@@ -5,6 +5,5 @@
   "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
-	<suppress checks="CustomImportOrderCheck" />
-	<suppress checks="AbbreviationAsWordInNameCheck" />
+  <suppress checks="AbbreviationAsWordInNameCheck"/>
 </suppressions>
