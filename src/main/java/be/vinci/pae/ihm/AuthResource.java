@@ -9,7 +9,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -22,6 +26,12 @@ public class AuthResource {
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
 
+  /**
+   * Log in a quidam by a pseudo and a password.
+   *
+   * @param json a json object that contains pseudo and password
+   * @return a json object that contains the token or a http error
+   */
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
