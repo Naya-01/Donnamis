@@ -13,7 +13,7 @@ public class Config {
   private static Properties props;
 
   /**
-   * Find the properties file by the path
+   * Load the properties file found.
    *
    * @param file : the path of file
    */
