@@ -1,0 +1,54 @@
+package be.vinci.pae.dal.dao;
+
+import be.vinci.pae.business.domain.MemberImpl;
+import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.dal.services.DALService;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class MemberDAO {
+
+  private DALService dalService = new DALService();
+
+ 
+  /**
+   * Get a member we want to retrieve by his pseudo.
+   *
+   * @param pseudo : the pseudo of the member we want to retrieve
+   * @return the member
+   */
+  public MemberDTO getOne(String pseudo) {
+
+    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+        "SELECT id_membre, pseudo, nom, prenom, etat, role, telephone, password, "
+            + "id_adresse, raison_refus FROM donnamis.membres WHERE pseudo = ?");
+    try {
+
+      preparedStatement.setString(1, pseudo);
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      MemberDTO memberDTO = new MemberImpl();
+      memberDTO.setMemberId(resultSet.getInt(1));
+      memberDTO.setPseudo(resultSet.getString(2));
+      memberDTO.setName(resultSet.getString(3));
+      memberDTO.setFirstname(resultSet.getString(4));
+      memberDTO.setStatus(resultSet.getString(5));
+      memberDTO.setRole(resultSet.getString(6));
+      memberDTO.setPhone(resultSet.getString(7));
+      memberDTO.setPassword(resultSet.getString(8));
+      memberDTO.setAddresse(resultSet.getInt(9));
+      memberDTO.setReasonRefusal(resultSet.getString(10));
+
+      return memberDTO;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+}
