@@ -1,10 +1,8 @@
 package be.vinci.pae.main;
 
-import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.utils.Config;
 import java.io.IOException;
 import java.net.URI;
-import java.sql.SQLException;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -25,7 +23,6 @@ public class Main {
     // in vinci.be package
     final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.ihm")
         .register(JacksonFeature.class);
-    System.out.println("oui");
 
     // create and start a new instance of grizzly http server
     // exposing the Jersey application at BASE_URI

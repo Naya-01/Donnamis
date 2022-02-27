@@ -16,7 +16,7 @@ public class DALService {
       connection = DriverManager.getConnection(Config.getProperty("dbUrl"),
           Config.getProperty("dbUser"),
           Config.getProperty("dbPassword"));
-        System.out.println(connection);
+
     } catch (SQLException e) {
       System.out.println("Impossible de joindre le server !");
       System.exit(1);
