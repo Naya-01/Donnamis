@@ -7,11 +7,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
- 
+
 public class Config {
 
   private static Properties props;
 
+  /**
+   * Find the properties file by the path
+   *
+   * @param file : the path of file
+   */
   public static void load(String file) {
     props = new Properties();
     try (InputStream input = new FileInputStream(file)) {
