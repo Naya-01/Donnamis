@@ -32,8 +32,8 @@ public class Main {
   /**
    * Main method.
    *
-   * @param args
-   * @throws IOException
+   * @param args : Array of arguments
+   * @throws IOException : If properties file not find
    */
   public static void main(String[] args) throws IOException {
     Config.load("prod.properties");
