@@ -3,13 +3,14 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALServiceImpl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MemberDAOImpl implements MemberDAO {
 
-  private DALService dalService = new DALService();
+  private DALService dalService = new DALServiceImpl();
 
 
   /**
