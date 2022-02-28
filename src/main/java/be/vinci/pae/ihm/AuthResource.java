@@ -2,13 +2,13 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
-import be.vinci.pae.business.ucc.MemberUCCImpl;
 import be.vinci.pae.utils.Config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -24,7 +24,9 @@ public class AuthResource {
 
   private final Algorithm jwtAlgorithm = Algorithm.HMAC256(Config.getProperty("JWTSecret"));
   private final ObjectMapper jsonMapper = new ObjectMapper();
-  private MemberUCC memberUCC = new MemberUCCImpl();
+
+  @Inject
+  private MemberUCC memberUCC;
 
   /**
    * Log in a quidam by a pseudo and a password.

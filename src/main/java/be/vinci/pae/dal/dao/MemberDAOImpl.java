@@ -1,17 +1,19 @@
 package be.vinci.pae.dal.dao;
 
-import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.dal.services.DALServiceImpl;
+import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MemberDAOImpl implements MemberDAO {
 
-  private DALService dalService = new DALServiceImpl();
-
+  @Inject
+  private DALService dalService;
+  @Inject
+  private MemberFactory memberFactory;
 
   /**
    * Get a member we want to retrieve by his pseudo.
@@ -35,7 +37,7 @@ public class MemberDAOImpl implements MemberDAO {
         return null;
       }
 
-      MemberDTO memberDTO = new MemberImpl();
+      MemberDTO memberDTO = memberFactory.getMemberDTO();
       memberDTO.setMemberId(resultSet.getInt(1));
       memberDTO.setPseudo(resultSet.getString(2));
       memberDTO.setName(resultSet.getString(3));
