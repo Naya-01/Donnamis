@@ -2,7 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
-import be.vinci.pae.ihm.managerToken.Token;
+import be.vinci.pae.ihm.tokenManager.Token;
 import be.vinci.pae.utils.Config;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.JsonNode;

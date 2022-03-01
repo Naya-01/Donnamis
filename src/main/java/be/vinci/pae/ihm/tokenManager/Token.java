@@ -1,4 +1,4 @@
-package be.vinci.pae.ihm.managerToken;
+package be.vinci.pae.ihm.tokenManager;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.utils.Config;
