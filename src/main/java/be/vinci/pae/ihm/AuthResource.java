@@ -35,9 +35,9 @@ public class AuthResource {
    * @return a json object that contains the token or a http error
    */
   @POST
+  @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/login")
   public ObjectNode login(JsonNode json) {
     if (!json.hasNonNull("pseudo") || !json.hasNonNull("password")) {
       throw new WebApplicationException("pseudo or password required", Response.Status.BAD_REQUEST);
@@ -48,7 +48,7 @@ public class AuthResource {
     MemberDTO memberDTO = memberUCC.login(pseudo, password);
     if (memberDTO == null) {
       throw new WebApplicationException("pseudo or password incorrect",
-          Response.Status.UNAUTHORIZED);
+          Response.Status.NOT_FOUND);
     }
 
     String token;
