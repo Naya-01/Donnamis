@@ -1,4 +1,4 @@
-package be.vinci.pae.ihm.token_manager;
+package be.vinci.pae.ihm.manager;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.utils.Config;
@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-public class Token {
+public class TokenImpl implements Token {
 
   private final Algorithm jwtAlgorithm = Algorithm.HMAC256(Config.getProperty("JWTSecret"));
 
@@ -32,9 +32,9 @@ public class Token {
    * @param memberDTO : member want to be authenticated
    * @return a token
    */
+  @Override
   public String withRememberMe(MemberDTO memberDTO) {
     Date date = Date.from(Instant.now().plus(30, ChronoUnit.DAYS));
-    System.out.println("long " + date);
     return getToken(memberDTO, date);
   }
 
@@ -44,9 +44,9 @@ public class Token {
    * @param memberDTO : member want to be authenticated
    * @return a token
    */
+  @Override
   public String withoutRememberMe(MemberDTO memberDTO) {
     Date date = Date.from(Instant.now().plus(12, ChronoUnit.HOURS));
-    System.out.println("short " + date);
     return getToken(memberDTO, date);
   }
 }

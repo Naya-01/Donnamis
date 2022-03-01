@@ -2,7 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
-import be.vinci.pae.ihm.token_manager.Token;
+import be.vinci.pae.ihm.manager.Token;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,7 +24,8 @@ public class AuthResource {
 
   @Inject
   private MemberUCC memberUCC;
-  private Token tokenManager = new Token();
+  @Inject
+  private Token tokenManager;
 
   /**
    * Log in a quidam by a pseudo and a password.
