@@ -1,4 +1,4 @@
-package be.vinci.pae.ihm.tokenManager;
+package be.vinci.pae.ihm.token_manager;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.utils.Config;
@@ -26,12 +26,24 @@ public class Token {
     return token;
   }
 
+  /**
+   * Make a token with a long expire date.
+   *
+   * @param memberDTO : member want to be authenticated
+   * @return a token
+   */
   public String withRememberMe(MemberDTO memberDTO) {
     Date date = Date.from(Instant.now().plus(30, ChronoUnit.DAYS));
     System.out.println("long " + date);
     return getToken(memberDTO, date);
   }
 
+  /**
+   * Make a token with a short expire date.
+   *
+   * @param memberDTO : member want to be authenticated
+   * @return a token
+   */
   public String withoutRememberMe(MemberDTO memberDTO) {
     Date date = Date.from(Instant.now().plus(12, ChronoUnit.HOURS));
     System.out.println("short " + date);

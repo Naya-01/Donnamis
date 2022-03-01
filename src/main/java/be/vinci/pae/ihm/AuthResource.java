@@ -2,9 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
-import be.vinci.pae.ihm.tokenManager.Token;
-import be.vinci.pae.utils.Config;
-import com.auth0.jwt.algorithms.Algorithm;
+import be.vinci.pae.ihm.token_manager.Token;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,7 +20,6 @@ import jakarta.ws.rs.core.Response;
 @Path("/auth")
 public class AuthResource {
 
-  private final Algorithm jwtAlgorithm = Algorithm.HMAC256(Config.getProperty("JWTSecret"));
   private final ObjectMapper jsonMapper = new ObjectMapper();
 
   @Inject
