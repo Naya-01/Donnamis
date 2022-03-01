@@ -16,7 +16,7 @@ class MemberUCCImplTest {
 
   String pseudo1 = "rayan";
   String passwd1 = "rayan123";
-  String role_accepted = "accepted";
+  String roleAccepted = "accepted";
   private MemberUCC memberUCC;
   private MemberDAO mockMemberDAO;
   private Member mockMember1;
@@ -33,7 +33,7 @@ class MemberUCCImplTest {
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
     Mockito.when(mockMember1.getPseudo()).thenReturn(pseudo1);
     Mockito.when(mockMember1.getPassword()).thenReturn(passwd1);
-    Mockito.when(mockMember1.getStatus()).thenReturn(role_accepted);
+    Mockito.when(mockMember1.getStatus()).thenReturn(roleAccepted);
     Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMember1);
     Mockito.when(mockMember1.checkPassword(passwd1)).thenReturn(true);
     assertEquals(mockMember1, memberUCC.login(pseudo1, passwd1));
