@@ -54,7 +54,6 @@ const connectClientAndRedirect = async (username, password, remember) => {
   }
 
   userData = await userData.json();
-
   setSessionObject("user", userData);
   await Navbar();
   Redirect("/");

@@ -3,10 +3,9 @@ import {Redirect} from "../Router/Router";
 import {removeSessionObject} from "../../utils/session";
 
 const Logout = () => {
-  console.log("Logout");
   removeSessionObject("user");
   Navbar();
-  Redirect("/Login");
+  Redirect("/connexion");
 };
 
 export default Logout;
