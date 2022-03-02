@@ -58,4 +58,8 @@ class MemberUCCImplTest {
     assertThrows(NotFoundException.class, () -> memberUCC.login("test", passwd1));
   }
 
+  @Test
+  public void testPasswordIsEmptyForGoodUsernameInTheDB() {
+    assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, ""));
+  }
 }
