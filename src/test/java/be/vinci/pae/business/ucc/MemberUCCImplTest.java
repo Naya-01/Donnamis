@@ -1,10 +1,12 @@
 package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
+import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.MemberDAO;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -40,5 +42,9 @@ class MemberUCCImplTest {
     assertEquals(mockMemberAccepted, memberUCC.login(pseudo1, passwd1));
   }
 
+  @Test
+  public void testMemberNonExistent() {
+    assertThrows(NotFoundException.class, () -> memberUCC.login("test", "test"));
+  }
 
 }
