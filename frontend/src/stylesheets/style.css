@@ -27,3 +27,10 @@
 .dropdown-profil-element:hover {
   color: black;
 }
+
+.vertical-text {
+  transform: rotate(90deg);
+  float: left;
+  transform-origin: left top 0;
+  white-space: nowrap;
+}
