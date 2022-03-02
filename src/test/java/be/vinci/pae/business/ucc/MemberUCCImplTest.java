@@ -53,4 +53,9 @@ class MemberUCCImplTest {
     assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, "test"));
   }
 
+  @Test
+  public void testPasswordExistentInTheDbForUsernameNonExistent() {
+    assertThrows(NotFoundException.class, () -> memberUCC.login("test", passwd1));
+  }
+
 }
