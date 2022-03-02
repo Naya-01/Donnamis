@@ -19,24 +19,25 @@ class MemberUCCImplTest {
   String roleAccepted = "accepted";
   private MemberUCC memberUCC;
   private MemberDAO mockMemberDAO;
-  private Member mockMember1;
+  private Member mockMemberAccepted;
 
   @BeforeEach
   void initAll() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
-    mockMember1 = Mockito.mock(MemberImpl.class);
+    mockMemberAccepted = Mockito.mock(MemberImpl.class);
+
+    Mockito.when(mockMemberAccepted.getPseudo()).thenReturn(pseudo1);
+    Mockito.when(mockMemberAccepted.getPassword()).thenReturn(passwd1);
+    Mockito.when(mockMemberAccepted.getStatus()).thenReturn(roleAccepted);
+    Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMemberAccepted);
+    Mockito.when(mockMemberAccepted.checkPassword(passwd1)).thenReturn(true);
   }
 
   @Test
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
-    Mockito.when(mockMember1.getPseudo()).thenReturn(pseudo1);
-    Mockito.when(mockMember1.getPassword()).thenReturn(passwd1);
-    Mockito.when(mockMember1.getStatus()).thenReturn(roleAccepted);
-    Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMember1);
-    Mockito.when(mockMember1.checkPassword(passwd1)).thenReturn(true);
-    assertEquals(mockMember1, memberUCC.login(pseudo1, passwd1));
+    assertEquals(mockMemberAccepted, memberUCC.login(pseudo1, passwd1));
   }
 
 
