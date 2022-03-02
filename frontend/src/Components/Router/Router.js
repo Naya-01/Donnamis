@@ -1,10 +1,12 @@
 import HomePage from "../Pages/HomePage";
-import NewPage from "../Pages/NewPage";
+import LoginPage from "../Pages/LoginPage";
+import Logout from "../Logout/Logout";
 
 // Configure your routes here
 const routes = {
   "/": HomePage,
-  "/new": NewPage,
+  "/connexion": LoginPage,
+  "/deconnexion": Logout,
 };
 
 /**
@@ -15,41 +17,34 @@ const routes = {
 
 const Router = () => {
   /* Manage click on the Navbar */
-  let navbarWrapper = document.querySelector("#navbarWrapper");
+  let navbarWrapper = document.querySelector("#navbar");
   navbarWrapper.addEventListener("click", (e) => {
     // To get a data attribute through the dataset object, get the property by the part of the attribute name after data- (note that dashes are converted to camelCase).
     let uri = e.target.dataset.uri;
 
     if (uri) {
       e.preventDefault();
-      /* use Web History API to add current page URL to the user's navigation history 
-       & set right URL in the browser (instead of "#") */
       window.history.pushState({}, uri, window.location.origin + uri);
-      /* render the requested component
-      NB : for the components that include JS, we want to assure that the JS included 
-      is not runned when the JS file is charged by the browser
-      therefore, those components have to be either a function or a class*/
       const componentToRender = routes[uri];
       if (routes[uri]) {
         componentToRender();
       } else {
-        throw Error("The " + uri + " ressource does not exist");
+        throw Error("La ressource " + uri + " n'existe pas");
       }
     }
   });
 
-  /* Route the right component when the page is loaded / refreshed */
   window.addEventListener("load", (e) => {
     const componentToRender = routes[window.location.pathname];
-    if (!componentToRender)
+    if (!componentToRender) {
       throw Error(
-        "The " + window.location.pathname + " ressource does not exist."
+          "La ressource " + window.location.pathname + " n'existe pas."
       );
+    }
 
     componentToRender();
   });
 
-  // Route the right component when the user use the browsing history
   window.addEventListener("popstate", () => {
     const componentToRender = routes[window.location.pathname];
     componentToRender();
@@ -61,7 +56,6 @@ const Router = () => {
  * @param {*} uri - Provides an URL that is associated to a functional component in the
  * routes array of the Router
  */
-
 const Redirect = (uri) => {
   // use Web History API to add current page URL to the user's navigation history & set right URL in the browser (instead of "#")
   window.history.pushState({}, uri, window.location.origin + uri);
@@ -70,8 +64,8 @@ const Redirect = (uri) => {
   if (routes[uri]) {
     componentToRender();
   } else {
-    throw Error("The " + uri + " ressource does not exist");
+    throw Error("La ressource " + uri + " n'existe pas.");
   }
 };
 
-export { Router, Redirect };
+export {Router, Redirect};

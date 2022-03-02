@@ -1,1 +1,29 @@
 
+.button-dot {
+  color: white;
+  display: inline-block;
+  position: relative;
+  padding: 2px 5px;
+}
+
+.dot {
+  background-color: #fa3e3e;
+  border-radius: 33px 33px;
+  color: white;
+  padding: 1px 3px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.bg-navbar {
+  background-color: rgb(52, 58, 64);
+}
+
+.dropdown-profil-element {
+  color: white;
+}
+
+.dropdown-profil-element:hover {
+  color: black;
+}
