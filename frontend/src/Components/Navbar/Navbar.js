@@ -30,7 +30,7 @@ const Navbar = async () => {
                       <a class="nav-link fs-4 " href="#" data-uri="/inscription">S'inscrire</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fs-4 active" href="#" data-uri="/connexion" tabindex="-1">Se connecter</a>
+                      <a class="nav-link fs-4 " href="#" data-uri="/connexion" tabindex="-1">Se connecter</a>
                     </li>
                   </ul>
                 </div>

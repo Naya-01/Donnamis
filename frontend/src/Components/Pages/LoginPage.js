@@ -7,14 +7,18 @@ const htmlPage = `
                 <div class="mx-5">
                   <form>
                     <div class="form-group">
-                      <label>Email address</label>
-                      <input class="form-control" placeholder="Enter email" type="email">
+                      <label>Pseudonyme</label>
+                      <input class="form-control" placeholder="Entrez votre pseudonyme" type="email">
                     </div>
                     <div class="form-group mt-3">
-                      <label>Password</label>
-                      <input class="form-control" placeholder="Password" type="password">
+                      <label>Mot de passe</label>
+                      <input class="form-control" placeholder="Entrez votre mot de passe" type="password">
                     </div>
-                    <button class="btn btn-primary mt-3" type="submit">Submit</button>
+                    <div class="mt-3 form-check">
+                      <input type="checkbox" class="form-check-input">
+                      <label class="form-check-label">Se souvenir de moi</label>
+                    </div>
+                    <button class="btn btn-primary mt-3" type="submit">Se connecter</button>
                   </form>
                 </div>
               </div>

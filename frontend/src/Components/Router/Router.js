@@ -19,7 +19,6 @@ const Router = () => {
   /* Manage click on the Navbar */
   let navbarWrapper = document.querySelector("#navbar");
   navbarWrapper.addEventListener("click", (e) => {
-    // To get a data attribute through the dataset object, get the property by the part of the attribute name after data- (note that dashes are converted to camelCase).
     let uri = e.target.dataset.uri;
 
     if (uri) {
