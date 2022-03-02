@@ -4,5 +4,6 @@ Content-Type: application/json
 
 {
   "pseudo": "test",
-  "password": "test"
+  "password": "test",
+  "rememberMe": false
 }
