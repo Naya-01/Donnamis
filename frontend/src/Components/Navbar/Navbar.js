@@ -52,7 +52,7 @@ const Navbar = async () => {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link fs-4 active" href="#">Accueil</a>
+                    <a class="nav-link fs-4" href="#">Accueil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-4 " href="#">Objets</a>
@@ -74,6 +74,9 @@ const Navbar = async () => {
             </ul>
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item m-auto">
+                        <a class="nav-link fs-2 text-white fw-bold " href="#">Mehdi</a>
+                    </li>
                     <li class="nav-item dropdown px-5">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                            href="#"
