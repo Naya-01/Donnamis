@@ -8,6 +8,7 @@ import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.MemberDAO;
+import jakarta.ws.rs.ForbiddenException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,11 @@ class MemberUCCImplTest {
   @Test
   public void testMemberNonExistent() {
     assertThrows(NotFoundException.class, () -> memberUCC.login("test", "test"));
+  }
+
+  @Test
+  public void testGoodUsernameBadPasswordNotRefusedAndInTheDB() {
+    assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, "test"));
   }
 
 }
