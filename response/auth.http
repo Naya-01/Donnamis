@@ -3,7 +3,7 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "pseudo": "test",
+  "username": "tchoupi",
   "password": "test",
   "rememberMe": false
 }

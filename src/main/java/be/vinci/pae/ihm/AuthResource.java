@@ -28,9 +28,9 @@ public class AuthResource {
   private Token tokenManager;
 
   /**
-   * Log in a quidam by a pseudo and a password.
+   * Log in a quidam by a username and a password.
    *
-   * @param json a json object that contains pseudo and password
+   * @param json a json object that contains username and password
    * @return a json object that contains the token or a http error
    */
   @POST
@@ -39,14 +39,14 @@ public class AuthResource {
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode login(JsonNode json) {
 
-    if (!json.hasNonNull("pseudo") || !json.hasNonNull("password")) {
-      throw new WebApplicationException("pseudo or password required", Response.Status.BAD_REQUEST);
+    if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
+      throw new WebApplicationException("username or password required", Response.Status.BAD_REQUEST);
     }
-    String pseudo = json.get("pseudo").asText();
+    String username = json.get("username").asText();
     String password = json.get("password").asText();
-    MemberDTO memberDTO = memberUCC.login(pseudo, password);
+    MemberDTO memberDTO = memberUCC.login(username, password);
     if (memberDTO == null) {
-      throw new WebApplicationException("pseudo or password incorrect", Response.Status.NOT_FOUND);
+      throw new WebApplicationException("username or password incorrect", Response.Status.NOT_FOUND);
     }
     String token;
     if (json.get("rememberMe").asBoolean()) {

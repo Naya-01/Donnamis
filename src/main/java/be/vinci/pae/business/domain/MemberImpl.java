@@ -5,8 +5,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MemberImpl implements Member {
 
   private int memberId;
-  private String pseudo;
-  private String name;
+  private String username;
+  private String lastname;
   private String firstname;
   private String status;
   private String role;
@@ -27,23 +27,23 @@ public class MemberImpl implements Member {
   }
 
   @Override
-  public String getPseudo() {
-    return pseudo;
+  public String getUsername() {
+    return username;
   }
 
   @Override
-  public void setPseudo(String pseudo) {
-    this.pseudo = pseudo;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   @Override
-  public String getName() {
-    return name;
+  public String getLastname() {
+    return lastname;
   }
 
   @Override
-  public void setName(String name) {
-    this.name = name;
+  public void setLastname(String name) {
+    this.lastname = name;
   }
 
   @Override

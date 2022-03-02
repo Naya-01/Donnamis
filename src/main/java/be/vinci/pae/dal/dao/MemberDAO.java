@@ -5,10 +5,10 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 public interface MemberDAO {
 
   /**
-   * Get a member we want to retrieve by his pseudo.
+   * Get a member we want to retrieve by his username.
    *
-   * @param pseudo : the pseudo of the member we want to retrieve
+   * @param username : the username of the member we want to retrieve
    * @return the member
    */
-  MemberDTO getOne(String pseudo);
+  MemberDTO getOne(String username);
 }
