@@ -25,7 +25,7 @@ public class MemberImpl implements Member {
   private int addresse;
   @JsonView(Views.Public.class)
   private String reasonRefusal;
-  @JsonView(Views.Public.class)
+  @JsonView(Views.Internal.class)
   private String password;
 
 

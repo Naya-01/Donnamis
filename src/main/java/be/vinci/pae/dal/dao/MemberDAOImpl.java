@@ -1,9 +1,7 @@
 package be.vinci.pae.dal.dao;
 
-import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.factories.MemberFactory;
-import be.vinci.pae.business.views.Filters;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -16,8 +14,6 @@ public class MemberDAOImpl implements MemberDAO {
   private DALService dalService;
   @Inject
   private MemberFactory memberFactory;
-
-  private Filters<MemberImpl> filters = new Filters<>(MemberImpl.class);
 
 
   /**
@@ -53,7 +49,7 @@ public class MemberDAOImpl implements MemberDAO {
       memberDTO.setAddresse(resultSet.getInt(9));
       memberDTO.setReasonRefusal(resultSet.getString(10));
 
-      return filters.filterPublicJsonView(memberDTO);
+      return memberDTO;
     } catch (SQLException e) {
       e.printStackTrace();
     }

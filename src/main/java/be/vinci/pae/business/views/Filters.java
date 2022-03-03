@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Filters<T> {
 
-  private final static ObjectMapper jsonMapper = new ObjectMapper();
+  private final ObjectMapper jsonMapper = new ObjectMapper();
   private Class<T> type;
 
   public Filters(Class<T> type) {
