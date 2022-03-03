@@ -7,6 +7,7 @@ import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.exceptions.NotFoundException;
+import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.MemberDAO;
 import jakarta.ws.rs.ForbiddenException;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -42,6 +43,12 @@ class MemberUCCImplTest {
   @Test
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
     assertEquals(mockMember, memberUCC.login(pseudo1, passwd1));
+  }
+
+  @Test
+  public void testGoodUsernameGoodPasswordRefusedAndInTheDB() {
+    Mockito.when(mockMember.getStatus()).thenReturn(roleRefused);
+    assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1));
   }
 
   @Test
