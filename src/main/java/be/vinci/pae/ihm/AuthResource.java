@@ -40,13 +40,15 @@ public class AuthResource {
   public ObjectNode login(JsonNode json) {
 
     if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
-      throw new WebApplicationException("username or password required", Response.Status.BAD_REQUEST);
+      throw new WebApplicationException("username or password required",
+          Response.Status.BAD_REQUEST);
     }
     String username = json.get("username").asText();
     String password = json.get("password").asText();
     MemberDTO memberDTO = memberUCC.login(username, password);
     if (memberDTO == null) {
-      throw new WebApplicationException("username or password incorrect", Response.Status.NOT_FOUND);
+      throw new WebApplicationException("username or password incorrect",
+          Response.Status.NOT_FOUND);
     }
     String token;
     if (json.get("rememberMe").asBoolean()) {

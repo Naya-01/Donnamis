@@ -2,7 +2,6 @@ package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.views.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -26,8 +25,6 @@ public class MemberImpl implements Member {
   private int addresse;
   @JsonView(Views.Public.class)
   private String reasonRefusal;
-//  @JsonView(Views.Internal.class)
-//  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @JsonView(Views.Public.class)
   private String password;
 
