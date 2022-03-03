@@ -64,6 +64,12 @@ class MemberUCCImplTest {
   }
 
   @Test
+  public void testUsernameIsEmptyForGoodPasswordInTheDB() {
+    Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
+    assertThrows(NotFoundException.class, () -> memberUCC.login("", passwd1));
+  }
+
+  @Test
   public void testUsernameAndPasswordAreEmpty() {
     assertThrows(NotFoundException.class, () -> memberUCC.login("", ""));
   }
