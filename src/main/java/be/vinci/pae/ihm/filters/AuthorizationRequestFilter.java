@@ -31,9 +31,8 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED)
           .entity("A token is needed to access this resource").build());
     } else {
-      DecodedJWT decodedToken = null;
       try {
-        decodedToken = this.jwtVerifier.verify(token);
+        DecodedJWT decodedToken = this.jwtVerifier.verify(token);
       } catch (Exception e) {
         throw new TokenDecodingException(e);
       }
