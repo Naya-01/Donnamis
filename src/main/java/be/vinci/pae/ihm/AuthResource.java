@@ -2,6 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,12 +10,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/auth")
@@ -57,5 +61,15 @@ public class AuthResource {
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
         .put("refresh_token", refreshToken);
+  }
+
+  @GET
+  @Path("/refreshToken")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectNode refreshToken(@Context ContainerRequest request) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    String accessToken = tokenManager.withoutRememberMe(memberDTO);
+    return jsonMapper.createObjectNode().put("access_token", accessToken);
   }
 }
