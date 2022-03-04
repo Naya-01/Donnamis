@@ -1,4 +1,4 @@
-import {setSessionObject} from "../../utils/session";
+import {getSessionObject, setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
 
@@ -26,6 +26,8 @@ const htmlPage = `
                   </form>
                 </div>
               </div>
+              <div class="" id="notif">
+              </div>
             </div>
                   `;
 
@@ -36,7 +38,7 @@ const connectClientAndRedirect = async (username, password, remember) => {
     let options = {
       method: "POST",
       body: JSON.stringify({
-        "pseudo": username,
+        "username": username,
         "password": password,
         "rememberMe": remember,
       }),
@@ -46,20 +48,27 @@ const connectClientAndRedirect = async (username, password, remember) => {
     };
     userData = await fetch("/api/auth/login/", options);
     if (!userData.ok) {
-      throw new Error("fetch error : " + userData.status + " : "
-          + userData.statusText);
+      let notif = document.getElementById("notif");
+      notif.className = "alert alert-warning fs-3 text-center";
+      notif.innerHTML = "La combinaison pseudo/mot de passe n'existe pas";
     }
   } catch (err) {
     console.log(err);
   }
-
-  userData = await userData.json();
-  setSessionObject("user", userData);
-  await Navbar();
-  Redirect("/");
+  if (userData.status === 200) {
+    userData = await userData.json();
+    setSessionObject("user", userData);
+    await Navbar();
+    Redirect("/");
+  }
 }
 
 const LoginPage = () => {
+  if (getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
+
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = htmlPage;
 
@@ -70,7 +79,15 @@ const LoginPage = () => {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
     let remember = document.getElementById("rememberMe").checked;
-    connectClientAndRedirect(username, password, remember);
+    let notif = document.getElementById("notif");
+    notif.className = "";
+    notif.innerHTML = "";
+    if (username.length === 0 || password.length === 0) {
+      notif.className = "alert alert-warning fs-3 text-center";
+      notif.innerHTML = "Veuillez introduire un nom et un mot de passe";
+    } else {
+      connectClientAndRedirect(username, password, remember);
+    }
   })
 
 };
