@@ -56,6 +56,8 @@ public class AuthResource {
     String refreshToken = null;
     if (json.get("rememberMe").asBoolean()) {
       refreshToken = tokenManager.withRememberMe(memberDTO);
+    } else {
+      refreshToken = accessToken;
     }
 
     return jsonMapper.createObjectNode()
