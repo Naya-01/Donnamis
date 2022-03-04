@@ -97,7 +97,10 @@ class MemberUCCImplTest {
 
   @Test
   public void testPasswordIsEmptyForGoodUsernameInTheDB() {
-    assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, ""));
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, "")),
+        () -> Mockito.verify(mockMember).checkPassword("")
+    );
   }
 
   @Test
