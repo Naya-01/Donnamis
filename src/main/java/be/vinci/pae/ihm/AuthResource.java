@@ -66,7 +66,7 @@ public class AuthResource {
   /**
    * Refresh the access token for authenticated member.
    *
-   * @param request: to get information request
+   * @param request to get information request
    * @return a json object that contains the new access token
    */
   @GET
