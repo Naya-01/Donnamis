@@ -46,7 +46,7 @@ public class TokenImpl implements Token {
    */
   @Override
   public String withoutRememberMe(MemberDTO memberDTO) {
-    Date date = Date.from(Instant.now().plus(3, ChronoUnit.HOURS));
+    Date date = Date.from(Instant.now().plus(2, ChronoUnit.HOURS));
     return getToken(memberDTO, date);
   }
 }
