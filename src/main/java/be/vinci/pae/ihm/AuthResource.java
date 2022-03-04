@@ -3,8 +3,8 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
-import be.vinci.pae.business.views.Filters;
 import be.vinci.pae.ihm.manager.Token;
+import be.vinci.pae.utils.Filters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -60,6 +60,7 @@ public class AuthResource {
       token = tokenManager.withoutRememberMe(memberDTO);
     }
 
-    return jsonMapper.createObjectNode().put("token", token).putPOJO("user", filters.filterPublicJsonView(memberDTO));
+    return jsonMapper.createObjectNode().put("token", token)
+        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
   }
 }

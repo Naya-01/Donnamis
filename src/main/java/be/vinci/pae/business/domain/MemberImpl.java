@@ -1,12 +1,13 @@
 package be.vinci.pae.business.domain;
 
-import be.vinci.pae.business.views.Views;
+import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.mindrot.jbcrypt.BCrypt;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MemberImpl implements Member {
+
   @JsonView(Views.Public.class)
   private int memberId;
   @JsonView(Views.Public.class)

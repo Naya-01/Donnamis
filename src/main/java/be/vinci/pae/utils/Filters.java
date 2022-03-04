@@ -1,4 +1,4 @@
-package be.vinci.pae.business.views;
+package be.vinci.pae.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
@@ -18,7 +18,7 @@ public class Filters<T> {
    * Filter a list of object.
    *
    * @param list a list that need to be filtered
-   * @param <T> the type of the list
+   * @param <T>  the type of the list
    * @return a filtered list
    */
   public <T> List<T> filterPublicJsonViewAsList(List<T> list) {
@@ -43,7 +43,7 @@ public class Filters<T> {
    * Filter an object.
    *
    * @param item an object that need to be filtered
-   * @param <T> the type of the object
+   * @param <T>  the type of the object
    * @return a filtered object
    */
   public <T> T filterPublicJsonView(T item) {
