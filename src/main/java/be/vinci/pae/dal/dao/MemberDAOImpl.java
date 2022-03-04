@@ -54,6 +54,12 @@ public class MemberDAOImpl implements MemberDAO {
     return findMember(preparedStatement);
   }
 
+  /**
+   * Make a memberDTO with the result set.
+   *
+   * @param preparedStatement : a prepared statement to execute the query.
+   * @return the member.
+   */
   public MemberDTO findMember(PreparedStatement preparedStatement) {
     try {
       preparedStatement.executeQuery();

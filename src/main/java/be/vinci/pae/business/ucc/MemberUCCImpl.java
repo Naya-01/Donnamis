@@ -38,6 +38,8 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
+   * Find a member with his id.
+   *
    * @param id : id of the member.
    * @return memberDTO having this id.
    */
