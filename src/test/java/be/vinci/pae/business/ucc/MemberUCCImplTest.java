@@ -55,7 +55,7 @@ class MemberUCCImplTest {
   }
 
   @Test
-  public void testGoodUsernameGoodPasswordRefusedAndInTheDB() {
+  public void testGoodUsernameGoodPasswordDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertAll(
         () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
@@ -90,7 +90,7 @@ class MemberUCCImplTest {
   }
 
   @Test
-  public void testGoodUsernameBadPasswordRefusedAndInTheDB() {
+  public void testGoodUsernameBadPasswordDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, badPassword)),
