@@ -8,7 +8,8 @@ CREATE TABLE donnamis.addresses (
     building_number VARCHAR(15) NOT NULL,
     street          VARCHAR(50) NOT NULL,
     postcode        VARCHAR(15) NOT NULL,
-    commune         VARCHAR(50) NOT NULL
+    commune         VARCHAR(50) NOT NULL,
+    country         VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE donnamis.members (
@@ -61,5 +62,3 @@ CREATE TABLE donnamis.offers (
     time_slot       VARCHAR(50)  NOT NULL,
     id_object       INTEGER     REFERENCES donnamis.objects (id_object) NOT NULL
 );
-
-SELECT id_member, username, lastname, firstname, status, role, phone_number, password, id_addresse, refusal_reason FROM donnamis.members m
