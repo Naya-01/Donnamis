@@ -63,6 +63,12 @@ public class AuthResource {
         .put("refresh_token", refreshToken);
   }
 
+  /**
+   * Refresh the access token for authenticated member.
+   *
+   * @param request: to get information request
+   * @return a json object that contains the new access token
+   */
   @GET
   @Path("/refreshToken")
   @Produces(MediaType.APPLICATION_JSON)
