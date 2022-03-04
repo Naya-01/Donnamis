@@ -30,8 +30,11 @@ public class MemberUCCImpl implements MemberUCC {
     if (!member.checkPassword(password)) {
       throw new ForbiddenException("Password invalid");
     }
-    if (memberDTO.getStatus().equals("refused")) {
-      throw new UnauthorizedException("Member status is refused");
+    if (memberDTO.getStatus().equals("denied")) {
+      throw new UnauthorizedException("Member status is denied");
+    }
+    if (memberDTO.getStatus().equals("pending")) {
+      throw new UnauthorizedException("Member status is pending");
     }
     return memberDTO;
 
