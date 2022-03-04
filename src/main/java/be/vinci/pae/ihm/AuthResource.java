@@ -27,7 +27,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 public class AuthResource {
 
   private final ObjectMapper jsonMapper = new ObjectMapper();
-  private final Filters<MemberImpl> filters = new Filters<>(MemberImpl.class);
 
   @Inject
   private MemberUCC memberUCC;
