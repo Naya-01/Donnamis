@@ -41,6 +41,7 @@ public class MemberUCCImpl implements MemberUCC {
    * @param id : id of the member.
    * @return memberDTO having this id.
    */
+  @Override
   public MemberDTO getMember(int id) {
     MemberDTO memberDTO = memberDAO.getOne(id);
     if (memberDTO == null) {
