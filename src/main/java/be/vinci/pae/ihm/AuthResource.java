@@ -1,29 +1,30 @@
 package be.vinci.pae.ihm;
 
-import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
-import be.vinci.pae.utils.Filters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/auth")
 public class AuthResource {
 
   private final ObjectMapper jsonMapper = new ObjectMapper();
-  private final Filters<MemberImpl> filters = new Filters<>(MemberImpl.class);
 
   @Inject
   private MemberUCC memberUCC;
@@ -53,14 +54,32 @@ public class AuthResource {
       throw new WebApplicationException("username or password incorrect",
           Response.Status.NOT_FOUND);
     }
-    String token;
+    String accessToken = tokenManager.withoutRememberMe(memberDTO);
+    String refreshToken = null;
     if (json.get("rememberMe").asBoolean()) {
-      token = tokenManager.withRememberMe(memberDTO);
+      refreshToken = tokenManager.withRememberMe(memberDTO);
     } else {
-      token = tokenManager.withoutRememberMe(memberDTO);
+      refreshToken = accessToken;
     }
 
-    return jsonMapper.createObjectNode().put("token", token)
-        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
+    return jsonMapper.createObjectNode()
+        .put("access_token", accessToken)
+        .put("refresh_token", refreshToken);
+  }
+
+  /**
+   * Refresh the access token for authenticated member.
+   *
+   * @param request to get information request
+   * @return a json object that contains the new access token
+   */
+  @GET
+  @Path("/refreshToken")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectNode refreshToken(@Context ContainerRequest request) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    String accessToken = tokenManager.withoutRememberMe(memberDTO);
+    return jsonMapper.createObjectNode().put("access_token", accessToken);
   }
 }

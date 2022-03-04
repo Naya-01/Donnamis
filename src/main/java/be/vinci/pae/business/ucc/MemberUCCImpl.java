@@ -31,7 +31,7 @@ public class MemberUCCImpl implements MemberUCC {
       throw new ForbiddenException("Password invalid");
     }
     if (memberDTO.getStatus().equals("refused")) {
-      throw new UnauthorizedException("Member role is refused");
+      throw new UnauthorizedException("Member status is refused");
     }
     return memberDTO;
 

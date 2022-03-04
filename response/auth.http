@@ -5,5 +5,5 @@ Content-Type: application/json
 {
   "username": "test",
   "password": "test",
-  "rememberMe": false
+  "rememberMe": true
 }
