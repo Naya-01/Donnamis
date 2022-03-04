@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,7 +43,13 @@ class MemberUCCImplTest {
 
   @Test
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
-    assertEquals(mockMember, memberUCC.login(pseudo1, passwd1));
+    assertAll(
+        () -> assertEquals(mockMember, memberUCC.login(pseudo1, passwd1)),
+        () -> Mockito.verify(mockMemberDAO).getOne(pseudo1),
+        () -> Mockito.verify(mockMember).checkPassword(passwd1),
+        () -> Mockito.verify(mockMember).getStatus()
+    );
+
   }
 
   @Test
