@@ -14,15 +14,15 @@ public class MemberUCCImpl implements MemberUCC {
   private MemberDAO memberDAO;
 
   /**
-   * Log in a quidam by a pseudo and a password.
+   * Log in a quidam by a username and a password.
    *
-   * @param pseudo   : pseudo of the member.
+   * @param username   : username of the member.
    * @param password : password of the member.
-   * @return member having the pseudo and password.
+   * @return member having the username and password.
    */
   @Override
-  public MemberDTO login(String pseudo, String password) {
-    MemberDTO memberDTO = memberDAO.getOne(pseudo);
+  public MemberDTO login(String username, String password) {
+    MemberDTO memberDTO = memberDAO.getOne(username);
     Member member = (Member) memberDTO;
     if (memberDTO == null) {
       throw new NotFoundException("Member not found");

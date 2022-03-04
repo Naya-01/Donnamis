@@ -6,13 +6,13 @@ public interface MemberDTO {
 
   void setMemberId(int memberId);
 
-  String getPseudo();
+  String getUsername();
 
-  void setPseudo(String pseudo);
+  void setUsername(String username);
 
-  String getName();
+  String getLastname();
 
-  void setName(String name);
+  void setLastname(String name);
 
   String getFirstname();
 

@@ -2,61 +2,64 @@ DROP SCHEMA IF EXISTS donnamis CASCADE ;
 
 CREATE SCHEMA donnamis;
 
-CREATE TABLE donnamis.adresses (
-    id_adresse  SERIAL      PRIMARY KEY,
-    boite       VARCHAR(15) NULL,
-    numero      VARCHAR(15) NOT NULL,
-    rue         VARCHAR(50) NOT NULL,
-    code_postal VARCHAR(15) NOT NULL,
-    commune     VARCHAR(50) NOT NULL
+CREATE TABLE donnamis.addresses (
+    id_addresse     SERIAL      PRIMARY KEY,
+    unit_number     VARCHAR(15) NULL,
+    building_number VARCHAR(15) NOT NULL,
+    street          VARCHAR(50) NOT NULL,
+    postcode        VARCHAR(15) NOT NULL,
+    commune         VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE donnamis.membres (
-    id_membre       SERIAL      PRIMARY KEY,
-    pseudo          VARCHAR(50) NOT NULL,
-    nom             VARCHAR(50) NOT NULL,
-    prenom          VARCHAR(50) NOT NULL,
-    etat            VARCHAR(15) NOT NULL,
+CREATE TABLE donnamis.members (
+    id_member       SERIAL      PRIMARY KEY,
+    username        VARCHAR(50) NOT NULL,
+    lastname        VARCHAR(50) NOT NULL,
+    firstname       VARCHAR(50) NOT NULL,
+    status          VARCHAR(15) NOT NULL,
     role            VARCHAR(15) NOT NULL,
-    telephone       VARCHAR(50) NULL,
-    id_adresse      INTEGER     REFERENCES donnamis.adresses(id_adresse) NOT NULL,
-    raison_refus    VARCHAR(50) NULL
+    phone_number    VARCHAR(50) NULL,
+    password        CHAR(60)    NOT NULL,
+    id_addresse     INTEGER     REFERENCES donnamis.addresses(id_addresse) NOT NULL,
+    refusal_reason  VARCHAR(50) NULL
 );
 
 CREATE TABLE donnamis.types (
     id_type         SERIAL      PRIMARY KEY,
     type            VARCHAR(50) NOT NULL,
-    est_par_defaut  BOOLEAN     NOT NULL
+    is_default      BOOLEAN     NOT NULL
 );
 
-CREATE TABLE donnamis.objets (
-    id_objet    SERIAL          PRIMARY KEY,
-    id_type     INTEGER         REFERENCES donnamis.types (id_type) NOT NULL,
-    description VARCHAR(100)    NOT NULL,
-    etat        VARCHAR(10)     NOT NULL,
-    image       BYTEA           NULL,
-    id_offreur  INTEGER         REFERENCES donnamis.membres (id_membre) NOT NULL
+CREATE TABLE donnamis.objects (
+    id_object       SERIAL          PRIMARY KEY,
+    id_type         INTEGER         REFERENCES donnamis.types (id_type) NOT NULL,
+    description     VARCHAR(100)    NOT NULL,
+    status          VARCHAR(10)     NOT NULL,
+    image           BYTEA           NULL,
+    id_offeror      INTEGER         REFERENCES donnamis.members (id_member) NOT NULL
 );
 
-CREATE TABLE donnamis.notes (
-    score       INTEGER         NOT NULL,
-    commentaire VARCHAR(100)    NOT NULL,
-    id_membre   INTEGER         REFERENCES donnamis.membres (id_membre) NOT NULL,
-    id_objet    INTEGER         REFERENCES donnamis.objets (id_objet) NOT NULL,
-    PRIMARY KEY (id_objet, id_membre)
+CREATE TABLE donnamis.ratings (
+    rating      INTEGER         NOT NULL,
+    comment     VARCHAR(100)    NOT NULL,
+    id_member   INTEGER         REFERENCES donnamis.members (id_member) NOT NULL,
+    id_object    INTEGER         REFERENCES donnamis.objects (id_object) NOT NULL,
+    PRIMARY KEY (id_object, id_member)
 );
 
-CREATE TABLE donnamis.interets (
-    date_disponibilite  DATE        NOT NULL,
-    etat                VARCHAR(15) NOT NULL,
-    id_membre           INTEGER     REFERENCES donnamis.membres (id_membre) NOT NULL,
-    id_objet            INTEGER     REFERENCES donnamis.objets (id_objet) NOT NULL,
-    PRIMARY KEY (id_objet, id_membre)
+CREATE TABLE donnamis.interests (
+    availability_date   DATE        NOT NULL,
+    status              VARCHAR(15) NOT NULL,
+    id_member           INTEGER     REFERENCES donnamis.members (id_member) NOT NULL,
+    id_object           INTEGER     REFERENCES donnamis.objects (id_object) NOT NULL,
+    PRIMARY KEY (id_object, id_member)
 );
 
-CREATE TABLE donnamis.offres (
-    id_offre        SERIAL      PRIMARY KEY,
-    date            DATE        NOT NULL,
-    plage_horaire   VARCHAR(50) NOT NULL,
-    id_objet        INTEGER     REFERENCES donnamis.objets (id_objet) NOT NULL
+CREATE TABLE donnamis.offers (
+    id_offer        SERIAL       PRIMARY KEY,
+    date            DATE         NOT NULL,
+    time_slot       VARCHAR(50)  NOT NULL,
+    id_object       INTEGER     REFERENCES donnamis.objects (id_object) NOT NULL
 );
+
+SELECT id_member, username, lastname, firstname, status, role, phone_number, password, id_addresse, refusal_reason FROM donnamis.members m

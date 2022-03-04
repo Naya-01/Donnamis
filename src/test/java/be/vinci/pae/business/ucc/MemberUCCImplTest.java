@@ -31,7 +31,7 @@ class MemberUCCImplTest {
 
   @Test
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
-    Mockito.when(mockMember1.getPseudo()).thenReturn(pseudo1);
+    Mockito.when(mockMember1.getUsername()).thenReturn(pseudo1);
     Mockito.when(mockMember1.getPassword()).thenReturn(passwd1);
     Mockito.when(mockMember1.getStatus()).thenReturn(roleAccepted);
     Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMember1);

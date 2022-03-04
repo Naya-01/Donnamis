@@ -15,21 +15,21 @@ public class MemberDAOImpl implements MemberDAO {
   @Inject
   private MemberFactory memberFactory;
 
+
   /**
-   * Get a member we want to retrieve by his pseudo.
+   * Get a member we want to retrieve by his username.
    *
-   * @param pseudo : the pseudo of the member we want to retrieve
+   * @param username : the username of the member we want to retrieve
    * @return the member
    */
   @Override
-  public MemberDTO getOne(String pseudo) {
-
+  public MemberDTO getOne(String username) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "SELECT id_membre, pseudo, nom, prenom, etat, role, telephone, password, "
-            + "id_adresse, raison_refus FROM donnamis.membres WHERE pseudo = ?");
+        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
+            + "id_addresse, refusal_reason FROM donnamis.members WHERE username = ?");
     try {
 
-      preparedStatement.setString(1, pseudo);
+      preparedStatement.setString(1, username);
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -39,8 +39,8 @@ public class MemberDAOImpl implements MemberDAO {
 
       MemberDTO memberDTO = memberFactory.getMemberDTO();
       memberDTO.setMemberId(resultSet.getInt(1));
-      memberDTO.setPseudo(resultSet.getString(2));
-      memberDTO.setName(resultSet.getString(3));
+      memberDTO.setUsername(resultSet.getString(2));
+      memberDTO.setLastname(resultSet.getString(3));
       memberDTO.setFirstname(resultSet.getString(4));
       memberDTO.setStatus(resultSet.getString(5));
       memberDTO.setRole(resultSet.getString(6));
