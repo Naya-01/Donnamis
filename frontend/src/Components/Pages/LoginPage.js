@@ -57,7 +57,13 @@ const connectClientAndRedirect = async (username, password, remember) => {
   }
   if (userData.status === 200) {
     userData = await userData.json();
-    setSessionObject("user", userData);
+
+    let userLocalStorage = {
+      refreshToken: userData.refresh_token,
+      accessToken: userData.access_token,
+    }
+
+    setSessionObject("user", userLocalStorage);
     await Navbar();
     Redirect("/");
   }

@@ -1,5 +1,28 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
+import {Redirect} from "../Router/Router";
+
+const getUsername = async () => {
+  let userData;
+  try {
+    let options = {
+      method: "POST",
+      headers: {
+        Authorization: getSessionObject("user").accessToken
+      },
+    };
+    userData = await fetch("/api/auth/getuserbytoken/", options);
+    if (!userData.ok) {
+      Redirect("/connexion");
+      Navbar();
+      return;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  userData = await userData.json();
+  return userData.user.username;
+}
 
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
@@ -40,6 +63,7 @@ const Navbar = async () => {
      `
     navbarWrapper.innerHTML = navbar;
   } else {
+
     navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
     <div class="container-fluid">
         <a class="navbar-brand fs-1" href="#">DONNAMIS</a>
@@ -75,7 +99,7 @@ const Navbar = async () => {
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item m-auto">
-                        <a class="nav-link fs-2 text-white fw-bold " href="#">Mehdi</a>
+                        <a class="nav-link fs-2 text-white fw-bold " href="#">${await getUsername()}</a>
                     </li>
                     <li class="nav-item dropdown px-5">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"

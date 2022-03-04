@@ -1,6 +1,12 @@
 import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import Logout from "../Logout/Logout";
+import {
+  getSessionObject,
+  removeSessionObject,
+  setSessionObject
+} from "../../utils/session";
+import Navbar from "../Navbar/Navbar";
 
 // Configure your routes here
 const routes = {
@@ -8,6 +14,39 @@ const routes = {
   "/connexion": LoginPage,
   "/deconnexion": Logout,
 };
+
+const refreshToken = async () => {
+  let refreshData;
+  try {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: getSessionObject("user").refreshToken
+      },
+    };
+    refreshData = await fetch("/api/auth/refreshToken/", options);
+    if (!refreshData.ok) {
+      throw new Error(
+          "fetch error : " + refreshData.status + " : " + refreshData.statusText
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  if (refreshData.status === 200) {
+    //update AccessToken
+    refreshData = await refreshData.json();
+    let actualData = getSessionObject("user");
+    actualData.accessToken = refreshData.access_token;
+    setSessionObject("user", actualData);
+    return true;
+  } else {
+    removeSessionObject("user");
+    await Navbar();
+    Redirect("/connexion");
+    return false;
+  }
+}
 
 /**
  * Deal with call and auto-render of Functional Components following click events
@@ -20,6 +59,11 @@ const Router = () => {
   let navbarWrapper = document.querySelector("#navbar");
   navbarWrapper.addEventListener("click", (e) => {
     let uri = e.target.dataset.uri;
+    if (getSessionObject("user")) {
+      if (!refreshToken()) {
+        return;
+      }
+    }
 
     if (uri) {
       e.preventDefault();
@@ -34,6 +78,12 @@ const Router = () => {
   });
 
   window.addEventListener("load", (e) => {
+    if (getSessionObject("user")) {
+      if (!refreshToken()) {
+        return;
+      }
+    }
+
     const componentToRender = routes[window.location.pathname];
     if (!componentToRender) {
       throw Error(
