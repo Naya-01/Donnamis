@@ -19,10 +19,11 @@ import org.mockito.Mockito;
 
 class MemberUCCImplTest {
 
-  private String pseudo1 = "rayan";
-  private String passwd1 = "rayan123";
-  private String roleAccepted = "accepted";
-  private String roleRefused = "refused";
+  private final String pseudo1 = "rayan";
+  private final String passwd1 = "rayan123";
+  private final String statusValid = "valid";
+  private final String statusDenied = "denied";
+  private final String statusPending = "pending";
   private MemberUCC memberUCC;
   private MemberDAO mockMemberDAO;
   private Member mockMember;
@@ -34,9 +35,9 @@ class MemberUCCImplTest {
     this.mockMemberDAO = locator.getService(MemberDAO.class);
     mockMember = Mockito.mock(MemberImpl.class);
 
-    Mockito.when(mockMember.getPseudo()).thenReturn(pseudo1);
+    Mockito.when(mockMember.getUsername()).thenReturn(pseudo1);
     Mockito.when(mockMember.getPassword()).thenReturn(passwd1);
-    Mockito.when(mockMember.getStatus()).thenReturn(roleAccepted);
+    Mockito.when(mockMember.getStatus()).thenReturn(statusValid);
     Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMember);
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
   }
@@ -46,14 +47,14 @@ class MemberUCCImplTest {
     assertAll(
         () -> assertEquals(mockMember, memberUCC.login(pseudo1, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
-        () -> Mockito.verify(mockMember).getStatus()
+        () -> Mockito.verify(mockMember, Mockito.times(2)).getStatus()
     );
 
   }
 
   @Test
   public void testGoodUsernameGoodPasswordRefusedAndInTheDB() {
-    Mockito.when(mockMember.getStatus()).thenReturn(roleRefused);
+    Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertAll(
         () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
@@ -74,7 +75,7 @@ class MemberUCCImplTest {
 
   @Test
   public void testGoodUsernameBadPasswordRefusedAndInTheDB() {
-    Mockito.when(mockMember.getStatus()).thenReturn(roleRefused);
+    Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, "test"));
   }
 
