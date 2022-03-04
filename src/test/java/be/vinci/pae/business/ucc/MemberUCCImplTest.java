@@ -67,9 +67,7 @@ class MemberUCCImplTest {
   @Test
   public void testMemberNonExistent() {
     Mockito.when(mockMemberDAO.getOne(badPseudo)).thenReturn(null);
-    assertAll(
-        () -> assertThrows(NotFoundException.class, () -> memberUCC.login(badPseudo, badPassword))
-    );
+    assertThrows(NotFoundException.class, () -> memberUCC.login(badPseudo, badPassword));
   }
 
   @Test
@@ -89,8 +87,6 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockMember).checkPassword(badPassword),
         () -> Mockito.verify(mockMember, Mockito.never()).getStatus()
     );
-
-
   }
 
   @Test
