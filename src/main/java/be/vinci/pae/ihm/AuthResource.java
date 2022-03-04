@@ -48,13 +48,14 @@ public class AuthResource {
     if (memberDTO == null) {
       throw new WebApplicationException("pseudo or password incorrect", Response.Status.NOT_FOUND);
     }
-    String token;
+    String access_token = tokenManager.withoutRememberMe(memberDTO);
+    String refresh_token = null;
     if (json.get("rememberMe").asBoolean()) {
-      token = tokenManager.withRememberMe(memberDTO);
-    } else {
-      token = tokenManager.withoutRememberMe(memberDTO);
+      refresh_token = tokenManager.withRememberMe(memberDTO);
     }
 
-    return jsonMapper.createObjectNode().put("token", token);
+    return jsonMapper.createObjectNode()
+        .put("access_token", access_token)
+        .put("refresh_token", refresh_token);
   }
 }
