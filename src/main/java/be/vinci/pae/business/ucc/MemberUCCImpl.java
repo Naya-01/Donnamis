@@ -16,7 +16,7 @@ public class MemberUCCImpl implements MemberUCC {
   /**
    * Log in a quidam by a username and a password.
    *
-   * @param username   : username of the member.
+   * @param username : username of the member.
    * @param password : password of the member.
    * @return member having the username and password.
    */
@@ -35,5 +35,20 @@ public class MemberUCCImpl implements MemberUCC {
     }
     return memberDTO;
 
+  }
+
+  /**
+   * Find a member with his id.
+   *
+   * @param id : id of the member.
+   * @return memberDTO having this id.
+   */
+  @Override
+  public MemberDTO getMember(int id) {
+    MemberDTO memberDTO = memberDAO.getOne(id);
+    if (memberDTO == null) {
+      throw new NotFoundException("Member not found");
+    }
+    return memberDTO;
   }
 }

@@ -30,6 +30,38 @@ public class MemberDAOImpl implements MemberDAO {
     try {
 
       preparedStatement.setString(1, username);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return findMember(preparedStatement);
+  }
+
+  /**
+   * Get a member we want to retrieve by his id.
+   *
+   * @param id : the id of the member we want to retrieve
+   * @return the member
+   */
+  public MemberDTO getOne(int id) {
+    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
+            + "id_addresse, refusal_reason FROM donnamis.members WHERE id_member = ?");
+    try {
+      preparedStatement.setInt(1, id);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return findMember(preparedStatement);
+  }
+
+  /**
+   * Make a memberDTO with the result set.
+   *
+   * @param preparedStatement : a prepared statement to execute the query.
+   * @return the member.
+   */
+  public MemberDTO findMember(PreparedStatement preparedStatement) {
+    try {
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -55,4 +87,6 @@ public class MemberDAOImpl implements MemberDAO {
     }
     return null;
   }
+
+
 }

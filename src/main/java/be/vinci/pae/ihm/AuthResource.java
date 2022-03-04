@@ -1,9 +1,11 @@
 package be.vinci.pae.ihm;
 
+import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
+import be.vinci.pae.utils.Filters;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,6 +27,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 public class AuthResource {
 
   private final ObjectMapper jsonMapper = new ObjectMapper();
+  private Filters<MemberImpl> filters = new Filters<>(MemberImpl.class);
 
   @Inject
   private MemberUCC memberUCC;
@@ -55,7 +58,7 @@ public class AuthResource {
           Response.Status.NOT_FOUND);
     }
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
-    String refreshToken = null;
+    String refreshToken;
     if (json.get("rememberMe").asBoolean()) {
       refreshToken = tokenManager.withRememberMe(memberDTO);
     } else {
@@ -64,7 +67,8 @@ public class AuthResource {
 
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
-        .put("refresh_token", refreshToken);
+        .put("refresh_token", refreshToken)
+        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
   }
 
   /**
@@ -80,6 +84,8 @@ public class AuthResource {
   public ObjectNode refreshToken(@Context ContainerRequest request) {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
-    return jsonMapper.createObjectNode().put("access_token", accessToken);
+    return jsonMapper.createObjectNode()
+        .put("access_token", accessToken)
+        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
   }
 }
