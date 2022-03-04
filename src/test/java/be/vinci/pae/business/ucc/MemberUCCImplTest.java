@@ -45,7 +45,6 @@ class MemberUCCImplTest {
   public void testGoodUsernameGoodPasswordNotRefusedAndInTheDB() {
     assertAll(
         () -> assertEquals(mockMember, memberUCC.login(pseudo1, passwd1)),
-        () -> Mockito.verify(mockMemberDAO).getOne(pseudo1),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
         () -> Mockito.verify(mockMember).getStatus()
     );
@@ -57,12 +56,9 @@ class MemberUCCImplTest {
     Mockito.when(mockMember.getStatus()).thenReturn(roleRefused);
     assertAll(
         () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
-        () -> Mockito.verify(mockMemberDAO).getOne(pseudo1),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
         () -> Mockito.verify(mockMember).getStatus()
     );
-
-
   }
 
   @Test
