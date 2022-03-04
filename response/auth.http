@@ -3,7 +3,19 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "pseudo": "test",
+  "username": "test",
   "password": "test",
-  "rememberMe": false
+  "rememberMe": true
 }
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### Refresh token
+GET {{baseUri}}/auth/refreshToken
+Authorization: {{refresh}}
+
+> {%
+client.global.set("access", response.body.access_token);
+%}
