@@ -88,4 +88,19 @@ public class AuthResource {
         .put("access_token", accessToken)
         .putPOJO("user", filters.filterPublicJsonView(memberDTO));
   }
+
+  /**
+   * Get a user by his token.
+   *
+   * @param request to get information request
+   * @return return the linked user to his token
+   */
+  @POST
+  @Path("/getuserbytoken")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public ObjectNode getUserByToken(@Context ContainerRequest request) {
+    return jsonMapper.createObjectNode()
+        .putPOJO("user", filters.filterPublicJsonView(request.getProperty("user")));
+  }
 }
