@@ -19,8 +19,8 @@ import org.mockito.Mockito;
 
 class MemberUCCImplTest {
 
-  private final String pseudo1 = "rayan";
-  private final String badPseudo = "test";
+  private final String username = "rayan";
+  private final String badUsername = "test";
   private final String passwd1 = "rayan123";
   private final String badPassword = "test";
   private final String statusValid = "valid";
@@ -37,17 +37,17 @@ class MemberUCCImplTest {
     this.mockMemberDAO = locator.getService(MemberDAO.class);
     mockMember = Mockito.mock(MemberImpl.class);
 
-    Mockito.when(mockMember.getUsername()).thenReturn(pseudo1);
+    Mockito.when(mockMember.getUsername()).thenReturn(username);
     Mockito.when(mockMember.getPassword()).thenReturn(passwd1);
     Mockito.when(mockMember.getStatus()).thenReturn(statusValid);
-    Mockito.when(mockMemberDAO.getOne(pseudo1)).thenReturn(mockMember);
+    Mockito.when(mockMemberDAO.getOne(username)).thenReturn(mockMember);
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
   }
 
   @Test
   public void testGoodUsernameGoodPasswordValidAndInTheDB() {
     assertAll(
-        () -> assertEquals(mockMember, memberUCC.login(pseudo1, passwd1)),
+        () -> assertEquals(mockMember, memberUCC.login(username, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
         () -> Mockito.verify(mockMember, Mockito.times(2)).getStatus()
     );
@@ -58,7 +58,7 @@ class MemberUCCImplTest {
   public void testGoodUsernameGoodPasswordDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertAll(
-        () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
+        () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(username, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
         () -> Mockito.verify(mockMember).getStatus()
     );
@@ -68,7 +68,7 @@ class MemberUCCImplTest {
   public void testGoodUsernameGoodPasswordPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
     assertAll(
-        () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
+        () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(username, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
         () -> Mockito.verify(mockMember, Mockito.times(2)).getStatus()
     );
@@ -76,14 +76,14 @@ class MemberUCCImplTest {
 
   @Test
   public void testMemberNonExistent() {
-    Mockito.when(mockMemberDAO.getOne(badPseudo)).thenReturn(null);
-    assertThrows(NotFoundException.class, () -> memberUCC.login(badPseudo, badPassword));
+    Mockito.when(mockMemberDAO.getOne(badUsername)).thenReturn(null);
+    assertThrows(NotFoundException.class, () -> memberUCC.login(badUsername, badPassword));
   }
 
   @Test
   public void testGoodUsernameBadPasswordValidAndInTheDB() {
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, badPassword)),
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(username, badPassword)),
         () -> Mockito.verify(mockMember).checkPassword(badPassword),
         () -> Mockito.verify(mockMember, Mockito.never()).getStatus()
     );
@@ -93,7 +93,7 @@ class MemberUCCImplTest {
   public void testGoodUsernameBadPasswordDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, badPassword)),
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(username, badPassword)),
         () -> Mockito.verify(mockMember).checkPassword(badPassword),
         () -> Mockito.verify(mockMember, Mockito.never()).getStatus()
     );
@@ -103,7 +103,7 @@ class MemberUCCImplTest {
   public void testGoodUsernameBadPasswordPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, badPassword)),
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(username, badPassword)),
         () -> Mockito.verify(mockMember).checkPassword(badPassword),
         () -> Mockito.verify(mockMember, Mockito.never()).getStatus()
     );
@@ -111,14 +111,14 @@ class MemberUCCImplTest {
 
   @Test
   public void testPasswordExistentInTheDbForUsernameNonExistent() {
-    Mockito.when(mockMemberDAO.getOne(badPseudo)).thenReturn(null);
-    assertThrows(NotFoundException.class, () -> memberUCC.login(badPseudo, passwd1));
+    Mockito.when(mockMemberDAO.getOne(badUsername)).thenReturn(null);
+    assertThrows(NotFoundException.class, () -> memberUCC.login(badUsername, passwd1));
   }
 
   @Test
   public void testPasswordIsEmptyForGoodUsernameInTheDB() {
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, "")),
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(username, "")),
         () -> Mockito.verify(mockMember).checkPassword("")
     );
   }
