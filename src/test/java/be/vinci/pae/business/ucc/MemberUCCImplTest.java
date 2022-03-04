@@ -81,7 +81,7 @@ class MemberUCCImplTest {
   }
 
   @Test
-  public void testGoodUsernameBadPasswordNotRefusedAndInTheDB() {
+  public void testGoodUsernameBadPasswordValidAndInTheDB() {
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> memberUCC.login(pseudo1, badPassword)),
         () -> Mockito.verify(mockMember).checkPassword(badPassword),
