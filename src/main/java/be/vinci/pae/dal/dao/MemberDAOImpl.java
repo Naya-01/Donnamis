@@ -36,6 +36,12 @@ public class MemberDAOImpl implements MemberDAO {
     return findMember(preparedStatement);
   }
 
+  /**
+   * Get a member we want to retrieve by his id.
+   *
+   * @param id : the id of the member we want to retrieve
+   * @return the member
+   */
   public MemberDTO getOne(int id) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
