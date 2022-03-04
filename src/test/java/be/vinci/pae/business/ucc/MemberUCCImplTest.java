@@ -53,6 +53,7 @@ class MemberUCCImplTest {
 
   @Test
   public void testMemberNonExistent() {
+    Mockito.when(mockMemberDAO.getOne("test")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("test", "test"));
   }
 
@@ -69,6 +70,7 @@ class MemberUCCImplTest {
 
   @Test
   public void testPasswordExistentInTheDbForUsernameNonExistent() {
+    Mockito.when(mockMemberDAO.getOne("test")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("test", passwd1));
   }
 
@@ -85,6 +87,7 @@ class MemberUCCImplTest {
 
   @Test
   public void testUsernameAndPasswordAreEmpty() {
+    Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("", ""));
   }
 }
