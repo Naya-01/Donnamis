@@ -65,6 +65,16 @@ class MemberUCCImplTest {
   }
 
   @Test
+  public void testGoodUsernameGoodPasswordPendingAndInTheDB() {
+    Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
+    assertAll(
+        () -> assertThrows(UnauthorizedException.class, () -> memberUCC.login(pseudo1, passwd1)),
+        () -> Mockito.verify(mockMember).checkPassword(passwd1),
+        () -> Mockito.verify(mockMember, Mockito.times(2)).getStatus()
+    );
+  }
+
+  @Test
   public void testMemberNonExistent() {
     Mockito.when(mockMemberDAO.getOne(badPseudo)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login(badPseudo, badPassword));
