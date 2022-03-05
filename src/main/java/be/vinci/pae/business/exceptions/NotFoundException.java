@@ -10,7 +10,10 @@ public class NotFoundException extends WebApplicationException {
   }
 
   public NotFoundException(String message) {
-    super(message, Response.Status.NOT_FOUND);
+    super(Response.status(Response.Status.UNAUTHORIZED)
+        .entity(message)
+        .type("text/plain")
+        .build());
   }
 
 }

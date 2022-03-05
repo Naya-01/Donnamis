@@ -2,11 +2,11 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.exceptions.ForbiddenException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.MemberDAO;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.ForbiddenException;
 
 public class MemberUCCImpl implements MemberUCC {
 

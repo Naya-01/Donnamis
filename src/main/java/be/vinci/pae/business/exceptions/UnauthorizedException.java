@@ -10,7 +10,10 @@ public class UnauthorizedException extends WebApplicationException {
   }
 
   public UnauthorizedException(String message) {
-    super(message, Response.Status.UNAUTHORIZED);
+    super(Response.status(Response.Status.UNAUTHORIZED)
+        .entity(message)
+        .type("text/plain")
+        .build());
   }
 
 }

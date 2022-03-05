@@ -48,9 +48,11 @@ const connectClientAndRedirect = async (username, password, remember) => {
     };
     userData = await fetch("/api/auth/login/", options);
     if (!userData.ok) {
-      let notif = document.getElementById("notif");
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "La combinaison pseudo/mot de passe n'existe pas";
+      userData.text().then((msg)=>{
+        let notif = document.getElementById("notif");
+        notif.className = "alert alert-warning fs-3 text-center";
+        notif.innerHTML = msg;
+      })
     }
   } catch (err) {
     console.log(err);

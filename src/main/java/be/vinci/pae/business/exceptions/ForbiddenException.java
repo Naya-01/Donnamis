@@ -10,7 +10,10 @@ public class ForbiddenException extends WebApplicationException {
   }
 
   public ForbiddenException(String message) {
-    super(message, Response.Status.FORBIDDEN);
+    super(Response.status(Response.Status.UNAUTHORIZED)
+        .entity(message)
+        .type("text/plain")
+        .build());
   }
 
 }
