@@ -9,6 +9,11 @@ public class TokenDecodingException extends WebApplicationException {
     super(Response.Status.UNAUTHORIZED);
   }
 
+  /**
+   * Make an TokenDecodingException with the custom message.
+   *
+   * @param message custom error message
+   */
   public TokenDecodingException(String message) {
     super(Response.status(Response.Status.UNAUTHORIZED)
         .entity(message)

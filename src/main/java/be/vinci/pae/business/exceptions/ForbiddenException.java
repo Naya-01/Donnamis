@@ -9,6 +9,11 @@ public class ForbiddenException extends WebApplicationException {
     super(Response.Status.FORBIDDEN);
   }
 
+  /**
+   * Make an ForbiddenException with the custom message.
+   *
+   * @param message custom error message
+   */
   public ForbiddenException(String message) {
     super(Response.status(Response.Status.UNAUTHORIZED)
         .entity(message)

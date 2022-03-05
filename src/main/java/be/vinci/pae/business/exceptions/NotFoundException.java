@@ -9,6 +9,11 @@ public class NotFoundException extends WebApplicationException {
     super(Response.Status.NOT_FOUND);
   }
 
+  /**
+   * Make an NotFoundException with the custom message.
+   *
+   * @param message custom error message
+   */
   public NotFoundException(String message) {
     super(Response.status(Response.Status.UNAUTHORIZED)
         .entity(message)

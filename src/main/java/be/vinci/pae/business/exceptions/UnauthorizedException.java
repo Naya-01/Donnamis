@@ -9,6 +9,11 @@ public class UnauthorizedException extends WebApplicationException {
     super(Response.Status.UNAUTHORIZED);
   }
 
+  /**
+   * Make an UnauthorizedException with the custom message.
+   *
+   * @param message custom error message
+   */
   public UnauthorizedException(String message) {
     super(Response.status(Response.Status.UNAUTHORIZED)
         .entity(message)
