@@ -15,7 +15,7 @@ public class ForbiddenException extends WebApplicationException {
    * @param message custom error message
    */
   public ForbiddenException(String message) {
-    super(Response.status(Response.Status.UNAUTHORIZED)
+    super(Response.status(Response.Status.FORBIDDEN)
         .entity(message)
         .type("text/plain")
         .build());

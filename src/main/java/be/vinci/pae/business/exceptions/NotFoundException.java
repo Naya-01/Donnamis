@@ -15,7 +15,7 @@ public class NotFoundException extends WebApplicationException {
    * @param message custom error message
    */
   public NotFoundException(String message) {
-    super(Response.status(Response.Status.UNAUTHORIZED)
+    super(Response.status(Response.Status.NOT_FOUND)
         .entity(message)
         .type("text/plain")
         .build());
