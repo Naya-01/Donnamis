@@ -37,6 +37,9 @@ const refreshToken = async () => {
     //update AccessToken
     refreshData = await refreshData.json();
     let actualData = getSessionObject("user");
+    if (actualData === undefined) {
+      return;
+    }
     actualData.accessToken = refreshData.access_token;
     setSessionObject("user", actualData);
     return true;
@@ -117,4 +120,4 @@ const Redirect = (uri) => {
   }
 };
 
-export {Router, Redirect};
+export {Router, Redirect, refreshToken};

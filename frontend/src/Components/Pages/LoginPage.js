@@ -48,7 +48,7 @@ const connectClientAndRedirect = async (username, password, remember) => {
     };
     userData = await fetch("/api/auth/login/", options);
     if (!userData.ok) {
-      userData.text().then((msg)=>{
+      userData.text().then((msg) => {
         let notif = document.getElementById("notif");
         notif.className = "alert alert-warning fs-3 text-center";
         notif.innerHTML = msg;
@@ -90,9 +90,15 @@ const LoginPage = () => {
     let notif = document.getElementById("notif");
     notif.className = "";
     notif.innerHTML = "";
-    if (username.length === 0 || password.length === 0) {
+    if (username.length === 0 && password.length === 0) {
       notif.className = "alert alert-warning fs-3 text-center";
       notif.innerHTML = "Veuillez introduire un nom et un mot de passe";
+    } else if (username.length === 0) {
+      notif.className = "alert alert-warning fs-3 text-center";
+      notif.innerHTML = "Veuillez introduire un nom";
+    } else if (password.length === 0) {
+      notif.className = "alert alert-warning fs-3 text-center";
+      notif.innerHTML = "Veuillez introduire un mot de passe";
     } else {
       connectClientAndRedirect(username, password, remember);
     }

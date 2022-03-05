@@ -1,8 +1,11 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
-import {Redirect} from "../Router/Router";
+import {Redirect, refreshToken} from "../Router/Router";
 
 const getUsername = async () => {
+  if (!await refreshToken()) {
+    return;
+  }
   let userData;
   try {
     let options = {

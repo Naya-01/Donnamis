@@ -3,8 +3,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "GaspardDePorto",
-  "password": "gaspardLeLeopard",
+  "username": "JoshuaDeMadrid",
+  "password": "joshuaLeCanard",
   "rememberMe": true
 }
 > {%
@@ -23,4 +23,4 @@ client.global.set("access", response.body.access_token);
 
 ### Get user by his token
 POST {{baseUri}}/auth/getuserbytoken
-Authorization: {{refresh}}
+Authorization: {{access}}
