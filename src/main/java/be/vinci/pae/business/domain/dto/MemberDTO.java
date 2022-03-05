@@ -30,9 +30,9 @@ public interface MemberDTO {
 
   void setPhone(String phone);
 
-  int getAddresse();
+  int getAddress();
 
-  void setAddresse(int addresse);
+  void setAddress(int address);
 
   String getReasonRefusal();
 
