@@ -25,16 +25,16 @@ public class MemberUCCImpl implements MemberUCC {
     MemberDTO memberDTO = memberDAO.getOne(username);
     Member member = (Member) memberDTO;
     if (memberDTO == null) {
-      throw new NotFoundException("Member not found");
+      throw new NotFoundException("Membre non trouvé");
     }
     if (!member.checkPassword(password)) {
-      throw new ForbiddenException("Password invalid");
+      throw new ForbiddenException("Mot de passe invalide");
     }
     if (memberDTO.getStatus().equals("denied")) {
-      throw new UnauthorizedException("Member status is denied");
+      throw new UnauthorizedException("Le statut du membre est refusé");
     }
     if (memberDTO.getStatus().equals("pending")) {
-      throw new UnauthorizedException("Member status is pending");
+      throw new UnauthorizedException("Le statut du membre est en attente");
     }
     return memberDTO;
 

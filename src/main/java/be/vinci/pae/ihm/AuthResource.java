@@ -47,14 +47,14 @@ public class AuthResource {
   public ObjectNode login(JsonNode json) {
 
     if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
-      throw new WebApplicationException("username or password required",
+      throw new WebApplicationException("Pseudonyme ou mot de passe requis",
           Response.Status.BAD_REQUEST);
     }
     String username = json.get("username").asText();
     String password = json.get("password").asText();
     MemberDTO memberDTO = memberUCC.login(username, password);
     if (memberDTO == null) {
-      throw new WebApplicationException("username or password incorrect",
+      throw new WebApplicationException("Pseudonyme ou mot de passe incorrect",
           Response.Status.NOT_FOUND);
     }
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
