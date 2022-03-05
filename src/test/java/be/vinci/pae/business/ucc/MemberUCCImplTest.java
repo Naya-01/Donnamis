@@ -14,6 +14,7 @@ import jakarta.ws.rs.ForbiddenException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -44,6 +45,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
   }
 
+  @DisplayName("Test with a good username, a good password, a valid member that exists in the DB")
   @Test
   public void testGoodUsernameGoodPasswordAndMemberValidAndInTheDB() {
     assertAll(
@@ -54,6 +56,8 @@ class MemberUCCImplTest {
 
   }
 
+
+  @DisplayName("Test with a good username, a good password, a denied member that exists in the DB")
   @Test
   public void testGoodUsernameGoodPasswordAndMemberDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
@@ -64,6 +68,7 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with a good username, a good password, a pending member that exists in the DB")
   @Test
   public void testGoodUsernameGoodPasswordAndMemberPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
@@ -74,12 +79,14 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with a member that doesn't exist in the DB")
   @Test
   public void testMemberNonExistent() {
     Mockito.when(mockMemberDAO.getOne(badUsername)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login(badUsername, badPassword));
   }
 
+  @DisplayName("Test with a good username, a bad password, a valid member that exists in the DB")
   @Test
   public void testGoodUsernameBadPasswordAndMemberValidAndInTheDB() {
     assertAll(
@@ -89,6 +96,7 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with a good username, a bad password, a denied member that exists in the DB")
   @Test
   public void testGoodUsernameBadPasswordAndMemberDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
@@ -99,6 +107,7 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with a good username, a bad password, a pending member that exists in the DB")
   @Test
   public void testGoodUsernameBadPasswordAndMemberPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
@@ -109,12 +118,14 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with a non existent username but an existent password in the DB")
   @Test
   public void testPasswordExistentInTheDbForNonExistentUsername() {
     Mockito.when(mockMemberDAO.getOne(badUsername)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login(badUsername, passwd1));
   }
 
+  @DisplayName("Test with an existent username in the DB and an empty password")
   @Test
   public void testPasswordIsEmptyForExistentUsernameInTheDB() {
     assertAll(
@@ -123,12 +134,14 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test with an existent password in the DB and an empty username")
   @Test
   public void testUsernameIsEmptyForExistentPasswordInTheDB() {
     Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("", passwd1));
   }
 
+  @DisplayName("Test with username and password fields empty")
   @Test
   public void testUsernameAndPasswordAreEmpty() {
     Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
