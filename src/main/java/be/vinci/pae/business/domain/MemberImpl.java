@@ -23,7 +23,7 @@ public class MemberImpl implements Member {
   @JsonView(Views.Public.class)
   private String phone;
   @JsonView(Views.Public.class)
-  private int addresse;
+  private int address;
   @JsonView(Views.Public.class)
   private String reasonRefusal;
   @JsonView(Views.Internal.class)
@@ -101,13 +101,13 @@ public class MemberImpl implements Member {
   }
 
   @Override
-  public int getAddresse() {
-    return addresse;
+  public int getAddress() {
+    return address;
   }
 
   @Override
-  public void setAddresse(int addresse) {
-    this.addresse = addresse;
+  public void setAddress(int address) {
+    this.address = address;
   }
 
   @Override

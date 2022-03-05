@@ -1,4 +1,40 @@
-### login
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "AlbertDeBucarest",
+  "password": "albertLePoulet",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### login valid 2
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "GaspardDePorto",
+  "password": "gaspardLeLeopard",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### login refused member
 POST {{baseUri}}/auth/login
 Content-Type: application/json
 
@@ -7,10 +43,16 @@ Content-Type: application/json
   "password": "joshuaLeCanard",
   "rememberMe": true
 }
-> {%
-client.global.set("access", response.body.access_token);
-client.global.set("refresh", response.body.refresh_token);
-%}
+
+### login pending member
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "MarcDeBruxelles",
+  "password": "marcLeLoup",
+  "rememberMe": true
+}
 
 ### Refresh token
 GET {{baseUri}}/auth/refreshToken

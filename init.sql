@@ -3,7 +3,7 @@ DROP SCHEMA IF EXISTS donnamis CASCADE ;
 CREATE SCHEMA donnamis;
 
 CREATE TABLE donnamis.addresses (
-    id_addresse     SERIAL      PRIMARY KEY,
+    id_address      SERIAL      PRIMARY KEY,
     unit_number     VARCHAR(15) NULL,
     building_number VARCHAR(15) NOT NULL,
     street          VARCHAR(50) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE donnamis.members (
     role            VARCHAR(15) NOT NULL,
     phone_number    VARCHAR(50) NULL,
     password        CHAR(60)    NOT NULL,
-    id_addresse     INTEGER     REFERENCES donnamis.addresses(id_addresse) NOT NULL,
+    id_address      INTEGER     REFERENCES donnamis.addresses(id_address) NOT NULL,
     refusal_reason  VARCHAR(50) NULL
 );
 
