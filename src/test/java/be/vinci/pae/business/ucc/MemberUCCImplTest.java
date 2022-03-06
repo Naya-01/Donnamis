@@ -46,7 +46,8 @@ class MemberUCCImplTest {
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
   }
 
-  @DisplayName("Test login function with a good username, a good password, a valid member that exists in the DB")
+  @DisplayName("Test login function with a good username, a good password, a valid member that "
+      + "exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameGoodPasswordAndMemberValidAndInTheDB() {
     assertAll(
@@ -58,7 +59,8 @@ class MemberUCCImplTest {
   }
 
 
-  @DisplayName("Test login function with a good username, a good password, a denied member that exists in the DB")
+  @DisplayName("Test login function with a good username, a good password, a denied member that "
+      + "exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameGoodPasswordAndMemberDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
@@ -69,7 +71,8 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test login function with a good username, a good password, a pending member that exists in the DB")
+  @DisplayName("Test login function with a good username, a good password, a pending member that "
+      + "exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameGoodPasswordAndMemberPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
@@ -87,7 +90,8 @@ class MemberUCCImplTest {
     assertThrows(NotFoundException.class, () -> memberUCC.login(badUsername, badPassword));
   }
 
-  @DisplayName("Test login function with a good username, a bad password, a valid member that exists in the DB")
+  @DisplayName("Test login function with a good username, a bad password, a valid member that "
+      + "exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameBadPasswordAndMemberValidAndInTheDB() {
     assertAll(
@@ -97,7 +101,8 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test login function with a good username, a bad password, a denied member that exists in the DB")
+  @DisplayName("Test login function with a good username, a bad password, a denied member that "
+      + "exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameBadPasswordAndMemberDeniedAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusDenied);
@@ -108,7 +113,8 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test login function with a good username, a bad password, a pending member that exists in the DB")
+  @DisplayName("Test login function with a good username, a bad password, a pending member that"
+      + " exists in the DB")
   @Test
   public void testLoginFunctionGoodUsernameBadPasswordAndMemberPendingAndInTheDB() {
     Mockito.when(mockMember.getStatus()).thenReturn(statusPending);
@@ -119,7 +125,8 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test login function with a non existent username but an existent password in the DB")
+  @DisplayName("Test login function with a non existent username but an existent password "
+      + "in the DB")
   @Test
   public void testLoginFunctionPasswordExistentInTheDbForNonExistentUsername() {
     Mockito.when(mockMemberDAO.getOne(badUsername)).thenReturn(null);
