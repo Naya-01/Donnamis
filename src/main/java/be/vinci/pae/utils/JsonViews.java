@@ -7,7 +7,7 @@ import java.util.List;
 
 public class JsonViews<T> {
 
-  private final static ObjectMapper jsonMapper = new ObjectMapper();
+  private static final ObjectMapper jsonMapper = new ObjectMapper();
 
 
   /**
