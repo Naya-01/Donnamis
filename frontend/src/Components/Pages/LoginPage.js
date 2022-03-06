@@ -92,10 +92,10 @@ const LoginPage = () => {
     notif.innerHTML = "";
     if (username.length === 0 && password.length === 0) {
       notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un nom et un mot de passe";
+      notif.innerHTML = "Veuillez introduire un pseudonyme et un mot de passe";
     } else if (username.length === 0) {
       notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un nom";
+      notif.innerHTML = "Veuillez introduire un pseudonyme";
     } else if (password.length === 0) {
       notif.className = "alert alert-warning fs-3 text-center";
       notif.innerHTML = "Veuillez introduire un mot de passe";
