@@ -1,11 +1,10 @@
 package be.vinci.pae.ihm;
 
-import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
-import be.vinci.pae.utils.Filters;
+import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,7 +26,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 public class AuthResource {
 
   private final ObjectMapper jsonMapper = new ObjectMapper();
-  private Filters<MemberImpl> filters = new Filters<>(MemberImpl.class);
+//  private JsonViews<MemberImpl> filters = new JsonViews<>(MemberImpl.class);
 
   @Inject
   private MemberUCC memberUCC;
@@ -68,7 +67,7 @@ public class AuthResource {
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
         .put("refresh_token", refreshToken)
-        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
   /**
@@ -86,7 +85,7 @@ public class AuthResource {
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
-        .putPOJO("user", filters.filterPublicJsonView(memberDTO));
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
   /**
@@ -100,7 +99,8 @@ public class AuthResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode getUserByToken(@Context ContainerRequest request) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
-        .putPOJO("user", filters.filterPublicJsonView(request.getProperty("user")));
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 }
