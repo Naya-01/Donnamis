@@ -147,4 +147,11 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("", ""));
   }
+
+  @DisplayName("Test getMember function with negative id")
+  @Test
+  public void testGetMemberFunctionWithNegativeId() {
+    Mockito.when(mockMemberDAO.getOne(-1)).thenReturn(null);
+    assertThrows(NotFoundException.class, () -> memberUCC.getMember(-1));
+  }
 }
