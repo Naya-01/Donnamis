@@ -31,7 +31,8 @@ public class MemberUCCImpl implements MemberUCC {
       throw new ForbiddenException("Mot de passe invalide");
     }
     if (memberDTO.getStatus().equals("denied")) {
-      throw new UnauthorizedException("Le statut du membre est refusé");
+      throw new UnauthorizedException(
+          "Votre inscription est refusé pour la raison suivante : " + member.getReasonRefusal());
     }
     if (memberDTO.getStatus().equals("pending")) {
       throw new UnauthorizedException("Le statut du membre est en attente");
