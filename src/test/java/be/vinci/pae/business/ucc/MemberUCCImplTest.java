@@ -162,5 +162,10 @@ class MemberUCCImplTest {
     assertEquals(mockMember, memberUCC.getMember(1));
   }
 
-
+  @DisplayName("Test getMember function with a non existent id povitive")
+  @Test
+  public void testGetMemberFunctionWithNonExistentIdPositive() {
+    Mockito.when(mockMemberDAO.getOne(100)).thenReturn(null);
+    assertThrows(NotFoundException.class, () -> memberUCC.getMember(100));
+  }
 }
