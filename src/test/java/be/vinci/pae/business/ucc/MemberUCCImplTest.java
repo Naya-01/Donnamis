@@ -42,6 +42,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMember.getPassword()).thenReturn(passwd1);
     Mockito.when(mockMember.getStatus()).thenReturn(statusValid);
     Mockito.when(mockMemberDAO.getOne(username)).thenReturn(mockMember);
+    Mockito.when(mockMemberDAO.getOne(1)).thenReturn(mockMember);
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
   }
 
@@ -154,4 +155,12 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(-1)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.getMember(-1));
   }
+
+  @DisplayName("Test getMember function with an existent id")
+  @Test
+  public void testGetMemberFunctionWithExistentId() {
+    assertEquals(mockMember, memberUCC.getMember(1));
+  }
+
+
 }
