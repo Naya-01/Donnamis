@@ -2,9 +2,9 @@ package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.time.LocalDate;
-import java.util.Date;
 
 public class OfferImpl implements Offer, OfferDTO {
+
   private int idOffer;
   private LocalDate date;
   private String timeSlot;

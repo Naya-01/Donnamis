@@ -3,14 +3,10 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.ihm.filters.Authorize;
-import be.vinci.pae.utils.JsonViews;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -31,6 +27,12 @@ public class OfferResource {
   private OfferUCC offerUcc;
 
 
+  /**
+   * Get all the offers that matche with a search pattern
+   *
+   * @param searchPattern the search pattern to find offers according to their type, description
+   * @return a json object of all offerDTO that match with the search pattern
+   */
   @GET
   @Path("/all")
   @Authorize

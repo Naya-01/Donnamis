@@ -1,7 +1,6 @@
 package be.vinci.pae.business.domain.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public interface OfferDTO {
 
