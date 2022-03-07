@@ -7,12 +7,14 @@ import {
   setSessionObject
 } from "../../utils/session";
 import Navbar from "../Navbar/Navbar";
+import AllObjectsPage from "../Pages/AllObjectsPage";
 
 // Configure your routes here
 const routes = {
   "/": HomePage,
   "/connexion": LoginPage,
   "/deconnexion": Logout,
+  "/objects": AllObjectsPage,
 };
 
 const refreshToken = async () => {

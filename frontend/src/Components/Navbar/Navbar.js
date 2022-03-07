@@ -79,10 +79,10 @@ const Navbar = async () => {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link fs-4" href="#">Accueil</a>
+                    <a class="nav-link fs-4" data-uri="/" href="#">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#">Objets</a>
+                    <a class="nav-link fs-4 " data-uri="/objects" href="#">Objets</a>
                 </li>
                 <li class="nav-item button-dot">
                     <a class="nav-link fs-4" href="#">Objets attribués</a>

@@ -60,5 +60,5 @@ CREATE TABLE donnamis.offers (
     id_offer        SERIAL       PRIMARY KEY,
     date            DATE         NOT NULL,
     time_slot       VARCHAR(50)  NOT NULL,
-    id_object       INTEGER     REFERENCES donnamis.objects (id_object) NOT NULL
+    id_object       INTEGER      REFERENCES donnamis.objects (id_object) NOT NULL
 );

@@ -25,3 +25,67 @@ VALUES ('GaspardDePorto', 'Pepe', 'Gaspard', 'valid', 'administrator','$2a$10$jT
 INSERT INTO donnamis.members
 (username, lastname, firstname, status, role, password, id_address, refusal_reason)
 VALUES ('JoshuaDeMadrid', 'Capri', 'Joshua', 'denied', 'member','$2a$10$JxDzVtxFgNkecl.AxXgZUu75dU2iedqVk7Yzj2SDZkAsRvlqey4I2',4, 'Je ne te connais pas.');
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Accessoires pour animaux domestiques', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Accessoires pour voiture', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Décoration', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Jouets', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Literie', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Matériel de cuisine', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Matériel de jardinage', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Meuble', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Plantes', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Produits cosmétiques', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Vélo, trottinette', TRUE);
+
+INSERT INTO donnamis.types
+(type, is_default)
+VALUES ('Vêtements', TRUE);
+
+INSERT INTO donnamis.objects
+(id_type, description, status, id_offeror)
+VALUES (4, 'Jouet playmobil', 'interested', 1);
+
+INSERT INTO donnamis.offers
+(date, time_slot, id_object)
+VALUES (NOW(), 'qtv', 1);
+
+INSERT INTO donnamis.objects
+(id_type, description, status, id_offeror)
+VALUES (4, 'Jouet lego', 'interested', 1);
+
+INSERT INTO donnamis.offers
+(date, time_slot, id_object)
+VALUES (NOW(), 'stt', 2);

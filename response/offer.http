@@ -1,0 +1,25 @@
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "AlbertDeBucarest",
+  "password": "albertLePoulet",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+###
+GET {{baseUri}}/offers/all
+Authorization: {{refresh}}
