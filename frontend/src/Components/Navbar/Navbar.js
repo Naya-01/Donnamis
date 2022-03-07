@@ -33,7 +33,11 @@ const Navbar = async () => {
 
   // Get the user object from the localStorage
   let userSession = getSessionObject("user");
-  if (!userSession) {
+  let username = undefined;
+  if(userSession){
+    username = await getUsername();
+  }
+  if (username===undefined) {
     navbar = `
           <nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
             <div class="container-fluid">
@@ -66,7 +70,6 @@ const Navbar = async () => {
      `
     navbarWrapper.innerHTML = navbar;
   } else {
-
     navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
     <div class="container-fluid">
         <a class="navbar-brand fs-1" href="#">DONNAMIS</a>
@@ -102,7 +105,7 @@ const Navbar = async () => {
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item m-auto">
-                        <a class="nav-link fs-2 text-white fw-bold " href="#">${await getUsername()}</a>
+                        <a class="nav-link fs-2 text-white fw-bold " href="#">${username}</a>
                     </li>
                     <li class="nav-item dropdown px-5">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
