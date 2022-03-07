@@ -118,3 +118,6 @@ package-lock.json
 dist/*
 # but (re)include specific dist directory files, e.g.
 #!frontend-essentials/step-1/dist
+
+# the Navbar 
+Navbar.js
