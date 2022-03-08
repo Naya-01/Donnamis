@@ -10,6 +10,12 @@ public class ObjectUCCImpl implements ObjectUCC {
   @Inject
   private ObjectDAO objectDAO;
 
+  /**
+   * Find an object with his id.
+   *
+   * @param id : id of the object.
+   * @return objectDTO having this id.
+   */
   @Override
   public ObjectDTO getObject(int id) {
     ObjectDTO objectDTO = objectDAO.getOne(id);
