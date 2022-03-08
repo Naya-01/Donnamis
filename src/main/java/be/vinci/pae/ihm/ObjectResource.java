@@ -22,6 +22,12 @@ public class ObjectResource {
   @Inject
   private ObjectUCC objectUCC;
 
+  /**
+   * GET an object by his id.
+   *
+   * @param id : the object id
+   * @return a json of the object
+   */
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
