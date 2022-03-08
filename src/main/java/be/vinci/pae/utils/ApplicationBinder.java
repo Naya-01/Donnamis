@@ -8,6 +8,8 @@ import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.business.ucc.MemberUCCImpl;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.MemberDAOImpl;
+import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.ObjectDAOImpl;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.dal.services.DALServiceImpl;
 import be.vinci.pae.ihm.manager.Token;
@@ -27,5 +29,6 @@ public class ApplicationBinder extends AbstractBinder {
     bind(MemberDAOImpl.class).to(MemberDAO.class).in(Singleton.class);
     bind(TokenImpl.class).to(Token.class).in(Singleton.class);
     bind(ObjectFactoryImpl.class).to(ObjectFactory.class).in(Singleton.class);
+    bind(ObjectDAOImpl.class).to(ObjectDAO.class).in(Singleton.class);
   }
 }
