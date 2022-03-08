@@ -27,9 +27,9 @@ public class OfferDAOImpl implements OfferDAO {
   public List<OfferDTO> getAll(String searchPattern) {
     String query = "SELECT id_offer, date, time_slot, id_object FROM donnamis.offers ";
 
-//    if (searchPattern != null && !searchPattern.isEmpty()) {
-//      // Search
-//    }
+    //if (searchPattern != null && !searchPattern.isEmpty()) {
+    //  // Search
+    //}
 
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();

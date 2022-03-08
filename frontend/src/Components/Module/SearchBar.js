@@ -1,4 +1,3 @@
-
 const searchBar = () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = `
@@ -14,7 +13,7 @@ const searchBar = () => {
             <a class="dropdown-item" href="#">Separated link</a>
           </div>
         </div>
-        <input type="text" class="form-control" aria-label="Text input with dropdown button">
+        <input id="search-bar-input" type="text" class="form-control" aria-label="Text input with dropdown button">
         <div class="input-group-append">
           <button class="btn btn-outline-primary" type="button">Rechercher</button>
         </div>
@@ -23,8 +22,8 @@ const searchBar = () => {
         <button type="submit" class="btn btn-primary mb-2">Ajouter un objet</button>
       </div>
     </form>
-    
   `;
+
 };
 
 export default searchBar;

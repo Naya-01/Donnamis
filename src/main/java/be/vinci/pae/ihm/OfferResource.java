@@ -37,7 +37,8 @@ public class OfferResource {
   @Path("/all")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode login(@DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
+  public ObjectNode getOffers(
+      @DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
     List<OfferDTO> offerDTOList = offerUcc.getAllPosts(searchPattern);
     if (offerDTOList.isEmpty()) {
       throw new WebApplicationException("Aucune offre", Response.Status.NOT_FOUND);
