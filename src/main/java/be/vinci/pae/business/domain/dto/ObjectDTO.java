@@ -2,11 +2,11 @@ package be.vinci.pae.business.domain.dto;
 
 public interface ObjectDTO {
 
-  int getIdObject();
+  Integer getIdObject();
 
   void setIdObject(int idObject);
 
-  int getIdType();
+  Integer getIdType();
 
   void setIdType(int idType);
 
@@ -22,7 +22,7 @@ public interface ObjectDTO {
 
   void setImage(String image);
 
-  int getIdOfferor();
+  Integer getIdOfferor();
 
   void setIdOfferor(int idOfferor);
 }

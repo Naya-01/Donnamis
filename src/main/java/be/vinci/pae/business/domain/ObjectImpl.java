@@ -4,15 +4,15 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 
 public class ObjectImpl implements ObjectDTO {
 
-  private int idObject;
-  private int idType;
+  private Integer idObject;
+  private Integer idType;
   private String description;
   private String status;
   private String image;
-  private int idOfferor;
+  private Integer idOfferor;
 
   @Override
-  public int getIdObject() {
+  public Integer getIdObject() {
     return idObject;
   }
 
@@ -22,7 +22,7 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public int getIdType() {
+  public Integer getIdType() {
     return idType;
   }
 
@@ -62,7 +62,7 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public int getIdOfferor() {
+  public Integer getIdOfferor() {
     return idOfferor;
   }
 
