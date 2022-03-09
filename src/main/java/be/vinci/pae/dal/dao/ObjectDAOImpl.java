@@ -47,6 +47,12 @@ public class ObjectDAOImpl implements ObjectDAO {
     return objectDTO;
   }
 
+  /**
+   * Get all objects that we want to retrieve by his status.
+   *
+   * @param status : the status of the objects that we want to retrieve
+   * @return the object
+   */
   public List<ObjectDTO> getAllByStatus(String status) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
