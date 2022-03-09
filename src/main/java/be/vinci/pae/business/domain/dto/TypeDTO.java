@@ -16,5 +16,5 @@ public interface TypeDTO {
 
   boolean isDefault();
 
-  void setIsDefault(boolean aDefault);
+  void setIsDefault(boolean isDefault);
 }

@@ -33,8 +33,8 @@ public class TypeUCCImpl implements TypeUCC {
    * @return typeDTO having this name.
    */
   @Override
-  public TypeDTO getType(String type_name) {
-    TypeDTO typeDTO = typeDAO.getOne(type_name);
+  public TypeDTO getType(String typeName) {
+    TypeDTO typeDTO = typeDAO.getOne(typeName);
     if (typeDTO == null) {
       throw new NotFoundException("Type not found");
     }
