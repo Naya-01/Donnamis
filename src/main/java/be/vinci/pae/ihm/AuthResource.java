@@ -102,4 +102,6 @@ public class AuthResource {
     return jsonMapper.createObjectNode()
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
+
+
 }

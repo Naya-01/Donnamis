@@ -89,4 +89,68 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
 
+  /**
+   * Add a member in the DB and make a memberDTO with the parameters
+   *
+   * @param username       : the username of the member we want to retrieve
+   * @param lastname       : the lastname of the member we want to retrieve
+   * @param firstname      : the firstname of the member we want to retrieve
+   * @param status         : the status of the member we want to retrieve
+   * @param role           : the role of the member we want to retrieve
+   * @param phone_number   : the phone_number of the member we want to retrieve
+   * @param password       : the password of the member we want to retrieve
+   * @param id_address     : the id_address of the member we want to retrieve
+   * @param refusal_reason : the refusal_reason of the member we want to retrieve
+   * @return the member added
+   */
+  @Override
+  public MemberDTO addOneMember(String username, String lastname, String firstname, String status,
+      String role, String phone_number, String password, int id_address, String refusal_reason) {
+    PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
+        + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
+        + "password, id_address, refusal_reason) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
+    try {
+
+      preparedStatement.setString(1, username);
+      preparedStatement.setString(2, lastname);
+      preparedStatement.setString(3, firstname);
+      preparedStatement.setString(4, status);
+      preparedStatement.setString(5, role);
+      preparedStatement.setString(6, phone_number);
+      preparedStatement.setString(7, password);
+      preparedStatement.setInt(8, id_address);
+      preparedStatement.setString(9, refusal_reason);
+
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      //get id of new member
+      int idNewMember = resultSet.getInt(1);
+
+      //create memberDTO
+      MemberDTO memberDTO = memberFactory.getMemberDTO();
+      memberDTO.setMemberId(idNewMember);
+      memberDTO.setUsername(username);
+      memberDTO.setLastname(lastname);
+      memberDTO.setFirstname(firstname);
+      memberDTO.setStatus(status);
+      memberDTO.setRole(role);
+      memberDTO.setPhone(phone_number);
+      memberDTO.setPassword(password);
+      memberDTO.setAddress(id_address);
+      memberDTO.setReasonRefusal(refusal_reason);
+
+      return memberDTO;
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
 }

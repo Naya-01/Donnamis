@@ -19,4 +19,13 @@ public interface MemberDAO {
    * @return the member
    */
   MemberDTO getOne(int id);
+  
+  /**
+   * Add a member in the DB and make a memberDTO with the parameters
+   *
+   * @param username : the username of the member we want to retrieve
+   * @return the new member
+   */
+  MemberDTO addOneMember(String username, String lastname, String firstname, String status,
+      String role, String phone_number, String password, int id_address, String refusal_reason);
 }
