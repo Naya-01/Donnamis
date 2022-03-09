@@ -1,6 +1,7 @@
 import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import Logout from "../Logout/Logout";
+import AddNewObjectPage from "../Pages/AddNewObjectPage";
 import {
   getSessionObject,
   removeSessionObject,
@@ -13,6 +14,7 @@ const routes = {
   "/": HomePage,
   "/connexion": LoginPage,
   "/deconnexion": Logout,
+  "/addNewObjectPage" : AddNewObjectPage,
 };
 
 const refreshToken = async () => {
