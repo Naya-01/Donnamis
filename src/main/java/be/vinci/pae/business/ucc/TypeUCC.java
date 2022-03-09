@@ -16,7 +16,7 @@ public interface TypeUCC {
   /**
    * Find a type by his type name.
    *
-   * @param type_name : name of the type.
+   * @param typeName : name of the type.
    * @return typeDTO having this name.
    */
   TypeDTO getType(String typeName);
