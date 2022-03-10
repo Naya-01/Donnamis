@@ -27,7 +27,8 @@ public class TypeDAOImpl implements TypeDAO {
     String query =
         "SELECT t.id_type, t.is_default, t.type_name "
             + "FROM donnamis.types t "
-            + "WHERE t.is_default = true ";
+            + "WHERE t.is_default = true "
+            + "ORDER BY t.type_name";
 
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
@@ -42,7 +43,6 @@ public class TypeDAOImpl implements TypeDAO {
         typeDTO.setTypeName(resultSet.getString(3));
         listDefaultType.add(typeDTO);
       }
-      System.out.println(listDefaultType);
       return listDefaultType;
     } catch (SQLException e) {
       e.printStackTrace();

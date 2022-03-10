@@ -1,6 +1,8 @@
-const searchBar = () => {
+import {getSessionObject} from "../../utils/session";
+
+const searchBar = async () => {
   const pageDiv = document.querySelector("#page");
-  pageDiv.innerHTML = `
+  let searchBar = `
     <form class="form row">
       <div class="input-group mb-3 col">
         <div class="input-group-prepend">
@@ -8,10 +10,13 @@ const searchBar = () => {
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
               Type
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <ul id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">`;
+
+  const types = await getDefaultTypes();
+  for (const type in types) {
+    searchBar += `<li><a class="dropdown-item" href="#">${types[type].typeName}</a></li>`;
+  }
+  searchBar += `
             </ul>
           </div>
         </div>
@@ -25,7 +30,28 @@ const searchBar = () => {
       </div>
     </form>
   `;
+  pageDiv.innerHTML = searchBar;
 
 };
+
+const getDefaultTypes = async () => {
+  try {
+    let options = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": getSessionObject("user").refreshToken
+      },
+    };
+    let userData = await fetch(
+        "/api/types/allDefault", options);
+    if (!userData.ok) {
+      return false;
+    }
+    return await userData.json();
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export default searchBar;

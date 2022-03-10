@@ -6,7 +6,7 @@ import searchBar from "../Module/SearchBar";
  */
 
 const AllObjectsPage = async () => {
-  searchBar();
+  await searchBar();
 
   const pageDiv = document.querySelector("#page");
 
@@ -24,13 +24,11 @@ const AllObjectsPage = async () => {
 // Display clients
 const displayOffers = async (searchPattern, pageDiv) => {
   const offers = await getOffers(searchPattern);
+  pageDiv.innerHTML = ``;
   if (!offers) {
     pageDiv.innerHTML = `<p>Aucun objet</p>`;
   }
-  pageDiv.innerHTML = ``;
   for (const property in offers) {
-    console.log(offers[property].object.type)
-
     pageDiv.innerHTML += `
       <p>
           ${offers[property].idOffer} 
