@@ -2,18 +2,6 @@ DROP SCHEMA IF EXISTS donnamis CASCADE;
 
 CREATE SCHEMA donnamis;
 
-CREATE TABLE donnamis.addresses
-(
-    id_membre       INTEGER REFERENCES donnamis.members (id_member),
-    unit_number     VARCHAR(15) NULL,
-    building_number VARCHAR(15) NOT NULL,
-    street          VARCHAR(50) NOT NULL,
-    postcode        VARCHAR(15) NOT NULL,
-    commune         VARCHAR(50) NOT NULL,
-    country         VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id_membre)
-);
-
 CREATE TABLE donnamis.members
 (
     id_member      SERIAL PRIMARY KEY,
@@ -25,6 +13,18 @@ CREATE TABLE donnamis.members
     phone_number   VARCHAR(50) NULL,
     password       CHAR(60)    NOT NULL,
     refusal_reason VARCHAR(50) NULL
+);
+
+CREATE TABLE donnamis.addresses
+(
+    id_member       INTEGER REFERENCES donnamis.members (id_member),
+    unit_number     VARCHAR(15) NULL,
+    building_number VARCHAR(15) NOT NULL,
+    street          VARCHAR(50) NOT NULL,
+    postcode        VARCHAR(15) NOT NULL,
+    commune         VARCHAR(50) NOT NULL,
+    country         VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id_member)
 );
 
 CREATE TABLE donnamis.types
