@@ -34,7 +34,7 @@ public class TypeImpl implements TypeDTO {
   }
 
   @Override
-  public void setDefault(boolean aDefault) {
-    isDefault = aDefault;
+  public void setDefault(boolean isDefault) {
+    this.isDefault = isDefault;
   }
 }

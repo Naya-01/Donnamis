@@ -6,7 +6,7 @@ import java.util.List;
 public interface TypeDAO {
 
   /**
-   * Get all default types available
+   * Get all default types available.
    *
    * @return a list of default types
    */
