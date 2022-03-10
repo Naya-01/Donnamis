@@ -4,7 +4,7 @@ import be.vinci.pae.business.domain.dto.AddressDTO;
 
 public class AddressImpl implements AddressDTO {
 
-  private int idAddress;
+  private int idMember;
   private String unitNumber;
   private String buildingNumber;
   private String street;
@@ -14,13 +14,13 @@ public class AddressImpl implements AddressDTO {
 
 
   @Override
-  public int getIdAddress() {
-    return this.idAddress;
+  public int getIdMember() {
+    return this.idMember;
   }
 
   @Override
-  public void setIdAddress(int idAddress) {
-    this.idAddress = idAddress;
+  public void setIdMember(int idMember) {
+    this.idMember = idMember;
   }
 
   @Override
