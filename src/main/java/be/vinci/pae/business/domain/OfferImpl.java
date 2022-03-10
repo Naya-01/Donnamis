@@ -1,14 +1,14 @@
 package be.vinci.pae.business.domain;
 
-import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import java.time.LocalDate;
 
-public class OfferImpl implements Offer, OfferDTO {
+public class OfferImpl implements Offer {
 
   private int idOffer;
   private LocalDate date;
   private String timeSlot;
-  private Object object;
+  private ObjectDTO object;
 
   @Override
   public int getIdOffer() {
@@ -41,12 +41,13 @@ public class OfferImpl implements Offer, OfferDTO {
   }
 
   @Override
-  public Object getObject() {
+  public ObjectDTO getObject() {
     return object;
   }
 
   @Override
-  public void setObject(Object object) {
+  public void setObject(ObjectDTO object) {
     this.object = object;
   }
+  
 }

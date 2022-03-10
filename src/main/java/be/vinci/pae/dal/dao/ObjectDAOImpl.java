@@ -36,7 +36,7 @@ public class ObjectDAOImpl implements ObjectDAO {
         return null;
       }
       objectDTO.setIdObject(resultSet.getInt(1));
-      objectDTO.setIdType(resultSet.getInt(2));
+      objectDTO.setType(null);
       objectDTO.setDescription(resultSet.getString(3));
       objectDTO.setStatus(resultSet.getString(4));
       objectDTO.setImage(resultSet.getString(5));

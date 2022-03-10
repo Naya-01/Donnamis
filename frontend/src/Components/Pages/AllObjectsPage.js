@@ -6,21 +6,47 @@ import searchBar from "../Module/SearchBar";
  */
 
 const AllObjectsPage = async () => {
-  const pageDiv = document.querySelector("#page");
-  const offers = await getOffers();
   searchBar();
-  for (const property in offers) {
-    pageDiv.innerHTML += `
-      <p>${offers[property].idOffer} ${offers[property].date} ${offers[property].timeSlot}</p>
-    `;
-  }
 
+  const pageDiv = document.querySelector("#page");
+
+  pageDiv.innerHTML += `<div id="offers-list"></div>`;
+  const offersList = document.getElementById("offers-list");
+
+  await displayOffers("", offersList);
   const searchBarInput = document.getElementById("search-bar-input");
-  searchBarInput.addEventListener('keyup', () => {
-    return getOffers(searchBarInput.value);
+  searchBarInput.addEventListener('keyup', async () => {
+    await displayOffers(searchBarInput.value, offersList);
   });
 
 };
+
+// Display clients
+const displayOffers = async (searchPattern, pageDiv) => {
+  const offers = await getOffers(searchPattern);
+  if (!offers) {
+    pageDiv.innerHTML = `<p>Aucun objet</p>`;
+  }
+  pageDiv.innerHTML = ``;
+  for (const property in offers) {
+    console.log(offers[property].object.type)
+
+    pageDiv.innerHTML += `
+      <p>
+          ${offers[property].idOffer} 
+          ${offers[property].date} 
+          ${offers[property].timeSlot}
+          ${offers[property].object.description}
+          ${offers[property].object.status}
+          ${offers[property].object.image}
+          ${offers[property].object.idOfferor}
+          ${offers[property].object.type.idType}
+          ${offers[property].object.type.typeName}
+          ${offers[property].object.type.default}
+      </p>
+    `;
+  }
+}
 
 const getOffers = async (searchPattern) => {
   try {
@@ -35,9 +61,9 @@ const getOffers = async (searchPattern) => {
         "/api/offers/all?search-pattern=" + searchPattern,
         options);
     if (!userData.ok) {
-      throw new Error();
+      return false;
     }
-    return userData.json();
+    return await userData.json();
   } catch (err) {
     console.log(err);
   }

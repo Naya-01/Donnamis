@@ -12,9 +12,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Singleton
@@ -40,9 +38,6 @@ public class OfferResource {
   public ObjectNode getOffers(
       @DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
     List<OfferDTO> offerDTOList = offerUcc.getAllPosts(searchPattern);
-    if (offerDTOList.isEmpty()) {
-      throw new WebApplicationException("Aucune offre", Response.Status.NOT_FOUND);
-    }
     ObjectNode objectNode = jsonMapper.createObjectNode();
     for (OfferDTO offerDTO : offerDTOList) {
       objectNode.putPOJO(String.valueOf(offerDTO.getIdOffer()), offerDTO);

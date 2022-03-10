@@ -16,7 +16,7 @@ public interface OfferDTO {
 
   void setTimeSlot(String timeSlot);
 
-  Object getObject();
+  ObjectDTO getObject();
 
-  void setObject(Object object);
+  void setObject(ObjectDTO object);
 }
