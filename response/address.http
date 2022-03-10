@@ -14,7 +14,7 @@ client.global.set("refresh", response.body.refresh_token);
 
 
 ###
-GET {{baseUri}}/address/updateOne
+POST {{baseUri}}/address/update
 Authorization: {{refresh}}
 Content-Type: application/json
 

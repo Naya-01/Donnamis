@@ -32,22 +32,26 @@ public class AddressDAOImpl implements AddressDAO {
     // Update in the db
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "UPDATE donnamis.addresses "
-            + "SET unit_member = ?,"
-            + "SET building_number = ?,"
-            + "SET street = ?,"
-            + "SET postcode = ?,"
-            + "SET commune = ?,"
-            + "SET country = ?)"
+            + "SET unit_number = ?,"
+            + " building_number = ?,"
+            + " street = ?,"
+            + " postcode = ?,"
+            + " commune = ?,"
+            + " country = ?"
             + "WHERE id_member = ?");
     try {
-      preparedStatement.setString(1, unitNumber);
+      if (unitNumber.length() == 0) {
+        preparedStatement.setNull(1, java.sql.Types.NULL);
+      } else {
+        preparedStatement.setString(1, unitNumber);
+      }
       preparedStatement.setString(2, buildingNumber);
       preparedStatement.setString(3, street);
       preparedStatement.setString(4, postcode);
       preparedStatement.setString(5, commune);
       preparedStatement.setString(6, country);
       preparedStatement.setInt(7, idMember);
-      preparedStatement.executeQuery();
+      preparedStatement.execute();
       preparedStatement.close();
 
       // Creation of the new Address
