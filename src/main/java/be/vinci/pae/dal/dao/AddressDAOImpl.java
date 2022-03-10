@@ -82,7 +82,8 @@ public class AddressDAOImpl implements AddressDAO {
       String postcode, String commune, String country) {
     // Insert in the db
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "INSERT INTO donnamis.addresses (id_member, unit_member, building_number, street, postcode, commune, country)"
+        "INSERT INTO donnamis.addresses (id_member, unit_member, building_number, street,"
+            + " postcode, commune, country)"
             + "VALUES(?,?,?,?,?,?,?)");
     try {
       preparedStatement.setInt(1, idMember);
