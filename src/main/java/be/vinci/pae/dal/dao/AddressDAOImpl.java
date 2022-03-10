@@ -87,7 +87,11 @@ public class AddressDAOImpl implements AddressDAO {
             + "VALUES(?,?,?,?,?,?,?)");
     try {
       preparedStatement.setInt(1, idMember);
-      preparedStatement.setString(2, unitNumber);
+      if (unitNumber.length() == 0) {
+        preparedStatement.setNull(2, java.sql.Types.NULL);
+      } else {
+        preparedStatement.setString(2, unitNumber);
+      }
       preparedStatement.setString(3, buildingNumber);
       preparedStatement.setString(4, street);
       preparedStatement.setString(5, postcode);
