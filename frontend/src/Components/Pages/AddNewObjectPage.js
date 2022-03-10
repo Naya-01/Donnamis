@@ -37,7 +37,7 @@ const AddNewObjectPage = async () => {
   }
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
-  let contentOfThePage = `
+  pageDiv.innerHTML = `
     <div class="container p-3">
       <div class="mx-5 my-5">
         <div class="card">  
@@ -97,7 +97,6 @@ const AddNewObjectPage = async () => {
         </div>
       </div>
     </div>`;
-  pageDiv.innerHTML = contentOfThePage;
   document.querySelector("#addObjectButton")
   .addEventListener("click", addObject);
 };
