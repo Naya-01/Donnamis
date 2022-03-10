@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface MemberUCC {
 
@@ -20,4 +21,6 @@ public interface MemberUCC {
    * @return memberDTO having this id.
    */
   MemberDTO getMember(int id);
+
+  ObjectNode register(MemberDTO user);
 }

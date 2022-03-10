@@ -6,6 +6,7 @@ import be.vinci.pae.business.exceptions.ForbiddenException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.MemberDAO;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 
 public class MemberUCCImpl implements MemberUCC {
@@ -54,5 +55,11 @@ public class MemberUCCImpl implements MemberUCC {
       throw new NotFoundException("Member not found");
     }
     return memberDTO;
+  }
+
+  @Override
+  public ObjectNode register(MemberDTO user) {
+
+    return null;
   }
 }
