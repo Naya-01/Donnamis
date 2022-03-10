@@ -4,27 +4,27 @@ CREATE SCHEMA donnamis;
 
 CREATE TABLE donnamis.addresses
 (
-    id_address      SERIAL PRIMARY KEY,
+    id_membre       INTEGER REFERENCES donnamis.members (id_member),
     unit_number     VARCHAR(15) NULL,
     building_number VARCHAR(15) NOT NULL,
     street          VARCHAR(50) NOT NULL,
     postcode        VARCHAR(15) NOT NULL,
     commune         VARCHAR(50) NOT NULL,
-    country         VARCHAR(50) NOT NULL
+    country         VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id_membre)
 );
 
 CREATE TABLE donnamis.members
 (
     id_member      SERIAL PRIMARY KEY,
-    username       VARCHAR(50)                                        NOT NULL,
-    lastname       VARCHAR(50)                                        NOT NULL,
-    firstname      VARCHAR(50)                                        NOT NULL,
-    status         VARCHAR(15)                                        NOT NULL,
-    role           VARCHAR(15)                                        NOT NULL,
-    phone_number   VARCHAR(50)                                        NULL,
-    password       CHAR(60)                                           NOT NULL,
-    id_address     INTEGER REFERENCES donnamis.addresses (id_address) NOT NULL,
-    refusal_reason VARCHAR(50)                                        NULL
+    username       VARCHAR(50) NOT NULL,
+    lastname       VARCHAR(50) NOT NULL,
+    firstname      VARCHAR(50) NOT NULL,
+    status         VARCHAR(15) NOT NULL,
+    role           VARCHAR(15) NOT NULL,
+    phone_number   VARCHAR(50) NULL,
+    password       CHAR(60)    NOT NULL,
+    refusal_reason VARCHAR(50) NULL
 );
 
 CREATE TABLE donnamis.types
@@ -50,7 +50,7 @@ CREATE TABLE donnamis.ratings
     comment   VARCHAR(100)                                    NOT NULL,
     id_member INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
-    PRIMARY KEY (id_object, id_member)
+    PRIMARY KEY (id_object)
 );
 
 CREATE TABLE donnamis.interests
