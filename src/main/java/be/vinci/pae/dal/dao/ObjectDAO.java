@@ -20,4 +20,13 @@ public interface ObjectDAO {
    * @return the object
    */
   List<ObjectDTO> getAllByStatus(String status);
+
+
+  /**
+   * Get all objects of a member that we want to retrieve by his id.
+   *
+   * @param idMember : take all object of this member.
+   * @return list object of this member.
+   */
+  List<ObjectDTO> getAllObjectOfMember(int idMember);
 }

@@ -68,7 +68,12 @@ public class ObjectDAOImpl implements ObjectDAO {
     return objectDTOList;
   }
 
-
+  /**
+   * Get all objects of a member that we want to retrieve by his id.
+   *
+   * @param idMember : take all object of this member.
+   * @return list object of this member.
+   */
   public List<ObjectDTO> getAllObjectOfMember(int idMember) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
