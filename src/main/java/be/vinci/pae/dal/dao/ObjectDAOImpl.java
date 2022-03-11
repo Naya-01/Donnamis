@@ -61,20 +61,42 @@ public class ObjectDAOImpl implements ObjectDAO {
     List<ObjectDTO> objectDTOList = new ArrayList<>();
     try {
       preparedStatement.setString(1, status);
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      while (resultSet.next()) {
-        ObjectDTO objectDTO = objectFactory.getObjectDTO();
-        setObject(objectDTO, resultSet);
-        objectDTOList.add(objectDTO);
-      }
-
-      resultSet.close();
-      preparedStatement.close();
+      setListObject(preparedStatement, objectDTOList);
     } catch (SQLException e) {
       e.printStackTrace();
     }
     return objectDTOList;
+  }
+
+
+  public List<ObjectDTO> getAllObjectOfMember(int idMember) {
+    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+        "SELECT id_object, id_type, description, status, image, id_offeror "
+            + "FROM donnamis.objects WHERE id_offeror = ?");
+
+    List<ObjectDTO> objectDTOList = new ArrayList<>();
+    try {
+      preparedStatement.setInt(1, idMember);
+      setListObject(preparedStatement, objectDTOList);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return objectDTOList;
+  }
+
+
+  private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList)
+      throws SQLException {
+    preparedStatement.executeQuery();
+    ResultSet resultSet = preparedStatement.getResultSet();
+    while (resultSet.next()) {
+      ObjectDTO objectDTO = objectFactory.getObjectDTO();
+      setObject(objectDTO, resultSet);
+      objectDTOList.add(objectDTO);
+    }
+
+    resultSet.close();
+    preparedStatement.close();
   }
 
 
