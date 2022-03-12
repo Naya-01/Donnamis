@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import java.util.List;
 
 public interface ObjectUCC {
 
@@ -11,4 +12,12 @@ public interface ObjectUCC {
    * @return objectDTO having this id.
    */
   ObjectDTO getObject(int id);
+
+  /**
+   * Find all object of a member.
+   *
+   * @param idMember : id member that we want to get all his object.
+   * @return object list of this member.
+   */
+  List<ObjectDTO> getAllObjectMember(int idMember);
 }
