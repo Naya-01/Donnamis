@@ -12,6 +12,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.util.List;
 
 @Singleton
 @Path("/object")
@@ -37,5 +38,15 @@ public class ObjectResource {
 
     return jsonMapper.createObjectNode()
         .putPOJO("object", objectDTO);
+  }
+
+  @GET
+  @Path("/member/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
+    List<ObjectDTO> objectDTOList = objectUCC.getAllObjectMember(idMember);
+
+    return objectDTOList;
   }
 }

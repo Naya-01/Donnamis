@@ -14,3 +14,8 @@ client.global.set("token", response.body.access_token);
 ### GET an object
 GET {{baseUri}}/object/1
 Authorization: {{token}}
+
+
+### GET an object
+GET {{baseUri}}/object/member/1
+Authorization: {{token}}
