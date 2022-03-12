@@ -44,9 +44,10 @@ public class ObjectResource {
   @Path("/member/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
+  public ObjectNode getAllObjectMember(@PathParam("id") int idMember) {
     List<ObjectDTO> objectDTOList = objectUCC.getAllObjectMember(idMember);
 
-    return objectDTOList;
+    return jsonMapper.createObjectNode()
+        .putPOJO("objectList", objectDTOList);
   }
 }
