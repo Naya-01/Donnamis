@@ -34,7 +34,7 @@ public class AddressResource {
   @Path("/update")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode login(JsonNode json) {
+  public ObjectNode updateOne(JsonNode json) {
     // Verification of all fields in the json except unitNumber
     if (!json.hasNonNull("idAddress")) {
       throw new WebApplicationException("Id de l'adresse requis",
