@@ -125,7 +125,7 @@ const LoginPage = () => {
       }
 
     } else {
-      connectClientAndRedirect(username, password, remember);
+      connectClientAndRedirect(username.value, password.value, remember);
     }
   })
 
