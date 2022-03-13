@@ -26,5 +26,5 @@ public interface MemberDAO {
    * @param member : member we want to add in the DB
    * @return the member added.
    */
-  MemberDTO addOneMember(MemberDTO member);
+  MemberDTO createOneMember(MemberDTO member);
 }

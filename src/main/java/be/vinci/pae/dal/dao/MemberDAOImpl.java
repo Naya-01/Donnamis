@@ -96,7 +96,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member added.
    */
   @Override
-  public MemberDTO addOneMember(MemberDTO member) {
+  public MemberDTO createOneMember(MemberDTO member) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
         + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
         + "password, refusal_reason) values (?,?,?,?,?,?,?,?) RETURNING id_member;");

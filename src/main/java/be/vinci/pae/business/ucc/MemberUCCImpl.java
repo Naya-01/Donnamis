@@ -79,7 +79,7 @@ public class MemberUCCImpl implements MemberUCC {
     memberDTO.setRole("member");
 
     //add the member
-    MemberDTO memberFromDao = memberDAO.addOneMember(memberDTO);
+    MemberDTO memberFromDao = memberDAO.createOneMember(memberDTO);
     if (memberFromDao == null) {
       throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
           + " données");
