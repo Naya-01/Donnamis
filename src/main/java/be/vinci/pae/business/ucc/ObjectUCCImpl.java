@@ -43,6 +43,12 @@ public class ObjectUCCImpl implements ObjectUCC {
     return objectDTOList;
   }
 
+  /**
+   * Create an object.
+   *
+   * @param objectDTO : object that we want to create.
+   * @return return the added object
+   */
   public ObjectDTO addOne(ObjectDTO objectDTO) {
 
     return objectDAO.addOne(objectDTO);
