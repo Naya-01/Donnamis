@@ -10,9 +10,9 @@ public interface ObjectDTO {
 
   void setIdObject(int idObject);
 
-  TypeDTO getType();
+  Integer getIdType();
 
-  void setType(TypeDTO idType);
+  void setIdType(Integer idType);
 
   String getDescription();
 

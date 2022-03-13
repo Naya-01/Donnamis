@@ -65,10 +65,10 @@ public class OfferDAOImpl implements OfferDAO {
 
         ObjectDTO objectDTO = objectFactory.getObjectDTO();
         objectDTO.setIdObject(resultSet.getInt(4));
-        objectDTO.setType(typeDTO);
+        objectDTO.setIdType(typeDTO.getIdType());
         objectDTO.setDescription(resultSet.getString(6));
         objectDTO.setStatus(resultSet.getString(7));
-        objectDTO.setImage(resultSet.getString(8));
+        objectDTO.setImage(resultSet.getBytes(8));
         objectDTO.setIdOfferor(resultSet.getInt(9));
 
         offerDTO.setObject(objectDTO);

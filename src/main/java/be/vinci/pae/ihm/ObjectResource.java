@@ -72,11 +72,12 @@ public class ObjectResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectDTO addOne(ObjectDTO objectDTO) {
-    if (objectDTO == null || objectDTO.getIdOfferor() == null || objectDTO.getIdType() == null
+    if (objectDTO == null || objectDTO.getIdOfferor() == null || objectDTO.getIdType() <= 0
         || objectDTO.getDescription() == null || objectDTO.getDescription().isBlank()) {
       throw new WebApplicationException("Pseudonyme ou mot de passe requis",
           Response.Status.BAD_REQUEST);
     }
+    System.out.println("fesfs");
     return objectUCC.addOne(objectDTO);
   }
 }

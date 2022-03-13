@@ -6,7 +6,7 @@ import be.vinci.pae.business.domain.dto.TypeDTO;
 public class ObjectImpl implements ObjectDTO {
 
   private Integer idObject;
-  private TypeDTO type;
+  private Integer idType;
   private String description;
   private String status;
   private byte[] image;
@@ -23,13 +23,13 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public TypeDTO getType() {
-    return type;
+  public Integer getIdType() {
+    return idType;
   }
 
   @Override
-  public void setType(TypeDTO type) {
-    this.type = type;
+  public void setIdType(Integer idType) {
+    this.idType = idType;
   }
 
   @Override
