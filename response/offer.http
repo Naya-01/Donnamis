@@ -1,4 +1,3 @@
-
 ### disconnect
 GET {{baseUri}}/falseroute
 Content-Type: application/json
@@ -21,15 +20,6 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
-
 ###
-GET {{baseUri}}/type/id/4
-Authorization: {{refresh}}
-
-###
-GET {{baseUri}}/type/type_name/Jouets
-Authorization: {{refresh}}
-
-###
-GET {{baseUri}}/type/allDefault
+GET {{baseUri}}/offers/all?search-pattern=t
 Authorization: {{refresh}}

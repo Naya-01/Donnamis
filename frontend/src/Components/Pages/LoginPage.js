@@ -46,7 +46,6 @@ const htmlPage = `
 const connectClientAndRedirect = async (username, password, remember) => {
 
   let userData;
-
   try {
     let options = {
       method: "POST",

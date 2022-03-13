@@ -26,7 +26,7 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(String username) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + " refusal_reason FROM donnamis.members WHERE username = ?");
+            + "refusal_reason FROM donnamis.members WHERE username = ?");
     try {
 
       preparedStatement.setString(1, username);
@@ -45,7 +45,7 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(int id) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + " refusal_reason FROM donnamis.members WHERE id_member = ?");
+            + "refusal_reason FROM donnamis.members WHERE id_member = ?");
     try {
       preparedStatement.setInt(1, id);
     } catch (SQLException e) {
@@ -152,5 +152,6 @@ public class MemberDAOImpl implements MemberDAO {
 
     return null;
   }
+
 
 }
