@@ -1,10 +1,14 @@
 package be.vinci.pae.business.domain.dto;
 
+import be.vinci.pae.business.domain.TypeImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = TypeImpl.class)
 public interface TypeDTO {
 
   int getIdType();
 
-  void setIdType(int idType);
+  void setId(int idType);
 
   String getTypeName();
 
@@ -12,5 +16,5 @@ public interface TypeDTO {
 
   boolean isDefault();
 
-  void setDefault(boolean isDefault);
+  void setIsDefault(boolean isDefault);
 }

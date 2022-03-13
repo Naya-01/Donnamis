@@ -14,13 +14,13 @@ public class TypeImpl implements TypeDTO {
   }
 
   @Override
-  public void setIdType(int idType) {
+  public void setId(int idType) {
     this.idType = idType;
   }
 
   @Override
   public String getTypeName() {
-    return typeName;
+    return this.typeName;
   }
 
   @Override
@@ -30,11 +30,11 @@ public class TypeImpl implements TypeDTO {
 
   @Override
   public boolean isDefault() {
-    return isDefault;
+    return this.isDefault;
   }
 
   @Override
-  public void setDefault(boolean isDefault) {
+  public void setIsDefault(boolean isDefault) {
     this.isDefault = isDefault;
   }
 }

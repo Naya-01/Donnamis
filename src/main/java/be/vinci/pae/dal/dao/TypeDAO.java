@@ -6,9 +6,27 @@ import java.util.List;
 public interface TypeDAO {
 
   /**
-   * Get all default types available.
+   * Get a type we want to retrieve by his type name.
    *
-   * @return a list of default types
+   * @param typeName : the typeName of the type we want to retrieve
+   * @return the type
    */
-  List<TypeDTO> getAllDefault();
+  TypeDTO getOne(String typeName);
+
+  /**
+   * Get a type we want to retrieve by his id.
+   *
+   * @param typeId : the id of the type we want to retrieve
+   * @return the type
+   */
+  TypeDTO getOne(int typeId);
+
+  /**
+   * Get all types that are default.
+   *
+   * @return a list with all types
+   */
+  List<TypeDTO> getAllDefaultTypes();
+
+
 }
