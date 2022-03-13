@@ -90,25 +90,25 @@ public class MemberDAOImpl implements MemberDAO {
 
 
   /**
-   * Add a member in the DB and make a memberDTO with the parameters
+   * Add a member in the DB and make a memberDTO with the parameters.
    *
-   * @param username       : the username of the member we want to retrieve
-   * @param lastname       : the lastname of the member we want to retrieve
-   * @param firstname      : the firstname of the member we want to retrieve
-   * @param status         : the status of the member we want to retrieve
-   * @param role           : the role of the member we want to retrieve
-   * @param phone_number   : the phone_number of the member we want to retrieve
-   * @param password       : the password of the member we want to retrieve
-   * @param id_address     : the id_address of the member we want to retrieve
-   * @param refusal_reason : the refusal_reason of the member we want to retrieve
-   * @return the member added
+   * @param username      : the username of the member we want to retrieve.
+   * @param lastname      : the lastname of the member we want to retrieve.
+   * @param firstname     : the firstname of the member we want to retrieve.
+   * @param status        : the status of the member we want to retrieve.
+   * @param role          : the role of the member we want to retrieve.
+   * @param phoneNumber   : the phone number of the member we want to retrieve.
+   * @param password      : the password of the member we want to retrieve.
+   * @param idAddress     : the id address of the member we want to retrieve.
+   * @param refusalReason : the refusal reason of the member we want to retrieve.
+   * @return the member added.
    */
   @Override
   public MemberDTO addOneMember(String username, String lastname, String firstname, String status,
-      String role, String phone_number, String password, int id_address, String refusal_reason) {
+      String role, String phoneNumber, String password, int idAddress, String refusalReason) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
-        + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
-        + "password, id_address, refusal_reason) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
+        + "donnamis.members (username, lastname, firstname, status, role, phoneNumber, "
+        + "password, idAddress, refusalReason) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
     try {
 
       preparedStatement.setString(1, username);
@@ -116,10 +116,10 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(3, firstname);
       preparedStatement.setString(4, status);
       preparedStatement.setString(5, role);
-      preparedStatement.setString(6, phone_number);
+      preparedStatement.setString(6, phoneNumber);
       preparedStatement.setString(7, password);
-      preparedStatement.setInt(8, id_address);
-      preparedStatement.setString(9, refusal_reason);
+      preparedStatement.setInt(8, idAddress);
+      preparedStatement.setString(9, refusalReason);
 
       preparedStatement.executeQuery();
 
@@ -139,10 +139,10 @@ public class MemberDAOImpl implements MemberDAO {
       memberDTO.setFirstname(firstname);
       memberDTO.setStatus(status);
       memberDTO.setRole(role);
-      memberDTO.setPhone(phone_number);
+      memberDTO.setPhone(phoneNumber);
       memberDTO.setPassword(password);
-      memberDTO.setAddress(id_address);
-      memberDTO.setReasonRefusal(refusal_reason);
+      memberDTO.setAddress(idAddress);
+      memberDTO.setReasonRefusal(refusalReason);
 
       return memberDTO;
 
