@@ -1,0 +1,29 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "AlbertDeBucarest",
+  "password": "albertLePoulet",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+
+###
+POST {{baseUri}}/address/update
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idAddress": 1,
+  "unitNumber": "",
+  "buildingNumber": "95",
+  "street": "chaussée de Waterloo",
+  "postcode": "1410",
+  "commune": "Waterloo",
+  "country": "Belgique"
+}

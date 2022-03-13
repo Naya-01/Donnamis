@@ -34,3 +34,7 @@
   transform-origin: left top 0;
   white-space: nowrap;
 }
+
+.img_file_input > #file_input {
+  display: none;
+}
