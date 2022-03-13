@@ -130,7 +130,7 @@ public class AuthResource {
 
     MemberDTO memberDTO = memberUCC.register(user);
     if (memberDTO == null) {
-      throw new WebApplicationException("this resource already exists", Response.Status.CONFLICT);
+      throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
     }
 
     String accessToken = tokenManager.withoutRememberMe(memberDTO);

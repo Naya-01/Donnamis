@@ -65,9 +65,14 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO register(MemberDTO member) {
+    MemberDTO memberExistent = memberDAO.getOne(member.getUsername());
+    if (memberExistent != null) {
+      return null;
+    }
     MemberDTO memberDTO = memberDAO.addOneMember(member);
     if (memberDTO == null) {
-      throw new InternalServerErrorException("Le membre n'a pas pû être ajouté");
+      throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
+          + " données");
     }
     return memberDTO;
   }
