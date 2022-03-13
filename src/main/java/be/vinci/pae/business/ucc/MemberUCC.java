@@ -24,8 +24,8 @@ public interface MemberUCC {
   /**
    * Register a quidam.
    *
-   * @param member : User object with all information.
+   * @param memberDTO : User object with all information.
    * @return token for the user.
    */
-  MemberDTO register(MemberDTO member);
+  MemberDTO register(MemberDTO memberDTO);
 }

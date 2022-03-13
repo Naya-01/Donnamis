@@ -60,20 +60,30 @@ public class MemberUCCImpl implements MemberUCC {
   /**
    * Register a quidam.
    *
-   * @param member : User object with all information.
+   * @param memberDTO : User object with all information.
    * @return token for the user.
    */
   @Override
-  public MemberDTO register(MemberDTO member) {
-    MemberDTO memberExistent = memberDAO.getOne(member.getUsername());
+  public MemberDTO register(MemberDTO memberDTO) {
+    //check if the member already exists
+    MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
     if (memberExistent != null) {
       return null;
     }
-    MemberDTO memberDTO = memberDAO.addOneMember(member);
-    if (memberDTO == null) {
+
+    //set the MemberDTO
+    Member member = (Member) memberDTO;
+    memberDTO.setPassword(
+        member.hashPassword(memberDTO.getPassword())); //hashPassword of the member
+    memberDTO.setStatus("pending");
+    memberDTO.setRole("member");
+
+    //add the member
+    MemberDTO memberFromDao = memberDAO.addOneMember(memberDTO);
+    if (memberFromDao == null) {
       throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
           + " données");
     }
-    return memberDTO;
+    return memberFromDao;
   }
 }
