@@ -31,7 +31,7 @@ const MyObjectPage = async () => {
               <div class="row justify-content-start p-2">
                 <!-- The image -->
                 <div class="col-4">
-                  <img alt="no image" width="75%" src="${noImage}"/>
+                  <img id="image" alt="no image" width="75%" src="${noImage}"/>
                 </div>
                 <!-- The description -->
                 <div class="col-8">
@@ -85,9 +85,29 @@ const MyObjectPage = async () => {
  */
 async function changeToFormOrText(e) {
   e.preventDefault();
+  // Convert to Form
   if (!form) {
-    // Convert description text to textarea :
-    let old = document.getElementById("description_object");
+    // Make the image clickable to import a file
+    let old = document.getElementById("image");
+    let span_image = document.createElement("span");
+    span_image.id = "span_image";
+    span_image.className = "img_file_input";
+    let label_image = document.createElement("label");
+    label_image.setAttribute("for", "file_input");
+    let image = document.createElement("img");
+    image.alt = "no image";
+    image.style.width = "75%";
+    image.setAttribute("src", noImage);
+    label_image.appendChild(image);
+    let input_file = document.createElement("input");
+    input_file.id = "file_input";
+    input_file.type = "file";
+    span_image.appendChild(label_image);
+    span_image.appendChild(input_file);
+    old.parentNode.replaceChild(span_image, old);
+
+    // Make a textarea for description
+    old = document.getElementById("description_object");
     let desc_textarea = document.createElement("textarea");
     desc_textarea.className = "form-control";
     desc_textarea.id = "description_object";
@@ -95,7 +115,7 @@ async function changeToFormOrText(e) {
     desc_textarea.value = old.textContent;
     old.parentNode.replaceChild(desc_textarea, old);
 
-    // Convert time_slot to textarea
+    // Make a textarea for description for the time slot
     old = document.getElementById("time_slot");
     let time_slot_textarea = document.createElement("textarea");
     time_slot_textarea.className = "form-control";
@@ -104,7 +124,7 @@ async function changeToFormOrText(e) {
     time_slot_textarea.value = old.textContent;
     old.parentNode.replaceChild(time_slot_textarea, old);
 
-    // Convert type text to input text
+    // Make a input text for the type
     let span = document.createElement("span");
     span.id = "span_type";
     old = document.getElementById("type");
@@ -114,7 +134,6 @@ async function changeToFormOrText(e) {
     type_input.id = "type";
     type_input.value = old.textContent;
     type_input.setAttribute("list", "all_types");
-
     let datalist_types = document.createElement("datalist");
     datalist_types.id = "all_types";
 
@@ -130,8 +149,8 @@ async function changeToFormOrText(e) {
     span.appendChild(datalist_types);
     old.parentNode.replaceChild(span, old);
 
+    // Replace the button "Modifier" by a "Confirmer" one
     old = document.getElementById("modifyObjectButton");
-
     let new_button = document.createElement("input");
     new_button.type = "button";
     new_button.className = "btn btn-primary";
@@ -139,16 +158,26 @@ async function changeToFormOrText(e) {
     new_button.id = "confirmObjectButton";
     new_button.addEventListener("click", updateObject);
     old.parentNode.replaceChild(new_button, old);
+  }
+  // Convert to Text
+  else {
+    // Make a simple image
+    let old = document.getElementById("span_image");
+    let image = document.createElement("img");
+    image.id = "image";
+    image.alt = "no image";
+    image.style.width = "75%";
+    image.setAttribute("src", noImage);
+    old.parentNode.replaceChild(image, old);
 
-  } else {
-    // Convert description textarea to text :
-    let old = document.getElementById("description_object");
+    // Make a simple paragraph for description
+    old = document.getElementById("description_object");
     let desc_text = document.createElement("p");
     desc_text.id = "description_object";
     desc_text.innerHTML = old.value;
     old.parentNode.replaceChild(desc_text, old);
 
-    // Convert time_slot to textarea
+    // Make a simple paragraph for time slot
     old = document.getElementById("time_slot");
     let time_slot_text = document.createElement("p");
     time_slot_text.id = "time_slot";
@@ -156,7 +185,7 @@ async function changeToFormOrText(e) {
     time_slot_text.innerHTML = old.value;
     old.parentNode.replaceChild(time_slot_text, old);
 
-    // Convert input text to type text
+    // Make a simple paragraph for type
     let span = document.createElement("span");
     span.id = "span_type";
     old = document.getElementById("span_type");
@@ -166,6 +195,7 @@ async function changeToFormOrText(e) {
     span.appendChild(type_text);
     old.parentNode.replaceChild(span, old);
 
+    // Replace the button "Confirmer" by a "Modifier" one
     old = document.getElementById("confirmObjectButton");
     let new_button = document.createElement("input");
     new_button.type = "button";
@@ -180,6 +210,10 @@ async function changeToFormOrText(e) {
 
 }
 
+/**
+ * Send to the backend all informations to update an object
+ * @param {Event} e : evenement
+ */
 function updateObject(e) {
   e.preventDefault();
   /*TODO : request to update the object*/
