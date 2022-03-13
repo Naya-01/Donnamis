@@ -1,5 +1,9 @@
 package be.vinci.pae.business.domain.dto;
 
+import be.vinci.pae.business.domain.ObjectImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = ObjectImpl.class)
 public interface ObjectDTO {
 
   Integer getIdObject();
@@ -18,9 +22,9 @@ public interface ObjectDTO {
 
   void setStatus(String status);
 
-  String getImage();
+  byte[] getImage();
 
-  void setImage(String image);
+  void setImage(byte[] image);
 
   Integer getIdOfferor();
 
