@@ -1,6 +1,5 @@
 package be.vinci.pae.business.domain;
 
-import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -23,8 +22,6 @@ public class MemberImpl implements Member {
   private String role;
   @JsonView(Views.Public.class)
   private String phone;
-  @JsonView(Views.Public.class)
-  private AddressDTO address;
   @JsonView(Views.Public.class)
   private String reasonRefusal;
   @JsonView(Views.Internal.class)

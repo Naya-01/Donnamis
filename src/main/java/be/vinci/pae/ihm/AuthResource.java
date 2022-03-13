@@ -119,9 +119,10 @@ public class AuthResource {
       throw new WebApplicationException("Manque d'informations obligatoires",
           Response.Status.BAD_REQUEST);
     }
-    if (user.getUsername() == null || user.getUsername().isBlank() || user.getPassword() == null ||
-        user.getPassword().isBlank() || user.getFirstname() == null || user.getFirstname().isBlank()
-        || user.getLastname() == null || user.getLastname().isBlank()
+    if (user.getUsername() == null || user.getUsername().isBlank() || user.getPassword() == null
+        || user.getPassword().isBlank() || user.getFirstname() == null
+        || user.getFirstname().isBlank() || user.getLastname() == null
+        || user.getLastname().isBlank()
     ) {
       throw new WebApplicationException("Le pseudonyme, le nom, le prénom, et le mot de passe"
           + " doivent être remplis",
