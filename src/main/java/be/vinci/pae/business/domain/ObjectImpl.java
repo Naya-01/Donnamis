@@ -1,7 +1,6 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
 
 public class ObjectImpl implements ObjectDTO {
 
