@@ -103,7 +103,12 @@ public class AuthResource {
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
-
+  /**
+   * Register a quidam
+   *
+   * @param user : all information of the quidam
+   * @return a json object that contains the token
+   */
   @POST
   @Path("register")
   @Consumes(MediaType.APPLICATION_JSON)
