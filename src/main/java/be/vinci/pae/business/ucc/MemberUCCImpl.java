@@ -3,10 +3,10 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.ForbiddenException;
+import be.vinci.pae.business.exceptions.InternalServerErrorException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.MemberDAO;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 
 public class MemberUCCImpl implements MemberUCC {
@@ -64,8 +64,11 @@ public class MemberUCCImpl implements MemberUCC {
    * @return token for the user.
    */
   @Override
-  public ObjectNode register(MemberDTO member) {
-    memberDAO.addOneMember(member);
-    return null;
+  public MemberDTO register(MemberDTO member) {
+    MemberDTO memberDTO = memberDAO.addOneMember(member);
+    if (memberDTO == null) {
+      throw new InternalServerErrorException("Le membre n'a pas pû être ajouté");
+    }
+    return memberDTO;
   }
 }

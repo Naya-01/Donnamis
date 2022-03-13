@@ -128,13 +128,17 @@ public class AuthResource {
           Response.Status.BAD_REQUEST);
     }
 
-    // Try to login
-    ObjectNode publicUser = memberUCC.register(user);
-
-    if (publicUser == null) {
+    MemberDTO memberDTO = memberUCC.register(user);
+    if (memberDTO == null) {
       throw new WebApplicationException("this resource already exists", Response.Status.CONFLICT);
     }
-    return publicUser;
+
+    String accessToken = tokenManager.withoutRememberMe(memberDTO);
+    String refreshToken = accessToken;
+    return jsonMapper.createObjectNode()
+        .put("access_token", accessToken)
+        .put("refresh_token", refreshToken)
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
 
   }
 }
