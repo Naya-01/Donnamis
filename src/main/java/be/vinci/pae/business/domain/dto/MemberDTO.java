@@ -34,10 +34,6 @@ public interface MemberDTO {
 
   void setPhone(String phone);
 
-  int getAddress();
-
-  void setAddress(int address);
-
   String getReasonRefusal();
 
   void setReasonRefusal(String reasonRefusal);

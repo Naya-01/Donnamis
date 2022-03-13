@@ -90,7 +90,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 
   /**
-   * Add a member in the DB and make a memberDTO with the parameters.
+   * Add a member in the DB and make a memberDTO.
    *
    * @param member : member we want to add in the DB
    * @return the member added.
@@ -99,9 +99,8 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO addOneMember(MemberDTO member) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
         + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
-        + "password, idAddress, refusal_reason) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
+        + "password, refusal_reason) values (?,?,?,?,?,?,?,?) RETURNING id_member;");
     try {
-
       preparedStatement.setString(1, member.getUsername());
       preparedStatement.setString(2, member.getLastname());
       preparedStatement.setString(3, member.getFirstname());
@@ -109,8 +108,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(5, member.getRole());
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
-      preparedStatement.setInt(8, member.getAddress());
-      preparedStatement.setString(9, member.getReasonRefusal());
+      preparedStatement.setString(8, member.getReasonRefusal());
 
       preparedStatement.executeQuery();
 

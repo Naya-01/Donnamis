@@ -21,7 +21,7 @@ public interface MemberDAO {
   MemberDTO getOne(int id);
 
   /**
-   * Add a member in the DB and make a memberDTO with the parameters.
+   * Add a member in the DB and make a memberDTO.
    *
    * @param member : member we want to add in the DB
    * @return the member added.

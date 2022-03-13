@@ -1,5 +1,6 @@
 package be.vinci.pae.business.domain;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -23,7 +24,7 @@ public class MemberImpl implements Member {
   @JsonView(Views.Public.class)
   private String phone;
   @JsonView(Views.Public.class)
-  private int address;
+  private AddressDTO address;
   @JsonView(Views.Public.class)
   private String reasonRefusal;
   @JsonView(Views.Internal.class)
@@ -98,16 +99,6 @@ public class MemberImpl implements Member {
   @Override
   public void setPhone(String phone) {
     this.phone = phone;
-  }
-
-  @Override
-  public int getAddress() {
-    return address;
-  }
-
-  @Override
-  public void setAddress(int address) {
-    this.address = address;
   }
 
   @Override
