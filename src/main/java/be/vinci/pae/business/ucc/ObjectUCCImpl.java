@@ -43,4 +43,8 @@ public class ObjectUCCImpl implements ObjectUCC {
     return objectDTOList;
   }
 
+  public ObjectDTO addOne(ObjectDTO objectDTO) {
+
+    return objectDAO.addOne(objectDTO);
+  }
 }

@@ -36,5 +36,5 @@ public interface ObjectDAO {
    * @param objectDTO : object that we want to add in the database.
    * @return object with his id.
    */
-  public ObjectDTO addOne(ObjectDTO objectDTO);
+  ObjectDTO addOne(ObjectDTO objectDTO);
 }

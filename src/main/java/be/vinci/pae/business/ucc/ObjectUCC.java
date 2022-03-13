@@ -20,4 +20,6 @@ public interface ObjectUCC {
    * @return object list of this member.
    */
   List<ObjectDTO> getAllObjectMember(int idMember);
+
+  ObjectDTO addOne(ObjectDTO objectDTO);
 }

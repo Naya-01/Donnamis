@@ -19,3 +19,16 @@ Authorization: {{token}}
 ### GET an object
 GET {{baseUri}}/object/member/1
 Authorization: {{token}}
+
+### Make an object
+POST {{baseUri}}/object
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idType": 1,
+  "description": "test",
+  "status": "available",
+  "image": null,
+  "idOfferor": 1
+}
