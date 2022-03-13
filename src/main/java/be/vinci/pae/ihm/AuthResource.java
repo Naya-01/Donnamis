@@ -104,10 +104,10 @@ public class AuthResource {
   }
 
   /**
-   * Register a quidam
+   * Register a quidam.
    *
-   * @param user : all information of the quidam
-   * @return a json object that contains the token
+   * @param user : all information of the quidam.
+   * @return a json object that contains the token.
    */
   @POST
   @Path("register")
