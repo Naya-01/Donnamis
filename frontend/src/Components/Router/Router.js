@@ -8,12 +8,14 @@ import {
   setSessionObject
 } from "../../utils/session";
 import Navbar from "../Navbar/Navbar";
+import RegisterPage from "../Pages/RegisterPage";
 
 // Configure your routes here
 const routes = {
   "/": HomePage,
-  "/connexion": LoginPage,
-  "/deconnexion": Logout,
+  "/login": LoginPage,
+  "/logout": Logout,
+  "/register": RegisterPage,
   "/addNewObjectPage" : AddNewObjectPage,
 };
 
@@ -48,7 +50,7 @@ const refreshToken = async () => {
   } else {
     removeSessionObject("user");
     await Navbar();
-    Redirect("/connexion");
+    Redirect("/login");
     return false;
   }
 }
