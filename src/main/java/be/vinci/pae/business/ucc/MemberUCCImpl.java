@@ -57,6 +57,12 @@ public class MemberUCCImpl implements MemberUCC {
     return memberDTO;
   }
 
+  /**
+   * Register a quidam.
+   *
+   * @param user : User object with all information.
+   * @return token for the user.
+   */
   @Override
   public ObjectNode register(MemberDTO user) {
 

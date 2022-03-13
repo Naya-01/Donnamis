@@ -22,5 +22,11 @@ public interface MemberUCC {
    */
   MemberDTO getMember(int id);
 
+  /**
+   * Register a quidam.
+   *
+   * @param user : User object with all information.
+   * @return token for the user.
+   */
   ObjectNode register(MemberDTO user);
 }
