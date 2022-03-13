@@ -53,6 +53,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    * @param status : the status of the objects that we want to retrieve
    * @return the object
    */
+  @Override
   public List<ObjectDTO> getAllByStatus(String status) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
@@ -74,6 +75,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    * @param idMember : take all object of this member.
    * @return list object of this member.
    */
+  @Override
   public List<ObjectDTO> getAllObjectOfMember(int idMember) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
@@ -89,6 +91,38 @@ public class ObjectDAOImpl implements ObjectDAO {
     return objectDTOList;
   }
 
+  /**
+   * Add object in the database with all information.
+   *
+   * @param objectDTO : object that we want to add in the database.
+   * @return object with his id.
+   */
+  @Override
+  public ObjectDTO addOne(ObjectDTO objectDTO) {
+    String query = "insert into donnamis.objects (id_type, description"
+        + ", status, image, id_offeror) values (?,?,?,?,?) RETURNING id_object;";
+
+    try {
+      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      preparedStatement.setInt(1, objectDTO.getIdType());
+      preparedStatement.setString(2, objectDTO.getDescription());
+      preparedStatement.setString(3, objectDTO.getStatus());
+      preparedStatement.setString(4, objectDTO.getImage());
+      preparedStatement.setInt(5, objectDTO.getIdOfferor());
+
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      objectDTO.setIdObject(resultSet.getInt(1));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return objectDTO;
+  }
 
   private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList)
       throws SQLException {

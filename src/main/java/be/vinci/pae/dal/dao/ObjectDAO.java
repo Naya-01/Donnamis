@@ -29,4 +29,12 @@ public interface ObjectDAO {
    * @return list object of this member.
    */
   List<ObjectDTO> getAllObjectOfMember(int idMember);
+
+  /**
+   * Add object in the database with all information.
+   *
+   * @param objectDTO : object that we want to add in the database.
+   * @return object with his id.
+   */
+  public ObjectDTO addOne(ObjectDTO objectDTO);
 }
