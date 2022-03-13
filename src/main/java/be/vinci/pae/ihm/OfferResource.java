@@ -42,6 +42,7 @@ public class OfferResource {
     for (OfferDTO offerDTO : offerDTOList) {
       objectNode.putPOJO(String.valueOf(offerDTO.getIdOffer()), offerDTO);
     }
+    // test
     return objectNode;
   }
 }
