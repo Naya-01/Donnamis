@@ -78,7 +78,7 @@ public class MemberDAOImpl implements MemberDAO {
       memberDTO.setRole(resultSet.getString(6));
       memberDTO.setPhone(resultSet.getString(7));
       memberDTO.setPassword(resultSet.getString(8));
-      // TODO : set the adress
+      // TODO : set the address
       memberDTO.setReasonRefusal(resultSet.getString(9));
 
       return memberDTO;
