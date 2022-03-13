@@ -115,12 +115,22 @@ public class AuthResource {
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode register(MemberDTO user) {
     // Get and check credentials
-    if (user == null || user.getPassword() == null || user.getPassword().isBlank()
-        || user.getUsername() == null || user.getUsername().isBlank()) {
-      throw new WebApplicationException("login or password required", Response.Status.BAD_REQUEST);
+    if (user == null) {
+      throw new WebApplicationException("Manque d'informations obligatoires",
+          Response.Status.BAD_REQUEST);
     }
+    if (user.getUsername() == null || user.getUsername().isBlank() || user.getPassword() == null ||
+        user.getPassword().isBlank() || user.getFirstname() == null || user.getFirstname().isBlank()
+        || user.getLastname() == null || user.getLastname().isBlank()
+    ) {
+      throw new WebApplicationException("Le pseudonyme, le nom, le prénom, et le mot de passe"
+          + " doivent être remplis",
+          Response.Status.BAD_REQUEST);
+    }
+
     // Try to login
     ObjectNode publicUser = memberUCC.register(user);
+
     if (publicUser == null) {
       throw new WebApplicationException("this resource already exists", Response.Status.CONFLICT);
     }
