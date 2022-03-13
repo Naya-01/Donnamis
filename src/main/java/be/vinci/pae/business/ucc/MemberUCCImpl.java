@@ -64,8 +64,8 @@ public class MemberUCCImpl implements MemberUCC {
    * @return token for the user.
    */
   @Override
-  public ObjectNode register(MemberDTO user) {
-
+  public ObjectNode register(MemberDTO member) {
+    memberDAO.addOneMember(member);
     return null;
   }
 }

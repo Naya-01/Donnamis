@@ -28,5 +28,5 @@ public interface MemberUCC {
    * @param user : User object with all information.
    * @return token for the user.
    */
-  ObjectNode register(MemberDTO user);
+  ObjectNode register(MemberDTO member);
 }
