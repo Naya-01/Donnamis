@@ -1,6 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
