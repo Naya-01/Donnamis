@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,7 +132,7 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
     String query = "UPDATE donnamis.offers SET time_slot = ? "
-        + "WHERE id_offer = ? RETURNING id_offer, time_slot";
+        + "WHERE id_offer = ? RETURNING id_offer, time_slot, id_object";
 
     try {
       PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
@@ -146,6 +147,7 @@ public class OfferDAOImpl implements OfferDAO {
 
       offerDTO.setIdOffer(resultSet.getInt(1));
       offerDTO.setTimeSlot(resultSet.getString(2));
+      offerDTO.getObject().setIdObject(resultSet.getInt(3));
       return offerDTO;
     } catch (SQLException e) {
       e.printStackTrace();

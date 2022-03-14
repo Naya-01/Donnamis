@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -96,6 +97,7 @@ public class OfferUCCImpl implements OfferUCC {
       throw new WebApplicationException("Problème lors de la mise à jour du time slot",
           Response.Status.BAD_REQUEST);
     }
+    objectDAO.updateOne(offerDTO.getObject());
     return offer;
   }
 }

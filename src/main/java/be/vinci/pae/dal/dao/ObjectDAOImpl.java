@@ -137,14 +137,13 @@ public class ObjectDAOImpl implements ObjectDAO {
             + "SET id_type = ?,"
             + " description = ?,"
             + " image = ?"
-            + "WHERE id_offeror = ? AND id_object = ?");
+            + "WHERE id_object = ?");
 
     try {
       preparedStatement.setInt(1,objectDTO.getIdType());
       preparedStatement.setString(2,objectDTO.getDescription());
       preparedStatement.setBytes(3,objectDTO.getImage());
-      preparedStatement.setInt(4,objectDTO.getIdOfferor());
-      preparedStatement.setInt(5,objectDTO.getIdObject());
+      preparedStatement.setInt(4,objectDTO.getIdObject());
 
       preparedStatement.executeQuery();
 

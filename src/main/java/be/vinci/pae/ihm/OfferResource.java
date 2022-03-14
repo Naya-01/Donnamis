@@ -106,7 +106,9 @@ public class OfferResource {
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO updateOffer(OfferDTO offerDTO) {
     if (offerDTO.getIdOffer() == 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
-        .isEmpty()) {
+        .isEmpty() || offerDTO.getObject() == null || offerDTO.getObject().getDescription() == null
+        || offerDTO.getObject().getDescription().isEmpty()
+        || offerDTO.getObject().getIdType() == null || offerDTO.getObject().getIdType() <= 0) {
       throw new WebApplicationException("Bad json offer sent",
           Response.Status.BAD_REQUEST);
     }

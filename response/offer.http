@@ -57,7 +57,7 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/1
+GET {{baseUri}}/offers/getById/4
 Authorization: {{refresh}}
 
 ### Update time slot of a offer
@@ -66,6 +66,10 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 1,
-  "timeSlot": "qtv"
+  "idOffer": 4,
+  "timeSlot": "Je suis disponible le dimanche soir",
+  "object": {
+    "description": "Jouet playmobil",
+    "idType": 2
+  }
 }

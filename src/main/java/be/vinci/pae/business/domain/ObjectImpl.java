@@ -1,6 +1,7 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import java.util.Arrays;
 
 public class ObjectImpl implements ObjectDTO {
 
@@ -71,4 +72,15 @@ public class ObjectImpl implements ObjectDTO {
     this.idOfferor = idOfferor;
   }
 
+  @Override
+  public String toString() {
+    return "ObjectImpl{" +
+        "idObject=" + idObject +
+        ", idType=" + idType +
+        ", description='" + description + '\'' +
+        ", status='" + status + '\'' +
+        ", image=" + Arrays.toString(image) +
+        ", idOfferor=" + idOfferor +
+        '}';
+  }
 }
