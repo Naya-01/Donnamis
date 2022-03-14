@@ -147,20 +147,5 @@ public class MemberImpl implements Member {
   public String hashPassword(String password) {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
-
-  @Override
-  public String toString() {
-    return "MemberImpl{" +
-        "memberId=" + memberId +
-        ", username='" + username + '\'' +
-        ", lastname='" + lastname + '\'' +
-        ", firstname='" + firstname + '\'' +
-        ", status='" + status + '\'' +
-        ", role='" + role + '\'' +
-        ", phone='" + phone + '\'' +
-        ", reasonRefusal='" + reasonRefusal + '\'' +
-        ", password='" + password + '\'' +
-        ", address=" + address +
-        '}';
-  }
+  
 }

@@ -82,17 +82,5 @@ public class AddressImpl implements AddressDTO {
   public void setCountry(String country) {
     this.country = country;
   }
-
-  @Override
-  public String toString() {
-    return "AddressImpl{" +
-        "idMember=" + idMember +
-        ", unitNumber='" + unitNumber + '\'' +
-        ", buildingNumber='" + buildingNumber + '\'' +
-        ", street='" + street + '\'' +
-        ", postcode='" + postcode + '\'' +
-        ", commune='" + commune + '\'' +
-        ", country='" + country + '\'' +
-        '}';
-  }
+  
 }
