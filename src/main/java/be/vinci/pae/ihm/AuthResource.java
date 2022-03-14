@@ -135,16 +135,19 @@ public class AuthResource {
    * Get all subscription requests according to their status. Need admin rights
    *
    * @param request to get information request
-   * @param status the status subscription members
+   * @param status  the status subscription members
    * @return a list of memberDTO
    */
   @GET
   @Authorize
   @Path("/subscriptions/{status}")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getRefusedInscriptionRequest(@Context ContainerRequest request, @PathParam("status") String status) {
+  public List<MemberDTO> getRefusedInscriptionRequest(@Context ContainerRequest request,
+      @PathParam("status") String status) {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    if (!memberDTO.getRole().equals("administrator")) throw new UnauthorizedException("Need admin right");
+    if (!memberDTO.getRole().equals("administrator")) {
+      throw new UnauthorizedException("Need admin right");
+    }
     return memberUCC.getInscriptionRequest(status);
   }
 }

@@ -70,4 +70,5 @@ public class ObjectImpl implements ObjectDTO {
   public void setIdOfferor(int idOfferor) {
     this.idOfferor = idOfferor;
   }
+
 }

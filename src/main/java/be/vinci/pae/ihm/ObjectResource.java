@@ -78,7 +78,6 @@ public class ObjectResource {
       throw new WebApplicationException("Pseudonyme ou mot de passe requis",
           Response.Status.BAD_REQUEST);
     }
-    System.out.println("fesfs");
     return objectUCC.addOne(objectDTO);
   }
 

@@ -27,3 +27,35 @@ Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 Authorization: {{refresh}}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+               "idObject": 1
+            }
+}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+    "idType": 1,
+    "description": "description oklm",
+    "status": "published",
+    "image": null,
+    "idOfferor": 1
+  }
+}
+
+### Get offer by id
+GET {{baseUri}}/offers/getById/1
+Authorization: {{refresh}}
