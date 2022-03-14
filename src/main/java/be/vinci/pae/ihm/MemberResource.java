@@ -46,7 +46,7 @@ public class MemberResource {
   }
 
   /**
-   * Promote a member to admin status with his id
+   * Promote a member to admin status with his id.
    *
    * @param json to get id of the member to promote
    */
@@ -65,7 +65,7 @@ public class MemberResource {
   }
 
   /**
-   * Confirm the registration of the member
+   * Confirm the registration of the member.
    *
    * @param json to get id of the member to promote
    */
@@ -84,7 +84,7 @@ public class MemberResource {
   }
 
   /**
-   * Decline the registration of the member
+   * Decline the registration of the member.
    *
    * @param json to get id of the member to promote
    */

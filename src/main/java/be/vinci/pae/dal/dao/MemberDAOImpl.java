@@ -73,7 +73,8 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public void declineRegistration(int id, String reason) {
-    String query = "UPDATE donnamis.members SET status='denied' , refusal_reason=? WHERE id_member=?";
+    String query = "UPDATE donnamis.members SET status='denied' , "
+        + "refusal_reason=? WHERE id_member=?";
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.setString(1, reason);
       preparedStatement.setInt(2, id);
