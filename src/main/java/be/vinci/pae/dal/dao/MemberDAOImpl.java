@@ -78,9 +78,8 @@ public class MemberDAOImpl implements MemberDAO {
       memberDTO.setRole(resultSet.getString(6));
       memberDTO.setPhone(resultSet.getString(7));
       memberDTO.setPassword(resultSet.getString(8));
-      // TODO : set the address
       memberDTO.setReasonRefusal(resultSet.getString(9));
-
+      preparedStatement.close();
       return memberDTO;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -123,6 +122,7 @@ public class MemberDAOImpl implements MemberDAO {
       //update memberDTO
       member.setMemberId(idNewMember);
 
+      preparedStatement.close();
       return member;
 
     } catch (SQLException e) {

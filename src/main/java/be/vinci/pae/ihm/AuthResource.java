@@ -1,3 +1,4 @@
+// source regex : https://ihateregex.io/expr/phone/
 package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
@@ -19,6 +20,8 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -114,33 +117,44 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode register(MemberDTO member) {
-    // Get and check credentials
-    if (member == null) {
+    // Check if there is a member, and then if there is an address
+    if (member == null || member.getAddress() == null) {
       throw new WebApplicationException("Manque d'informations obligatoires",
           Response.Status.BAD_REQUEST);
     }
-    System.out.println("print 1 : " + member);
+
+    // Check is Not Null are not null nor blank
     if (member.getUsername() == null || member.getUsername().isBlank()
-        || member.getPassword() == null
-        || member.getPassword().isBlank() || member.getFirstname() == null
-        || member.getFirstname().isBlank() || member.getLastname() == null
-        || member.getLastname().isBlank()
+        || member.getPassword() == null || member.getPassword().isBlank()
+        || member.getFirstname() == null || member.getFirstname().isBlank()
+        || member.getLastname() == null || member.getLastname().isBlank()
+        || member.getAddress().getBuildingNumber() == null
+        || member.getAddress().getBuildingNumber().isBlank()
+        || member.getAddress().getStreet() == null || member.getAddress().getStreet().isBlank()
+        || member.getAddress().getPostcode() == null || member.getAddress().getPostcode().isBlank()
+        || member.getAddress().getCommune() == null || member.getAddress().getCommune().isBlank()
+        || member.getAddress().getCountry() == null || member.getAddress().getCountry().isBlank()
     ) {
-      throw new WebApplicationException("Le pseudonyme, le nom, le prénom, et le mot de passe"
-          + " doivent être remplis",
+      throw new WebApplicationException("Veuillez remplir tous les champs obligatoires",
           Response.Status.BAD_REQUEST);
     }
-    System.out.println("print 2 : " + member);
+
+    // Check the number phone if is valid
+    Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$");
+    Matcher matcher = pattern.matcher(member.getPhone());
+    if (!matcher.find()) {
+      throw new WebApplicationException("Numéro de GSM invalide",
+          Response.Status.BAD_REQUEST);
+    }
+
     MemberDTO memberDTO = memberUCC.register(member);
     if (memberDTO == null) {
       throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
     }
-    System.out.println("print 3 : " + memberDTO);
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
-    String refreshToken = accessToken;
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
-        .put("refresh_token", refreshToken)
+        .put("refresh_token", accessToken)
         .putPOJO("member", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
 
   }

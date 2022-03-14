@@ -82,6 +82,7 @@ public class MemberUCCImpl implements MemberUCC {
         member.hashPassword(memberDTO.getPassword())); //hashPassword of the member
     memberDTO.setStatus("pending");
     memberDTO.setRole("member");
+    memberDTO.setReasonRefusal(null);
 
     //add the member
     MemberDTO memberFromDao = memberDAO.createOneMember(memberDTO);
@@ -91,6 +92,10 @@ public class MemberUCCImpl implements MemberUCC {
     }
 
     AddressDTO addressOfMember = memberDTO.getAddress();
+    //add the address
+    if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().isBlank()) {
+      addressOfMember.setUnitNumber(null);
+    }
     addressOfMember.setIdMember(memberFromDao.getMemberId());
     //add the address
     AddressDTO addressDTO = addressDAO.createOne(addressOfMember);

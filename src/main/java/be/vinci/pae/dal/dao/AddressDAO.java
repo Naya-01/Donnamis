@@ -20,10 +20,10 @@ public interface AddressDAO {
       String postcode, String commune, String country);
 
   /**
-   * Add an address
+   * Add an address.
    *
-   * @param addressDTO : address to add in the DB
-   * @return addressDTO added
+   * @param addressDTO : address to add in the DB.
+   * @return addressDTO added.
    */
   AddressDTO createOne(AddressDTO addressDTO);
 }

@@ -67,10 +67,10 @@ public class AddressDAOImpl implements AddressDAO {
   }
 
   /**
-   * Add an address
+   * Add an address.
    *
-   * @param addressDTO : address to add in the DB
-   * @return addressDTO added
+   * @param addressDTO : address to add in the DB.
+   * @return addressDTO added.
    */
   @Override
   public AddressDTO createOne(AddressDTO addressDTO) {
