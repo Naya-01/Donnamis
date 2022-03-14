@@ -1,6 +1,7 @@
-// source regex : https://ihateregex.io/expr/phone/
+// source regex phone number : https://ihateregex.io/expr/phone/
 package be.vinci.pae.ihm;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -123,7 +124,7 @@ public class AuthResource {
           Response.Status.BAD_REQUEST);
     }
 
-    // Check is Not Null are not null nor blank
+    // Check is Not Null fields are not null nor blank
     if (member.getUsername() == null || member.getUsername().isBlank()
         || member.getPassword() == null || member.getPassword().isBlank()
         || member.getFirstname() == null || member.getFirstname().isBlank()
@@ -139,6 +140,23 @@ public class AuthResource {
           Response.Status.BAD_REQUEST);
     }
 
+    // Check length of Username, Lastname and Firstname fields (member)
+    if (member.getUsername().length() > 50) {
+      throw new WebApplicationException(
+          "Le pseudonyme dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+    if (member.getLastname().length() > 50) {
+      throw new WebApplicationException(
+          "Le nom dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+    if (member.getFirstname().length() > 50) {
+      throw new WebApplicationException(
+          "Le prénom dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+
     // Check the number phone if is valid
     Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$");
     Matcher matcher = pattern.matcher(member.getPhone());
@@ -147,6 +165,46 @@ public class AuthResource {
           Response.Status.BAD_REQUEST);
     }
 
+    // Check length of address fields
+    AddressDTO addressOfMember = member.getAddress();
+
+    if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().length() > 15) {
+      throw new WebApplicationException(
+          "La boite de l'adresse dépasse la longueur maximale autorisée "
+              + "(15 caractères max compris)", Response.Status.BAD_REQUEST);
+    }
+
+    if (addressOfMember.getBuildingNumber().length() > 8) {
+      throw new WebApplicationException(
+          "Le numéro de l'adresse dépasse la longueur maximale autorisée "
+              + "(8 caractères max compris)", Response.Status.BAD_REQUEST);
+    }
+
+    if (addressOfMember.getStreet().length() > 50) {
+      throw new WebApplicationException(
+          "Le nom de rue dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+
+    if (addressOfMember.getPostcode().length() > 15) {
+      throw new WebApplicationException(
+          "Le code postal dépasse la longueur maximale autorisée (15 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+
+    if (addressOfMember.getCommune().length() > 50) {
+      throw new WebApplicationException(
+          "La commune dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+
+    if (addressOfMember.getCountry().length() > 50) {
+      throw new WebApplicationException(
+          "Le pays dépasse la longueur maximale autorisée (50 caractères max compris)",
+          Response.Status.BAD_REQUEST);
+    }
+
+    // Register the member
     MemberDTO memberDTO = memberUCC.register(member);
     if (memberDTO == null) {
       throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
