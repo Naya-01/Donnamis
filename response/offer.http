@@ -59,3 +59,13 @@ Content-Type: application/json
 ### Get offer by id
 GET {{baseUri}}/offers/getById/1
 Authorization: {{refresh}}
+
+### Update time slot of a offer
+POST {{baseUri}}/offers/update
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 1,
+  "timeSlot": "qtv"
+}

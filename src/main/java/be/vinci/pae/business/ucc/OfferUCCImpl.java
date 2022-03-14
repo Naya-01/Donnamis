@@ -82,4 +82,20 @@ public class OfferUCCImpl implements OfferUCC {
     }
     return offer;
   }
+
+  /**
+   * Update the time slot of an offer or an errorcode.
+   *
+   * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
+   * @return an offerDTO with the id and the new time slot
+   */
+  @Override
+  public OfferDTO updateOffer(OfferDTO offerDTO) {
+    OfferDTO offer = offerDAO.updateOne(offerDTO);
+    if (offer == null) {
+      throw new WebApplicationException("Problème lors de la mise à jour du time slot",
+          Response.Status.BAD_REQUEST);
+    }
+    return offer;
+  }
 }

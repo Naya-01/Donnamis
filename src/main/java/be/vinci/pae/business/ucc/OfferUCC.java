@@ -35,4 +35,12 @@ public interface OfferUCC {
    * @return the offerDTO added
    */
   OfferDTO addOffer(OfferDTO offerDTO);
+
+  /**
+   * Update the time slot of an offer or an errorcode.
+   *
+   * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
+   * @return an offerDTO with the id and the new time slot
+   */
+  OfferDTO updateOffer(OfferDTO offerDTO);
 }

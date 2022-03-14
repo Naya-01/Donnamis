@@ -92,4 +92,24 @@ public class OfferResource {
     }
     return offerUcc.addOffer(offerDTO);
   }
+
+  /**
+   * Update the time slot of an offer.
+   *
+   * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
+   * @return an offerDTO with the id and the new time slot
+   */
+  @POST
+  @Authorize
+  @Path("/update")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public OfferDTO updateOffer(OfferDTO offerDTO) {
+    if (offerDTO.getIdOffer() == 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
+        .isEmpty()) {
+      throw new WebApplicationException("Bad json offer sent",
+          Response.Status.BAD_REQUEST);
+    }
+    return offerUcc.updateOffer(offerDTO);
+  }
 }

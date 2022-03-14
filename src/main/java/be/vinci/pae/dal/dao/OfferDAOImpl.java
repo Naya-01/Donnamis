@@ -123,6 +123,36 @@ public class OfferDAOImpl implements OfferDAO {
   }
 
   /**
+   * Update the time slot of an offer.
+   *
+   * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
+   * @return an offerDTO with the id and the new time slot or null
+   */
+  @Override
+  public OfferDTO updateOne(OfferDTO offerDTO) {
+    String query = "UPDATE donnamis.offers SET time_slot = ? WHERE id_offer = ? RETURNING id_offer, time_slot";
+
+    try {
+      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      preparedStatement.setString(1, offerDTO.getTimeSlot());
+      preparedStatement.setInt(2, offerDTO.getIdOffer());
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      offerDTO.setIdOffer(resultSet.getInt(1));
+      offerDTO.setTimeSlot(resultSet.getString(2));
+      return offerDTO;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
    * Get a list of offers according to the query.
    *
    * @param query a query that match with the pattern :

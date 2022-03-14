@@ -35,4 +35,12 @@ public interface OfferDAO {
    * @return the offerDTO added
    */
   OfferDTO addOne(OfferDTO offerDTO);
+
+  /**
+   * Update the time slot of an offer.
+   *
+   * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
+   * @return an offerDTO with the id and the new time slot or null
+   */
+  OfferDTO updateOne(OfferDTO offerDTO);
 }
