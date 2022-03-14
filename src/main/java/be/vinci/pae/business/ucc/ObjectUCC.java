@@ -22,4 +22,6 @@ public interface ObjectUCC {
   List<ObjectDTO> getAllObjectMember(int idMember);
 
   ObjectDTO addOne(ObjectDTO objectDTO);
+
+  ObjectDTO updateOne(ObjectDTO objectDTO);
 }

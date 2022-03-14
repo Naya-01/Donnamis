@@ -124,6 +124,44 @@ public class ObjectDAOImpl implements ObjectDAO {
     return objectDTO;
   }
 
+  /**
+   * Update an object.
+   *
+   * @param objectDTO : object that we want to update.
+   * @return object updated
+   */
+  @Override
+  public ObjectDTO updateOne(ObjectDTO objectDTO){
+    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+        "UPDATE donnamis.objects "
+            + "SET id_type = ?,"
+            + " description = ?,"
+            + " image = ?"
+            + "WHERE id_offeror = ? AND id_object = ?");
+
+    try {
+      preparedStatement.setInt(1,objectDTO.getIdType());
+      preparedStatement.setString(2,objectDTO.getDescription());
+      preparedStatement.setBytes(3,objectDTO.getImage());
+      preparedStatement.setInt(4,objectDTO.getIdOfferor());
+      preparedStatement.setInt(5,objectDTO.getIdObject());
+
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      setObject(objectDTO,resultSet);
+      resultSet.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    return objectDTO;
+  }
+
   private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList)
       throws SQLException {
     preparedStatement.executeQuery();
