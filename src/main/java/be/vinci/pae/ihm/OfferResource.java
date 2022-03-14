@@ -83,7 +83,8 @@ public class OfferResource {
       throw new WebApplicationException("Timeslot or object incorrect",
           Response.Status.BAD_REQUEST);
     }
-    if (offerDTO.getObject().getIdObject() == null && (offerDTO.getObject().getIdType() == null
+    if (offerDTO.getObject().getIdObject() == null && (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() <= 0
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
         .isEmpty() || offerDTO.getObject().getIdOfferor() == null)) {
@@ -108,7 +109,8 @@ public class OfferResource {
     if (offerDTO.getIdOffer() == 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
         .isEmpty() || offerDTO.getObject() == null || offerDTO.getObject().getDescription() == null
         || offerDTO.getObject().getDescription().isEmpty()
-        || offerDTO.getObject().getIdType() == null || offerDTO.getObject().getIdType() <= 0) {
+        || offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() <= 0) {
       throw new WebApplicationException("Bad json offer sent",
           Response.Status.BAD_REQUEST);
     }

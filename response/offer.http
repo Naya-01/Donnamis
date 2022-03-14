@@ -48,7 +48,9 @@ Content-Type: application/json
 {
   "timeSlot": "time slot test",
   "object": {
-    "idType": 1,
+    "type": {
+      "idType": 4
+    },
     "description": "description oklm",
     "status": "published",
     "image": null,
@@ -57,7 +59,7 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/4
+GET {{baseUri}}/offers/getById/5
 Authorization: {{refresh}}
 
 ### Update time slot of a offer
@@ -67,9 +69,11 @@ Content-Type: application/json
 
 {
   "idOffer": 4,
-  "timeSlot": "Je suis disponible le dimanche soir",
+  "timeSlot": "Je suis disponible le lundi soir",
   "object": {
-    "description": "Jouet playmobil",
-    "idType": 2
+    "description": "Jouet coquin :3",
+    "type": {
+      "idType": 1
+    }
   }
 }

@@ -104,7 +104,7 @@ public class ObjectDAOImpl implements ObjectDAO {
 
     try {
       PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
-      preparedStatement.setObject(1, objectDTO.getIdType());
+      preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
       preparedStatement.setString(3, objectDTO.getStatus());
       preparedStatement.setBytes(4, objectDTO.getImage());
@@ -140,7 +140,7 @@ public class ObjectDAOImpl implements ObjectDAO {
             + "WHERE id_object = ?");
 
     try {
-      preparedStatement.setInt(1,objectDTO.getIdType());
+      preparedStatement.setInt(1,objectDTO.getType().getIdType());
       preparedStatement.setString(2,objectDTO.getDescription());
       preparedStatement.setBytes(3,objectDTO.getImage());
       preparedStatement.setInt(4,objectDTO.getIdObject());
@@ -179,7 +179,6 @@ public class ObjectDAOImpl implements ObjectDAO {
   private void setObject(ObjectDTO objectDTO, ResultSet resultSet) {
     try {
       objectDTO.setIdObject(resultSet.getInt(1));
-      objectDTO.setIdType(0);
       objectDTO.setDescription(resultSet.getString(3));
       objectDTO.setStatus(resultSet.getString(4));
       objectDTO.setImage(resultSet.getBytes(5));

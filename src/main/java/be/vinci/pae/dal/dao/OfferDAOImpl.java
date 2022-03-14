@@ -2,8 +2,10 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
+import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -16,10 +18,13 @@ public class OfferDAOImpl implements OfferDAO {
 
   @Inject
   private DALService dalService;
+
   @Inject
   private OfferFactory offerFactory;
   @Inject
   private ObjectFactory objectFactory;
+  @Inject
+  private TypeFactory typeFactory;
 
   /**
    * Get all offers that match with the search pattern.
@@ -185,6 +190,7 @@ public class OfferDAOImpl implements OfferDAO {
     try {
       List<OfferDTO> listOfferDTO = new ArrayList<>();
       while (resultSet.next()) {
+
         OfferDTO offerDTO = offerFactory.getOfferDTO();
         offerDTO.setIdOffer(resultSet.getInt(1));
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
@@ -192,7 +198,11 @@ public class OfferDAOImpl implements OfferDAO {
 
         ObjectDTO objectDTO = objectFactory.getObjectDTO();
         objectDTO.setIdObject(resultSet.getInt(4));
-        objectDTO.setIdType(resultSet.getInt(5));
+
+        TypeDTO typeDTO = typeFactory.getTypeDTO();
+        typeDTO.setId(resultSet.getInt(5));
+        objectDTO.setType(typeDTO);
+
         objectDTO.setDescription(resultSet.getString(6));
         objectDTO.setStatus(resultSet.getString(7));
         objectDTO.setImage(resultSet.getBytes(8));
