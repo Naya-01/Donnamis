@@ -23,3 +23,7 @@ client.global.set("refresh", response.body.refresh_token);
 ###
 GET {{baseUri}}/offers/all?search-pattern=t
 Authorization: {{refresh}}
+
+###
+GET {{baseUri}}/offers/lasts
+Authorization: {{refresh}}

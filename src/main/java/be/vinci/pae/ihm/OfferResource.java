@@ -3,8 +3,6 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.ihm.filters.Authorize;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.DefaultValue;
@@ -19,8 +17,6 @@ import java.util.List;
 @Path("/offers")
 public class OfferResource {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
-
   @Inject
   private OfferUCC offerUcc;
 
@@ -29,20 +25,27 @@ public class OfferResource {
    * Get all the offers that matche with a search pattern.
    *
    * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a json object of all offerDTO that match with the search pattern
+   * @return a list of all offerDTO that match with the search pattern
    */
   @GET
   @Path("/all")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getOffers(
+  public List<OfferDTO> getOffers(
       @DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
-    List<OfferDTO> offerDTOList = offerUcc.getAllPosts(searchPattern);
-    ObjectNode objectNode = jsonMapper.createObjectNode();
-    for (OfferDTO offerDTO : offerDTOList) {
-      objectNode.putPOJO(String.valueOf(offerDTO.getIdOffer()), offerDTO);
-    }
-    // test
-    return objectNode;
+    return offerUcc.getAllPosts(searchPattern);
+  }
+
+  /**
+   * Get the last six offers posted.
+   *
+   * @return a list of six offerDTO
+   */
+  @GET
+  @Path("/lasts")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<OfferDTO> getLastOffers() {
+    return offerUcc.getLastOffers();
   }
 }

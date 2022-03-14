@@ -2,10 +2,8 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
-import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -22,8 +20,6 @@ public class OfferDAOImpl implements OfferDAO {
   private OfferFactory offerFactory;
   @Inject
   private ObjectFactory objectFactory;
-  @Inject
-  private TypeFactory typeFactory;
 
   /**
    * Get all offers that match with the search pattern.
@@ -45,19 +41,41 @@ public class OfferDAOImpl implements OfferDAO {
           "AND (ob.status LIKE '%" + searchPattern + "%' OR o.time_slot LIKE '%" + searchPattern
               + "%')";
     }
+    return getOffers(query);
+  }
 
+  /**
+   * Get the last six offers posted.
+   *
+   * @return a list of six offerDTO
+   */
+  @Override
+  public List<OfferDTO> getAllLast() {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
+        + "ob.id_object, id_type, description, status, image, id_offeror "
+        + "FROM donnamis.offers of, donnamis.objects ob "
+        + "WHERE of.id_object = ob.id_object ORDER BY of.date DESC LIMIT 6";
+
+    return getOffers(query);
+  }
+
+
+  /**
+   * Get a list of offers according to the query.
+   *
+   * @param query a query that match with the pattern :
+   *     SELECT of.id_offer, of.date, of.time_slot, of.id_object,
+   *     ob.id_object, id_type, description, status, image, id_offeror
+   *     FROM donnamis.offers of, donnamis.objects ob
+   *
+   * @return a list of six offerDTO
+   */
+  public List<OfferDTO> getOffers(String query) {
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
-
       ResultSet resultSet = preparedStatement.getResultSet();
       List<OfferDTO> listOfferDTO = new ArrayList<>();
-
       while (resultSet.next()) {
-        TypeDTO typeDTO = typeFactory.getTypeDTO();
-        typeDTO.setId(resultSet.getInt(10));
-        typeDTO.setIsDefault(resultSet.getBoolean(11));
-        typeDTO.setTypeName(resultSet.getString(12));
-
         OfferDTO offerDTO = offerFactory.getOfferDTO();
         offerDTO.setIdOffer(resultSet.getInt(1));
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
@@ -65,13 +83,14 @@ public class OfferDAOImpl implements OfferDAO {
 
         ObjectDTO objectDTO = objectFactory.getObjectDTO();
         objectDTO.setIdObject(resultSet.getInt(4));
-        objectDTO.setIdType(typeDTO.getIdType());
+        objectDTO.setIdType(resultSet.getInt(5));
         objectDTO.setDescription(resultSet.getString(6));
         objectDTO.setStatus(resultSet.getString(7));
         objectDTO.setImage(resultSet.getBytes(8));
         objectDTO.setIdOfferor(resultSet.getInt(9));
 
         offerDTO.setObject(objectDTO);
+
         listOfferDTO.add(offerDTO);
       }
       return listOfferDTO;
@@ -80,5 +99,4 @@ public class OfferDAOImpl implements OfferDAO {
     }
     return null;
   }
-
 }
