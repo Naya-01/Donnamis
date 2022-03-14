@@ -6,28 +6,32 @@ public interface MemberDAO {
 
   /**
    * Promote the member with his id to the admin status
+   *
    * @param id of the member
    */
   void promoteAdministrator(int id);
 
   /**
    * Confirm the registration of the member and remove his precedent reason.
+   *
    * @param id of the member
    */
   void confirmDeniedMemberRegistration(int id);
 
   /**
    * Confirm the registration of the member with his id
+   *
    * @param id of the member
    */
   void confirmRegistration(int id);
 
   /**
    * Decline the registration of a member with his id and the reason
-   * @param id of the member
+   *
+   * @param id     of the member
    * @param reason for denial
    */
-  void declineRegistration(int id,String reason);
+  void declineRegistration(int id, String reason);
 
   /**
    * Get a member we want to retrieve by his username.

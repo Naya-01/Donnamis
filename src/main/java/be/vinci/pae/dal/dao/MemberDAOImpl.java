@@ -24,10 +24,10 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void promoteAdministrator(int id) {
     String query = "UPDATE donnamis.members SET role='administrator' WHERE id_member=?";
-    try(PreparedStatement preparedStatement = dalService.getPreparedStatement(query)){
-      preparedStatement.setInt(1,id);
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
     }
   }
@@ -40,10 +40,10 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void confirmDeniedMemberRegistration(int id) {
     String query = "UPDATE donnamis.members SET refusal_reason = NULL WHERE id_member=?";
-    try(PreparedStatement preparedStatement = dalService.getPreparedStatement(query)){
-      preparedStatement.setInt(1,id);
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
     }
     confirmRegistration(id);
@@ -57,10 +57,10 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void confirmRegistration(int id) {
     String query = "UPDATE donnamis.members SET status='valid' WHERE id_member=?";
-    try(PreparedStatement preparedStatement = dalService.getPreparedStatement(query)){
-      preparedStatement.setInt(1,id);
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
     }
   }
@@ -74,11 +74,11 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void declineRegistration(int id, String reason) {
     String query = "UPDATE donnamis.members SET status='denied' , refusal_reason=? WHERE id_member=?";
-    try(PreparedStatement preparedStatement = dalService.getPreparedStatement(query)){
-      preparedStatement.setString(1,reason);
-      preparedStatement.setInt(2,id);
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setString(1, reason);
+      preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
     }
   }

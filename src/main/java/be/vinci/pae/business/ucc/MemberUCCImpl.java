@@ -64,9 +64,9 @@ public class MemberUCCImpl implements MemberUCC {
   @Override
   public void confirmRegistration(int id) {
     MemberDTO memberDTO = memberDAO.getOne(id);
-    if(memberDTO.getStatus().equals("denied")){
+    if (memberDTO.getStatus().equals("denied")) {
       memberDAO.confirmDeniedMemberRegistration(id);
-    }else{
+    } else {
       memberDAO.confirmRegistration(id);
     }
 
@@ -81,8 +81,10 @@ public class MemberUCCImpl implements MemberUCC {
   @Override
   public void declineRegistration(int id, String reason) {
     MemberDTO memberDTO = memberDAO.getOne(id);
-    if(memberDTO.getStatus().equals("valid"))throw new UnauthorizedException("Vous ne pouvez pas modifier un membre déjà validé");
-    memberDAO.declineRegistration(id,reason);
+    if (memberDTO.getStatus().equals("valid")) {
+      throw new UnauthorizedException("Vous ne pouvez pas modifier un membre déjà validé");
+    }
+    memberDAO.declineRegistration(id, reason);
   }
 
   /**
@@ -93,7 +95,7 @@ public class MemberUCCImpl implements MemberUCC {
   @Override
   public void promoteAdministrator(int id) {
     MemberDTO memberDTO = memberDAO.getOne(id);
-    if(memberDTO.getStatus().equals("administrator")){
+    if (memberDTO.getStatus().equals("administrator")) {
       // Check if the exception is the good one
       throw new ForbiddenException("Already administrator");
     }
