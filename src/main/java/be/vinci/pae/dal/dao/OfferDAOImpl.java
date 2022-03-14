@@ -59,6 +59,42 @@ public class OfferDAOImpl implements OfferDAO {
     return getOffers(query);
   }
 
+  /**
+   * Add an offer in the db.
+   *
+   * @param offerDTO an offer we want to add in the db
+   * @return the offerDTO added
+   */
+  @Override
+  public OfferDTO addOne(OfferDTO offerDTO) {
+    String query = "INSERT INTO donnamis.offers (date, time_slot, id_object) "
+        + "VALUES (NOW(), ?, ?) "
+        + "RETURNING id_offer, date, time_slot, id_object";
+
+    try {
+      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      preparedStatement.setString(1, offerDTO.getTimeSlot());
+      preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
+
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      offerDTO.setIdOffer(resultSet.getInt(1));
+      offerDTO.setDate(resultSet.getDate(2).toLocalDate());
+      offerDTO.setTimeSlot(resultSet.getString(3));
+      offerDTO.getObject().setIdObject(resultSet.getInt(4));
+      return offerDTO;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
 
   /**
    * Get a list of offers according to the query.

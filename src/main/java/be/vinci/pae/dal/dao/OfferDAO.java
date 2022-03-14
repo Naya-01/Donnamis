@@ -20,4 +20,11 @@ public interface OfferDAO {
    */
   List<OfferDTO> getAllLast();
 
+  /**
+   * Add an offer in the db.
+   *
+   * @param offerDTO an offer we want to add in the db
+   * @return the offerDTO added
+   */
+  OfferDTO addOne(OfferDTO offerDTO);
 }

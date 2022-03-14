@@ -20,4 +20,11 @@ public interface OfferUCC {
    */
   List<OfferDTO> getLastOffers();
 
+  /**
+   * Add an offer in the db with out without an object.
+   *
+   * @param offerDTO an offer we want to add in the db
+   * @return the offerDTO added
+   */
+  OfferDTO addOffer(OfferDTO offerDTO);
 }
