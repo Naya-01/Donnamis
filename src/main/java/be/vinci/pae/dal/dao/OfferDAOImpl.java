@@ -77,7 +77,9 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
 
       List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
-      if (offerDTOList == null || offerDTOList.size() != 1) return null;
+      if (offerDTOList == null || offerDTOList.size() != 1) {
+        return null;
+      }
       return offerDTOList.get(0);
     } catch (SQLException e) {
       e.printStackTrace();
