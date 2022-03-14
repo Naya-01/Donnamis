@@ -80,7 +80,7 @@ const MyObjectPage = async () => {
 }
 
 /**
- * Send to the backend all informations to create an object
+ * Change the elements of the html to have a text or a form.
  * @param {Event} e : evenement
  */
 async function changeToFormOrText(e) {
