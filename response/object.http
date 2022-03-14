@@ -32,3 +32,17 @@ Authorization: {{token}}
   "image": null,
   "idOfferor": 1
 }
+
+### update an object
+PUT {{baseUri}}/object/update
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 15,
+  "idType": 1,
+  "description": "test",
+  "status": "available",
+  "image": null,
+  "idOfferor": 1
+}

@@ -10,6 +10,7 @@ import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -78,5 +79,20 @@ public class ObjectResource {
           Response.Status.BAD_REQUEST);
     }
     return objectUCC.addOne(objectDTO);
+  }
+
+  /**
+   * Update an object with new information in the ObjectDTO.
+   *
+   * @param objectDTO : object that we want to update.
+   * @return : object update
+   */
+  @PUT
+  @Path("/update")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectDTO updateOne(ObjectDTO objectDTO){
+    return objectUCC.updateOne(objectDTO);
   }
 }
