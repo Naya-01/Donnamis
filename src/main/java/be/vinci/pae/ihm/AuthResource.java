@@ -106,30 +106,31 @@ public class AuthResource {
   /**
    * Register a quidam.
    *
-   * @param user : all information of the quidam.
+   * @param member : all information of the quidam.
    * @return a json object that contains the token.
    */
   @POST
   @Path("register")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode register(MemberDTO user) {
+  public ObjectNode register(MemberDTO member) {
     // Get and check credentials
-    if (user == null) {
+    if (member == null) {
       throw new WebApplicationException("Manque d'informations obligatoires",
           Response.Status.BAD_REQUEST);
     }
-    if (user.getUsername() == null || user.getUsername().isBlank() || user.getPassword() == null
-        || user.getPassword().isBlank() || user.getFirstname() == null
-        || user.getFirstname().isBlank() || user.getLastname() == null
-        || user.getLastname().isBlank()
+    if (member.getUsername() == null || member.getUsername().isBlank()
+        || member.getPassword() == null
+        || member.getPassword().isBlank() || member.getFirstname() == null
+        || member.getFirstname().isBlank() || member.getLastname() == null
+        || member.getLastname().isBlank()
     ) {
       throw new WebApplicationException("Le pseudonyme, le nom, le prénom, et le mot de passe"
           + " doivent être remplis",
           Response.Status.BAD_REQUEST);
     }
 
-    MemberDTO memberDTO = memberUCC.register(user);
+    MemberDTO memberDTO = memberUCC.register(member);
     if (memberDTO == null) {
       throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
     }
@@ -139,7 +140,7 @@ public class AuthResource {
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
         .put("refresh_token", refreshToken)
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+        .putPOJO("member", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
 
   }
 }

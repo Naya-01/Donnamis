@@ -42,5 +42,8 @@ public interface MemberDTO {
 
   void setPassword(String password);
 
+  AddressDTO getAddress();
+
+  void setAddress(AddressDTO address);
 
 }
