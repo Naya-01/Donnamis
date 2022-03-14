@@ -2,11 +2,25 @@ import {getSessionObject, setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
 
+const Swal = require('sweetalert2')
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'bottom',
+  showConfirmButton: false,
+  timer: 5000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+
 const htmlPage = `
             <div class="container mt-5">
               <div class="border border-5 border-dark p-5">
                 <div class="row mx-5">
-                  <span class="px-5 vertical-text fs-1">Se connecter</span>
+                  <div class="fs-1 text-center mb-2">Connexion</div>
                 </div>
                 <div class="mx-5">
                   <form>
@@ -26,14 +40,12 @@ const htmlPage = `
                   </form>
                 </div>
               </div>
-              <div class="" id="notif">
-              </div>
             </div>
                   `;
 
 const connectClientAndRedirect = async (username, password, remember) => {
-  let userData;
 
+  let userData;
   try {
     let options = {
       method: "POST",
@@ -49,9 +61,10 @@ const connectClientAndRedirect = async (username, password, remember) => {
     userData = await fetch("/api/auth/login/", options);
     if (!userData.ok) {
       userData.text().then((msg) => {
-        let notif = document.getElementById("notif");
-        notif.className = "alert alert-warning fs-3 text-center";
-        notif.innerHTML = msg;
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        })
       })
     }
   } catch (err) {
@@ -65,6 +78,10 @@ const connectClientAndRedirect = async (username, password, remember) => {
       accessToken: userData.access_token,
     }
 
+    Toast.fire({
+      icon: 'success',
+      title: "Bienvenue !"
+    })
     setSessionObject("user", userLocalStorage);
     await Navbar();
     Redirect("/");
@@ -84,23 +101,31 @@ const LoginPage = () => {
 
   btnSubmit.addEventListener("click", e => {
     e.preventDefault();
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    let username = document.getElementById("username");
+    let password = document.getElementById("password");
+    if (username.classList.contains("border-danger")) {
+      username.classList.remove("border-danger");
+    }
+    if (password.classList.contains("border-danger")) {
+      password.classList.remove("border-danger");
+    }
     let remember = document.getElementById("rememberMe").checked;
-    let notif = document.getElementById("notif");
-    notif.className = "";
-    notif.innerHTML = "";
-    if (username.length === 0 && password.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un pseudonyme et un mot de passe";
-    } else if (username.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un pseudonyme";
-    } else if (password.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un mot de passe";
+    if (username.value.length === 0 || password.value.length === 0) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir les champs obligatoires !'
+      })
+
+      if (password.value.length === 0) {
+        password.classList.add("border-danger");
+      }
+
+      if (username.value.length === 0) {
+        username.classList.add("border-danger");
+      }
+
     } else {
-      connectClientAndRedirect(username, password, remember);
+      connectClientAndRedirect(username.value, password.value, remember);
     }
   })
 

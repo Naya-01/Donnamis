@@ -1,12 +1,3 @@
-
-### disconnect
-GET {{baseUri}}/falseroute
-Content-Type: application/json
-
-> {%
-client.global.clearAll()
-%}
-
 ### login valid
 POST {{baseUri}}/auth/login
 Content-Type: application/json
@@ -23,13 +14,16 @@ client.global.set("refresh", response.body.refresh_token);
 
 
 ###
-GET {{baseUri}}/type/id/4
+POST {{baseUri}}/address/update
 Authorization: {{refresh}}
+Content-Type: application/json
 
-###
-GET {{baseUri}}/type/type_name/Jouets
-Authorization: {{refresh}}
-
-###
-GET {{baseUri}}/type/allDefault
-Authorization: {{refresh}}
+{
+  "idAddress": 1,
+  "unitNumber": "",
+  "buildingNumber": "95",
+  "street": "chaussée de Waterloo",
+  "postcode": "1410",
+  "commune": "Waterloo",
+  "country": "Belgique"
+}

@@ -1,6 +1,7 @@
 package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
@@ -14,11 +15,13 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -101,5 +104,47 @@ public class AuthResource {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+  }
+
+  /**
+   * Register a quidam.
+   *
+   * @param user : all information of the quidam.
+   * @return a json object that contains the token.
+   */
+  @POST
+  @Path("register")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public ObjectNode register(MemberDTO user) {
+    // Get and check credentials
+    if (user == null || user.getPassword() == null || user.getPassword().isBlank()
+        || user.getUsername() == null || user.getUsername().isBlank()) {
+      throw new WebApplicationException("login or password required", Response.Status.BAD_REQUEST);
+    }
+    // Try to login
+    ObjectNode publicUser = memberUCC.register(user);
+    if (publicUser == null) {
+      throw new WebApplicationException("this resource already exists", Response.Status.CONFLICT);
+    }
+    return publicUser;
+
+  }
+
+  /**
+   * Get all subscription requests according to their status. Need admin rights
+   *
+   * @param request to get information request
+   * @param status the status subscription members
+   * @return a list of memberDTO
+   */
+  @GET
+  @Authorize
+  @Path("/subscriptions/{status}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<MemberDTO> getRefusedInscriptionRequest(@Context ContainerRequest request, @PathParam("status") String status) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    if (!memberDTO.getRole().equals("administrator")) throw new UnauthorizedException("Need admin right");
+    return memberUCC.getInscriptionRequest(status);
   }
 }
