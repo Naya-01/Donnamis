@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import java.util.List;
 
 public interface MemberDAO {
 
@@ -36,4 +37,13 @@ public interface MemberDAO {
    */
   MemberDTO addOneMember(String username, String lastname, String firstname, String status,
       String role, String phoneNumber, String password, int idAddress, String refusalReason);
+
+
+  /**
+   * Get all subscription requests according to their status.
+   *
+   * @param status the status subscription members
+   * @return a list of memberDTO
+   */
+  List<MemberDTO> getAllWithSubStatus(String status);
 }

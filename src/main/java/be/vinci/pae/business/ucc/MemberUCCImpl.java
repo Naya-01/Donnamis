@@ -8,6 +8,7 @@ import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.MemberDAO;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
+import java.util.List;
 
 public class MemberUCCImpl implements MemberUCC {
 
@@ -67,5 +68,20 @@ public class MemberUCCImpl implements MemberUCC {
   public ObjectNode register(MemberDTO user) {
 
     return null;
+  }
+
+  /**
+   * Get all subscription requests according to their status.
+   *
+   * @param status the status subscription members
+   * @return a list of memberDTO
+   */
+  @Override
+  public List<MemberDTO> getInscriptionRequest(String status) {
+    List<MemberDTO> memberDTOList = memberDAO.getAllWithSubStatus(status);
+    if (memberDTOList == null || memberDTOList.isEmpty()) {
+      throw new NotFoundException("Aucune requête d'inscription");
+    }
+    return memberDTOList;
   }
 }
