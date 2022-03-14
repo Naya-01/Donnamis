@@ -1,11 +1,13 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.Member;
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.ForbiddenException;
 import be.vinci.pae.business.exceptions.InternalServerErrorException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
+import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import jakarta.inject.Inject;
 
@@ -13,6 +15,9 @@ public class MemberUCCImpl implements MemberUCC {
 
   @Inject
   private MemberDAO memberDAO;
+
+  @Inject
+  private AddressDAO addressDAO;
 
   /**
    * Log in a quidam by a username and a password.
@@ -84,6 +89,12 @@ public class MemberUCCImpl implements MemberUCC {
       throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
           + " données");
     }
+
+    //change the id of the idMember of the address
+    memberFromDao.getAddress().setIdMember(memberFromDao.getMemberId());
+    //add the address
+    AddressDTO addressDTO = addressDAO.createOne(memberFromDao.getAddress());
+    memberFromDao.setAddress(addressDTO);
     return memberFromDao;
   }
 }

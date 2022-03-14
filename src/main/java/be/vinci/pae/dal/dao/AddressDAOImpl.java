@@ -77,33 +77,34 @@ public class AddressDAOImpl implements AddressDAO {
    * @param country        : the name of the country
    * @return the new address for the member
    */
+
+  /**
+   * Add an address
+   *
+   * @param addressDTO : address to add in the DB
+   * @return addressDTO added
+   */
   @Override
-  public AddressDTO createOne(int idMember, String unitNumber, String buildingNumber, String street,
-      String postcode, String commune, String country) {
+  public AddressDTO createOne(AddressDTO addressDTO) {
     // Insert in the db
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "INSERT INTO donnamis.addresses (id_member, unit_member, building_number, street,"
             + " postcode, commune, country)"
             + "VALUES(?,?,?,?,?,?,?)");
     try {
-      preparedStatement.setInt(1, idMember);
-      if (unitNumber.length() == 0) {
-        preparedStatement.setNull(2, java.sql.Types.NULL);
-      } else {
-        preparedStatement.setString(2, unitNumber);
-      }
-      preparedStatement.setString(3, buildingNumber);
-      preparedStatement.setString(4, street);
-      preparedStatement.setString(5, postcode);
-      preparedStatement.setString(6, commune);
-      preparedStatement.setString(7, country);
+      preparedStatement.setInt(1, addressDTO.getIdMember());
+      preparedStatement.setString(2, addressDTO.getUnitNumber());
+      preparedStatement.setString(3, addressDTO.getBuildingNumber());
+      preparedStatement.setString(4, addressDTO.getStreet());
+      preparedStatement.setString(5, addressDTO.getPostCode());
+      preparedStatement.setString(6, addressDTO.getCommune());
+      preparedStatement.setString(7, addressDTO.getCountry());
       preparedStatement.executeQuery();
       preparedStatement.close();
 
-      // Creation of the new Address
-      AddressDTO addressDTO = addressFactory.getAddressDTO();
-      setAddress(addressDTO, idMember, unitNumber, buildingNumber, street, postcode, commune,
-          country);
+      //vérifier s'il a été ajouté
+      //ou mieux de faire getOne dans UCC?
+
       return addressDTO;
     } catch (SQLException e) {
       e.printStackTrace();
