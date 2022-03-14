@@ -122,7 +122,6 @@ public class MemberDAOImpl implements MemberDAO {
       //update memberDTO
       member.setMemberId(idNewMember);
 
-      preparedStatement.close();
       return member;
 
     } catch (SQLException e) {

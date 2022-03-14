@@ -159,11 +159,13 @@ public class AuthResource {
     }
 
     // Check the number phone if is valid
-    Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
-    Matcher matcher = pattern.matcher(member.getPhone());
-    if (!matcher.find()) {
-      throw new WebApplicationException("Numéro de GSM invalide",
-          Response.Status.BAD_REQUEST);
+    if (member.getPhone() != null) {
+      Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
+      Matcher matcher = pattern.matcher(member.getPhone());
+      if (!matcher.find()) {
+        throw new WebApplicationException("Numéro de GSM invalide",
+            Response.Status.BAD_REQUEST);
+      }
     }
 
     // Check length of address fields
