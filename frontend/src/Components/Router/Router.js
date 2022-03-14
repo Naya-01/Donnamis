@@ -2,12 +2,13 @@ import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import Logout from "../Logout/Logout";
 import AddNewObjectPage from "../Pages/AddNewObjectPage";
+import Navbar from "../Navbar/Navbar";
+import MyObjectPage from "../Pages/MyObjectPage";
 import {
   getSessionObject,
   removeSessionObject,
   setSessionObject
 } from "../../utils/session";
-import Navbar from "../Navbar/Navbar";
 import AllObjectsPage from "../Pages/AllObjectsPage";
 import ObjectDetails from "../Pages/ObjectDetails";
 import RegisterPage from "../Pages/RegisterPage";
@@ -21,6 +22,7 @@ const routes = {
   "/logout": Logout,
   "/register": RegisterPage,
   "/addNewObjectPage" : AddNewObjectPage,
+  "/myObjectPage": MyObjectPage
 };
 
 const refreshToken = async () => {
