@@ -1,0 +1,56 @@
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "GaspardDePorto",
+  "password": "gaspardLeLeopard",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### Get user by his token
+POST {{baseUri}}/member/getMemberByToken
+Authorization: {{access}}
+
+### Promote Administrator
+
+POST {{baseUri}}/member/promoteAdministrator
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "id": 2
+}
+
+### Confirm registration
+
+POST {{baseUri}}/member/confirmRegistration
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "id": 1
+}
+
+### Decline registration
+
+POST {{baseUri}}/member/declineRegistration
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "id": 1,
+  "reason": "Test de refus"
+}
