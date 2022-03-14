@@ -55,4 +55,48 @@ public class MemberUCCImpl implements MemberUCC {
     }
     return memberDTO;
   }
+
+  /**
+   * Confirm the registration of the member with his id
+   *
+   * @param id of the member
+   */
+  @Override
+  public void confirmRegistration(int id) {
+    MemberDTO memberDTO = memberDAO.getOne(id);
+    if(memberDTO.getStatus().equals("denied")){
+      memberDAO.confirmDeniedMemberRegistration(id);
+    }else{
+      memberDAO.confirmRegistration(id);
+    }
+
+  }
+
+  /**
+   * Decline the registration of a member with his id and the reason
+   *
+   * @param id     of the member
+   * @param reason for denial
+   */
+  @Override
+  public void declineRegistration(int id, String reason) {
+    MemberDTO memberDTO = memberDAO.getOne(id);
+    if(memberDTO.getStatus().equals("valid"))throw new UnauthorizedException("Vous ne pouvez pas modifier un membre déjà validé");
+    memberDAO.declineRegistration(id,reason);
+  }
+
+  /**
+   * Promote the member with his id to the admin status
+   *
+   * @param id of the member
+   */
+  @Override
+  public void promoteAdministrator(int id) {
+    MemberDTO memberDTO = memberDAO.getOne(id);
+    if(memberDTO.getStatus().equals("administrator")){
+      // Check if the exception is the good one
+      throw new ForbiddenException("Already administrator");
+    }
+    memberDAO.promoteAdministrator(id);
+  }
 }
