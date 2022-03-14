@@ -17,7 +17,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 
   /**
-   * Promote the member with his id to the admin status
+   * Promote the member with his id to the admin status.
    *
    * @param id of the member
    */
@@ -50,7 +50,7 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Confirm the registration of the member with his id
+   * Confirm the registration of the member with his id.
    *
    * @param id of the member
    */
@@ -66,7 +66,7 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Decline the registration of a member with his id and the reason
+   * Decline the registration of a member with his id and the reason.
    *
    * @param id     of the member
    * @param reason for denial
