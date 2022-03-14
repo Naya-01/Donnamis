@@ -60,7 +60,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @param objectDTO : object that we want to update.
    * @return object updated
    */
-  public ObjectDTO updateOne(ObjectDTO objectDTO){
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
     return objectDAO.updateOne(objectDTO);
   }
 }

@@ -50,14 +50,4 @@ public class OfferImpl implements OfferDTO {
   public void setObject(ObjectDTO object) {
     this.object = object;
   }
-
-  @Override
-  public String toString() {
-    return "OfferImpl{" +
-        "idOffer=" + idOffer +
-        ", date=" + date +
-        ", timeSlot='" + timeSlot + '\'' +
-        ", object=" + object +
-        '}';
-  }
 }

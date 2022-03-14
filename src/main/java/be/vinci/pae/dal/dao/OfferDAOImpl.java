@@ -130,7 +130,8 @@ public class OfferDAOImpl implements OfferDAO {
    */
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
-    String query = "UPDATE donnamis.offers SET time_slot = ? WHERE id_offer = ? RETURNING id_offer, time_slot";
+    String query = "UPDATE donnamis.offers SET time_slot = ? "
+        + "WHERE id_offer = ? RETURNING id_offer, time_slot";
 
     try {
       PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
@@ -155,11 +156,9 @@ public class OfferDAOImpl implements OfferDAO {
   /**
    * Get a list of offers according to the query.
    *
-   * @param query a query that match with the pattern :
-   *     SELECT of.id_offer, of.date, of.time_slot, of.id_object,
-   *     id_type, description, status, image, id_offeror
-   *     FROM donnamis.offers of, donnamis.objects ob
-   *
+   * @param query a query that match with the pattern : SELECT of.id_offer, of.date, of.time_slot,
+   *              of.id_object, id_type, description, status, image, id_offeror FROM donnamis.offers
+   *              of, donnamis.objects ob
    * @return a list of six offerDTO
    */
   private List<OfferDTO> getOffersWithQuery(String query) {
@@ -176,11 +175,9 @@ public class OfferDAOImpl implements OfferDAO {
   /**
    * Get a list of offers according to the resultSet.
    *
-   * @param resultSet a resultSet created with this kind of query :
-   *     SELECT of.id_offer, of.date, of.time_slot, of.id_object,
-   *     id_type, description, status, image, id_offeror
-   *     FROM donnamis.offers of, donnamis.objects ob
-   *
+   * @param resultSet a resultSet created with this kind of query : SELECT of.id_offer, of.date,
+   *                  of.time_slot, of.id_object, id_type, description, status, image, id_offeror
+   *                  FROM donnamis.offers of, donnamis.objects ob
    * @return a list of offers
    */
   private List<OfferDTO> getOffersWithResultSet(ResultSet resultSet) {

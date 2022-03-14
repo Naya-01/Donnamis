@@ -92,7 +92,7 @@ public class ObjectResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public ObjectDTO updateOne(ObjectDTO objectDTO){
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
     return objectUCC.updateOne(objectDTO);
   }
 }

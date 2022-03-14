@@ -131,7 +131,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    * @return object updated
    */
   @Override
-  public ObjectDTO updateOne(ObjectDTO objectDTO){
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "UPDATE donnamis.objects "
             + "SET id_type = ?,"
