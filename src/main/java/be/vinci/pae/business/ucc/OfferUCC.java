@@ -21,6 +21,14 @@ public interface OfferUCC {
   List<OfferDTO> getLastOffers();
 
   /**
+   * Get the offer with a specific id.
+   *
+   * @param idOffer the id of the offer
+   * @return an offer that match with the idOffer or an error if offer not found
+   */
+  OfferDTO getOfferById(int idOffer);
+
+  /**
    * Add an offer in the db with out without an object.
    *
    * @param offerDTO an offer we want to add in the db

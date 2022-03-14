@@ -46,6 +46,21 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
+   * Get the offer with a specific id.
+   *
+   * @param idOffer the id of the offer
+   * @return an offer that match with the idOffer or an error if offer not found
+   */
+  @Override
+  public OfferDTO getOfferById(int idOffer) {
+    OfferDTO offerDTO = offerDAO.getOne(idOffer);
+    if (offerDTO == null) {
+      throw new NotFoundException("Aucune offres");
+    }
+    return offerDTO;
+  }
+
+  /**
    * Add an offer in the db with out without an object.
    *
    * @param offerDTO an offer we want to add in the db

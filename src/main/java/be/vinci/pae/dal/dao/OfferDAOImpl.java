@@ -41,7 +41,7 @@ public class OfferDAOImpl implements OfferDAO {
           "AND (ob.status LIKE '%" + searchPattern + "%' OR o.time_slot LIKE '%" + searchPattern
               + "%')";
     }
-    return getOffers(query);
+    return getOffersWithQuery(query);
   }
 
   /**
@@ -52,11 +52,37 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAllLast() {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "ob.id_object, id_type, description, status, image, id_offeror "
+        + "id_type, description, status, image, id_offeror "
         + "FROM donnamis.offers of, donnamis.objects ob "
         + "WHERE of.id_object = ob.id_object ORDER BY of.date DESC LIMIT 6";
 
-    return getOffers(query);
+    return getOffersWithQuery(query);
+  }
+
+  /**
+   * Get the offer with a specific id.
+   *
+   * @param idOffer the id of the offer
+   * @return an offer that match with the idOffer or null
+   */
+  @Override
+  public OfferDTO getOne(int idOffer) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
+        + "id_type, description, status, image, id_offeror "
+        + "FROM donnamis.offers of, donnamis.objects ob "
+        + "WHERE of.id_object = ob.id_object AND of.id_offer = ?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idOffer);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+
+      List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
+      if (offerDTOList == null || offerDTOList.size() != 1) return null;
+      return offerDTOList.get(0);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -94,22 +120,39 @@ public class OfferDAOImpl implements OfferDAO {
     return null;
   }
 
-
-
   /**
    * Get a list of offers according to the query.
    *
    * @param query a query that match with the pattern :
    *     SELECT of.id_offer, of.date, of.time_slot, of.id_object,
-   *     ob.id_object, id_type, description, status, image, id_offeror
+   *     id_type, description, status, image, id_offeror
    *     FROM donnamis.offers of, donnamis.objects ob
    *
    * @return a list of six offerDTO
    */
-  public List<OfferDTO> getOffers(String query) {
+  private List<OfferDTO> getOffersWithQuery(String query) {
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
+      return getOffersWithResultSet(resultSet);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * Get a list of offers according to the resultSet.
+   *
+   * @param resultSet a resultSet created with this kind of query :
+   *     SELECT of.id_offer, of.date, of.time_slot, of.id_object,
+   *     id_type, description, status, image, id_offeror
+   *     FROM donnamis.offers of, donnamis.objects ob
+   *
+   * @return a list of offers
+   */
+  private List<OfferDTO> getOffersWithResultSet(ResultSet resultSet) {
+    try {
       List<OfferDTO> listOfferDTO = new ArrayList<>();
       while (resultSet.next()) {
         OfferDTO offerDTO = offerFactory.getOfferDTO();
@@ -130,8 +173,8 @@ public class OfferDAOImpl implements OfferDAO {
         listOfferDTO.add(offerDTO);
       }
       return listOfferDTO;
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
     }
     return null;
   }

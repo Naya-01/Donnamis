@@ -55,3 +55,7 @@ Content-Type: application/json
     "idOfferor": 1
   }
 }
+
+### Get offer by id
+GET {{baseUri}}/offers/getById/1
+Authorization: {{refresh}}

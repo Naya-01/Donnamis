@@ -21,6 +21,14 @@ public interface OfferDAO {
   List<OfferDTO> getAllLast();
 
   /**
+   * Get the offer with a specific id.
+   *
+   * @param idOffer the id of the offer
+   * @return an offer that match with the idOffer or null
+   */
+  OfferDTO getOne(int idOffer);
+
+  /**
    * Add an offer in the db.
    *
    * @param offerDTO an offer we want to add in the db

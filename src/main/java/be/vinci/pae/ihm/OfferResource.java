@@ -10,6 +10,7 @@ import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
@@ -23,7 +24,6 @@ public class OfferResource {
 
   @Inject
   private OfferUCC offerUcc;
-
 
   /**
    * Get all the offers that matche with a search pattern.
@@ -51,6 +51,20 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getLastOffers() {
     return offerUcc.getLastOffers();
+  }
+
+  /**
+   * Get the offer with a specific id.
+   *
+   * @param idOffer the id of the offer
+   * @return an offer that match with the idOffer
+   */
+  @GET
+  @Path("/getById/{idOffer}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public OfferDTO getOfferById(@PathParam("idOffer") int idOffer) {
+    return offerUcc.getOfferById(idOffer);
   }
 
   /**
