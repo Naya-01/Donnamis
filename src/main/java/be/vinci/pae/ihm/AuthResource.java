@@ -119,6 +119,7 @@ public class AuthResource {
       throw new WebApplicationException("Manque d'informations obligatoires",
           Response.Status.BAD_REQUEST);
     }
+    System.out.println("print 1 : " + member);
     if (member.getUsername() == null || member.getUsername().isBlank()
         || member.getPassword() == null
         || member.getPassword().isBlank() || member.getFirstname() == null
@@ -129,12 +130,12 @@ public class AuthResource {
           + " doivent être remplis",
           Response.Status.BAD_REQUEST);
     }
-
+    System.out.println("print 2 : " + member);
     MemberDTO memberDTO = memberUCC.register(member);
     if (memberDTO == null) {
       throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
     }
-
+    System.out.println("print 3 : " + memberDTO);
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     String refreshToken = accessToken;
     return jsonMapper.createObjectNode()

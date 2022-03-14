@@ -66,3 +66,26 @@ client.global.set("access", response.body.access_token);
 ### Get user by his token
 POST {{baseUri}}/auth/getuserbytoken
 Authorization: {{access}}
+
+
+### register valid
+POST {{baseUri}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "test",
+  "lastname": "Stefan",
+  "firstname": "Mirco",
+  "password": "Stef123",
+  "address": {
+    "buildingNumber": "14",
+    "street": "Rue du cheval",
+    "postcode": "1140",
+    "commune": "Evere",
+    "country": "Belgique"
+  }
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}

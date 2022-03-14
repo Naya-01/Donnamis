@@ -5,6 +5,7 @@ import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AddressDAOImpl implements AddressDAO {
@@ -66,19 +67,6 @@ public class AddressDAOImpl implements AddressDAO {
   }
 
   /**
-   * Create an address for the member.
-   *
-   * @param idMember       : the id of the member that will have this address
-   * @param unitNumber     : the unit number
-   * @param buildingNumber : the building number
-   * @param street         : the name of the street
-   * @param postcode       : the postcode
-   * @param commune        : the name of the commune
-   * @param country        : the name of the country
-   * @return the new address for the member
-   */
-
-  /**
    * Add an address
    *
    * @param addressDTO : address to add in the DB
@@ -88,23 +76,30 @@ public class AddressDAOImpl implements AddressDAO {
   public AddressDTO createOne(AddressDTO addressDTO) {
     // Insert in the db
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "INSERT INTO donnamis.addresses (id_member, unit_member, building_number, street,"
-            + " postcode, commune, country)"
-            + "VALUES(?,?,?,?,?,?,?)");
+        "insert into donnamis.addresses (id_member, unit_number, building_number, street, "
+            + "postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member;");
     try {
       preparedStatement.setInt(1, addressDTO.getIdMember());
       preparedStatement.setString(2, addressDTO.getUnitNumber());
       preparedStatement.setString(3, addressDTO.getBuildingNumber());
       preparedStatement.setString(4, addressDTO.getStreet());
-      preparedStatement.setString(5, addressDTO.getPostCode());
+      preparedStatement.setString(5, addressDTO.getPostcode());
       preparedStatement.setString(6, addressDTO.getCommune());
       preparedStatement.setString(7, addressDTO.getCountry());
       preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      //get id of new member
+      int idNewAddressMember = resultSet.getInt(1);
+      if (idNewAddressMember != addressDTO.getIdMember()) {
+        return null;
+      }
+
       preparedStatement.close();
-
-      //vérifier s'il a été ajouté
-      //ou mieux de faire getOne dans UCC?
-
       return addressDTO;
     } catch (SQLException e) {
       e.printStackTrace();

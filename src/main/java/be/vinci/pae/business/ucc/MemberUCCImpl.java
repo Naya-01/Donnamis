@@ -90,10 +90,14 @@ public class MemberUCCImpl implements MemberUCC {
           + " données");
     }
 
-    //change the id of the idMember of the address
-    memberFromDao.getAddress().setIdMember(memberFromDao.getMemberId());
+    AddressDTO addressOfMember = memberDTO.getAddress();
+    addressOfMember.setIdMember(memberFromDao.getMemberId());
     //add the address
-    AddressDTO addressDTO = addressDAO.createOne(memberFromDao.getAddress());
+    AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
+    if (addressDTO == null) {
+      throw new InternalServerErrorException("L'adresse n'a pas pû être ajoutée à la base de"
+          + " données");
+    }
     memberFromDao.setAddress(addressDTO);
     return memberFromDao;
   }
