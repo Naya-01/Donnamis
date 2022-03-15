@@ -2,14 +2,23 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
 import TypeLibrary from "../../Domain/TypeLibrary";
+import OfferLibrary from "../../Domain/OfferLibrary";
 
 const typeLibrary = new TypeLibrary();
+const offerLibrary = new OfferLibrary();
+const dictionnary = new Map([
+  ['interested', 'Disponible'],
+  ['available', 'Disponible'],
+  ['assigned', 'En cours de donnation'],
+  ['given', 'Donné'],
+  ['cancelled', 'Annulé']
+]);
 let form = false;
 
 /**
  * Render the page to see his object
  */
-const MyObjectPage = async () => {
+const MyObjectPage = async (id) => {
   // If he's not log in he's redirect to the homepage
   if (!getSessionObject("user")) {
     Redirect("/");
@@ -17,8 +26,15 @@ const MyObjectPage = async () => {
   }
   // GET all informations of the object
   //TODO fetch to get all information of the object
+  id = 1;
+  let offer = await offerLibrary.getOfferById(id);
+  console.log(offer);
+
+  let english_status = offer.object.status;
+  let french_status = dictionnary.get(english_status);
 
   // Construct all the HTML
+
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML =
       `<div class="container p-3">
@@ -37,7 +53,7 @@ const MyObjectPage = async () => {
                 <div class="col-8">
                     <div class="mb-3">
                       <h5><label for="description_object" class="form-label">Description</label></h5>
-                      <p id="description_object">La description de l'objet</p>
+                      <p id="description_object">${offer.object.description}</p>
                     </div>
                 </div>
               </div>
@@ -46,9 +62,9 @@ const MyObjectPage = async () => {
                 <div class="col">
                     <div class="mb-3">
                       <h5><label for="time_slot" class="form-label">Plage horaire</label></h5>
-                      <p id="time_slot">Ceci est la plage horaire</p> <!-- TODO : GET from the DB -->
+                      <p id="time_slot">${offer.timeSlot}</p> <!-- TODO : GET from the DB -->
                     </div>
-                 </div>
+                </div>
               <!-- The type -->
                 <div class="col">
                   <div class="mb-3">
@@ -60,7 +76,7 @@ const MyObjectPage = async () => {
                 <div class="col">
                   <div class="mb-3">
                     <h5><label for="status">Etat de l'objet</label></h5>
-                    <p id="status">Disponible</p> <!-- TODO : GET from the DB -->
+                    <p id="status">${french_status}</p> <!-- TODO : GET from the DB -->
                   </div>
                 </div>
               </div>
@@ -217,6 +233,7 @@ async function changeToFormOrText(e) {
 function updateObject(e) {
   e.preventDefault();
   /*TODO : request to update the object*/
+
   changeToFormOrText(e);
 }
 

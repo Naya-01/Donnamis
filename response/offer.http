@@ -36,8 +36,8 @@ Content-Type: application/json
 {
   "timeSlot": "time slot test",
   "object": {
-               "idObject": 1
-            }
+    "idObject": 1
+  }
 }
 
 ###
@@ -59,7 +59,7 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/5
+GET {{baseUri}}/offers/getById/1
 Authorization: {{refresh}}
 
 ### Update time slot of a offer

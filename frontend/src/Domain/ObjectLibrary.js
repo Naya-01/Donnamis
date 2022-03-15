@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
 
-class TypeLibrary {
-  async getAllDefaultTypes() {
+class ObjectLibrary {
+  async getObject(id) {
     let response;
     try {
       let options = {
@@ -11,16 +11,17 @@ class TypeLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/type/allDefault", options);
+      response = await fetch("api/object/" + id, options);
     } catch (err) {
       console.log(err);
     }
-    let allDefaultTypesJson;
+    let actualObject;
     if (response.status === 200) {
-      allDefaultTypesJson = await response.json();
+      actualObject = await response.json();
     }
-    return allDefaultTypesJson;
+    return actualObject;
+
   }
 }
 
-export default TypeLibrary;
+export default ObjectLibrary;

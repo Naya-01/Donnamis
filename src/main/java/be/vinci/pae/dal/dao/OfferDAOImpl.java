@@ -57,9 +57,9 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAllLast() {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "id_type, description, status, image, id_offeror "
-        + "FROM donnamis.offers of, donnamis.objects ob "
-        + "WHERE of.id_object = ob.id_object ORDER BY of.date DESC LIMIT 6";
+        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
+        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type ORDER BY of.date DESC LIMIT 6";
 
     return getOffersWithQuery(query);
   }
@@ -73,9 +73,9 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO getOne(int idOffer) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "id_type, description, status, image, id_offeror "
-        + "FROM donnamis.offers of, donnamis.objects ob "
-        + "WHERE of.id_object = ob.id_object AND of.id_offer = ?";
+        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE of.id_object = ob.id_object AND of.id_offer = ? AND ty.id_type = ob.id_type";
     try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idOffer);
       preparedStatement.executeQuery();
@@ -201,6 +201,9 @@ public class OfferDAOImpl implements OfferDAO {
 
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));
+        typeDTO.setTypeName(resultSet.getString(10));
+        typeDTO.setIsDefault(resultSet.getBoolean(11));
+
         objectDTO.setType(typeDTO);
 
         objectDTO.setDescription(resultSet.getString(6));
