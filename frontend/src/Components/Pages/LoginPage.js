@@ -46,7 +46,6 @@ const htmlPage = `
 const connectClientAndRedirect = async (username, password, remember) => {
 
   let userData;
-
   try {
     let options = {
       method: "POST",
@@ -126,7 +125,7 @@ const LoginPage = () => {
       }
 
     } else {
-      connectClientAndRedirect(username, password, remember);
+      connectClientAndRedirect(username.value, password.value, remember);
     }
   })
 

@@ -73,7 +73,7 @@ POST {{baseUri}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "hehe",
+  "username": "hehe2",
   "lastname": "Stefan",
   "firstname": "Mirco",
   "password": "Stef123",
@@ -90,3 +90,7 @@ Content-Type: application/json
 client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
+
+### Get subcription request by status
+GET {{baseUri}}/auth/subscriptions/pending
+Authorization: {{access}}
