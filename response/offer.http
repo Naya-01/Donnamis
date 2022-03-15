@@ -77,3 +77,20 @@ Content-Type: application/json
     }
   }
 }
+
+### Update time slot of a offer
+POST {{baseUri}}/offers/update
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 4,
+  "timeSlot": "Je suis disponible le lundi soir",
+  "object": {
+    "description": "Jouet coquin :3",
+    "type": {
+      "idType": 1,
+      "typeName": "test type"
+    }
+  }
+}

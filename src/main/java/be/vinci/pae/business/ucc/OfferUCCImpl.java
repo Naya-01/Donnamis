@@ -1,9 +1,11 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.TypeDAO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -15,6 +17,8 @@ public class OfferUCCImpl implements OfferUCC {
   private OfferDAO offerDAO;
   @Inject
   private ObjectDAO objectDAO;
+  @Inject
+  private TypeDAO typeDAO;
 
   /**
    * Get all the offers that matche with a search pattern.
@@ -91,6 +95,12 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO updateOffer(OfferDTO offerDTO) {
+
+    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      TypeDTO typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+      offerDTO.getObject().setType(typeDTO);
+    }
     OfferDTO offer = offerDAO.updateOne(offerDTO);
     if (offer == null) {
       throw new WebApplicationException("Problème lors de la mise à jour du time slot",
