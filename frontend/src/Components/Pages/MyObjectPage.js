@@ -12,7 +12,7 @@ const dictionnary = new Map([
   ['cancelled', 'Annulé']
 ]);
 let idOffert;
-let typeName;
+let english_status;
 let idType;
 let form = false;
 let description;
@@ -28,17 +28,15 @@ const MyObjectPage = async (id) => {
     return;
   }
 
-  // GET all informations of the object
-  //TODO fetch to get all information of the object
-  id = 1;
+  id = 1; //TODO : delete this line
   idOffert = id;
+  // GET all informations of the object
   let offer = await offerLibrary.getOfferById(id);
   idType = offer.object.type.idType;
-  typeName = offer.object.type.typeName;
   description = offer.object.description;
   time_slot = offer.timeSlot;
 
-  let english_status = offer.object.status;
+  english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
 
   // Construct all the HTML
@@ -150,25 +148,31 @@ async function changeToFormOrText(e) {
 
     // Replace the button "Modifier" by a "Confirmer" one
     old = document.getElementById("modifyObjectButton");
-    let spanButtons = document.createElement("span");
-    spanButtons.id = "spanButtons";
-    spanButtons.className = "p-2";
+    let divButtons = document.createElement("div");
+    divButtons.className = "row justify-content-md-center";
+    divButtons.id = "divButtons";
+    let divCol1 = document.createElement("div");
+    divCol1.className = "col-2";
     let new_button = document.createElement("input");
     new_button.type = "button";
     new_button.className = "btn btn-primary";
     new_button.value = "Confirmer";
     new_button.id = "confirmObjectButton";
     new_button.addEventListener("click", updateObject);
-    spanButtons.appendChild(new_button);
+    divCol1.appendChild(new_button);
+    divButtons.appendChild(divCol1);
 
+    let divCol2 = document.createElement("div");
+    divCol2.className = "col-2";
     let cancelButton = document.createElement("input");
     cancelButton.type = "button";
     cancelButton.className = "btn btn-primary";
     cancelButton.value = "Annuler";
     cancelButton.id = "cancelObjectButton";
     cancelButton.addEventListener("click", changeToFormOrText);
-    spanButtons.appendChild(cancelButton);
-    old.parentNode.replaceChild(spanButtons, old);
+    divCol2.appendChild(cancelButton);
+    divButtons.appendChild(divCol2);
+    old.parentNode.replaceChild(divButtons, old);
   }
   // Convert to Text
   else {
@@ -197,7 +201,7 @@ async function changeToFormOrText(e) {
     old.parentNode.replaceChild(time_slot_text, old);
 
     // Replace the button "Confirmer" by a "Modifier" one
-    old = document.getElementById("spanButtons");
+    old = document.getElementById("divButtons");
     let new_button = document.createElement("input");
     new_button.type = "button";
     new_button.className = "btn btn-primary";
@@ -250,7 +254,7 @@ function updateObject(e) {
   }
   // Call the function to update the offer
   offerLibrary.updateOffer(idOffert, new_time_slot, new_description, idType,
-      typeName)
+      english_status);
 
   // Attribute new values
   description = new_description

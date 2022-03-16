@@ -34,10 +34,10 @@ class OfferLibrary {
    * @param timeSlot the time slot of the offer
    * @param description the description of the object
    * @param idType the id of the type
-   * @param typeName the type name of the type
+   * @param status the status of the object
    * @returns {Promise<*>} the offer in json
    */
-  async updateOffer(id, timeSlot, description, idType, typeName) {
+  async updateOffer(id, timeSlot, description, idType, status) {
     let response;
     try {
       let options = {
@@ -47,9 +47,10 @@ class OfferLibrary {
           "timeSlot": timeSlot,
           "object": {
             "description": description,
+            "image": null,
+            "status": status,
             "type": {
-              "idType": idType,
-              "typeName": typeName
+              "idType": idType
             }
           }
         }),
