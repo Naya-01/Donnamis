@@ -14,9 +14,12 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.util.List;
+import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
 @Path("/offers")
@@ -83,11 +86,11 @@ public class OfferResource {
       throw new WebApplicationException("Timeslot or object incorrect",
           Response.Status.BAD_REQUEST);
     }
-    if (offerDTO.getObject().getIdObject() == null && (offerDTO.getObject().getType() == null
+    if (offerDTO.getObject().getIdObject() == 0 && (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getType().getIdType() <= 0
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
-        .isEmpty() || offerDTO.getObject().getIdOfferor() == null)) {
+        .isEmpty() || offerDTO.getObject().getIdOfferor() == 0)) {
       throw new WebApplicationException("Bad json object sent",
           Response.Status.BAD_REQUEST);
     }
@@ -105,15 +108,30 @@ public class OfferResource {
   @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OfferDTO updateOffer(OfferDTO offerDTO) {
-    if (offerDTO.getIdOffer() == 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
-        .isEmpty() || offerDTO.getObject() == null || offerDTO.getObject().getDescription() == null
-        || offerDTO.getObject().getDescription().isEmpty()
-        || offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getType().getIdType() <= 0) {
-      throw new WebApplicationException("Bad json offer sent",
-          Response.Status.BAD_REQUEST);
+  public OfferDTO updateOffer(OfferDTO offerDTO, @Context ContainerRequest request) {
+    if (offerDTO.getIdOffer() <= 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
+        .isEmpty()) {
+      throw new WebApplicationException("Offer need more informations", Status.BAD_REQUEST);
     }
+
+    if (offerDTO.getObject() == null || offerDTO.getObject().getDescription() == null ||
+        offerDTO.getObject().getDescription().isEmpty() || offerDTO.getObject().getStatus() == null
+        || offerDTO.getObject().getStatus().isEmpty()) {
+      throw new WebApplicationException("Object need more informations", Status.BAD_REQUEST);
+    }
+
+    if (offerDTO.getObject().getType() == null ||
+        ((offerDTO.getObject().getType().getIdType() == 0
+            && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
+            .getType().getTypeName().isEmpty())
+            ||
+            (offerDTO.getObject().getType().getIdType() != 0
+                && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
+                .getType()
+                .getTypeName().isEmpty()))) {
+      throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
+    }
+
     return offerUcc.updateOffer(offerDTO);
   }
 }

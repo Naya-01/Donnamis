@@ -25,6 +25,10 @@ GET {{baseUri}}/offers/all?search-pattern=t
 Authorization: {{refresh}}
 
 ###
+GET {{baseUri}}/offers/all
+Authorization: {{refresh}}
+
+###
 GET {{baseUri}}/offers/lasts
 Authorization: {{refresh}}
 
@@ -68,29 +72,14 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 4,
-  "timeSlot": "Je suis disponible le lundi soir",
+  "idOffer": 1,
+  "timeSlot": "Je suis disponible le mardi soir",
   "object": {
-    "description": "Jouet coquin :3",
+    "description": "Une fusée tintin",
+    "image": null,
+    "status": "interested",
     "type": {
-      "idType": 1
-    }
-  }
-}
-
-### Update time slot of a offer
-POST {{baseUri}}/offers/update
-Authorization: {{refresh}}
-Content-Type: application/json
-
-{
-  "idOffer": 4,
-  "timeSlot": "Je suis disponible le lundi soir",
-  "object": {
-    "description": "Jouet coquin :3",
-    "type": {
-      "idType": 1,
-      "typeName": "test type"
+      "idType": 4
     }
   }
 }

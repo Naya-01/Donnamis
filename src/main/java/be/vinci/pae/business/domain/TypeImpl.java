@@ -37,4 +37,13 @@ public class TypeImpl implements TypeDTO {
   public void setIsDefault(boolean isDefault) {
     this.isDefault = isDefault;
   }
+
+  @Override
+  public String toString() {
+    return "TypeImpl{" +
+        "idType=" + idType +
+        ", typeName='" + typeName + '\'' +
+        ", isDefault=" + isDefault +
+        '}';
+  }
 }

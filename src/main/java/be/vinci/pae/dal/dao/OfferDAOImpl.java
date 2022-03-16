@@ -34,11 +34,10 @@ public class OfferDAOImpl implements OfferDAO {
    */
   @Override
   public List<OfferDTO> getAll(String searchPattern) {
-    String query =
-        "SELECT o.id_offer, o.date, o.time_slot, ob.id_object, ob.id_type, ob.description, "
-            + "ob.status, ob.image, ob.id_offeror, t.id_type, t.is_default, t.type_name "
-            + "FROM donnamis.offers o, donnamis.objects ob, donnamis.types t "
-            + "WHERE o.id_object = ob.id_object AND t.id_type = ob.id_type ";
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
+        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE ob.id_object = of.id_object AND ty.id_type = ob.id_type ";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
@@ -57,9 +56,10 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAllLast() {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
-        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
-        + "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type ORDER BY of.date DESC LIMIT 6";
+        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type ORDER BY of.date "
+        + "DESC LIMIT 6";
 
     return getOffersWithQuery(query);
   }
@@ -136,7 +136,7 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
     String query = "UPDATE donnamis.offers SET time_slot = ? "
-        + "WHERE id_offer = ? RETURNING id_offer, time_slot, id_object";
+        + "WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
 
     try {
       PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
@@ -150,8 +150,9 @@ public class OfferDAOImpl implements OfferDAO {
       }
 
       offerDTO.setIdOffer(resultSet.getInt(1));
-      offerDTO.setTimeSlot(resultSet.getString(2));
-      offerDTO.getObject().setIdObject(resultSet.getInt(3));
+      offerDTO.setDate(resultSet.getDate(2).toLocalDate());
+      offerDTO.setTimeSlot(resultSet.getString(3));
+      offerDTO.getObject().setIdObject(resultSet.getInt(4));
       return offerDTO;
     } catch (SQLException e) {
       e.printStackTrace();
