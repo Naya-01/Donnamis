@@ -109,26 +109,27 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO updateOffer(OfferDTO offerDTO, @Context ContainerRequest request) {
-    if (offerDTO.getIdOffer() <= 0 || offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot()
-        .isEmpty()) {
+    if (offerDTO.getIdOffer() <= 0
+        || offerDTO.getTimeSlot() == null
+        || offerDTO.getTimeSlot().isEmpty()) {
       throw new WebApplicationException("Offer need more informations", Status.BAD_REQUEST);
     }
 
-    if (offerDTO.getObject() == null || offerDTO.getObject().getDescription() == null ||
-        offerDTO.getObject().getDescription().isEmpty() || offerDTO.getObject().getStatus() == null
+    if (offerDTO.getObject() == null
+        || offerDTO.getObject().getDescription() == null
+        || offerDTO.getObject().getDescription().isEmpty()
+        || offerDTO.getObject().getStatus() == null
         || offerDTO.getObject().getStatus().isEmpty()) {
       throw new WebApplicationException("Object need more informations", Status.BAD_REQUEST);
     }
 
-    if (offerDTO.getObject().getType() == null ||
-        ((offerDTO.getObject().getType().getIdType() == 0
-            && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
-            .getType().getTypeName().isEmpty())
-            ||
-            (offerDTO.getObject().getType().getIdType() != 0
-                && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
-                .getType()
-                .getTypeName().isEmpty()))) {
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() == 0
+        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()
+        || offerDTO.getObject().getType().getIdType() != 0
+        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()) {
       throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
     }
 
