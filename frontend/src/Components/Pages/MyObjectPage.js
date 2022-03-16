@@ -1,10 +1,8 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
-import TypeLibrary from "../../Domain/TypeLibrary";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
-const typeLibrary = new TypeLibrary();
 const offerLibrary = new OfferLibrary();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
@@ -13,7 +11,12 @@ const dictionnary = new Map([
   ['given', 'Donné'],
   ['cancelled', 'Annulé']
 ]);
+let idOffert;
+let typeName;
+let idType;
 let form = false;
+let description;
+let time_slot;
 
 /**
  * Render the page to see his object
@@ -24,11 +27,16 @@ const MyObjectPage = async (id) => {
     Redirect("/");
     return;
   }
+
   // GET all informations of the object
   //TODO fetch to get all information of the object
   id = 1;
+  idOffert = id;
   let offer = await offerLibrary.getOfferById(id);
-  console.log(offer);
+  idType = offer.object.type.idType;
+  typeName = offer.object.type.typeName;
+  description = offer.object.description;
+  time_slot = offer.timeSlot;
 
   let english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
@@ -53,7 +61,7 @@ const MyObjectPage = async (id) => {
                 <div class="col-8">
                     <div class="mb-3">
                       <h5><label for="description_object" class="form-label">Description</label></h5>
-                      <p id="description_object">${offer.object.description}</p>
+                      <p id="description_object">${description}</p>
                     </div>
                 </div>
               </div>
@@ -62,27 +70,27 @@ const MyObjectPage = async (id) => {
                 <div class="col">
                     <div class="mb-3">
                       <h5><label for="time_slot" class="form-label">Plage horaire</label></h5>
-                      <p id="time_slot">${offer.timeSlot}</p> <!-- TODO : GET from the DB -->
+                      <p id="time_slot">${time_slot}</p>
                     </div>
                 </div>
               <!-- The type -->
                 <div class="col">
                   <div class="mb-3">
                     <h5><label for="type">Type</label></h5>
-                    <p id="type">Voiture</p> <!-- TODO : GET from the DB -->
+                    <p id="type">${offer.object.type.typeName}</p>
                   </div>
                 </div>
                 <!-- The status -->
                 <div class="col">
                   <div class="mb-3">
                     <h5><label for="status">Etat de l'objet</label></h5>
-                    <p id="status">${french_status}</p> <!-- TODO : GET from the DB -->
+                    <p id="status">${french_status}</p>
                   </div>
                 </div>
               </div>
               <!-- The confirm button -->
               <div class="text-center">
-              <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier"> <!-- TODO : add link to the other page -->
+              <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
               </div>
             
           </p>
@@ -128,7 +136,7 @@ async function changeToFormOrText(e) {
     desc_textarea.className = "form-control";
     desc_textarea.id = "description_object";
     desc_textarea.rows = "6";
-    desc_textarea.value = old.textContent;
+    desc_textarea.value = description;
     old.parentNode.replaceChild(desc_textarea, old);
 
     // Make a textarea for description for the time slot
@@ -137,43 +145,30 @@ async function changeToFormOrText(e) {
     time_slot_textarea.className = "form-control";
     time_slot_textarea.id = "time_slot";
     time_slot_textarea.rows = "3";
-    time_slot_textarea.value = old.textContent;
+    time_slot_textarea.value = time_slot;
     old.parentNode.replaceChild(time_slot_textarea, old);
-
-    // Make a input text for the type
-    let span = document.createElement("span");
-    span.id = "span_type";
-    old = document.getElementById("type");
-    let type_input = document.createElement("input");
-    type_input.type = "text";
-    type_input.className = "form-control";
-    type_input.id = "type";
-    type_input.value = old.textContent;
-    type_input.setAttribute("list", "all_types");
-    let datalist_types = document.createElement("datalist");
-    datalist_types.id = "all_types";
-
-    // Get all types from the backend
-    let allDefaultTypes = await typeLibrary.getAllDefaultTypes();
-    // Create an HTML list of proposition for Types
-    for (let i = 0; i < allDefaultTypes.type.length; i++) {
-      let newType = document.createElement("option");
-      newType.value = allDefaultTypes.type[i].typeName;
-      datalist_types.appendChild(newType);
-    }
-    span.appendChild(type_input);
-    span.appendChild(datalist_types);
-    old.parentNode.replaceChild(span, old);
 
     // Replace the button "Modifier" by a "Confirmer" one
     old = document.getElementById("modifyObjectButton");
+    let spanButtons = document.createElement("span");
+    spanButtons.id = "spanButtons";
+    spanButtons.className = "p-2";
     let new_button = document.createElement("input");
     new_button.type = "button";
     new_button.className = "btn btn-primary";
     new_button.value = "Confirmer";
     new_button.id = "confirmObjectButton";
     new_button.addEventListener("click", updateObject);
-    old.parentNode.replaceChild(new_button, old);
+    spanButtons.appendChild(new_button);
+
+    let cancelButton = document.createElement("input");
+    cancelButton.type = "button";
+    cancelButton.className = "btn btn-primary";
+    cancelButton.value = "Annuler";
+    cancelButton.id = "cancelObjectButton";
+    cancelButton.addEventListener("click", changeToFormOrText);
+    spanButtons.appendChild(cancelButton);
+    old.parentNode.replaceChild(spanButtons, old);
   }
   // Convert to Text
   else {
@@ -190,7 +185,7 @@ async function changeToFormOrText(e) {
     old = document.getElementById("description_object");
     let desc_text = document.createElement("p");
     desc_text.id = "description_object";
-    desc_text.innerHTML = old.value;
+    desc_text.innerHTML = description;
     old.parentNode.replaceChild(desc_text, old);
 
     // Make a simple paragraph for time slot
@@ -198,21 +193,11 @@ async function changeToFormOrText(e) {
     let time_slot_text = document.createElement("p");
     time_slot_text.id = "time_slot";
     time_slot_text.rows = "3";
-    time_slot_text.innerHTML = old.value;
+    time_slot_text.innerHTML = time_slot;
     old.parentNode.replaceChild(time_slot_text, old);
 
-    // Make a simple paragraph for type
-    let span = document.createElement("span");
-    span.id = "span_type";
-    old = document.getElementById("span_type");
-    let type_text = document.createElement("p");
-    type_text.id = "type";
-    type_text.innerHTML = document.getElementById("type").value;
-    span.appendChild(type_text);
-    old.parentNode.replaceChild(span, old);
-
     // Replace the button "Confirmer" by a "Modifier" one
-    old = document.getElementById("confirmObjectButton");
+    old = document.getElementById("spanButtons");
     let new_button = document.createElement("input");
     new_button.type = "button";
     new_button.className = "btn btn-primary";
@@ -232,8 +217,46 @@ async function changeToFormOrText(e) {
  */
 function updateObject(e) {
   e.preventDefault();
-  /*TODO : request to update the object*/
+  // Get all elements from the form
+  let new_image = document.getElementById("file_input"); // TODO : how to get the image ?
+  let descriptionDOM = document.getElementById("description_object");
+  let new_description = descriptionDOM.value.trim();
 
+  let new_time_slotDOM = document.getElementById("time_slot")
+  let new_time_slot = new_time_slotDOM.value.trim();
+
+  // Test description, time slot and show to the user the errors if they exist
+  let emptyParameters = 0;
+  if (new_description.length === 0) {
+    descriptionDOM.classList.add("border-danger");
+    emptyParameters++;
+  } else {
+    if (descriptionDOM.classList.contains("border-danger")) {
+      descriptionDOM.classList.remove("border-danger");
+    }
+  }
+  if (new_time_slot.length === 0) {
+    document.getElementById("time_slot").classList.add("border-danger");
+    emptyParameters++;
+  } else {
+    if (new_time_slotDOM.classList.contains("border-danger")) {
+      new_time_slotDOM.classList.remove("border-danger");
+    }
+
+  }
+  // Check if there is an empty parameter
+  if (emptyParameters > 0) {
+    return;
+  }
+  // Call the function to update the offer
+  offerLibrary.updateOffer(idOffert, new_time_slot, new_description, idType,
+      typeName)
+
+  // Attribute new values
+  description = new_description
+  time_slot = new_time_slot;
+
+  // Put text back
   changeToFormOrText(e);
 }
 

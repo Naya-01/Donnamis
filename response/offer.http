@@ -25,10 +25,6 @@ GET {{baseUri}}/offers/all?search-pattern=t
 Authorization: {{refresh}}
 
 ###
-GET {{baseUri}}/offers/all
-Authorization: {{refresh}}
-
-###
 GET {{baseUri}}/offers/lasts
 Authorization: {{refresh}}
 
