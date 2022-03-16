@@ -57,9 +57,10 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAllLast() {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
-        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
-        + "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type ORDER BY of.date DESC LIMIT 6";
+        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type ORDER BY of.date "
+        + "DESC LIMIT 6";
 
     return getOffersWithQuery(query);
   }
