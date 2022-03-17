@@ -10,14 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -39,7 +42,7 @@ public class MemberResource {
   @Path("/getMemberByToken")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getUserByToken(@Context ContainerRequest request) {
+  public ObjectNode getMemberByToken(@Context ContainerRequest request) {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
@@ -106,6 +109,21 @@ public class MemberResource {
 
     memberUCC.declineRegistration(id, reason);
     throw new WebApplicationException("Le membre est désormais validé", Status.OK);
+  }
+
+  /**
+   * Get all subscription requests according to their status. Need admin rights
+   *
+   * @param status the status subscription members
+   * @return a list of memberDTO
+   */
+  @GET
+  @Authorize
+  @Admin
+  @Path("/subscriptions/{status}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<MemberDTO> getAllInscriptionRequest(@PathParam("status") String status) {
+    return memberUCC.getInscriptionRequest(status);
   }
 
 
