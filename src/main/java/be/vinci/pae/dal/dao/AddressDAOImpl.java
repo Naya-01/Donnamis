@@ -5,6 +5,7 @@ import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AddressDAOImpl implements AddressDAO {
@@ -66,44 +67,39 @@ public class AddressDAOImpl implements AddressDAO {
   }
 
   /**
-   * Create an address for the member.
+   * Add an address.
    *
-   * @param idMember       : the id of the member that will have this address
-   * @param unitNumber     : the unit number
-   * @param buildingNumber : the building number
-   * @param street         : the name of the street
-   * @param postcode       : the postcode
-   * @param commune        : the name of the commune
-   * @param country        : the name of the country
-   * @return the new address for the member
+   * @param addressDTO : address to add in the DB.
+   * @return addressDTO added.
    */
   @Override
-  public AddressDTO createOne(int idMember, String unitNumber, String buildingNumber, String street,
-      String postcode, String commune, String country) {
+  public AddressDTO createOne(AddressDTO addressDTO) {
     // Insert in the db
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "INSERT INTO donnamis.addresses (id_member, unit_member, building_number, street,"
-            + " postcode, commune, country)"
-            + "VALUES(?,?,?,?,?,?,?)");
+        "insert into donnamis.addresses (id_member, unit_number, building_number, street, "
+            + "postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member;");
     try {
-      preparedStatement.setInt(1, idMember);
-      if (unitNumber.length() == 0) {
-        preparedStatement.setNull(2, java.sql.Types.NULL);
-      } else {
-        preparedStatement.setString(2, unitNumber);
-      }
-      preparedStatement.setString(3, buildingNumber);
-      preparedStatement.setString(4, street);
-      preparedStatement.setString(5, postcode);
-      preparedStatement.setString(6, commune);
-      preparedStatement.setString(7, country);
+      preparedStatement.setInt(1, addressDTO.getIdMember());
+      preparedStatement.setString(2, addressDTO.getUnitNumber());
+      preparedStatement.setString(3, addressDTO.getBuildingNumber());
+      preparedStatement.setString(4, addressDTO.getStreet());
+      preparedStatement.setString(5, addressDTO.getPostcode());
+      preparedStatement.setString(6, addressDTO.getCommune());
+      preparedStatement.setString(7, addressDTO.getCountry());
       preparedStatement.executeQuery();
-      preparedStatement.close();
 
-      // Creation of the new Address
-      AddressDTO addressDTO = addressFactory.getAddressDTO();
-      setAddress(addressDTO, idMember, unitNumber, buildingNumber, street, postcode, commune,
-          country);
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      //get id of new member
+      int idNewAddressMember = resultSet.getInt(1);
+      if (idNewAddressMember != addressDTO.getIdMember()) {
+        return null;
+      }
+
+      preparedStatement.close();
       return addressDTO;
     } catch (SQLException e) {
       e.printStackTrace();

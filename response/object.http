@@ -1,0 +1,34 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "AlbertDeBucarest",
+  "password": "albertLePoulet",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
+### GET an object
+GET {{baseUri}}/object/1
+Authorization: {{token}}
+
+
+### GET an object
+GET {{baseUri}}/object/member/1
+Authorization: {{token}}
+
+### Make an object
+POST {{baseUri}}/object
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idType": 1,
+  "description": "test",
+  "status": "available",
+  "image": null,
+  "idOfferor": 1
+}

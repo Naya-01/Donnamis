@@ -5,7 +5,7 @@ import {removeSessionObject} from "../../utils/session";
 const Logout = () => {
   removeSessionObject("user");
   Navbar();
-  Redirect("/connexion");
+  Redirect("/login");
 };
 
 export default Logout;

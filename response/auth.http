@@ -62,3 +62,34 @@ Authorization: {{refresh}}
 client.global.set("access", response.body.access_token);
 %}
 
+### Get user by his token
+POST {{baseUri}}/member/getMemberByToken
+Authorization: {{access}}
+
+
+### register valid
+POST {{baseUri}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "hehe2",
+  "lastname": "Stefan",
+  "firstname": "Mirco",
+  "password": "Stef123",
+  "phone": "0498989898",
+  "address": {
+    "buildingNumber": "14",
+    "street": "Rue du cheval",
+    "postcode": "1140",
+    "commune": "Evere",
+    "country": "Belgique"
+  }
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### Get subcription request by status
+GET {{baseUri}}/auth/subscriptions/pending
+Authorization: {{access}}

@@ -4,18 +4,30 @@ import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.AddressFactoryImpl;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.MemberFactoryImpl;
+import be.vinci.pae.business.factories.ObjectFactory;
+import be.vinci.pae.business.factories.ObjectFactoryImpl;
+import be.vinci.pae.business.factories.OfferFactory;
+import be.vinci.pae.business.factories.OfferFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
 import be.vinci.pae.business.ucc.AddressUCC;
 import be.vinci.pae.business.ucc.AddressUCCImpl;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.business.ucc.MemberUCCImpl;
+import be.vinci.pae.business.ucc.ObjectUCC;
+import be.vinci.pae.business.ucc.ObjectUCCImpl;
+import be.vinci.pae.business.ucc.OfferUCC;
+import be.vinci.pae.business.ucc.OfferUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.AddressDAOImpl;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.MemberDAOImpl;
+import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.ObjectDAOImpl;
+import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.OfferDAOImpl;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALService;
@@ -44,7 +56,16 @@ public class ApplicationBinder extends AbstractBinder {
     bind(MemberDAOImpl.class).to(MemberDAO.class).in(Singleton.class);
     bind(TypeDAOImpl.class).to(TypeDAO.class).in(Singleton.class);
     bind(AddressDAOImpl.class).to(AddressDAO.class).in(Singleton.class);
-    
+
+
+    bind(OfferFactoryImpl.class).to(OfferFactory.class).in(Singleton.class);
+    bind(OfferUCCImpl.class).to(OfferUCC.class).in(Singleton.class);
+    bind(OfferDAOImpl.class).to(OfferDAO.class).in(Singleton.class);
+
+    bind(ObjectFactoryImpl.class).to(ObjectFactory.class).in(Singleton.class);
+    bind(ObjectDAOImpl.class).to(ObjectDAO.class).in(Singleton.class);
+    bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
+
     bind(TokenImpl.class).to(Token.class).in(Singleton.class);
   }
 }

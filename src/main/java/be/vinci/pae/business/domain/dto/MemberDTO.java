@@ -34,10 +34,6 @@ public interface MemberDTO {
 
   void setPhone(String phone);
 
-  int getAddress();
-
-  void setAddress(int address);
-
   String getReasonRefusal();
 
   void setReasonRefusal(String reasonRefusal);
@@ -46,5 +42,8 @@ public interface MemberDTO {
 
   void setPassword(String password);
 
+  AddressDTO getAddress();
+
+  void setAddress(AddressDTO address);
 
 }
