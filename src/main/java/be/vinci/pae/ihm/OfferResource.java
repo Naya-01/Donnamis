@@ -81,13 +81,8 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    if (offerDTO.getTimeSlot() == null || offerDTO.getTimeSlot().isEmpty()
-        || offerDTO.getObject() == null) {
-      throw new WebApplicationException("Timeslot or object incorrect",
-          Response.Status.BAD_REQUEST);
-    }
+    verifyType(offerDTO);
     if (offerDTO.getObject().getIdObject() == 0 && (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getType().getIdType() <= 0
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
         .isEmpty() || offerDTO.getObject().getIdOfferor() == 0)) {
@@ -123,6 +118,12 @@ public class OfferResource {
       throw new WebApplicationException("Object need more informations", Status.BAD_REQUEST);
     }
 
+    verifyType(offerDTO);
+
+    return offerUcc.updateOffer(offerDTO);
+  }
+
+  private void verifyType(OfferDTO offerDTO) {
     if (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getType().getIdType() == 0
         && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
@@ -132,7 +133,5 @@ public class OfferResource {
         .getType().getTypeName().isEmpty()) {
       throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
     }
-
-    return offerUcc.updateOffer(offerDTO);
   }
 }

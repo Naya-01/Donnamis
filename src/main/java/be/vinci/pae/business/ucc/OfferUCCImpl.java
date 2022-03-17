@@ -73,6 +73,22 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addOffer(OfferDTO offerDTO) {
+    TypeDTO typeDTO;
+    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+        if (typeDTO == null) {
+          throw new WebApplicationException("Problème lors de la création du type",
+              Response.Status.BAD_REQUEST);
+        }
+      }
+    } else {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
+    }
+    offerDTO.getObject().setType(typeDTO);
+
     if (offerDTO.getObject().getIdObject() == 0) {
       objectDAO.addOne(offerDTO.getObject());
       if (offerDTO.getObject().getIdObject() == 0) {

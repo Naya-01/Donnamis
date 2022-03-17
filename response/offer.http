@@ -46,15 +46,16 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "timeSlot": "time slot test",
+  "timeSlot": "tous les mois de janvier",
   "object": {
     "type": {
-      "idType": 4
+      "idType": 0,
+      "typeName": "Croissant"
     },
-    "description": "description oklm",
-    "status": "published",
+    "description": "C'est un croissant rien de plus",
+    "status": "available",
     "image": null,
-    "idOfferor": 1
+    "idOfferor": 2
   }
 }
 
