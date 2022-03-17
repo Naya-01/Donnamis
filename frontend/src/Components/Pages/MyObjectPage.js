@@ -112,13 +112,15 @@ const MyObjectPage = async (id) => {
     button.addEventListener("click", changeToForm);
   } else {
     //TODO : get user by id
+    let memberGiver = await memberLibrary.getUserByHisId(id);
     button.id = "interestedButton";
     button.value = "Je suis interessé";
     button.addEventListener("click", () => {
       //TODO : POST an interest
       button.disabled = true;
     });
-    document.getElementById("titleObject").textContent = "L'objet de " + "";//TODO : put the pseudo here
+    document.getElementById("titleObject").textContent = "L'objet de "
+        + memberGiver.username;
   }
 
 }
