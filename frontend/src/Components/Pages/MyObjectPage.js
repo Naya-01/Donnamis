@@ -2,6 +2,7 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
+import notification from "../Module/Notification";
 
 const offerLibrary = new OfferLibrary();
 const dictionnary = new Map([
@@ -14,9 +15,9 @@ const dictionnary = new Map([
 let idOffert;
 let english_status;
 let idType;
-let form = false;
 let description;
 let time_slot;
+let form = false;
 
 /**
  * Render the page to see his object
@@ -87,132 +88,133 @@ const MyObjectPage = async (id) => {
                 </div>
               </div>
               <!-- The confirm button -->
-              <div class="text-center">
-              <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
+              <div class="text-center p-2">
+                <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
               </div>
-            
           </p>
         </div>
       </div>
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
-  button.addEventListener("click", changeToFormOrText);
+  button.addEventListener("click", changeToForm);
 
 }
 
 /**
- * Change the elements of the html to have a text or a form.
+ * Change elements of the html to have a text.
  * @param {Event} e : evenement
  */
-async function changeToFormOrText(e) {
-  e.preventDefault();
-  // Convert to Form
-  if (!form) {
-    // Make the image clickable to import a file
-    let old = document.getElementById("image");
-    let span_image = document.createElement("span");
-    span_image.id = "span_image";
-    span_image.className = "img_file_input";
-    let label_image = document.createElement("label");
-    label_image.setAttribute("for", "file_input");
-    let image = document.createElement("img");
-    image.alt = "no image";
-    image.style.width = "75%";
-    image.setAttribute("src", noImage);
-    label_image.appendChild(image);
-    let input_file = document.createElement("input");
-    input_file.id = "file_input";
-    input_file.type = "file";
-    span_image.appendChild(label_image);
-    span_image.appendChild(input_file);
-    old.parentNode.replaceChild(span_image, old);
+async function changeToText(e) {
+  // Make a simple image
+  let old = document.getElementById("span_image");
+  let image = document.createElement("img");
+  image.id = "image";
+  image.alt = "no image";
+  image.style.width = "75%";
+  image.setAttribute("src", noImage);
+  old.parentNode.replaceChild(image, old);
 
-    // Make a textarea for description
-    old = document.getElementById("description_object");
-    let desc_textarea = document.createElement("textarea");
-    desc_textarea.className = "form-control";
-    desc_textarea.id = "description_object";
-    desc_textarea.rows = "6";
-    desc_textarea.value = description;
-    old.parentNode.replaceChild(desc_textarea, old);
+  // Make a simple paragraph for description
+  old = document.getElementById("description_object");
+  let desc_text = document.createElement("p");
+  desc_text.id = "description_object";
+  desc_text.innerHTML = description;
+  old.parentNode.replaceChild(desc_text, old);
 
-    // Make a textarea for description for the time slot
-    old = document.getElementById("time_slot");
-    let time_slot_textarea = document.createElement("textarea");
-    time_slot_textarea.className = "form-control";
-    time_slot_textarea.id = "time_slot";
-    time_slot_textarea.rows = "3";
-    time_slot_textarea.value = time_slot;
-    old.parentNode.replaceChild(time_slot_textarea, old);
+  // Make a simple paragraph for time slot
+  old = document.getElementById("time_slot");
+  let time_slot_text = document.createElement("p");
+  time_slot_text.id = "time_slot";
+  time_slot_text.rows = "3";
+  time_slot_text.innerHTML = time_slot;
+  old.parentNode.replaceChild(time_slot_text, old);
 
-    // Replace the button "Modifier" by a "Confirmer" one
-    old = document.getElementById("modifyObjectButton");
-    let divButtons = document.createElement("div");
-    divButtons.className = "row justify-content-md-center";
-    divButtons.id = "divButtons";
-    let divCol1 = document.createElement("div");
-    divCol1.className = "col-2";
-    let new_button = document.createElement("input");
-    new_button.type = "button";
-    new_button.className = "btn btn-primary";
-    new_button.value = "Confirmer";
-    new_button.id = "confirmObjectButton";
-    new_button.addEventListener("click", updateObject);
-    divCol1.appendChild(new_button);
-    divButtons.appendChild(divCol1);
+  // Replace the button "Confirmer" by a "Modifier" one
+  old = document.getElementById("divButtons");
+  let new_button = document.createElement("input");
+  new_button.type = "button";
+  new_button.className = "btn btn-primary";
+  new_button.value = "Modifier";
+  new_button.id = "modifyObjectButton";
+  new_button.addEventListener("click", changeToForm);
+  old.parentNode.replaceChild(new_button, old);
 
-    let divCol2 = document.createElement("div");
-    divCol2.className = "col-2";
-    let cancelButton = document.createElement("input");
-    cancelButton.type = "button";
-    cancelButton.className = "btn btn-primary";
-    cancelButton.value = "Annuler";
-    cancelButton.id = "cancelObjectButton";
-    cancelButton.addEventListener("click", changeToFormOrText);
-    divCol2.appendChild(cancelButton);
-    divButtons.appendChild(divCol2);
-    old.parentNode.replaceChild(divButtons, old);
-  }
-  // Convert to Text
-  else {
-    // Make a simple image
-    let old = document.getElementById("span_image");
-    let image = document.createElement("img");
-    image.id = "image";
-    image.alt = "no image";
-    image.style.width = "75%";
-    image.setAttribute("src", noImage);
-    old.parentNode.replaceChild(image, old);
-
-    // Make a simple paragraph for description
-    old = document.getElementById("description_object");
-    let desc_text = document.createElement("p");
-    desc_text.id = "description_object";
-    desc_text.innerHTML = description;
-    old.parentNode.replaceChild(desc_text, old);
-
-    // Make a simple paragraph for time slot
-    old = document.getElementById("time_slot");
-    let time_slot_text = document.createElement("p");
-    time_slot_text.id = "time_slot";
-    time_slot_text.rows = "3";
-    time_slot_text.innerHTML = time_slot;
-    old.parentNode.replaceChild(time_slot_text, old);
-
-    // Replace the button "Confirmer" by a "Modifier" one
-    old = document.getElementById("divButtons");
-    let new_button = document.createElement("input");
-    new_button.type = "button";
-    new_button.className = "btn btn-primary";
-    new_button.value = "Modifier";
-    new_button.id = "modifyObjectButton";
-    new_button.addEventListener("click", changeToFormOrText);
-    old.parentNode.replaceChild(new_button, old);
-
-  }
   form = !form;
+}
 
+/**
+ * Change elements of the html to have a form.
+ * @param {Event} e : evenement
+ */
+async function changeToForm(e) {
+  e.preventDefault();
+  // Make the image clickable to import a file
+  let old = document.getElementById("image");
+  let span_image = document.createElement("span");
+  span_image.id = "span_image";
+  span_image.className = "img_file_input";
+  let label_image = document.createElement("label");
+  label_image.setAttribute("for", "file_input");
+  let image = document.createElement("img");
+  image.alt = "no image";
+  image.style.width = "75%";
+  image.setAttribute("src", noImage);
+  label_image.appendChild(image);
+  let input_file = document.createElement("input");
+  input_file.id = "file_input";
+  input_file.type = "file";
+  span_image.appendChild(label_image);
+  span_image.appendChild(input_file);
+  old.parentNode.replaceChild(span_image, old);
+
+  // Make a textarea for description
+  old = document.getElementById("description_object");
+  let desc_textarea = document.createElement("textarea");
+  desc_textarea.className = "form-control";
+  desc_textarea.id = "description_object";
+  desc_textarea.rows = "6";
+  desc_textarea.value = description;
+  old.parentNode.replaceChild(desc_textarea, old);
+
+  // Make a textarea for description for the time slot
+  old = document.getElementById("time_slot");
+  let time_slot_textarea = document.createElement("textarea");
+  time_slot_textarea.className = "form-control";
+  time_slot_textarea.id = "time_slot";
+  time_slot_textarea.rows = "3";
+  time_slot_textarea.value = time_slot;
+  old.parentNode.replaceChild(time_slot_textarea, old);
+
+  // Replace the button "Modifier" by a "Confirmer" one
+  old = document.getElementById("modifyObjectButton");
+  let divButtons = document.createElement("div");
+  divButtons.className = "row justify-content-md-center";
+  divButtons.id = "divButtons";
+  let divCol1 = document.createElement("div");
+  divCol1.className = "col-2";
+  let new_button = document.createElement("input");
+  new_button.type = "button";
+  new_button.className = "btn btn-primary";
+  new_button.value = "Confirmer";
+  new_button.id = "confirmObjectButton";
+  new_button.addEventListener("click", updateObject);
+  divCol1.appendChild(new_button);
+  divButtons.appendChild(divCol1);
+
+  let divCol2 = document.createElement("div");
+  divCol2.className = "col-2";
+  let cancelButton = document.createElement("input");
+  cancelButton.type = "button";
+  cancelButton.className = "btn btn-primary";
+  cancelButton.value = "Annuler";
+  cancelButton.id = "cancelObjectButton";
+  cancelButton.addEventListener("click", changeToText);
+  divCol2.appendChild(cancelButton);
+  divButtons.appendChild(divCol2);
+  old.parentNode.replaceChild(divButtons, old);
+
+  form = !form;
 }
 
 /**
@@ -225,7 +227,6 @@ function updateObject(e) {
   let new_image = document.getElementById("file_input"); // TODO : how to get the image ?
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
-
   let new_time_slotDOM = document.getElementById("time_slot")
   let new_time_slot = new_time_slotDOM.value.trim();
 
@@ -250,6 +251,11 @@ function updateObject(e) {
   }
   // Check if there is an empty parameter
   if (emptyParameters > 0) {
+    let notif = new notification().getNotification();
+    notif.fire({
+      icon: 'error',
+      title: 'Veuillez remplir les champs obligatoires !'
+    })
     return;
   }
   // Call the function to update the offer
@@ -261,7 +267,7 @@ function updateObject(e) {
   time_slot = new_time_slot;
 
   // Put text back
-  changeToFormOrText(e);
+  changeToText(e);
 }
 
 export default MyObjectPage;
