@@ -1,6 +1,14 @@
 import {Redirect} from "../Router/Router";
 import {getSessionObject} from "../../utils/session";
 import noImage from "../../img/noImage.png";
+import TypeLibrary from "../../Domain/TypeLibrary";
+import MemberLibrary from "../../Domain/MemberLibrary";
+import OfferLibrary from "../../Domain/OfferLibrary";
+
+const typeLibrary = new TypeLibrary();
+const memberLibrary = new MemberLibrary();
+const offerLibrary = new OfferLibrary();
+let idOfferor;
 
 /**
  * Render the page to add a new object
@@ -11,23 +19,13 @@ const AddNewObjectPage = async () => {
     Redirect("/");
     return;
   }
+  // Get the id of the member
+  let member = await memberLibrary.getUserByHisToken();
+  idOfferor = member.user.memberId;
+
   // Get all types from the backend
-  let allDefaultTypes;
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": getSessionObject("user").accessToken,
-      },
-    };
-    allDefaultTypes = await fetch("api/type/allDefault", options);
-  } catch (err) {
-    console.log(err);
-  }
-  if (allDefaultTypes.status === 200) {
-    allDefaultTypes = await allDefaultTypes.json();
-  }
+  let allDefaultTypes = await typeLibrary.getAllDefaultTypes();
+
   // Create an HTML list of proposition for Types
   let allDefaultTypesHtml = "";
   for (let i = 0; i < allDefaultTypes.type.length; i++) {
@@ -35,6 +33,7 @@ const AddNewObjectPage = async () => {
     allDefaultTypesHtml += allDefaultTypes.type[i].typeName;
     allDefaultTypesHtml += `\">`;
   }
+
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = `
@@ -110,34 +109,14 @@ async function addObject(e) {
   console.log("add object" + e.target);
   let description = document.getElementById("description_object").value;
   let type = document.getElementById("type_object").value;
-  let date = document.getElementById("availability_date").value;
+  let timeSlot = document.getElementById("availability_date").value;
   console.log(description);
   console.log(type);
-  console.log(date);
+  console.log(timeSlot);
   //TODO : get the image if it exists
   //TODO call the backend
-  try {
-    let response;
-    let options = {
-      method: "POST",
-      body: JSON.stringify({
-        "description": description,
-        "type": type,
-        "time_slot": date,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    //TODO: put fetch here in response
-    response = true;
-    if (!response) { //!response.ok
-      //TODO : add SweetAlert2 to say it is insert
-      Redirect("/");
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  offerLibrary.addOffer(timeSlot, description, 1, idOfferor); //TODO : get the id type
+
 }
 
 export default AddNewObjectPage;

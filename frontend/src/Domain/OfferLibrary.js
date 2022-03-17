@@ -28,6 +28,40 @@ class OfferLibrary {
     return current_offer;
   }
 
+  async addOffer(timeSlot, description, idType, idOfferor) {
+    let response;
+    try {
+      let options = {
+        method: "POST",
+        body: JSON.stringify({
+          "timeSlot": timeSlot,
+          "object": {
+            "type": {
+              "idType": idType,
+            },
+            "description": description,
+            "status": "available",
+            "image": null, //TODO : change the image
+            "idOfferor": idOfferor
+          }
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/offers", options);
+    } catch (err) {
+      console.log(err);
+    }
+    let current_offer;
+    if (response.status === 200) {
+      current_offer = await response.json();
+    }
+
+    return current_offer;
+  }
+
   /**
    * Update an offer
    * @param id the id of the offer
