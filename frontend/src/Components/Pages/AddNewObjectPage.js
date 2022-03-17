@@ -43,55 +43,57 @@ const AddNewObjectPage = async () => {
         <div class="card">  
           <!-- Body of the card -->
           <div class="card-body">
-            <p class="card-text">
-            <form class="form_add">
-              <div class="row justify-content-start">
-                <!--TODO : make the image changeable-->
-                <!-- The image -->
-                <div class="col-4">
-                  <div class="img_file_input">
-                    <label for="file_input">
-                      <img alt="no image"  height="75%" width="75%" src="${noImage}"/>
-                    </label>
-                    <input id="file_input" type="file"/>
+            <div class="card-text">
+              <form class="form_add">
+                <div class="row justify-content-start p-2">
+                  <!--TODO : make the image changeable-->
+                  <!-- The image -->
+                  <div class="col-4">
+                    <div class="img_file_input">
+                      <label for="file_input">
+                        <img alt="no image"  height="75%" width="75%" src="${noImage}"/>
+                      </label>
+                      <input id="file_input" type="file"/>
+                    </div>
                   </div>
-                </div>
-                <!-- The description -->
-                <div class="col-8">
-                  <div class="form_add">
-                    <div class="mb-3">
-                      <label for="description_object" class="form-label">Description</label>
-                      <textarea class="form-control" id="description_object" rows="6"></textarea>
+                  <!-- The description -->
+                  <div class="col-8">
+                    <div class="form_add">
+                      <div class="mb-3">
+                        <h5><label for="description_object" class="form-label">Description</label></h5>
+                        <textarea class="form-control" id="description_object" rows="6"></textarea>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- The type -->
-              <div class="row">
-                <div class="form_add">
-                  <div class="mb-3">
-                    <label for="type_object" class="form-label">Type</label>
-                    <input type="text" class="form-control" id="type_object" list="all_types">
-                    <datalist id="all_types">`
+                <!-- The type -->
+                <div class="row p-2">
+                  <div class="form_add">
+                    <div class="mb-3">
+                      <h5><label for="type_object" class="form-label">Type</label></h5>
+                      <input type="text" class="form-control" id="type_object" list="all_types">
+                      <datalist id="all_types">`
       // Put the list of default types
       + allDefaultTypesHtml +
       `             </datalist>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <!-- the time slot-->
-              <div class="row"> 
-                <div class="form_add">
-                  <div class="mb-3">
-                    <label for="availability_date" class="form-label">Plage horaire</label>
-                    <textarea class="form-control" id="availability_date" rows="3"></textarea>
+                <!-- the time slot-->
+                <div class="row p-2"> 
+                  <div class="form_add">
+                    <div class="mb-3">
+                      <h5><label for="availability_date" class="form-label">Plage horaire</label></h5>
+                      <textarea class="form-control" id="availability_date" rows="3"></textarea>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <!-- The confirm button -->
-              <button type="submit" class="btn btn-primary" id="addObjectButton">Confirmer</button>
-            </form>
-            </p>
+                <!-- The confirm button -->
+                <div class="text-center"> 
+                  <button type="submit" class="btn btn-primary" id="addObjectButton">Confirmer</button>
+                </div>
+              </form>
+            </div>
             
           </div>
         </div>
@@ -107,15 +109,14 @@ const AddNewObjectPage = async () => {
  */
 async function addObject(e) {
   e.preventDefault();
-  console.log("add object" + e.target);
   let description = document.getElementById("description_object").value;
   let typeName = document.getElementById("type_object").value;
   let timeSlot = document.getElementById("availability_date").value;
-  console.log(description);
-  console.log(timeSlot);
+
   //TODO : get the image if it exists
-  //TODO call the backend
-  offerLibrary.addOffer(timeSlot, description, typeName, idOfferor); //TODO : get the id type
+
+  // Call the backend to add the offert
+  offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
   Redirect("/");
   let notif = new Notification().getNotification("top-end");
   notif.fire({
