@@ -73,21 +73,7 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    TypeDTO typeDTO;
-    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isEmpty()) {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
-      if (typeDTO == null) {
-        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-        if (typeDTO == null) {
-          throw new WebApplicationException("Problème lors de la création du type",
-              Response.Status.BAD_REQUEST);
-        }
-      }
-    } else {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
-    }
-    offerDTO.getObject().setType(typeDTO);
+    setCorrectType(offerDTO);
 
     if (offerDTO.getObject().getIdObject() == 0) {
       objectDAO.addOne(offerDTO.getObject());
@@ -112,6 +98,24 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO updateOffer(OfferDTO offerDTO) {
+    setCorrectType(offerDTO);
+
+    OfferDTO offer = offerDAO.updateOne(offerDTO);
+    if (offer == null) {
+      throw new WebApplicationException("Problème lors de la mise à jour du time slot",
+          Response.Status.BAD_REQUEST);
+    }
+
+    ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
+    if (objectDTO == null) {
+      throw new WebApplicationException("Problème lors de la mise à jour de l'objet",
+          Response.Status.BAD_REQUEST);
+    }
+
+    return offer;
+  }
+
+  private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
     if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
         .getTypeName().isEmpty()) {
@@ -127,19 +131,5 @@ public class OfferUCCImpl implements OfferUCC {
       typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
     }
     offerDTO.getObject().setType(typeDTO);
-
-    OfferDTO offer = offerDAO.updateOne(offerDTO);
-    if (offer == null) {
-      throw new WebApplicationException("Problème lors de la mise à jour du time slot",
-          Response.Status.BAD_REQUEST);
-    }
-
-    ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-    if (objectDTO == null) {
-      throw new WebApplicationException("Problème lors de la mise à jour de l'objet",
-          Response.Status.BAD_REQUEST);
-    }
-
-    return offer;
   }
 }
