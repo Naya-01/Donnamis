@@ -123,6 +123,11 @@ public class OfferResource {
     return offerUcc.updateOffer(offerDTO);
   }
 
+  /**
+   * Verify the type and throw an error if it's not correct.
+   *
+   * @param offerDTO the offer that has an object that has a type.
+   */
   private void verifyType(OfferDTO offerDTO) {
     if (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getType().getIdType() == 0

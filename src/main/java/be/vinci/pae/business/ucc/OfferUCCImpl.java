@@ -115,6 +115,11 @@ public class OfferUCCImpl implements OfferUCC {
     return offer;
   }
 
+  /**
+   * Verify the type and set it.
+   *
+   * @param offerDTO the offer that has an object that has a type.
+   */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
     if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
