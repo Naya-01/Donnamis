@@ -3,7 +3,9 @@ import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
+import MemberLibrary from "../../Domain/MemberLibrary";
 
+const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
@@ -20,7 +22,7 @@ let time_slot;
 let form = false;
 
 /**
- * Render the page to see his object
+ * Render the page to see an object
  */
 const MyObjectPage = async (id) => {
   // If he's not log in he's redirect to the homepage
@@ -28,11 +30,14 @@ const MyObjectPage = async (id) => {
     Redirect("/");
     return;
   }
+  // Get the id of the member
+  let member = await memberLibrary.getUserByHisToken();
+  let idMemberConnected = member.user.memberId;
 
   id = 1; //TODO : delete this line
   idOffert = id;
   // GET all informations of the object
-  let offer = await offerLibrary.getOfferById(id);
+  let offer = await offerLibrary.getOfferById(idOffert);
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
@@ -40,13 +45,15 @@ const MyObjectPage = async (id) => {
   english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
 
+  // GET all interests
+  let nbMembersInterested = 3; //TODO : request to have all interests
   // Construct all the HTML
 
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML =
       `<div class="container p-3">
       <div class="mx-5 my-5">
-      <h3 class=pb-3>Votre objet</h3>
+      <h3 id="titleObject" class=pb-3></h3>
       <div class="card">
         <!-- Body of the card -->
         <div class="card-body">
@@ -88,8 +95,11 @@ const MyObjectPage = async (id) => {
                 </div>
               </div>
               <!-- The confirm button -->
-              <div class="text-center p-2">
+              <div id="divB" class="text-center p-2">
                 <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
+              </div>
+              <div id="nbMembersInterested" class="text-center p-2">
+                <p>${nbMembersInterested} personnes sont intéressés par cet objet</p>
               </div>
           </p>
         </div>
@@ -97,7 +107,19 @@ const MyObjectPage = async (id) => {
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
-  button.addEventListener("click", changeToForm);
+  if (idMemberConnected === offer.object.idOfferor) { //TODO : put ===
+    document.getElementById("titleObject").textContent = "Votre objet";
+    button.addEventListener("click", changeToForm);
+  } else {
+    //TODO : get user by id
+    button.id = "interestedButton";
+    button.value = "Je suis interessé";
+    button.addEventListener("click", () => {
+      //TODO : POST an interest
+      button.disabled = true;
+    });
+    document.getElementById("titleObject").textContent = "L'objet de " + "";//TODO : put the pseudo here
+  }
 
 }
 
