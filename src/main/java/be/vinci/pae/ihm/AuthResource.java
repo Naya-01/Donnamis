@@ -234,7 +234,7 @@ public class AuthResource {
   @Authorize
   @Path("/subscriptions/{status}")
   @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getRefusedInscriptionRequest(@Context ContainerRequest request,
+  public List<MemberDTO> getAllInscriptionRequest(@Context ContainerRequest request,
       @PathParam("status") String status) {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     if (!memberDTO.getRole().equals("administrator")) {
