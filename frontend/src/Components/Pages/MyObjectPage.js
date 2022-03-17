@@ -2,7 +2,7 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import notification from "../Module/Notification";
+import Notification from "../Module/Notification";
 
 const offerLibrary = new OfferLibrary();
 const dictionnary = new Map([
@@ -251,7 +251,7 @@ function updateObject(e) {
   }
   // Check if there is an empty parameter
   if (emptyParameters > 0) {
-    let notif = new notification().getNotification();
+    let notif = new Notification().getNotification();
     notif.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'

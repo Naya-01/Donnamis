@@ -4,6 +4,7 @@ import noImage from "../../img/noImage.png";
 import TypeLibrary from "../../Domain/TypeLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import OfferLibrary from "../../Domain/OfferLibrary";
+import Notification from "../Module/Notification";
 
 const typeLibrary = new TypeLibrary();
 const memberLibrary = new MemberLibrary();
@@ -108,14 +109,19 @@ async function addObject(e) {
   e.preventDefault();
   console.log("add object" + e.target);
   let description = document.getElementById("description_object").value;
-  let type = document.getElementById("type_object").value;
+  let typeName = document.getElementById("type_object").value;
   let timeSlot = document.getElementById("availability_date").value;
   console.log(description);
-  console.log(type);
   console.log(timeSlot);
   //TODO : get the image if it exists
   //TODO call the backend
-  offerLibrary.addOffer(timeSlot, description, 1, idOfferor); //TODO : get the id type
+  offerLibrary.addOffer(timeSlot, description, typeName, idOfferor); //TODO : get the id type
+  Redirect("/");
+  let notif = new Notification().getNotification("top-end");
+  notif.fire({
+    icon: 'success',
+    title: 'Votre objet a bien été publié !'
+  })
 
 }
 

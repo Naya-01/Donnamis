@@ -1,10 +1,10 @@
 const Swal = require('sweetalert2')
 
 class Notification {
-  getNotification() {
+  getNotification(position = "bottom") {
     return Swal.mixin({
       toast: true,
-      position: 'bottom',
+      position: position,
       showConfirmButton: false,
       timer: 5000,
       timerProgressBar: true,

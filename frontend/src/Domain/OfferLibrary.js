@@ -28,7 +28,7 @@ class OfferLibrary {
     return current_offer;
   }
 
-  async addOffer(timeSlot, description, idType, idOfferor) {
+  async addOffer(timeSlot, description, typeName, idOfferor) {
     let response;
     try {
       let options = {
@@ -37,7 +37,8 @@ class OfferLibrary {
           "timeSlot": timeSlot,
           "object": {
             "type": {
-              "idType": idType,
+              "idType": 0,
+              "typeName": typeName,
             },
             "description": description,
             "status": "available",
