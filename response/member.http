@@ -54,3 +54,7 @@ Authorization: {{access}}
   "id": 1,
   "reason": "Test de refus"
 }
+
+### Get subcription request by status
+GET {{baseUri}}/member/subscriptions/pending
+Authorization: {{access}}
