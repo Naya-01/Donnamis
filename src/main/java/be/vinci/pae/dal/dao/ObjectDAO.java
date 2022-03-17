@@ -37,4 +37,12 @@ public interface ObjectDAO {
    * @return object with his id.
    */
   ObjectDTO addOne(ObjectDTO objectDTO);
+
+  /**
+   * Update an object.
+   *
+   * @param objectDTO : object that we want to update.
+   * @return object updated
+   */
+  ObjectDTO updateOne(ObjectDTO objectDTO);
 }

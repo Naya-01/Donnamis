@@ -1,18 +1,19 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 
 public class ObjectImpl implements ObjectDTO {
 
-  private Integer idObject;
-  private Integer idType;
+  private int idObject;
+  private TypeDTO type;
   private String description;
   private String status;
   private byte[] image;
-  private Integer idOfferor;
+  private int idOfferor;
 
   @Override
-  public Integer getIdObject() {
+  public int getIdObject() {
     return idObject;
   }
 
@@ -22,13 +23,13 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public Integer getIdType() {
-    return idType;
+  public TypeDTO getType() {
+    return type;
   }
 
   @Override
-  public void setIdType(Integer idType) {
-    this.idType = idType;
+  public void setType(TypeDTO type) {
+    this.type = type;
   }
 
   @Override
@@ -62,7 +63,7 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public Integer getIdOfferor() {
+  public int getIdOfferor() {
     return idOfferor;
   }
 
@@ -70,4 +71,5 @@ public class ObjectImpl implements ObjectDTO {
   public void setIdOfferor(int idOfferor) {
     this.idOfferor = idOfferor;
   }
+
 }

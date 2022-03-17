@@ -27,3 +27,55 @@ Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 Authorization: {{refresh}}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+    "idObject": 1
+  }
+}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+    "type": {
+      "idType": 4
+    },
+    "description": "description oklm",
+    "status": "published",
+    "image": null,
+    "idOfferor": 1
+  }
+}
+
+### Get offer by id
+GET {{baseUri}}/offers/getById/1
+Authorization: {{refresh}}
+
+### Update time slot of a offer
+POST {{baseUri}}/offers/update
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 1,
+  "timeSlot": "Je suis disponible le mardi soir",
+  "object": {
+    "description": "Une fusée tintin",
+    "image": null,
+    "status": "interested",
+    "type": {
+      "idType": 4
+    }
+  }
+}

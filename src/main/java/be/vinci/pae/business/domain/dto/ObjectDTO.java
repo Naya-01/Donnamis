@@ -6,13 +6,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ObjectImpl.class)
 public interface ObjectDTO {
 
-  Integer getIdObject();
+  int getIdObject();
 
   void setIdObject(int idObject);
 
-  Integer getIdType();
+  TypeDTO getType();
 
-  void setIdType(Integer idType);
+  void setType(TypeDTO type);
 
   String getDescription();
 
@@ -26,7 +26,7 @@ public interface ObjectDTO {
 
   void setImage(byte[] image);
 
-  Integer getIdOfferor();
+  int getIdOfferor();
 
   void setIdOfferor(int idOfferor);
 }

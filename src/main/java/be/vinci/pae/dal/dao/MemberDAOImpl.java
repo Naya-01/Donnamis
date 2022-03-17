@@ -161,7 +161,6 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public List<MemberDTO> getAllWithSubStatus(String status) {
-    System.out.println(status);
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
             + "refusal_reason FROM donnamis.members WHERE status = ?");

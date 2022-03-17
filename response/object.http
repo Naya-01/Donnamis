@@ -26,7 +26,25 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "idType": 1,
+  "type": {
+    "idType": 4
+  },
+  "description": "test",
+  "status": "available",
+  "image": null,
+  "idOfferor": 1
+}
+
+### update an object
+PUT {{baseUri}}/object/update
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 15,
+  "type": {
+    "idType": 4
+  },
   "description": "test",
   "status": "available",
   "image": null,
