@@ -24,10 +24,11 @@ const htmlPage = `
             <div class="fs-1 text-center">Inscription</div>
           <div class="mx-5">
             <form>
-              <div class="form-group">
+              <div class="form-group mt-3">
                 <label>Pseudonyme</label>
                 <input id="username" class="form-control" placeholder="pseudonyme" type="text">
               </div>
+              
               <div class="row mt-3">
                 <div class="form-group col">
                     <label>Nom</label>
@@ -38,10 +39,17 @@ const htmlPage = `
                     <input id="firstname" class="form-control" placeholder="prenom" type="text">
                   </div>
               </div>
-              <div class="form-group mt-3">
-                <label>Rue</label>
-                <input id="street" class="form-control" placeholder="rue" type="text">
+              <div class="row mt-3">
+                <div class="form-group col">
+                  <label>Rue</label>
+                  <input id="street" class="form-control" placeholder="rue" type="text">
+                </div>
+                <div class="form-group col">
+                <label>Numéro de téléphone</label>
+                <input id="phone_number" class="form-control" placeholder="numéro de téléphone" type="text">
               </div>
+              </div>
+              
               <div class="row mt-3">
                 <div class="col form-group">
                     <label>Numéro</label>
