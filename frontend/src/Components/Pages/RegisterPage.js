@@ -1,6 +1,3 @@
-import {setSessionObject} from "../../utils/session";
-import Navbar from "../Navbar/Navbar";
-import {Redirect} from "../Router/Router";
 import Member from "../../Domain/Member";
 import Address from "../../Domain/Address";
 
@@ -26,63 +23,74 @@ const htmlPage = `
             <form>
               <div class="form-group mt-3">
                 <label>Pseudonyme</label>
-                <input id="username" class="form-control" placeholder="pseudonyme" type="text">
+                <input id="username" class="form-control" 
+                  placeholder="pseudonyme" type="text">
               </div>
               
               <div class="row mt-3">
                 <div class="form-group col">
                     <label>Nom</label>
-                    <input id="lastname" class="form-control" placeholder="nom" type="text">
+                    <input id="lastname" class="form-control" placeholder="nom" 
+                      type="text">
                 </div>
                 <div class="form-group col">
                     <label>Prenom</label>
-                    <input id="firstname" class="form-control" placeholder="prenom" type="text">
+                    <input id="firstname" class="form-control" 
+                      placeholder="prenom" type="text">
                   </div>
               </div>
               <div class="row mt-3">
                 <div class="form-group col">
                   <label>Rue</label>
-                  <input id="street" class="form-control" placeholder="rue" type="text">
+                  <input id="street" class="form-control" placeholder="rue" 
+                    type="text">
                 </div>
                 <div class="form-group col">
                 <label>Numéro de téléphone</label>
-                <input id="phone_number" class="form-control" placeholder="numéro de téléphone" type="text">
+                <input id="phone_number" class="form-control" 
+                  placeholder="numéro de téléphone" type="text">
               </div>
               </div>
               
               <div class="row mt-3">
                 <div class="col form-group">
                     <label>Numéro</label>
-                    <input id="number" class="form-control" placeholder="numéro" type="text">
+                    <input id="number" class="form-control" placeholder="numéro"
+                      type="text">
                 </div>
                 <div class="col form-group">
                     <label>Boîte</label>
-                    <input id="box" class="form-control" placeholder="boîte" type="text">
+                    <input id="box" class="form-control" placeholder="boîte" 
+                      type="text">
                 </div>
                 <div class="col form-group">
                     <label>Code postal</label>
-                    <input id="postalcode" class="form-control" placeholder="CP" type="text">
+                    <input id="postalcode" class="form-control" placeholder="CP" 
+                      type="text">
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col form-group mt-3">
                     <label>Commune</label>
-                    <input id="commune" class="form-control" placeholder="commune" type="text">
+                    <input id="commune" class="form-control" 
+                      placeholder="commune" type="text">
                   </div>
                   <div class="col form-group mt-3">
                     <label>Pays</label>
-                    <input id="country" class="form-control" placeholder="pays" type="text">
+                    <input id="country" class="form-control" placeholder="pays"
+                      type="text">
                   </div>
               </div>
               
               <div class="form-group mt-3">
                 <label>Mot de passe</label>
-                <input id="password" class="form-control" placeholder="mot de passe" type="password">
+                <input id="password" class="form-control" 
+                  placeholder="mot de passe" type="password">
               </div>
               <div class="text-center">
-                <button class="btn btn-lg btn-primary mt-3" id="submitRegister" type="submit">S'inscrire</button>
+                <button class="btn btn-lg btn-primary mt-3" id="submitRegister" 
+                  type="submit">S'inscrire</button>
               <div class="text-center">
-                
             </form>
           </div>
         </div>
@@ -138,6 +146,8 @@ const RegisterPage = async () => {
       password.classList.remove("border-danger");
     }
 
+    let phoneNumber = document.getElementById("phone_number");
+
     if (username.value.length === 0 || lastname.value.length === 0
         || firstname.value.length === 0
         || street.value.length === 0 || number.value.length === 0
@@ -184,20 +194,17 @@ const RegisterPage = async () => {
       let address = new Address(box.value, number.value, street.value,
           postalcode.value, commune.value, country.value);
       let member = new Member(username.value, lastname.value, firstname.value,
-          password.value, address);
+          password.value, phoneNumber.value, address);
 
       // Requête DB inscription et redirect
       await registerMember(member);
-      await Navbar();
-      Redirect("/");
       Toast.fire({
         icon: 'success',
-        title: 'Bienvenue !'
-      })
+        title: `Vous êtes désormais en attente de la validation de votre profil
+          par un administrateur`
+      });
     }
-
   });
-
 };
 
 const registerMember = async (member) => {
@@ -223,16 +230,6 @@ const registerMember = async (member) => {
     }
   } catch (err) {
     console.log(err);
-  }
-  if (userData.status === 200) {
-    userData = await userData.json();
-
-    let userLocalStorage = {
-      refreshToken: userData.refresh_token,
-      accessToken: userData.access_token,
-    }
-
-    setSessionObject("user", userLocalStorage);
   }
 }
 
