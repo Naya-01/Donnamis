@@ -1,8 +1,10 @@
 import {setSessionObject} from "../../utils/session";
 import Navbar from "../Navbar/Navbar";
 import {Redirect} from "../Router/Router";
+import Member from "../../Domain/Member";
+import Address from "../../Domain/Address";
 
-const Swal = require('sweetalert2')
+const Swal = require('sweetalert2');
 
 const Toast = Swal.mixin({
   toast: true,
@@ -171,11 +173,13 @@ const RegisterPage = async () => {
       }
 
     } else {
+      let address = new Address(box.value, number.value, street.value,
+          postalcode.value, commune.value, country.value);
+      let member = new Member(username.value, lastname.value, firstname.value,
+          password.value, address);
 
       // Requête DB inscription et redirect
-      await registerMember(username.value, lastname.value, firstname.value,
-          password.value, box.value, number.value, street.value,
-          postalcode.value, commune.value, country.value)
+      await registerMember(member);
       await Navbar();
       Redirect("/");
       Toast.fire({
@@ -188,30 +192,13 @@ const RegisterPage = async () => {
 
 };
 
-const registerMember = async (username, lastname, firstname,
-    password, unitNumber, buildingNumber, street, postcode,
-    commune, country) => {
+const registerMember = async (member) => {
 
   let userData;
   try {
     let options = {
       method: "POST",
-      body: JSON.stringify({
-            "username": username,
-            "lastname": lastname,
-            "firstname": firstname,
-            "password": password,
-            //"phone": phoneNumber,
-            "address": {
-              "unitNumber": unitNumber,
-              "buildingNumber": buildingNumber,
-              "street": street,
-              "postcode": postcode,
-              "commune": commune,
-              "country": country
-            }
-          }
-      ),
+      body: JSON.stringify(member),
       headers: {
         "Content-Type": "application/json",
       },
@@ -222,7 +209,8 @@ const registerMember = async (username, lastname, firstname,
         Toast.fire({
           icon: 'error',
           title: msg
-        })
+        });
+        console.log(msg);
       })
     }
   } catch (err) {
