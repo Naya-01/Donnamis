@@ -1,3 +1,7 @@
+import {setSessionObject} from "../../utils/session";
+import Navbar from "../Navbar/Navbar";
+import {Redirect} from "../Router/Router";
+
 const Swal = require('sweetalert2')
 
 const Toast = Swal.mixin({
@@ -75,13 +79,13 @@ const htmlPage = `
       </div>
       `
 
-const RegisterPage = () => {
+const RegisterPage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = htmlPage;
 
   let btnSubmit = document.getElementById("submitRegister");
 
-  btnSubmit.addEventListener("click", e => {
+  btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
     let username = document.getElementById("username");
     if (username.classList.contains("border-danger")) {
@@ -169,7 +173,11 @@ const RegisterPage = () => {
     } else {
 
       // Requête DB inscription et redirect
-
+      await registerMember(username.value, lastname.value, firstname.value,
+          password.value, box.value, number.value, street.value,
+          postalcode.value, commune.value, country.value)
+      await Navbar();
+      Redirect("/");
       Toast.fire({
         icon: 'success',
         title: 'Bienvenue !'
@@ -179,5 +187,57 @@ const RegisterPage = () => {
   });
 
 };
+
+const registerMember = async (username, lastname, firstname,
+    password, unitNumber, buildingNumber, street, postcode,
+    commune, country) => {
+
+  let userData;
+  try {
+    let options = {
+      method: "POST",
+      body: JSON.stringify({
+            "username": username,
+            "lastname": lastname,
+            "firstname": firstname,
+            "password": password,
+            //"phone": phoneNumber,
+            "address": {
+              "unitNumber": unitNumber,
+              "buildingNumber": buildingNumber,
+              "street": street,
+              "postcode": postcode,
+              "commune": commune,
+              "country": country
+            }
+          }
+      ),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    userData = await fetch("/api/auth/register/", options);
+    if (!userData.ok) {
+      userData.text().then((msg) => {
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        })
+      })
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  if (userData.status === 200) {
+    userData = await userData.json();
+
+    let userLocalStorage = {
+      refreshToken: userData.refresh_token,
+      accessToken: userData.access_token,
+    }
+
+    setSessionObject("user", userLocalStorage);
+  }
+}
 
 export default RegisterPage;
