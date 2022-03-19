@@ -26,7 +26,7 @@ public class ObjectDAOImpl implements ObjectDAO {
   @Override
   public ObjectDTO getOne(int id) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "SELECT id_object, id_type, description, status, image, id_offeror "
+        "SELECT id_object, description, status, image, id_offeror "
             + "FROM donnamis.objects WHERE id_object = ?");
 
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
@@ -99,12 +99,12 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO addOne(ObjectDTO objectDTO) {
-    String query = "insert into donnamis.objects (id_type, description"
-        + ", status, image, id_offeror) values (?,?,?,?,?) RETURNING id_object;";
+    String query = "insert into donnamis.objects (id_type, description, status, image, id_offeror) "
+        + "values (?,?,?,?,?) RETURNING id_object, description, status, image, id_offeror";
 
     try {
       PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
-      preparedStatement.setObject(1, objectDTO.getIdType());
+      preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
       preparedStatement.setString(3, objectDTO.getStatus());
       preparedStatement.setBytes(4, objectDTO.getImage());
@@ -116,11 +116,46 @@ public class ObjectDAOImpl implements ObjectDAO {
       if (!resultSet.next()) {
         return null;
       }
-      int idObject = resultSet.getInt(1);
-      objectDTO.setIdObject(idObject);
+
+      setObject(objectDTO, resultSet);
+      resultSet.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
+    return objectDTO;
+  }
+
+  /**
+   * Update an object.
+   *
+   * @param objectDTO : object that we want to update.
+   * @return object updated
+   */
+  @Override
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
+    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+        "UPDATE donnamis.objects SET id_type = ?, description = ?, image = ?"
+            + "WHERE id_object = ? RETURNING id_object, description, status, image, id_offeror");
+
+    try {
+      preparedStatement.setInt(1, objectDTO.getType().getIdType());
+      preparedStatement.setString(2, objectDTO.getDescription());
+      preparedStatement.setBytes(3, objectDTO.getImage());
+      preparedStatement.setInt(4, objectDTO.getIdObject());
+
+      preparedStatement.executeQuery();
+
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      setObject(objectDTO, resultSet);
+      resultSet.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     return objectDTO;
   }
 
@@ -142,11 +177,10 @@ public class ObjectDAOImpl implements ObjectDAO {
   private void setObject(ObjectDTO objectDTO, ResultSet resultSet) {
     try {
       objectDTO.setIdObject(resultSet.getInt(1));
-      objectDTO.setIdType(0);
-      objectDTO.setDescription(resultSet.getString(3));
-      objectDTO.setStatus(resultSet.getString(4));
-      objectDTO.setImage(resultSet.getBytes(5));
-      objectDTO.setIdOfferor(resultSet.getInt(6));
+      objectDTO.setDescription(resultSet.getString(2));
+      objectDTO.setStatus(resultSet.getString(3));
+      objectDTO.setImage(resultSet.getBytes(4));
+      objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
       e.printStackTrace();
     }

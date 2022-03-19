@@ -28,5 +28,11 @@ public interface TypeDAO {
    */
   List<TypeDTO> getAllDefaultTypes();
 
-
+  /**
+   * Insert a new type in the db.
+   *
+   * @param typeName the name of the type
+   * @return a typeDTO with all the informations of the new type added
+   */
+  TypeDTO addOne(String typeName);
 }

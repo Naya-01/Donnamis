@@ -80,16 +80,16 @@ VALUES ('Vêtements', TRUE);
 
 INSERT INTO donnamis.objects
     (id_type, description, status, id_offeror)
-VALUES (4, 'Jouet playmobil', 'interested', 1);
+VALUES (4, 'Une fusée tintin', 'interested', 2);
 
 INSERT INTO donnamis.offers
     (date, time_slot, id_object)
-VALUES (NOW(), 'qtv', 1);
+VALUES (NOW(), 'Je suis disponible le dimanche soir à partir de 17h', 1);
 
 INSERT INTO donnamis.objects
     (id_type, description, status, id_offeror)
-VALUES (4, 'Jouet lego', 'interested', 1);
+VALUES (4, 'Jouet lego', 'interested', 2);
 
 INSERT INTO donnamis.offers
     (date, time_slot, id_object)
-VALUES (NOW(), 'stt', 2);
+VALUES (NOW(), 'Disponible à chaque heure de la semaine', 2);
