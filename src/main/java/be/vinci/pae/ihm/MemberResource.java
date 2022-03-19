@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -20,7 +21,14 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -31,6 +39,24 @@ public class MemberResource {
 
   @Inject
   private MemberUCC memberUCC;
+
+
+  @POST
+  @Path("/upload")
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  public Response uploadFile(@FormDataParam("file") InputStream file, @FormDataParam("file")
+      FormDataContentDisposition fileDisposition) {
+
+    try {
+      String fileName = System.getenv("OneDrive") + "\\img\\"
+          + UUID.randomUUID() + fileDisposition.getFileName();
+      Files.copy(file, Paths.get(fileName));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return Response.ok().build();
+  }
 
   /**
    * Get a user by his token.
