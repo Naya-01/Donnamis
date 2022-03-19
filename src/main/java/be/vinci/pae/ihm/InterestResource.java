@@ -81,8 +81,7 @@ public class InterestResource {
    *
    * @param idObject the object we want to retrieve the interest count
    * @param request  request received from Authorize annotation (filter).
-   * @return jsonNode that contains count of interested people and a boolean if the authenticated
-   * user is interested in the object
+   * @return jsonNode with count of interests and a boolean if the user is one of the interested
    */
   @GET
   @Path("/count/{idObject}")
