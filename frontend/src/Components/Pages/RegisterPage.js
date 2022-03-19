@@ -14,7 +14,7 @@ const regOnlyLettersAndNumbersOrNothing =
     new RegExp('^([0-9]+[a-zA-Z]?)*$');
 const regOnlyLetters = new RegExp('^[a-zA-Z éàùöèêûî\']+$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const Toast = new Notification().getNotification();
+const toast = new Notification().getNotification();
 
 const htmlPage = `
           <div class="container mt-5">
@@ -35,9 +35,9 @@ const htmlPage = `
                       type="text">
                 </div>
                 <div class="form-group col">
-                    <label>Prenom</label>
+                    <label>Prénom</label>
                     <input id="firstname" class="form-control" 
-                      placeholder="prenom" type="text">
+                      placeholder="prénom" type="text">
                   </div>
               </div>
               <div class="row mt-3">
@@ -150,34 +150,34 @@ const RegisterPage = async () => {
     });
 
     if (!allNotNullFieldsFilled) {
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Veuillez remplir tout les champs obligatoires !'
       })
     } else if (username.value.trim().length > 50) {
       username.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le pseudonyme est trop grand ou est invalide'
       })
     } else if (lastname.value.trim().length > 50 ||
         !regOnlyLetters.test(lastname.value.trim())) {
       lastname.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le nom est trop grand ou est invalide'
       })
     } else if (firstname.value.trim().length > 50 ||
         !regOnlyLetters.test(firstname.value.trim())) {
       firstname.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le prénom est trop grand ou est invalide'
       })
     } else if (phoneNumber.value.trim().length !== 0
         && !regNumberPhone.test(phoneNumber.value.trim())) {
       unitNumber.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le numéro de téléphone est invalide'
       })
@@ -187,42 +187,42 @@ const RegisterPage = async () => {
             && !regOnlyLettersAndNumbersOrNothing.test(unitNumber.value.trim())
         )) {
       unitNumber.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le numéro de boite est trop grand ou est invalide'
       })
     } else if (buildingNumber.value.trim().length > 8 ||
         !regOnlyLettersAndNumbers.test(buildingNumber.value.trim())) {
       buildingNumber.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le numéro de maison est trop grand ou est invalide'
       })
     } else if (street.value.trim().length > 50 ||
         !regOnlyLettersAndDash.test(street.value.trim())) {
       street.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le nom de rue est trop grand ou est invalide'
       })
     } else if (postcode.value.trim().length > 15 ||
         !regOnlyNumbersAndDash.test(postcode.value.trim())) {
       postcode.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le numéro de code postal est trop grand ou est invalide'
       })
     } else if (commune.value.trim().length > 50 ||
         !regOnlyLettersAndDash.test(commune.value.trim())) {
       commune.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le nom de commune est trop grand ou est invalide'
       })
     } else if (country.value.trim().length > 50 ||
         !regOnlyLettersAndDash.test(country.value.trim())) {
       country.classList.add("border-danger");
-      Toast.fire({
+      toast.fire({
         icon: 'error',
         title: 'Le nom de pays est trop grand ou est invalide'
       })
@@ -236,7 +236,7 @@ const RegisterPage = async () => {
 
       // Requête DB inscription et redirect
       await memberLibrary.registerMember(member);
-      Toast.fire({
+      toast.fire({
         icon: 'success',
         title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`
