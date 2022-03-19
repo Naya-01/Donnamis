@@ -1,19 +1,11 @@
 import Member from "../../Domain/Member";
 import Address from "../../Domain/Address";
+import Notification from "../Module/Notification";
+import MemberLibrary from "../../Domain/MemberLibrary";
 
-const Swal = require('sweetalert2');
+const memberLibrary = new MemberLibrary();
 
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'bottom',
-  showConfirmButton: false,
-  timer: 5000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer)
-    toast.addEventListener('mouseleave', Swal.resumeTimer)
-  }
-})
+const Toast = new Notification().getNotification();
 
 const htmlPage = `
           <div class="container mt-5">
@@ -106,90 +98,43 @@ const RegisterPage = async () => {
   btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
     let username = document.getElementById("username");
-    if (username.classList.contains("border-danger")) {
-      username.classList.remove("border-danger");
-    }
     let lastname = document.getElementById("lastname");
-    if (lastname.classList.contains("border-danger")) {
-      lastname.classList.remove("border-danger");
-    }
     let firstname = document.getElementById("firstname");
-    if (firstname.classList.contains("border-danger")) {
-      firstname.classList.remove("border-danger");
-    }
-    let street = document.getElementById("street");
-    if (street.classList.contains("border-danger")) {
-      street.classList.remove("border-danger");
-    }
-    let number = document.getElementById("number");
-    if (number.classList.contains("border-danger")) {
-      number.classList.remove("border-danger");
-    }
-    let box = document.getElementById("box");
-    if (box.classList.contains("border-danger")) {
-      box.classList.remove("border-danger");
-    }
-    let postalcode = document.getElementById("postalcode");
-    if (postalcode.classList.contains("border-danger")) {
-      postalcode.classList.remove("border-danger");
-    }
-    let commune = document.getElementById("commune");
-    if (commune.classList.contains("border-danger")) {
-      commune.classList.remove("border-danger");
-    }
-    let country = document.getElementById("country");
-    if (country.classList.contains("border-danger")) {
-      country.classList.remove("border-danger");
-    }
-    let password = document.getElementById("password");
-    if (password.classList.contains("border-danger")) {
-      password.classList.remove("border-danger");
-    }
-
     let phoneNumber = document.getElementById("phone_number");
+    let password = document.getElementById("password");
 
-    if (username.value.length === 0 || lastname.value.length === 0
-        || firstname.value.length === 0
-        || street.value.length === 0 || number.value.length === 0
-        || box.value.length === 0
-        || postalcode.value.length === 0 || commune.value.length === 0
-        || country.value.length === 0 || password.value.length === 0) {
+    let street = document.getElementById("street");
+    let number = document.getElementById("number");
+    let box = document.getElementById("box");
+    let postalcode = document.getElementById("postalcode");
+    let commune = document.getElementById("commune");
+    let country = document.getElementById("country");
+
+    const notNullFields = [username, lastname, firstname, phoneNumber, password,
+      number, street, postalcode, commune, country];
+
+    notNullFields.forEach(function (item) {
+      if (item.classList.contains("border-danger")) {
+        item.classList.remove("border-danger");
+      }
+    });
+
+    let allNotNullFieldsFilled = true;
+
+    notNullFields.forEach(function (item) {
+      if (item.value.trim().length === 0) {
+        item.classList.add("border-danger");
+        if (allNotNullFieldsFilled) {
+          allNotNullFieldsFilled = false;
+        }
+      }
+    });
+
+    if (!allNotNullFieldsFilled) {
       Toast.fire({
         icon: 'error',
         title: 'Veuillez remplir tout les champs obligatoires !'
       })
-
-      if (username.value.length === 0) {
-        username.classList.add("border-danger");
-      }
-      if (lastname.value.length === 0) {
-        lastname.classList.add("border-danger");
-      }
-      if (firstname.value.length === 0) {
-        firstname.classList.add("border-danger");
-      }
-      if (street.value.length === 0) {
-        street.classList.add("border-danger");
-      }
-      if (number.value.length === 0) {
-        number.classList.add("border-danger");
-      }
-      if (box.value.length === 0) {
-        box.classList.add("border-danger");
-      }
-      if (postalcode.value.length === 0) {
-        postalcode.classList.add("border-danger");
-      }
-      if (commune.value.length === 0) {
-        commune.classList.add("border-danger");
-      }
-      if (country.value.length === 0) {
-        country.classList.add("border-danger");
-      }
-      if (password.value.length === 0) {
-        password.classList.add("border-danger");
-      }
-
     } else {
       let address = new Address(box.value, number.value, street.value,
           postalcode.value, commune.value, country.value);
@@ -197,7 +142,7 @@ const RegisterPage = async () => {
           password.value, phoneNumber.value, address);
 
       // Requête DB inscription et redirect
-      await registerMember(member);
+      await memberLibrary.registerMember(member);
       Toast.fire({
         icon: 'success',
         title: `Vous êtes désormais dans l'attente de la validation d'un 
@@ -206,31 +151,5 @@ const RegisterPage = async () => {
     }
   });
 };
-
-const registerMember = async (member) => {
-
-  let userData;
-  try {
-    let options = {
-      method: "POST",
-      body: JSON.stringify(member),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    userData = await fetch("/api/auth/register/", options);
-    if (!userData.ok) {
-      userData.text().then((msg) => {
-        Toast.fire({
-          icon: 'error',
-          title: msg
-        });
-        console.log(msg);
-      })
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 export default RegisterPage;
