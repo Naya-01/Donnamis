@@ -62,9 +62,8 @@ Authorization: {{refresh}}
 client.global.set("access", response.body.access_token);
 %}
 
-
 ### Get user by his token
-POST {{baseUri}}/auth/getuserbytoken
+POST {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
 
 

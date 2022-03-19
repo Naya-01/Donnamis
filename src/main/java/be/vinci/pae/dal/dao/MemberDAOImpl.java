@@ -19,6 +19,74 @@ public class MemberDAOImpl implements MemberDAO {
 
 
   /**
+   * Promote the member with his id to the admin status.
+   *
+   * @param id of the member
+   */
+  @Override
+  public void promoteAdministrator(int id) {
+    String query = "UPDATE donnamis.members SET role='administrator' WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Confirm the registration of the member and remove his precedent reason.
+   *
+   * @param id of the member
+   */
+  @Override
+  public void confirmDeniedMemberRegistration(int id) {
+    String query = "UPDATE donnamis.members SET refusal_reason = NULL WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    confirmRegistration(id);
+  }
+
+  /**
+   * Confirm the registration of the member with his id.
+   *
+   * @param id of the member
+   */
+  @Override
+  public void confirmRegistration(int id) {
+    String query = "UPDATE donnamis.members SET status='valid' WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Decline the registration of a member with his id and the reason.
+   *
+   * @param id     of the member
+   * @param reason for denial
+   */
+  @Override
+  public void declineRegistration(int id, String reason) {
+    String query = "UPDATE donnamis.members SET status='denied' , "
+        + "refusal_reason=? WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setString(1, reason);
+      preparedStatement.setInt(2, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Get a member we want to retrieve by his username.
    *
    * @param username : the username of the member we want to retrieve
