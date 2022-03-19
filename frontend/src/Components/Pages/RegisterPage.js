@@ -5,6 +5,8 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 
 const memberLibrary = new MemberLibrary();
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
+const regNumberPhone =
+    new RegExp('^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$');
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 //starting with numbers
@@ -172,6 +174,13 @@ const RegisterPage = async () => {
         icon: 'error',
         title: 'Le prénom est trop grand ou est invalide'
       })
+    } else if (phoneNumber.value.trim().length !== 0
+        && !regNumberPhone.test(phoneNumber.value.trim())) {
+      unitNumber.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le numéro de téléphone est invalide'
+      })
     } else if (
         unitNumber.value.trim().length > 15
         || (unitNumber.value.trim().length !== 0
@@ -218,10 +227,12 @@ const RegisterPage = async () => {
         title: 'Le nom de pays est trop grand ou est invalide'
       })
     } else {
-      let address = new Address(unitNumber.value, buildingNumber.value,
-          street.value, postcode.value, commune.value, country.value);
-      let member = new Member(username.value, lastname.value, firstname.value,
-          password.value, phoneNumber.value, address);
+      let address = new Address(unitNumber.value.trim(),
+          buildingNumber.value.trim(), street.value.trim(),
+          postcode.value.trim(), commune.value.trim(), country.value.trim());
+      let member = new Member(username.value.trim(), lastname.value.trim(),
+          firstname.value.trim(), password.value.trim(),
+          phoneNumber.value.trim(), address);
 
       // Requête DB inscription et redirect
       await memberLibrary.registerMember(member);
