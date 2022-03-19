@@ -4,7 +4,14 @@ import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
 
 const memberLibrary = new MemberLibrary();
-
+const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
+//starting with numbers
+const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
+//starting with numbers
+const regOnlyLettersAndNumbersOrNothing =
+    new RegExp('^([0-9]+[a-zA-Z]?)*$');
+const regOnlyLetters = new RegExp('^[a-zA-Z éàùöèêûî\']+$');
+const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 const Toast = new Notification().getNotification();
 
 const htmlPage = `
@@ -47,13 +54,13 @@ const htmlPage = `
               <div class="row mt-3">
                 <div class="col form-group">
                     <label>Numéro</label>
-                    <input id="building_number" class="form-control" placeholder="numéro"
-                      type="text">
+                    <input id="building_number" class="form-control" 
+                      placeholder="numéro" type="text">
                 </div>
                 <div class="col form-group">
                     <label>Boîte</label>
-                    <input id="unit_number" class="form-control" placeholder="boîte" 
-                      type="text">
+                    <input id="unit_number" class="form-control" 
+                      placeholder="boîte" type="text">
                 </div>
                 <div class="col form-group">
                     <label>Code postal</label>
@@ -121,6 +128,13 @@ const RegisterPage = async () => {
       }
     });
 
+    if (phoneNumber.classList.contains("border-danger")) {
+      phoneNumber.classList.remove("border-danger");
+    }
+    if (unitNumber.classList.contains("border-danger")) {
+      unitNumber.classList.remove("border-danger");
+    }
+
     let allNotNullFieldsFilled = true;
 
     //check if all not null fields are filled
@@ -137,6 +151,71 @@ const RegisterPage = async () => {
       Toast.fire({
         icon: 'error',
         title: 'Veuillez remplir tout les champs obligatoires !'
+      })
+    } else if (username.value.trim().length > 50) {
+      username.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le pseudonyme est trop grand ou est invalide'
+      })
+    } else if (lastname.value.trim().length > 50 ||
+        !regOnlyLetters.test(lastname.value.trim())) {
+      lastname.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le nom est trop grand ou est invalide'
+      })
+    } else if (firstname.value.trim().length > 50 ||
+        !regOnlyLetters.test(firstname.value.trim())) {
+      firstname.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le prénom est trop grand ou est invalide'
+      })
+    } else if (
+        unitNumber.value.trim().length > 15
+        || (unitNumber.value.trim().length !== 0
+            && !regOnlyLettersAndNumbersOrNothing.test(unitNumber.value.trim())
+        )) {
+      unitNumber.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le numéro de boite est trop grand ou est invalide'
+      })
+    } else if (buildingNumber.value.trim().length > 8 ||
+        !regOnlyLettersAndNumbers.test(buildingNumber.value.trim())) {
+      buildingNumber.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le numéro de maison est trop grand ou est invalide'
+      })
+    } else if (street.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(street.value.trim())) {
+      street.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le nom de rue est trop grand ou est invalide'
+      })
+    } else if (postcode.value.trim().length > 15 ||
+        !regOnlyNumbersAndDash.test(postcode.value.trim())) {
+      postcode.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le numéro de code postal est trop grand ou est invalide'
+      })
+    } else if (commune.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(commune.value.trim())) {
+      commune.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le nom de commune est trop grand ou est invalide'
+      })
+    } else if (country.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(country.value.trim())) {
+      country.classList.add("border-danger");
+      Toast.fire({
+        icon: 'error',
+        title: 'Le nom de pays est trop grand ou est invalide'
       })
     } else {
       let address = new Address(unitNumber.value, buildingNumber.value,
