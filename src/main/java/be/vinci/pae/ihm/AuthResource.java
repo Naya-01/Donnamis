@@ -233,9 +233,10 @@ public class AuthResource {
   @Path("/id/{id}")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public MemberDTO getUserById(@PathParam("id") int id) {
-    System.out.println("id");
-    return memberUCC.getMember(id);
+  public ObjectNode getUserById(@PathParam("id") int id) {
+    MemberDTO memberDTO = memberUCC.getMember(id);
+    return jsonMapper.createObjectNode()
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
   /**
