@@ -1,0 +1,36 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "AlbertDeBucarest",
+  "password": "albertLePoulet",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+
+### Get One interest
+GET {{baseUri}}/interest?idObject=2&idMember=1
+Authorization: {{refresh}}
+
+### Add One interest
+POST {{baseUri}}/interest
+Content-Type: application/json
+Authorization: {{refresh}}
+
+{
+  "idObject": 3,
+  "availabilityDate": "2017-01-13"
+}
+
+### Get interest count
+GET {{baseUri}}/interest/count/1
+Authorization: {{refresh}}
+
+
+### /interest/interestedCount/{idObject} → retourne le nombre d'intéressé + si l'user est lui même interessé
+### /interest/getAllInterested/{idObject} → retourne tous les membres interressé (request ok si le membre a posté l'objet)
