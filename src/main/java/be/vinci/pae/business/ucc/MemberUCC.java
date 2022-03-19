@@ -23,6 +23,29 @@ public interface MemberUCC {
   MemberDTO getMember(int id);
 
   /**
+   * Confirm the registration of the member with his id.
+   *
+   * @param id of the member
+   */
+  void confirmRegistration(int id);
+
+  /**
+   * Decline the registration of a member with his id and the reason.
+   *
+   * @param id     of the member
+   * @param reason for denial
+   */
+  void declineRegistration(int id, String reason);
+
+
+  /**
+   * Promote the member with his id to the admin status.
+   *
+   * @param id of the member
+   */
+  void promoteAdministrator(int id);
+
+  /**
    * Register a quidam.
    *
    * @param memberDTO : User object with all information.
@@ -37,4 +60,5 @@ public interface MemberUCC {
    * @return a list of memberDTO
    */
   List<MemberDTO> getInscriptionRequest(String status);
+
 }

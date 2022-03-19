@@ -4,7 +4,6 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
@@ -14,17 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -92,22 +84,6 @@ public class AuthResource {
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
-  }
-
-  /**
-   * Get a user by his token.
-   *
-   * @param request to get information request
-   * @return return the linked user to his token
-   */
-  @POST
-  @Path("/getuserbytoken")
-  @Authorize
-  @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getUserByToken(@Context ContainerRequest request) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return jsonMapper.createObjectNode()
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
@@ -237,26 +213,6 @@ public class AuthResource {
     MemberDTO memberDTO = memberUCC.getMember(id);
     return jsonMapper.createObjectNode()
         .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
-  }
-
-  /**
-   * Get all subscription requests according to their status. Need admin rights
-   *
-   * @param request to get information request
-   * @param status  the status subscription members
-   * @return a list of memberDTO
-   */
-  @GET
-  @Authorize
-  @Path("/subscriptions/{status}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getAllInscriptionRequest(@Context ContainerRequest request,
-      @PathParam("status") String status) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    if (!memberDTO.getRole().equals("administrator")) {
-      throw new UnauthorizedException("Need admin right");
-    }
-    return memberUCC.getInscriptionRequest(status);
   }
 
 

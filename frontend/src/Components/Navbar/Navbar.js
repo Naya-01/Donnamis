@@ -98,7 +98,7 @@ const Navbar = async () => {
                     <a class="nav-link fs-4 " href="#" data-uri="/myObjectPage">MY OBJECT PAGE</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#">Inscriptions</a>
+                    <a class="nav-link fs-4 " data-uri="/registrationManagement" href="#">Inscriptions</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-4 " href="#">Membres</a>
