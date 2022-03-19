@@ -13,12 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -217,26 +212,6 @@ public class AuthResource {
   public MemberDTO getUserById(@PathParam("id") int id) {
     System.out.println("id");
     return memberUCC.getMember(id);
-  }
-
-  /**
-   * Get all subscription requests according to their status. Need admin rights
-   *
-   * @param request to get information request
-   * @param status  the status subscription members
-   * @return a list of memberDTO
-   */
-  @GET
-  @Authorize
-  @Path("/subscriptions/{status}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getAllInscriptionRequest(@Context ContainerRequest request,
-      @PathParam("status") String status) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    if (!memberDTO.getRole().equals("administrator")) {
-      throw new UnauthorizedException("Need admin right");
-    }
-    return memberUCC.getInscriptionRequest(status);
   }
 
 
