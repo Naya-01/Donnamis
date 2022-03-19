@@ -94,10 +94,10 @@ public class InterestDAOImpl implements InterestDAO {
   }
 
   /**
-   * Get a list of interest by an id object.
+   * Get a list of interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
-   * @return a list of interest by an id object
+   * @return a list of interest, by an id object
    */
   @Override
   public List<InterestDTO> getAll(int idObject) {

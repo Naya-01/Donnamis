@@ -49,8 +49,7 @@ public class InterestResource {
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
-    return interestDTO;
+    return interestUCC.getInterest(idObject, idMember);
   }
 
   /**
@@ -78,12 +77,12 @@ public class InterestResource {
   }
 
   /**
-   * Get the count of interested people of a object.
+   * Get the count of interested people of an object.
    *
    * @param idObject the object we want to retrieve the interest count
    * @param request  request received from Authorize annotation (filter).
-   * @return jsonnode that contains count of interested people and a boolean if the authenticated
-   * user is interested by the object
+   * @return jsonNode that contains count of interested people and a boolean if the authenticated
+   * user is interested in the object
    */
   @GET
   @Path("/count/{idObject}")
