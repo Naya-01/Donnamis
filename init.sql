@@ -5,14 +5,15 @@ CREATE SCHEMA donnamis;
 CREATE TABLE donnamis.members
 (
     id_member      SERIAL PRIMARY KEY,
-    username       VARCHAR(50) NOT NULL,
-    lastname       VARCHAR(50) NOT NULL,
-    firstname      VARCHAR(50) NOT NULL,
-    status         VARCHAR(15) NOT NULL,
-    role           VARCHAR(15) NOT NULL,
-    phone_number   VARCHAR(50) NULL,
-    password       CHAR(60)    NOT NULL,
-    refusal_reason VARCHAR(50) NULL
+    username       VARCHAR(50)  NOT NULL,
+    lastname       VARCHAR(50)  NOT NULL,
+    firstname      VARCHAR(50)  NOT NULL,
+    status         VARCHAR(15)  NOT NULL,
+    role           VARCHAR(15)  NOT NULL,
+    phone_number   VARCHAR(50)  NULL,
+    password       CHAR(60)     NOT NULL,
+    refusal_reason VARCHAR(50)  NULL,
+    image          VARCHAR(100) NULL
 );
 
 CREATE TABLE donnamis.addresses
@@ -40,7 +41,7 @@ CREATE TABLE donnamis.objects
     id_type     INTEGER REFERENCES donnamis.types (id_type)     NOT NULL,
     description VARCHAR(100)                                    NOT NULL,
     status      VARCHAR(10)                                     NOT NULL,
-    image       BYTEA                                           NULL,
+    image       VARCHAR(100)                                    NULL,
     id_offeror  INTEGER REFERENCES donnamis.members (id_member) NOT NULL
 );
 
