@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -44,8 +45,23 @@ public class MemberResource {
   @POST
   @Path("/upload")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  public Response uploadFile(@FormDataParam("file") InputStream file, @FormDataParam("file")
-      FormDataContentDisposition fileDisposition) {
+  public Response uploadFile(@FormDataParam("file") InputStream file,
+      @FormDataParam("file") FormDataContentDisposition fileDisposition,
+      @FormDataParam("file") FormDataBodyPart fileMime) {
+
+    String type = fileMime.getMediaType().getSubtype();
+    String[] typesAllowed = {"png", "jpg", "jpeg"};
+    boolean authorizedType = false;
+    for (String t : typesAllowed) {
+      if (type.equals(t)) {
+        authorizedType = true;
+      }
+    }
+    
+    if (!authorizedType) {
+      throw new WebApplicationException("Le type du fichier est incorrect."
+          + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
+    }
 
     try {
       String fileName = System.getenv("OneDrive") + "\\img\\"
