@@ -2,6 +2,8 @@ package be.vinci.pae.utils;
 
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.AddressFactoryImpl;
+import be.vinci.pae.business.factories.InterestFactory;
+import be.vinci.pae.business.factories.InterestFactoryImpl;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.MemberFactoryImpl;
 import be.vinci.pae.business.factories.ObjectFactory;
@@ -12,6 +14,8 @@ import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
 import be.vinci.pae.business.ucc.AddressUCC;
 import be.vinci.pae.business.ucc.AddressUCCImpl;
+import be.vinci.pae.business.ucc.InterestUCC;
+import be.vinci.pae.business.ucc.InterestUCCImpl;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.business.ucc.MemberUCCImpl;
 import be.vinci.pae.business.ucc.ObjectUCC;
@@ -22,6 +26,8 @@ import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.AddressDAOImpl;
+import be.vinci.pae.dal.dao.InterestDAO;
+import be.vinci.pae.dal.dao.InterestDAOImpl;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.MemberDAOImpl;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -46,18 +52,17 @@ public class ApplicationBinder extends AbstractBinder {
     bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
     bind(TypeFactoryImpl.class).to(TypeFactory.class).in(Singleton.class);
     bind(AddressFactoryImpl.class).to(AddressFactory.class).in(Singleton.class);
-
+    bind(InterestFactoryImpl.class).to(InterestFactory.class).in(Singleton.class);
     bind(DALServiceImpl.class).to(DALService.class).in(Singleton.class);
 
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(TypeUCCImpl.class).to(TypeUCC.class).in(Singleton.class);
     bind(AddressUCCImpl.class).to(AddressUCC.class).in(Singleton.class);
-
+    bind(InterestUCCImpl.class).to(InterestUCC.class).in(Singleton.class);
     bind(MemberDAOImpl.class).to(MemberDAO.class).in(Singleton.class);
     bind(TypeDAOImpl.class).to(TypeDAO.class).in(Singleton.class);
     bind(AddressDAOImpl.class).to(AddressDAO.class).in(Singleton.class);
-
-
+    bind(InterestDAOImpl.class).to(InterestDAO.class).in(Singleton.class);
     bind(OfferFactoryImpl.class).to(OfferFactory.class).in(Singleton.class);
     bind(OfferUCCImpl.class).to(OfferUCC.class).in(Singleton.class);
     bind(OfferDAOImpl.class).to(OfferDAO.class).in(Singleton.class);
