@@ -47,17 +47,17 @@ const htmlPage = `
               <div class="row mt-3">
                 <div class="col form-group">
                     <label>Numéro</label>
-                    <input id="number" class="form-control" placeholder="numéro"
+                    <input id="building_number" class="form-control" placeholder="numéro"
                       type="text">
                 </div>
                 <div class="col form-group">
                     <label>Boîte</label>
-                    <input id="box" class="form-control" placeholder="boîte" 
+                    <input id="unit_number" class="form-control" placeholder="boîte" 
                       type="text">
                 </div>
                 <div class="col form-group">
                     <label>Code postal</label>
-                    <input id="postalcode" class="form-control" placeholder="CP" 
+                    <input id="postcode" class="form-control" placeholder="CP" 
                       type="text">
                 </div>
               </div>
@@ -97,21 +97,23 @@ const RegisterPage = async () => {
 
   btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
+    //member fields
     let username = document.getElementById("username");
     let lastname = document.getElementById("lastname");
     let firstname = document.getElementById("firstname");
     let phoneNumber = document.getElementById("phone_number");
     let password = document.getElementById("password");
 
+    //address fields
     let street = document.getElementById("street");
-    let number = document.getElementById("number");
-    let box = document.getElementById("box");
-    let postalcode = document.getElementById("postalcode");
+    let buildingNumber = document.getElementById("building_number");
+    let unitNumber = document.getElementById("unit_number");
+    let postcode = document.getElementById("postcode");
     let commune = document.getElementById("commune");
     let country = document.getElementById("country");
 
-    const notNullFields = [username, lastname, firstname, phoneNumber, password,
-      number, street, postalcode, commune, country];
+    const notNullFields = [username, lastname, firstname, password,
+      buildingNumber, street, postcode, commune, country];
 
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
@@ -121,6 +123,7 @@ const RegisterPage = async () => {
 
     let allNotNullFieldsFilled = true;
 
+    //check if all not null fields are filled
     notNullFields.forEach(function (item) {
       if (item.value.trim().length === 0) {
         item.classList.add("border-danger");
@@ -136,8 +139,8 @@ const RegisterPage = async () => {
         title: 'Veuillez remplir tout les champs obligatoires !'
       })
     } else {
-      let address = new Address(box.value, number.value, street.value,
-          postalcode.value, commune.value, country.value);
+      let address = new Address(unitNumber.value, buildingNumber.value,
+          street.value, postcode.value, commune.value, country.value);
       let member = new Member(username.value, lastname.value, firstname.value,
           password.value, phoneNumber.value, address);
 
