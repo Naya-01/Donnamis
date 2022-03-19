@@ -20,17 +20,10 @@ public interface AddressDAO {
       String postcode, String commune, String country);
 
   /**
-   * Create an address for the member.
+   * Add an address.
    *
-   * @param idMember       : the id of the member that will have this address
-   * @param unitNumber     : the unit number
-   * @param buildingNumber : the building number
-   * @param street         : the name of the street
-   * @param postcode       : the postcode
-   * @param commune        : the name of the commune
-   * @param country        : the name of the country
-   * @return the new address for the member
+   * @param addressDTO : address to add in the DB.
+   * @return addressDTO added.
    */
-  AddressDTO createOne(int idMember, String unitNumber, String buildingNumber, String street,
-      String postcode, String commune, String country);
+  AddressDTO createOne(AddressDTO addressDTO);
 }

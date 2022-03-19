@@ -1,7 +1,6 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
 
 public interface MemberUCC {
@@ -26,10 +25,10 @@ public interface MemberUCC {
   /**
    * Register a quidam.
    *
-   * @param user : User object with all information.
+   * @param memberDTO : User object with all information.
    * @return token for the user.
    */
-  ObjectNode register(MemberDTO user);
+  MemberDTO register(MemberDTO memberDTO);
 
   /**
    * Get all subscription requests according to their status.

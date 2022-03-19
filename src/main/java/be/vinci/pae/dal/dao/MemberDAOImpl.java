@@ -107,49 +107,45 @@ public class MemberDAOImpl implements MemberDAO {
 
 
   /**
-   * Add a member in the DB and make a memberDTO with the parameters.
+   * Add a member in the DB and make a memberDTO.
    *
-   * @param username      : the username of the member we want to retrieve.
-   * @param lastname      : the lastname of the member we want to retrieve.
-   * @param firstname     : the firstname of the member we want to retrieve.
-   * @param status        : the status of the member we want to retrieve.
-   * @param role          : the role of the member we want to retrieve.
-   * @param phoneNumber   : the phone number of the member we want to retrieve.
-   * @param password      : the password of the member we want to retrieve.
-   * @param idAddress     : the id address of the member we want to retrieve.
-   * @param refusalReason : the refusal reason of the member we want to retrieve.
+   * @param member : member we want to add in the DB
    * @return the member added.
    */
   @Override
-  public MemberDTO addOneMember(String username, String lastname, String firstname, String status,
-      String role, String phoneNumber, String password, int idAddress, String refusalReason) {
+  public MemberDTO createOneMember(MemberDTO member) {
     PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
-        + "donnamis.members (username, lastname, firstname, status, role, phoneNumber, "
-        + "password, idAddress, refusalReason) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
+        + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason) values (?,?,?,?,?,?,?,?) RETURNING id_member;");
     try {
+      preparedStatement.setString(1, member.getUsername());
+      preparedStatement.setString(2, member.getLastname());
+      preparedStatement.setString(3, member.getFirstname());
+      preparedStatement.setString(4, member.getStatus());
+      preparedStatement.setString(5, member.getRole());
+      preparedStatement.setString(6, member.getPhone());
+      preparedStatement.setString(7, member.getPassword());
+      preparedStatement.setString(8, member.getReasonRefusal());
 
-      preparedStatement.setString(1, username);
-      preparedStatement.setString(2, lastname);
-      preparedStatement.setString(3, firstname);
-      preparedStatement.setString(4, status);
-      preparedStatement.setString(5, role);
-      preparedStatement.setString(6, phoneNumber);
-      preparedStatement.setString(7, password);
-      preparedStatement.setInt(8, idAddress);
-      preparedStatement.setString(9, refusalReason);
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
         return null;
       }
-      //create memberDTO
-      return getMember(resultSet.getInt(1), username, lastname, firstname, status, role,
-          phoneNumber, password, refusalReason);
+
+      //get id of new member
+      int idNewMember = resultSet.getInt(1);
+
+      //update memberDTO
+      member.setMemberId(idNewMember);
+
+      return member;
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
+
     return null;
   }
 

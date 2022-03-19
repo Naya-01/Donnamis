@@ -1,12 +1,14 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.Member;
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.ForbiddenException;
+import be.vinci.pae.business.exceptions.InternalServerErrorException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
+import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -14,6 +16,9 @@ public class MemberUCCImpl implements MemberUCC {
 
   @Inject
   private MemberDAO memberDAO;
+
+  @Inject
+  private AddressDAO addressDAO;
 
   /**
    * Log in a quidam by a username and a password.
@@ -61,13 +66,46 @@ public class MemberUCCImpl implements MemberUCC {
   /**
    * Register a quidam.
    *
-   * @param user : User object with all information.
+   * @param memberDTO : User object with all information.
    * @return token for the user.
    */
   @Override
-  public ObjectNode register(MemberDTO user) {
+  public MemberDTO register(MemberDTO memberDTO) {
+    //check if the member already exists
+    MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
+    if (memberExistent != null) {
+      return null;
+    }
 
-    return null;
+    //set the MemberDTO
+    Member member = (Member) memberDTO;
+    memberDTO.setPassword(
+        member.hashPassword(memberDTO.getPassword())); //hashPassword of the member
+    memberDTO.setStatus("pending");
+    memberDTO.setRole("member");
+    memberDTO.setReasonRefusal(null);
+
+    //add the member
+    MemberDTO memberFromDao = memberDAO.createOneMember(memberDTO);
+    if (memberFromDao == null) {
+      throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
+          + " données");
+    }
+
+    AddressDTO addressOfMember = memberDTO.getAddress();
+    //add the address
+    if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().isBlank()) {
+      addressOfMember.setUnitNumber(null);
+    }
+    addressOfMember.setIdMember(memberFromDao.getMemberId());
+    //add the address
+    AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
+    if (addressDTO == null) {
+      throw new InternalServerErrorException("L'adresse n'a pas pû être ajoutée à la base de"
+          + " données");
+    }
+    memberFromDao.setAddress(addressDTO);
+    return memberFromDao;
   }
 
   /**

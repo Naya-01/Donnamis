@@ -22,7 +22,7 @@ public interface AddressDTO {
 
   void setStreet(String street);
 
-  String getPostCode();
+  String getPostcode();
 
   void setPostcode(String postcode);
 

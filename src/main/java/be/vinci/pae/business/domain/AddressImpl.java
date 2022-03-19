@@ -54,7 +54,7 @@ public class AddressImpl implements AddressDTO {
   }
 
   @Override
-  public String getPostCode() {
+  public String getPostcode() {
     return this.postcode;
   }
 
@@ -82,4 +82,5 @@ public class AddressImpl implements AddressDTO {
   public void setCountry(String country) {
     this.country = country;
   }
+  
 }

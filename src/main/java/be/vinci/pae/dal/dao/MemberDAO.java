@@ -22,22 +22,12 @@ public interface MemberDAO {
   MemberDTO getOne(int id);
 
   /**
-   * Add a member in the DB and make a memberDTO with the parameters.
+   * Add a member in the DB and make a memberDTO.
    *
-   * @param username      : the username of the member we want to retrieve.
-   * @param lastname      : the lastname of the member we want to retrieve.
-   * @param firstname     : the firstname of the member we want to retrieve.
-   * @param status        : the status of the member we want to retrieve.
-   * @param role          : the role of the member we want to retrieve.
-   * @param phoneNumber   : the phone number of the member we want to retrieve.
-   * @param password      : the password of the member we want to retrieve.
-   * @param idAddress     : the id address of the member we want to retrieve.
-   * @param refusalReason : the refusal reason of the member we want to retrieve.
+   * @param member : member we want to add in the DB
    * @return the member added.
    */
-  MemberDTO addOneMember(String username, String lastname, String firstname, String status,
-      String role, String phoneNumber, String password, int idAddress, String refusalReason);
-
+  MemberDTO createOneMember(MemberDTO member);
 
   /**
    * Get all subscription requests according to their status.

@@ -1,5 +1,6 @@
 package be.vinci.pae.business.domain;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -23,12 +24,11 @@ public class MemberImpl implements Member {
   @JsonView(Views.Public.class)
   private String phone;
   @JsonView(Views.Public.class)
-  private int address;
-  @JsonView(Views.Public.class)
   private String reasonRefusal;
   @JsonView(Views.Internal.class)
   private String password;
-
+  @JsonView(Views.Public.class)
+  private AddressDTO address;
 
   @Override
   public int getMemberId() {
@@ -101,16 +101,6 @@ public class MemberImpl implements Member {
   }
 
   @Override
-  public int getAddress() {
-    return address;
-  }
-
-  @Override
-  public void setAddress(int address) {
-    this.address = address;
-  }
-
-  @Override
   public String getReasonRefusal() {
     return reasonRefusal;
   }
@@ -128,6 +118,14 @@ public class MemberImpl implements Member {
   @Override
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public AddressDTO getAddress() {
+    return address;
+  }
+
+  public void setAddress(AddressDTO address) {
+    this.address = address;
   }
 
   /**
@@ -149,5 +147,5 @@ public class MemberImpl implements Member {
   public String hashPassword(String password) {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
-
+  
 }

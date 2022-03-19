@@ -40,8 +40,8 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
       <version>2.13.1</version>
     </dependency>
     <dependency>
