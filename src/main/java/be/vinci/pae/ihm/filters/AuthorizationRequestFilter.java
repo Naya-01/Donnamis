@@ -1,7 +1,9 @@
 package be.vinci.pae.ihm.filters;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.TokenDecodingException;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.ihm.manager.Token;
 import be.vinci.pae.utils.Config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -21,26 +23,18 @@ import java.io.IOException;
 @Authorize
 public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
-  private final Algorithm jwtAlgorithm = Algorithm.HMAC256(Config.getProperty("JWTSecret"));
-  private final JWTVerifier jwtVerifier = JWT.require(this.jwtAlgorithm).withIssuer("auth0")
-      .build();
   @Inject
-  private MemberUCC memberUCC;
+  private Token tokenManager;
 
   @Override
-  public void filter(ContainerRequestContext requestContext) throws IOException {
+  public void filter(ContainerRequestContext requestContext) {
     String token = requestContext.getHeaderString("Authorization");
-    if (token == null) {
+    MemberDTO memberDTO = tokenManager.verifyToken(token);
+    if (memberDTO == null) {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED)
           .entity("A token is needed to access this resource").build());
     } else {
-      try {
-        DecodedJWT decodedToken = this.jwtVerifier.verify(token);
-        int idMember = decodedToken.getClaim("user").asInt();
-        requestContext.setProperty("user", memberUCC.getMember(idMember));
-      } catch (Exception e) {
-        throw new TokenDecodingException(e);
-      }
+      requestContext.setProperty("user", memberDTO);
     }
   }
 }

@@ -55,7 +55,6 @@ public class MemberResource {
    * @return a list of memberDTO
    */
   @GET
-  @Authorize
   @Admin
   @Path("/subscriptions/{status}")
   @Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +73,6 @@ public class MemberResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public MemberDTO getMemberById(@PathParam("id") int id) {
-    System.out.println("id");
     return memberUCC.getMember(id);
   }
 
@@ -85,7 +83,6 @@ public class MemberResource {
    */
   @POST
   @Path("/promoteAdministrator")
-  @Authorize
   @Admin
   public void promoteAdministrator(JsonNode json) {
     if (!json.hasNonNull("id")) {
@@ -104,7 +101,6 @@ public class MemberResource {
    */
   @POST
   @Path("/confirmRegistration")
-  @Authorize
   @Admin
   public void confirmRegistration(JsonNode json) {
     if (!json.hasNonNull("id")) {
@@ -123,7 +119,6 @@ public class MemberResource {
    */
   @POST
   @Path("/declineRegistration")
-  @Authorize
   @Admin
   public void declineRegistration(JsonNode json) {
     if (!json.hasNonNull("id") || !json.hasNonNull("reason")) {
@@ -140,8 +135,4 @@ public class MemberResource {
     memberUCC.declineRegistration(id, reason);
     throw new WebApplicationException("Le membre est désormais validé", Status.OK);
   }
-
-
-
-
 }
