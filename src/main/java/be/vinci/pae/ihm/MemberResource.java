@@ -49,6 +49,36 @@ public class MemberResource {
   }
 
   /**
+   * Get all subscription requests according to their status. Need admin rights
+   *
+   * @param status the status subscription members
+   * @return a list of memberDTO
+   */
+  @GET
+  @Authorize
+  @Admin
+  @Path("/subscriptions/{status}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<MemberDTO> getAllInscriptionRequest(@PathParam("status") String status) {
+    return memberUCC.getInscriptionRequest(status);
+  }
+
+  /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO getMemberById(@PathParam("id") int id) {
+    System.out.println("id");
+    return memberUCC.getMember(id);
+  }
+
+  /**
    * Promote a member to admin status with his id.
    *
    * @param json to get id of the member to promote
@@ -111,35 +141,7 @@ public class MemberResource {
     throw new WebApplicationException("Le membre est désormais validé", Status.OK);
   }
 
-  /**
-   * Get all subscription requests according to their status. Need admin rights
-   *
-   * @param status the status subscription members
-   * @return a list of memberDTO
-   */
-  @GET
-  @Authorize
-  @Admin
-  @Path("/subscriptions/{status}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getAllInscriptionRequest(@PathParam("status") String status) {
-    return memberUCC.getInscriptionRequest(status);
-  }
 
-  /**
-   * Get a user by his id.
-   *
-   * @param id the id of the member we want to get
-   * @return return the linked user to his id
-   */
-  @GET
-  @Path("/id/{id}")
-  @Authorize
-  @Produces(MediaType.APPLICATION_JSON)
-  public MemberDTO getUserById(@PathParam("id") int id) {
-    System.out.println("id");
-    return memberUCC.getMember(id);
-  }
 
 
 }
