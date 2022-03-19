@@ -200,8 +200,8 @@ const RegisterPage = async () => {
       await registerMember(member);
       Toast.fire({
         icon: 'success',
-        title: `Vous êtes désormais en attente de la validation de votre profil
-          par un administrateur`
+        title: `Vous êtes désormais dans l'attente de la validation d'un 
+          administrateur de votre profil`
       });
     }
   });

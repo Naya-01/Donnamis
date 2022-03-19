@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.exceptions.ConflictException;
 import be.vinci.pae.business.exceptions.ForbiddenException;
 import be.vinci.pae.business.exceptions.InternalServerErrorException;
 import be.vinci.pae.business.exceptions.NotFoundException;
@@ -74,7 +75,7 @@ public class MemberUCCImpl implements MemberUCC {
     //check if the member already exists
     MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
     if (memberExistent != null) {
-      return null;
+      throw new ConflictException("Ce membre existe déjà");
     }
 
     //set the MemberDTO

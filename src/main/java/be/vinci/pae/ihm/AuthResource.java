@@ -212,9 +212,6 @@ public class AuthResource {
 
     // Register the member
     MemberDTO memberDTO = memberUCC.register(member);
-    if (memberDTO == null) {
-      throw new WebApplicationException("Ce membre existe déjà", Response.Status.CONFLICT);
-    }
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
         .put("access_token", accessToken)
