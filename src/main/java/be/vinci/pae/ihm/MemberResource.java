@@ -126,5 +126,20 @@ public class MemberResource {
     return memberUCC.getInscriptionRequest(status);
   }
 
+  /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO getUserById(@PathParam("id") int id) {
+    System.out.println("id");
+    return memberUCC.getMember(id);
+  }
+
 
 }
