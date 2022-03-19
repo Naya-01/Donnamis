@@ -221,6 +221,21 @@ public class AuthResource {
   }
 
   /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO getUserById(@PathParam("id") int id) {
+    System.out.println("id");
+    return memberUCC.getMember(id);
+  }
+
+  /**
    * Get all subscription requests according to their status. Need admin rights
    *
    * @param request to get information request
@@ -239,4 +254,6 @@ public class AuthResource {
     }
     return memberUCC.getInscriptionRequest(status);
   }
+
+
 }

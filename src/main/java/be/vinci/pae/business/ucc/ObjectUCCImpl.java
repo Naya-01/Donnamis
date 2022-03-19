@@ -53,4 +53,14 @@ public class ObjectUCCImpl implements ObjectUCC {
 
     return objectDAO.addOne(objectDTO);
   }
+
+  /**
+   * Update an object.
+   *
+   * @param objectDTO : object that we want to update.
+   * @return object updated
+   */
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
+    return objectDAO.updateOne(objectDTO);
+  }
 }

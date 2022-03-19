@@ -27,3 +27,56 @@ Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 Authorization: {{refresh}}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+    "idObject": 1
+  }
+}
+
+###
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "tous les mois de janvier",
+  "object": {
+    "type": {
+      "idType": 0,
+      "typeName": "Croissant"
+    },
+    "description": "C'est un croissant rien de plus",
+    "status": "available",
+    "image": null,
+    "idOfferor": 2
+  }
+}
+
+### Get offer by id
+GET {{baseUri}}/offers/getById/1
+Authorization: {{refresh}}
+
+### Update time slot of a offer
+POST {{baseUri}}/offers/update
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 1,
+  "timeSlot": "Je suis disponible le mardi soir",
+  "object": {
+    "description": "Une fusée tintin",
+    "image": null,
+    "status": "interested",
+    "type": {
+      "idType": 4
+    }
+  }
+}

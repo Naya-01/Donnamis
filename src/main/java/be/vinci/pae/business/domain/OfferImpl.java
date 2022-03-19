@@ -1,9 +1,10 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.time.LocalDate;
 
-public class OfferImpl implements Offer {
+public class OfferImpl implements OfferDTO {
 
   private int idOffer;
   private LocalDate date;
@@ -49,5 +50,5 @@ public class OfferImpl implements Offer {
   public void setObject(ObjectDTO object) {
     this.object = object;
   }
-  
+
 }

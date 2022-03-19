@@ -94,3 +94,7 @@ client.global.set("refresh", response.body.refresh_token);
 ### Get subcription request by status
 GET {{baseUri}}/auth/subscriptions/pending
 Authorization: {{access}}
+
+### Get a member by his id
+GET {{baseUri}}/auth/id/2
+Authorization: {{access}}
