@@ -81,6 +81,26 @@ public class TypeDAOImpl implements TypeDAO {
     return null;
   }
 
+  /**
+   * Insert a new type in the db.
+   *
+   * @param typeName the name of the type
+   * @return a typeDTO with all the informations of the new type added
+   */
+  @Override
+  public TypeDTO addOne(String typeName) {
+    String query = "INSERT INTO donnamis.types (type_name, is_default) VALUES (?, false) "
+        + "RETURNING id_type, type_name, is_default";
+    try {
+      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      preparedStatement.setString(1, typeName);
+      return getTypeDTO(preparedStatement);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   private TypeDTO getTypeDTO(PreparedStatement preparedStatement) {
     try {
       preparedStatement.executeQuery();

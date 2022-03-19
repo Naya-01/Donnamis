@@ -1,7 +1,10 @@
 package be.vinci.pae.business.domain.dto;
 
+import be.vinci.pae.business.domain.OfferImpl;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.LocalDate;
 
+@JsonDeserialize(as = OfferImpl.class)
 public interface OfferDTO {
 
   int getIdOffer();

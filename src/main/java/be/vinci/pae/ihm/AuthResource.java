@@ -204,5 +204,40 @@ public class AuthResource {
 
   }
 
+  /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO getUserById(@PathParam("id") int id) {
+    System.out.println("id");
+    return memberUCC.getMember(id);
+  }
+
+  /**
+   * Get all subscription requests according to their status. Need admin rights
+   *
+   * @param request to get information request
+   * @param status  the status subscription members
+   * @return a list of memberDTO
+   */
+  @GET
+  @Authorize
+  @Path("/subscriptions/{status}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<MemberDTO> getAllInscriptionRequest(@Context ContainerRequest request,
+      @PathParam("status") String status) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    if (!memberDTO.getRole().equals("administrator")) {
+      throw new UnauthorizedException("Need admin right");
+    }
+    return memberUCC.getInscriptionRequest(status);
+  }
+
 
 }
