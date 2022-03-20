@@ -160,7 +160,7 @@ const RegisterPage = async () => {
       username.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le pseudonyme est trop grand ou est invalide'
+        title: 'Le pseudonyme est trop grand'
       })
     } else if (lastname.value.trim().length > 50 ||
         !regOnlyLetters.test(lastname.value.trim())) {

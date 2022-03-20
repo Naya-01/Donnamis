@@ -102,6 +102,8 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode register(MemberDTO member) {
+    Pattern pattern;
+    Matcher matcher;
     // Check if there is a member, and then if there is an address
     if (member == null || member.getAddress() == null) {
       throw new BadRequestException("Manque d'informations obligatoires");
@@ -124,24 +126,21 @@ public class AuthResource {
 
     // Check length of Username, Lastname and Firstname fields (member)
     if (member.getUsername().length() > 50) {
-      throw new BadRequestException("Le pseudonyme dépasse la longueur maximale autorisée "
-          + "(50 caractères max compris)");
+      throw new BadRequestException("Le pseudonyme est trop grand");
     }
     if (member.getLastname().length() > 50) {
-      throw new BadRequestException("Le nom dépasse la longueur maximale autorisée (50 caractères "
-          + "max compris)");
+      throw new BadRequestException("Le nom est trop grand ou est invalide");
     }
     if (member.getFirstname().length() > 50) {
-      throw new BadRequestException("Le prénom dépasse la longueur maximale autorisée (50 "
-          + "caractères max compris)");
+      throw new BadRequestException("Le prénom est trop grand ou est invalide");
     }
 
     // Check the number phone if is valid
     if (member.getPhone() != null) {
-      Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
-      Matcher matcher = pattern.matcher(member.getPhone());
+      pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
+      matcher = pattern.matcher(member.getPhone());
       if (!matcher.find()) {
-        throw new BadRequestException("Numéro de GSM invalide");
+        throw new BadRequestException("Le numéro de téléphone est invalide");
       }
     }
 
@@ -149,33 +148,27 @@ public class AuthResource {
     AddressDTO addressOfMember = member.getAddress();
 
     if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().length() > 15) {
-      throw new BadRequestException("La boite de l'adresse dépasse la longueur maximale autorisée "
-          + "(15 caractères max compris)");
+      throw new BadRequestException("Le numéro de boite est trop grand ou est invalide");
     }
 
     if (addressOfMember.getBuildingNumber().length() > 8) {
-      throw new BadRequestException("Le numéro de l'adresse dépasse la longueur maximale autorisée "
-          + "(8 caractères max compris)");
+      throw new BadRequestException("Le numéro de maison est trop grand ou est invalide");
     }
 
     if (addressOfMember.getStreet().length() > 50) {
-      throw new BadRequestException("Le nom de rue dépasse la longueur maximale autorisée "
-          + "(50 caractères max compris)");
+      throw new BadRequestException("Le nom de rue est trop grand ou est invalide");
     }
 
     if (addressOfMember.getPostcode().length() > 15) {
-      throw new BadRequestException("Le code postal dépasse la longueur maximale autorisée "
-          + "(15 caractères max compris)");
+      throw new BadRequestException("Le numéro de code postal est trop grand ou est invalide");
     }
 
     if (addressOfMember.getCommune().length() > 50) {
-      throw new BadRequestException("La commune dépasse la longueur maximale autorisée (50 "
-          + "caractères max compris)");
+      throw new BadRequestException("Le nom de commune est trop grand ou est invalide");
     }
 
     if (addressOfMember.getCountry().length() > 50) {
-      throw new BadRequestException("Le pays dépasse la longueur maximale autorisée (50 caractères "
-          + "max compris)");
+      throw new BadRequestException("Le nom de pays est trop grand ou est invalide");
     }
 
     // Register the member
