@@ -54,8 +54,7 @@ public class ApplicationBinder extends AbstractBinder {
     bind(TypeFactoryImpl.class).to(TypeFactory.class).in(Singleton.class);
     bind(AddressFactoryImpl.class).to(AddressFactory.class).in(Singleton.class);
     bind(InterestFactoryImpl.class).to(InterestFactory.class).in(Singleton.class);
-    bind(DALServiceImpl.class).to(DALBackendService.class).in(Singleton.class);
-    bind(DALServiceImpl.class).to(DALService.class).in(Singleton.class);
+    bind(DALServiceImpl.class).to(DALBackendService.class).to(DALService.class).in(Singleton.class);
 
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(TypeUCCImpl.class).to(TypeUCC.class).in(Singleton.class);
