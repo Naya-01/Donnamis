@@ -2,7 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.factories.InterestFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,7 +14,7 @@ import java.util.List;
 public class InterestDAOImpl implements InterestDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
   @Inject
   private InterestFactory interestFactory;
 
@@ -28,7 +28,7 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "select i.id_object, i.id_member, i.availability_date, i.status\n"
             + "from donnamis.interests i\n"
             + "WHERE i.id_object=? AND i.id_member=?;");
@@ -77,7 +77,7 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO addOne(InterestDTO item) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "insert into donnamis.interests (id_object, id_member, availability_date, status)\n"
             + "values (?,?,?,?);");
     try {
@@ -101,7 +101,7 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAll(int idObject) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_object, id_member, availability_date, status "
             + "FROM donnamis.interests WHERE id_object = ? AND status != 'cancelled'");
 

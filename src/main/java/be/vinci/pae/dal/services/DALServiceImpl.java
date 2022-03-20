@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DALServiceImpl implements DALService {
+public class DALServiceImpl implements DALBackendService, DALService {
 
   private Connection connection;
 
@@ -40,5 +40,20 @@ public class DALServiceImpl implements DALService {
       e.printStackTrace();
     }
     return null;
+  }
+
+  @Override
+  public void startTransaction() {
+
+  }
+
+  @Override
+  public void commitTransaction() {
+
+  }
+
+  @Override
+  public void rollBackTransaction() {
+
   }
 }

@@ -2,7 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.util.List;
 public class ObjectDAOImpl implements ObjectDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
   @Inject
   private ObjectFactory objectFactory;
 
@@ -25,7 +25,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_object, description, status, image, id_offeror "
             + "FROM donnamis.objects WHERE id_object = ?");
 
@@ -55,7 +55,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public List<ObjectDTO> getAllByStatus(String status) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
             + "FROM donnamis.objects WHERE status = ?");
 
@@ -77,7 +77,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public List<ObjectDTO> getAllObjectOfMember(int idMember) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_object, id_type, description, status, image, id_offeror "
             + "FROM donnamis.objects WHERE id_offeror = ?");
 
@@ -103,7 +103,7 @@ public class ObjectDAOImpl implements ObjectDAO {
         + "values (?,?,?,?,?) RETURNING id_object, description, status, image, id_offeror";
 
     try {
-      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
       preparedStatement.setString(3, objectDTO.getStatus());
@@ -133,7 +133,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "UPDATE donnamis.objects SET id_type = ?, description = ?, image = ?"
             + "WHERE id_object = ? RETURNING id_object, description, status, image, id_offeror");
 
