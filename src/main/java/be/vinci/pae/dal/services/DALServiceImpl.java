@@ -47,14 +47,19 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.setAutoCommit(false);
       connection.set(conn);
     } catch (SQLException e) {
-      System.out.println("Impossible de joindre le server !");
-      System.exit(1);
+      e.printStackTrace(); // impossible de joindre le serveur
     }
   }
 
   @Override
   public void commitTransaction() {
-
+    Connection conn = connection.get();
+    try {
+      conn.commit();
+      conn.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
