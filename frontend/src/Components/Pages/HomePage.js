@@ -7,6 +7,7 @@ const offerLibrary = new OfferLibrary();
  */
 const render = async () => {
   let lastOffers = await offerLibrary.getAllLastOffers();
+  let actualOffer = 0;
   let lines;
   let nbOffers = lastOffers.length;
   if (lastOffers.length <= 3) {
@@ -17,8 +18,9 @@ const render = async () => {
 
   let page = "";
   for (let nbRows = 0; nbRows < lines; nbRows++) {
-    page += `<div class="container-fluid align-content-center w-75 mt-3 mb-3">
-      <div class="row row-cols-1 row-cols-md-3 g-4">`;
+    page += `
+      <div class="container-fluid align-content-center w-75 mt-3 mb-3">
+        <div class="row row-cols-1 row-cols-md-3 g-4">`;
 
     //number max of columns =3
     let nbColumns = 0;
@@ -47,7 +49,8 @@ const render = async () => {
       nbOffers--;
       nbColumns++;
     }
-    page += `</div>
+    page += `
+      </div>
     </div>`;
   }
   return page;
