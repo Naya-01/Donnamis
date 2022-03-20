@@ -61,6 +61,8 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setIdMember(resultSet.getInt(2));
       interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
       interestDTO.setStatus(resultSet.getString(4));
+      preparedStatement.close();
+
       return interestDTO;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -87,6 +89,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setString(4, item.getStatus());
 
       preparedStatement.executeQuery();
+      preparedStatement.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -120,6 +123,7 @@ public class InterestDAOImpl implements InterestDAO {
 
         interestDTOList.add(interestDTO);
       }
+      preparedStatement.close();
       return interestDTOList;
     } catch (SQLException e) {
       e.printStackTrace();
