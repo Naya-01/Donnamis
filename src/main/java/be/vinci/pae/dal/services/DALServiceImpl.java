@@ -64,6 +64,12 @@ public class DALServiceImpl implements DALBackendService, DALService {
 
   @Override
   public void rollBackTransaction() {
-
+    Connection conn = connection.get();
+    try {
+      conn.rollback();
+      conn.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 }
