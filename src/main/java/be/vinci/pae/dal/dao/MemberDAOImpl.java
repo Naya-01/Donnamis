@@ -266,9 +266,9 @@ public class MemberDAOImpl implements MemberDAO {
   public List<MemberDTO> getAll(String search, String status) {
     boolean hasSearch = false;
     String query =
-        "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, m.phone_number, "
-            + "m.password, m.refusal_reason, a.id_member, a.unit_number, a.building_number, "
-            + "a.street, a.postcode, a.commune, a.country "
+        "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
+            + "m.phone_number, m.password, m.refusal_reason, a.id_member, a.unit_number, "
+            + "a.building_number, a.street, a.postcode, a.commune, a.country "
             + "FROM donnamis.members m, donnamis.addresses a "
             + "WHERE a.id_member = m.id_member ";
 
