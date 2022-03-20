@@ -4,6 +4,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.exceptions.BadRequestException;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
@@ -106,8 +107,7 @@ public class AuthResource {
   public ObjectNode register(MemberDTO member) {
     // Check if there is a member, and then if there is an address
     if (member == null || member.getAddress() == null) {
-      throw new WebApplicationException("Manque d'informations obligatoires",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Manque d'informations obligatoires");
     }
 
     // Check is Not Null fields are not null nor blank
@@ -122,25 +122,21 @@ public class AuthResource {
         || member.getAddress().getCommune() == null || member.getAddress().getCommune().isBlank()
         || member.getAddress().getCountry() == null || member.getAddress().getCountry().isBlank()
     ) {
-      throw new WebApplicationException("Veuillez remplir tous les champs obligatoires",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Veuillez remplir tous les champs obligatoires");
     }
 
     // Check length of Username, Lastname and Firstname fields (member)
     if (member.getUsername().length() > 50) {
-      throw new WebApplicationException(
-          "Le pseudonyme dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le pseudonyme dépasse la longueur maximale autorisée "
+          + "(50 caractères max compris)");
     }
     if (member.getLastname().length() > 50) {
-      throw new WebApplicationException(
-          "Le nom dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le nom dépasse la longueur maximale autorisée (50 caractères "
+          + "max compris)");
     }
     if (member.getFirstname().length() > 50) {
-      throw new WebApplicationException(
-          "Le prénom dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le prénom dépasse la longueur maximale autorisée (50 "
+          + "caractères max compris)");
     }
 
     // Check the number phone if is valid
@@ -148,8 +144,7 @@ public class AuthResource {
       Pattern pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
       Matcher matcher = pattern.matcher(member.getPhone());
       if (!matcher.find()) {
-        throw new WebApplicationException("Numéro de GSM invalide",
-            Response.Status.BAD_REQUEST);
+        throw new BadRequestException("Numéro de GSM invalide");
       }
     }
 
@@ -157,39 +152,33 @@ public class AuthResource {
     AddressDTO addressOfMember = member.getAddress();
 
     if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().length() > 15) {
-      throw new WebApplicationException(
-          "La boite de l'adresse dépasse la longueur maximale autorisée "
-              + "(15 caractères max compris)", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("La boite de l'adresse dépasse la longueur maximale autorisée "
+          + "(15 caractères max compris)");
     }
 
     if (addressOfMember.getBuildingNumber().length() > 8) {
-      throw new WebApplicationException(
-          "Le numéro de l'adresse dépasse la longueur maximale autorisée "
-              + "(8 caractères max compris)", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le numéro de l'adresse dépasse la longueur maximale autorisée "
+          + "(8 caractères max compris)");
     }
 
     if (addressOfMember.getStreet().length() > 50) {
-      throw new WebApplicationException(
-          "Le nom de rue dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le nom de rue dépasse la longueur maximale autorisée "
+          + "(50 caractères max compris)");
     }
 
     if (addressOfMember.getPostcode().length() > 15) {
-      throw new WebApplicationException(
-          "Le code postal dépasse la longueur maximale autorisée (15 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le code postal dépasse la longueur maximale autorisée "
+          + "(15 caractères max compris)");
     }
 
     if (addressOfMember.getCommune().length() > 50) {
-      throw new WebApplicationException(
-          "La commune dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("La commune dépasse la longueur maximale autorisée (50 "
+          + "caractères max compris)");
     }
 
     if (addressOfMember.getCountry().length() > 50) {
-      throw new WebApplicationException(
-          "Le pays dépasse la longueur maximale autorisée (50 caractères max compris)",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le pays dépasse la longueur maximale autorisée (50 caractères "
+          + "max compris)");
     }
 
     // Register the member
