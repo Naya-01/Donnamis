@@ -32,7 +32,7 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO login(String username, String password) {
-    MemberDTO memberDTO = null;
+    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(username);
@@ -52,7 +52,7 @@ public class MemberUCCImpl implements MemberUCC {
       }
     } catch (NotFoundException | ForbiddenException | UnauthorizedException e) {
       dalService.rollBackTransaction();
-      e.printStackTrace();
+      throw e;
     }
     dalService.commitTransaction();
     return memberDTO;
