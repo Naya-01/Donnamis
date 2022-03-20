@@ -8,21 +8,13 @@ import java.sql.SQLException;
 
 public class DALServiceImpl implements DALBackendService, DALService {
 
-  private Connection connection;
+  private ThreadLocal<Connection> connection;
 
   /**
    * Establish the connection of the db.
    */
   public DALServiceImpl() {
-    try {
-      connection = DriverManager.getConnection(Config.getProperty("dbUrl"),
-          Config.getProperty("dbUser"),
-          Config.getProperty("dbPassword"));
-
-    } catch (SQLException e) {
-      System.out.println("Impossible de joindre le server !");
-      System.exit(1);
-    }
+    connection = new ThreadLocal<>();
 
   }
 
@@ -34,17 +26,30 @@ public class DALServiceImpl implements DALBackendService, DALService {
    */
   @Override
   public PreparedStatement getPreparedStatement(String query) {
+    Connection conn;
+    PreparedStatement ps = null;
     try {
-      return connection.prepareStatement(query);
+      conn = connection.get();
+      ps = conn.prepareStatement(query);
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return null;
+    return ps;
   }
 
   @Override
   public void startTransaction() {
-
+    try {
+      Connection conn;
+      conn = DriverManager.getConnection(Config.getProperty("dbUrl"),
+          Config.getProperty("dbUser"),
+          Config.getProperty("dbPassword"));
+      conn.setAutoCommit(false);
+      connection.set(conn);
+    } catch (SQLException e) {
+      System.out.println("Impossible de joindre le server !");
+      System.exit(1);
+    }
   }
 
   @Override
