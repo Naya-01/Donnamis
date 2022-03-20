@@ -36,18 +36,17 @@ const render = async () => {
               <rect width="100%" height="100%" fill="#868e96"></rect><text 
               x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text>
             </svg>
-    
+            
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">This is a longer card with supporting text 
-                below as a natural lead-in to additional content. This content 
-                is a little bit longer.
-               </p>
+              <p class="card-text">
+                ${lastOffers[actualOffer].object.description}
+              </p>
             </div>
           </div>
         </div>`;
       nbOffers--;
       nbColumns++;
+      actualOffer++;
     }
     page += `
       </div>
