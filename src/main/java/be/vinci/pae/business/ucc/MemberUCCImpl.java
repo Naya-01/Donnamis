@@ -10,6 +10,7 @@ import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
+import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -17,9 +18,10 @@ public class MemberUCCImpl implements MemberUCC {
 
   @Inject
   private MemberDAO memberDAO;
-
   @Inject
   private AddressDAO addressDAO;
+  @Inject
+  private DALService dalService;
 
   /**
    * Log in a quidam by a username and a password.
@@ -30,21 +32,29 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO login(String username, String password) {
-    MemberDTO memberDTO = memberDAO.getOne(username);
-    Member member = (Member) memberDTO;
-    if (memberDTO == null) {
-      throw new NotFoundException("Membre non trouvé");
+    MemberDTO memberDTO = null;
+    try {
+      dalService.startTransaction();
+      memberDTO = memberDAO.getOne(username);
+      Member member = (Member) memberDTO;
+      if (memberDTO == null) {
+        throw new NotFoundException("Membre non trouvé");
+      }
+      if (!member.checkPassword(password)) {
+        throw new ForbiddenException("Mot de passe invalide");
+      }
+      if (memberDTO.getStatus().equals("denied")) {
+        throw new UnauthorizedException(
+            "Votre inscription est refusé pour la raison suivante : " + member.getReasonRefusal());
+      }
+      if (memberDTO.getStatus().equals("pending")) {
+        throw new UnauthorizedException("Le statut du membre est en attente");
+      }
+    } catch (NotFoundException | ForbiddenException | UnauthorizedException e) {
+      dalService.rollBackTransaction();
+      e.printStackTrace();
     }
-    if (!member.checkPassword(password)) {
-      throw new ForbiddenException("Mot de passe invalide");
-    }
-    if (memberDTO.getStatus().equals("denied")) {
-      throw new UnauthorizedException(
-          "Votre inscription est refusé pour la raison suivante : " + member.getReasonRefusal());
-    }
-    if (memberDTO.getStatus().equals("pending")) {
-      throw new UnauthorizedException("Le statut du membre est en attente");
-    }
+    dalService.commitTransaction();
     return memberDTO;
 
   }
