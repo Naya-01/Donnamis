@@ -5,6 +5,7 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.BadRequestException;
+import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
@@ -20,10 +21,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -52,15 +51,13 @@ public class AuthResource {
   public ObjectNode login(JsonNode json) {
 
     if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
-      throw new WebApplicationException("Pseudonyme ou mot de passe requis",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Pseudonyme ou mot de passe requis");
     }
     String username = json.get("username").asText();
     String password = json.get("password").asText();
     MemberDTO memberDTO = memberUCC.login(username, password);
     if (memberDTO == null) {
-      throw new WebApplicationException("Pseudonyme ou mot de passe incorrect",
-          Response.Status.NOT_FOUND);
+      throw new NotFoundException("Pseudonyme ou mot de passe incorrect");
     }
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     String refreshToken;
