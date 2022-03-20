@@ -26,7 +26,6 @@ Authorization: {{refresh}}
 
 ###
 GET {{baseUri}}/offers/lasts
-Authorization: {{refresh}}
 
 ###
 POST {{baseUri}}/offers/
