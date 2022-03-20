@@ -107,8 +107,20 @@ public class AddressDAOImpl implements AddressDAO {
     return null;
   }
 
-
-  private void setAddress(AddressDTO addressDTO, int idMember, String unitNumber,
+  /**
+   * Add values to an AddressDTO instance.
+   *
+   * @param addressDTO     the instance
+   * @param idMember       the member id
+   * @param unitNumber     the unit number
+   * @param buildingNumber the building number
+   * @param street         the street
+   * @param postcode       the postcode
+   * @param commune        the commune
+   * @param country        the country
+   */
+  @Override
+  public void setAddress(AddressDTO addressDTO, int idMember, String unitNumber,
       String buildingNumber, String street,
       String postcode, String commune, String country) {
     addressDTO.setIdMember(idMember);

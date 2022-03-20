@@ -10,11 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -134,5 +136,22 @@ public class MemberResource {
 
     memberUCC.declineRegistration(id, reason);
     throw new WebApplicationException("Le membre est désormais validé", Status.OK);
+  }
+
+  /**
+   * Search a member with status and search on firstname, lastname and username.
+   *
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
+   */
+  @GET
+  @Path("/search")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public List<MemberDTO> searchMembers(@DefaultValue("") @QueryParam("search") String search,
+      @DefaultValue("") @QueryParam("status") String status) {
+    return memberUCC.searchMembers(search, status);
   }
 }

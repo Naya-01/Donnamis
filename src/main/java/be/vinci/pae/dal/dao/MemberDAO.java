@@ -65,4 +65,14 @@ public interface MemberDAO {
    * @return a list of memberDTO
    */
   List<MemberDTO> getAllWithSubStatus(String status);
+
+  /**
+   * Search a member with status and search on firstname, lastname and username.
+   *
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
+   */
+  List<MemberDTO> getAll(String search, String status);
 }

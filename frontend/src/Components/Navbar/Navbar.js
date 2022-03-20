@@ -14,7 +14,7 @@ const getUsername = async () => {
         Authorization: getSessionObject("user").accessToken
       },
     };
-    userData = await fetch("/api/auth/getuserbytoken/", options);
+    userData = await fetch("/api/member/getMemberByToken/", options);
     if (!userData.ok) {
       Redirect("/login");
       Navbar();

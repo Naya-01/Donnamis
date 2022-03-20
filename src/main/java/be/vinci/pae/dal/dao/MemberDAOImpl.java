@@ -1,6 +1,8 @@
 package be.vinci.pae.dal.dao;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
@@ -16,6 +18,10 @@ public class MemberDAOImpl implements MemberDAO {
   private DALService dalService;
   @Inject
   private MemberFactory memberFactory;
+  @Inject
+  private AddressDAO addressDAO;
+  @Inject
+  private AddressFactory addressFactory;
 
 
   /**
@@ -103,7 +109,7 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
+    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
     if (memberDTOList.size() != 1) {
       return null;
     }
@@ -125,7 +131,7 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
+    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
     if (memberDTOList.size() != 1) {
       return null;
     }
@@ -138,7 +144,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @param preparedStatement : a prepared statement to execute the query.
    * @return the member.
    */
-  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement) {
+  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAdress) {
     List<MemberDTO> memberDTOList = new ArrayList<>();
     try {
       preparedStatement.executeQuery();
@@ -148,6 +154,15 @@ public class MemberDAOImpl implements MemberDAO {
             resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
             resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
             resultSet.getString(9));
+
+        if (hasAdress) {
+          AddressDTO addressDTO = addressFactory.getAddressDTO();
+          addressDAO.setAddress(addressDTO, resultSet.getInt(10),
+              resultSet.getString(11), resultSet.getString(12),
+              resultSet.getString(13), resultSet.getString(14),
+              resultSet.getString(15), resultSet.getString(16));
+          memberDTO.setAddress(addressDTO);
+        }
         memberDTOList.add(memberDTO);
       }
       return memberDTOList;
@@ -232,10 +247,55 @@ public class MemberDAOImpl implements MemberDAO {
     try {
       preparedStatement.setString(1, status);
       preparedStatement.executeQuery();
-      return getMemberList(preparedStatement);
+      return getMemberList(preparedStatement, false);
     } catch (SQLException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Search a member with status and search on firstname, lastname and username.
+   *
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
+   */
+  @Override
+  public List<MemberDTO> getAll(String search, String status) {
+    boolean hasSearch = false;
+    String query =
+        "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, m.phone_number, m.password, "
+            + "m.refusal_reason, a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune, a.country "
+            + "FROM donnamis.members m, donnamis.addresses a "
+            + "WHERE a.id_member = m.id_member ";
+
+    if (status != null && status.equals("waiting")) {
+      query += "AND m.status != 'valid' ";
+    } else if (status != null && status.equals("pending")) {
+      query += "AND m.status = 'pending' ";
+    } else if (status != null && status.equals("denied")) {
+      query += "AND m.status = 'denied' ";
+    } else if (status != null && status.equals("valid")) {
+      query += "AND m.status = 'valid' ";
+    }
+    if (search != null && !search.isEmpty()) {
+      hasSearch = true;
+      query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? OR lower(m.username) LIKE ?)";
+    }
+    try {
+      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      if (hasSearch) {
+        for (int i = 1; i <= 3; i++) {
+          preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
+        }
+      }
+      preparedStatement.execute();
+      return getMemberList(preparedStatement, true);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+      return null;
+    }
   }
 }

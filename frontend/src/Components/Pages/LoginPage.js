@@ -78,7 +78,7 @@ const connectClientAndRedirect = async (username, password, remember) => {
       accessToken: userData.access_token,
     }
 
-    Toast.fire({
+    await Toast.fire({
       icon: 'success',
       title: "Bienvenue !"
     })
@@ -99,7 +99,7 @@ const LoginPage = () => {
 
   let btnSubmit = document.getElementById("submitConnect");
 
-  btnSubmit.addEventListener("click", e => {
+  btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
     let username = document.getElementById("username");
     let password = document.getElementById("password");
@@ -111,7 +111,7 @@ const LoginPage = () => {
     }
     let remember = document.getElementById("rememberMe").checked;
     if (username.value.length === 0 || password.value.length === 0) {
-      Toast.fire({
+      await Toast.fire({
         icon: 'error',
         title: 'Veuillez remplir les champs obligatoires !'
       })
@@ -125,7 +125,7 @@ const LoginPage = () => {
       }
 
     } else {
-      connectClientAndRedirect(username.value, password.value, remember);
+      await connectClientAndRedirect(username.value, password.value, remember);
     }
   })
 

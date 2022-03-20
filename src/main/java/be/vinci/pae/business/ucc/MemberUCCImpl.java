@@ -168,4 +168,21 @@ public class MemberUCCImpl implements MemberUCC {
     }
     return memberDTOList;
   }
+
+  /**
+   * Search a member with status and search on firstname, lastname and username.
+   *
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members pending -> pending members
+   *               denied -> denied members valid -> valid members empty -> all members
+   * @return a list of MemberDTO
+   */
+  @Override
+  public List<MemberDTO> searchMembers(String search, String status) {
+    List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
+    if (memberDTOList == null || memberDTOList.isEmpty()) {
+      throw new NotFoundException("Aucun membre");
+    }
+    return memberDTOList;
+  }
 }

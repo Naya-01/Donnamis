@@ -62,3 +62,27 @@ Authorization: {{access}}
 ### Get a member by his id
 GET {{baseUri}}/member/id/2
 Authorization: {{access}}
+
+### Search 'alb' pattern member
+GET {{baseUri}}/member/search?search=alb
+Authorization: {{access}}
+
+### Search wating member
+GET {{baseUri}}/member/search?search=&status=waiting
+Authorization: {{access}}
+
+### Search pending member
+GET {{baseUri}}/member/search?search=&status=pending
+Authorization: {{access}}
+
+### Search denied member
+GET {{baseUri}}/member/search?search=&status=denied
+Authorization: {{access}}
+
+### Search valid member
+GET {{baseUri}}/member/search?search=&status=valid
+Authorization: {{access}}
+
+### Search all member
+GET {{baseUri}}/member/search?search=&status=
+Authorization: {{access}}
