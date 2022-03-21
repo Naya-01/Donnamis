@@ -24,26 +24,40 @@ let form = false;
 /**
  * Render the page to see an object
  */
-const MyObjectPage = async (id) => {
+const MyObjectPage = async () => {
   // If he's not log in he's redirect to the homepage
   if (!getSessionObject("user")) {
     Redirect("/");
     return;
   }
-  // Get the id of the member
-  let member = await memberLibrary.getUserByHisToken();
-  let idMemberConnected = member.user.memberId;
 
-  id = 1; //TODO : delete this line
-  idOffert = id;
+  let url_string = window.location;
+  let url = new URL(url_string);
+  let idOfferUrl = url.searchParams.get("idOffer");
+
+  if (!idOfferUrl || idOfferUrl <= 0) {
+    Redirect("/");
+    return;
+  }
+
+  idOffert = idOfferUrl;
   // GET all informations of the object
   let offer = await offerLibrary.getOfferById(idOffert);
+  if (offer === undefined) {
+    Redirect("/");
+    return;
+  }
+
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
 
   english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
+
+  // Get the id of the member
+  let member = await memberLibrary.getUserByHisToken();
+  let idMemberConnected = member.user.memberId;
 
   // GET all interests
   let nbMembersInterested = 3; //TODO : request to have all interests
@@ -66,7 +80,11 @@ const MyObjectPage = async (id) => {
                 <!-- The description -->
                 <div class="col-8">
                     <div class="mb-3">
-                      <h5><label for="description_object" class="form-label">Description</label></h5>
+                      <h5>
+                        <label for="description_object" class="form-label">
+                          Description
+                        </label>
+                       </h5>
                       <p id="description_object">${description}</p>
                     </div>
                 </div>
@@ -75,7 +93,11 @@ const MyObjectPage = async (id) => {
                 <!-- the time slot-->
                 <div class="col">
                     <div class="mb-3">
-                      <h5><label for="time_slot" class="form-label">Plage horaire</label></h5>
+                      <h5>
+                        <label for="time_slot" class="form-label">
+                          Plage horaire
+                         </label>
+                       </h5>
                       <p id="time_slot">${time_slot}</p>
                     </div>
                 </div>
@@ -96,10 +118,12 @@ const MyObjectPage = async (id) => {
               </div>
               <!-- The confirm button -->
               <div id="divB" class="text-center p-2">
-                <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
+                <input type="button"  class="btn btn-primary" 
+                  id="modifyObjectButton" value="Modifier">
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personnes sont intéressés par cet objet</p>
+                <p>${nbMembersInterested} personnes sont intéressées par 
+                  cet objet</p>
               </div>
           </p>
         </div>
@@ -112,7 +136,8 @@ const MyObjectPage = async (id) => {
     button.addEventListener("click", changeToForm);
   } else {
     //TODO : get user by id
-    let memberGiver = await memberLibrary.getUserByHisId(id);
+    let memberGiver = await memberLibrary.getUserByHisId(
+        offer.object.idOfferor);
     button.id = "interestedButton";
     button.value = "Je suis interessé";
     button.addEventListener("click", () => {
@@ -120,7 +145,7 @@ const MyObjectPage = async (id) => {
       button.disabled = true;
     });
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username;
+        + memberGiver.user.username;
   }
 
 }
@@ -248,7 +273,8 @@ async function changeToForm(e) {
 function updateObject(e) {
   e.preventDefault();
   // Get all elements from the form
-  let new_image = document.getElementById("file_input"); // TODO : how to get the image ?
+  // TODO : how to get the image ?
+  let new_image = document.getElementById("file_input");
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
   let new_time_slotDOM = document.getElementById("time_slot")

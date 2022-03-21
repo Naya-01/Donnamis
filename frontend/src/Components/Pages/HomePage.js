@@ -1,4 +1,6 @@
 import OfferLibrary from "../../Domain/OfferLibrary";
+import {getSessionObject} from "../../utils/session";
+import {RedirectWithParamsInUrl} from "../Router/Router";
 
 const offerLibrary = new OfferLibrary();
 
@@ -7,6 +9,7 @@ const offerLibrary = new OfferLibrary();
  */
 const render = async () => {
   let lastOffers = await offerLibrary.getAllLastOffers();
+  let isMemberConnected = getSessionObject("user");
   let actualOffer = 0;
   let lines;
   let nbOffers = lastOffers.length;
@@ -28,7 +31,10 @@ const render = async () => {
     while (nbColumns < 3 && nbOffers !== 0) {
       page += `
         <div class="col">
-          <div class="card">
+          <div class="card ${isMemberConnected ? "clickable" : ""}" 
+             data-element-id="
+                    ${isMemberConnected ? lastOffers[actualOffer].idOffer : ""}"
+             >
             <svg class="bd-placeholder-img card-img-top" width="100%" 
               height="180" xmlns="http://www.w3.org/2000/svg" role="img" 
               aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid 
@@ -57,6 +63,15 @@ const render = async () => {
 const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = await render();
+
+  for (const offer of pageDiv.querySelectorAll(".clickable")) {
+    offer.addEventListener("click", async (e) => {
+      e.preventDefault();
+      let offerId = parseInt(e.currentTarget.dataset.elementId);
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          offerId);
+    });
+  }
 };
 
 export default HomePage;
