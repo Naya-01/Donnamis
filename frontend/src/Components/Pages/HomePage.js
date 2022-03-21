@@ -30,7 +30,10 @@ const render = async () => {
     while (nbColumns < 3 && nbOffers !== 0) {
       page += `
         <div class="col">
-          <div class="card ${isMemberConnected ? "clickable" : ""}">
+          <div class="card ${isMemberConnected ? "clickable" : ""}" 
+             data-element-id="
+                    ${isMemberConnected ? lastOffers[actualOffer].idOffer : ""}"
+             >
             <svg class="bd-placeholder-img card-img-top" width="100%" 
               height="180" xmlns="http://www.w3.org/2000/svg" role="img" 
               aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid 
@@ -59,6 +62,7 @@ const render = async () => {
 const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = await render();
+
 };
 
 export default HomePage;
