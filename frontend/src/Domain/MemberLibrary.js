@@ -42,6 +42,28 @@ class MemberLibrary {
     }
     return user;
   }
+
+  async getMemberBySearchAndStatus(search, status) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch(
+          "api/member/search?search=" + search + "&status=" + status, options);
+    } catch (err) {
+      console.log(err);
+      return {};
+    }
+    let user = {};
+    if (response.status === 200) {
+      user = await response.json();
+    }
+    return user;
+  }
 }
 
 export default MemberLibrary;
