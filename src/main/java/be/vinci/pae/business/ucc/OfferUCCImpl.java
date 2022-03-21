@@ -3,10 +3,12 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.exceptions.BadRequestException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
+import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -20,6 +22,8 @@ public class OfferUCCImpl implements OfferUCC {
   private ObjectDAO objectDAO;
   @Inject
   private TypeDAO typeDAO;
+  @Inject
+  private DALService dalService;
 
   /**
    * Get all the offers that matche with a search pattern.
@@ -29,10 +33,13 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getAllPosts(String searchPattern) {
+    dalService.startTransaction();
     List<OfferDTO> offers = offerDAO.getAll(searchPattern);
     if (offers.isEmpty()) {
+      dalService.rollBackTransaction();
       throw new NotFoundException("Aucune offres");
     }
+    dalService.commitTransaction();
     return offers;
   }
 
@@ -43,10 +50,13 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getLastOffers() {
+    dalService.startTransaction();
     List<OfferDTO> offers = offerDAO.getAllLast();
     if (offers.isEmpty()) {
+      dalService.rollBackTransaction();
       throw new NotFoundException("Aucune offres");
     }
+    dalService.commitTransaction();
     return offers;
   }
 
@@ -58,10 +68,13 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO getOfferById(int idOffer) {
+    dalService.startTransaction();
     OfferDTO offerDTO = offerDAO.getOne(idOffer);
     if (offerDTO == null) {
+      dalService.rollBackTransaction();
       throw new NotFoundException("Aucune offres");
     }
+    dalService.commitTransaction();
     return offerDTO;
   }
 
@@ -73,20 +86,26 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    setCorrectType(offerDTO);
+    OfferDTO offer;
+    try {
+      dalService.startTransaction();
+      setCorrectType(offerDTO);
 
-    if (offerDTO.getObject().getIdObject() == 0) {
-      objectDAO.addOne(offerDTO.getObject());
       if (offerDTO.getObject().getIdObject() == 0) {
-        throw new WebApplicationException("Problème lors de la création d'un objet",
-            Response.Status.BAD_REQUEST);
+        objectDAO.addOne(offerDTO.getObject());
+        if (offerDTO.getObject().getIdObject() == 0) {
+          throw new BadRequestException("Problème lors de la création d'un objet");
+        }
       }
+      offer = offerDAO.addOne(offerDTO);
+      if (offer.getIdOffer() == 0) {
+        throw new BadRequestException("Problème lors de la création d'une offre");
+      }
+    } catch (BadRequestException e) {
+      dalService.rollBackTransaction();
+      throw e;
     }
-    OfferDTO offer = offerDAO.addOne(offerDTO);
-    if (offer.getIdOffer() == 0) {
-      throw new WebApplicationException("Problème lors de la création d'une offre",
-          Response.Status.BAD_REQUEST);
-    }
+    dalService.commitTransaction();
     return offer;
   }
 
@@ -98,20 +117,25 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO updateOffer(OfferDTO offerDTO) {
-    setCorrectType(offerDTO);
+    OfferDTO offer;
+    try {
+      dalService.startTransaction();
+      setCorrectType(offerDTO);
 
-    OfferDTO offer = offerDAO.updateOne(offerDTO);
-    if (offer == null) {
-      throw new WebApplicationException("Problème lors de la mise à jour du time slot",
-          Response.Status.BAD_REQUEST);
+      offer = offerDAO.updateOne(offerDTO);
+      if (offer == null) {
+        throw new BadRequestException("Problème lors de la mise à jour du time slot");
+      }
+
+      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
+      if (objectDTO == null) {
+        throw new BadRequestException("Problème lors de la mise à jour de l'objet");
+      }
+    } catch (WebApplicationException e) {
+      dalService.rollBackTransaction();
+      throw e;
     }
-
-    ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-    if (objectDTO == null) {
-      throw new WebApplicationException("Problème lors de la mise à jour de l'objet",
-          Response.Status.BAD_REQUEST);
-    }
-
+    dalService.commitTransaction();
     return offer;
   }
 
@@ -128,8 +152,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (typeDTO == null) {
         typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          throw new WebApplicationException("Problème lors de la création du type",
-              Response.Status.BAD_REQUEST);
+          throw new BadRequestException("Problème lors de la création du type");
         }
       }
     } else {
