@@ -10,6 +10,9 @@ public class Log {
 
   private static Logger logger;
 
+  /**
+   * Config the Logger for the files & console log.
+   */
   public static void config() {
     logger = Logger.getLogger("Log");
     logger.setLevel(Level.INFO);
