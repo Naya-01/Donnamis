@@ -5,7 +5,7 @@ import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.ConflictException;
 import be.vinci.pae.business.exceptions.ForbiddenException;
-import be.vinci.pae.business.exceptions.InternalServerErrorException;
+import be.vinci.pae.business.exceptions.FatalException;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.AddressDAO;
@@ -162,7 +162,7 @@ public class MemberUCCImpl implements MemberUCC {
       //add the member
       memberFromDao = memberDAO.createOneMember(memberDTO);
       if (memberFromDao == null) {
-        throw new InternalServerErrorException("Le membre n'a pas pû être ajouté à la base de"
+        throw new FatalException("Le membre n'a pas pû être ajouté à la base de"
             + " données");
       }
 
@@ -175,11 +175,11 @@ public class MemberUCCImpl implements MemberUCC {
       //add the address
       AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
       if (addressDTO == null) {
-        throw new InternalServerErrorException("L'adresse n'a pas pû être ajoutée à la base de"
+        throw new FatalException("L'adresse n'a pas pû être ajoutée à la base de"
             + " données");
       }
       memberFromDao.setAddress(addressDTO);
-    } catch (ConflictException | InternalServerErrorException e) {
+    } catch (ConflictException | FatalException e) {
       dalService.rollBackTransaction();
       throw e;
     }
