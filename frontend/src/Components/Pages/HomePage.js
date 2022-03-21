@@ -29,7 +29,6 @@ const render = async () => {
     let nbColumns = 0;
     //check if we still have offers and if the arrived to the end of row
     while (nbColumns < 3 && nbOffers !== 0) {
-      console.log(lastOffers[actualOffer].idOffer);
       page += `
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 

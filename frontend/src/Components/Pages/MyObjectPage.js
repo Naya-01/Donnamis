@@ -122,7 +122,7 @@ const MyObjectPage = async () => {
                   id="modifyObjectButton" value="Modifier">
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personnes sont intéressés par 
+                <p>${nbMembersInterested} personnes sont intéressées par 
                   cet objet</p>
               </div>
           </p>
@@ -136,7 +136,8 @@ const MyObjectPage = async () => {
     button.addEventListener("click", changeToForm);
   } else {
     //TODO : get user by id
-    let memberGiver = await memberLibrary.getUserByHisId(id);
+    let memberGiver = await memberLibrary.getUserByHisId(
+        offer.object.idOfferor);
     button.id = "interestedButton";
     button.value = "Je suis interessé";
     button.addEventListener("click", () => {
@@ -144,7 +145,7 @@ const MyObjectPage = async () => {
       button.disabled = true;
     });
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username;
+        + memberGiver.user.username;
   }
 
 }
