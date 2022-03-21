@@ -14,7 +14,7 @@ class MemberLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("/api/member/getMemberByToken/", options);
+      response = await fetch("api/member/getMemberByToken", options);
     } catch (err) {
       console.log(err);
     }

@@ -105,6 +105,27 @@ class OfferLibrary {
 
     return current_offer;
   }
+
+  async getAllLastOffers() {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      response = await fetch("api/offers/lasts", options);
+    } catch (err) {
+      console.log(err);
+    }
+    let allLastOffers;
+    if (response.status === 200) {
+      allLastOffers = await response.json();
+    }
+
+    return allLastOffers;
+  }
 }
 
 export default OfferLibrary;

@@ -21,7 +21,7 @@ public class TestBinder extends AbstractBinder {
   @Override
   protected void configure() {
     bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
-    bind(DALServiceImpl.class).to(DALService.class).in(Singleton.class);
+    bind(Mockito.mock(DALServiceImpl.class)).to(DALService.class);
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(Mockito.mock(AddressDAOImpl.class)).to(AddressDAO.class);
     bind(Mockito.mock(MemberDAOImpl.class)).to(MemberDAO.class);

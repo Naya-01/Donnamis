@@ -2,7 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.factories.AddressFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class AddressDAOImpl implements AddressDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
   @Inject
   private AddressFactory addressFactory;
 
@@ -31,7 +31,7 @@ public class AddressDAOImpl implements AddressDAO {
   public AddressDTO updateOne(int idMember, String unitNumber, String buildingNumber, String street,
       String postcode, String commune, String country) {
     // Update in the db
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "UPDATE donnamis.addresses "
             + "SET unit_number = ?,"
             + " building_number = ?,"
@@ -75,7 +75,7 @@ public class AddressDAOImpl implements AddressDAO {
   @Override
   public AddressDTO createOne(AddressDTO addressDTO) {
     // Insert in the db
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "insert into donnamis.addresses (id_member, unit_number, building_number, street, "
             + "postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member;");
     try {
