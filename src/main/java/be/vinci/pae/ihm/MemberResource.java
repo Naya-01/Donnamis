@@ -40,7 +40,14 @@ public class MemberResource {
   @Inject
   private Image imageManager;
 
-
+  /**
+   * Set a picture for the member
+   *
+   * @param request  information of the member
+   * @param file     data
+   * @param fileMime mime with the picture type
+   * @return member updated
+   */
   @POST
   @Path("/setPicture")
   @Authorize

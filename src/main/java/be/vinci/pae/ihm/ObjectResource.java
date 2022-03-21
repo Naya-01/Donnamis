@@ -56,6 +56,15 @@ public class ObjectResource {
         .putPOJO("object", objectDTO);
   }
 
+  /**
+   * Set a picture for the object.
+   *
+   * @param id       of the object
+   * @param request  with member data
+   * @param file     data
+   * @param fileMime mime with the type of file
+   * @return object updated
+   */
   @POST
   @Path("/setPicture/{id}")
   @Authorize
@@ -70,8 +79,7 @@ public class ObjectResource {
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
-      throw new WebApplicationException("Cette objet ne vous appartient pas"
-          , Status.UNAUTHORIZED);
+      throw new WebApplicationException("Cette objet ne vous appartient pas", Status.UNAUTHORIZED);
     }
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\");
 
