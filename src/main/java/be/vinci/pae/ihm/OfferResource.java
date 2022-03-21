@@ -50,7 +50,6 @@ public class OfferResource {
    */
   @GET
   @Path("/lasts")
-  @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getLastOffers() {
     return offerUcc.getLastOffers();

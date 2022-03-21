@@ -2,7 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.factories.MemberFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.util.List;
 public class MemberDAOImpl implements MemberDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
   @Inject
   private MemberFactory memberFactory;
 
@@ -26,7 +26,7 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void promoteAdministrator(int id) {
     String query = "UPDATE donnamis.members SET role='administrator' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
@@ -42,7 +42,7 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void confirmDeniedMemberRegistration(int id) {
     String query = "UPDATE donnamis.members SET refusal_reason = NULL WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
@@ -59,7 +59,7 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public void confirmRegistration(int id) {
     String query = "UPDATE donnamis.members SET status='valid' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
@@ -77,7 +77,7 @@ public class MemberDAOImpl implements MemberDAO {
   public void declineRegistration(int id, String reason) {
     String query = "UPDATE donnamis.members SET status='denied' , "
         + "refusal_reason=? WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, reason);
       preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();
@@ -94,7 +94,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO getOne(String username) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
             + "refusal_reason FROM donnamis.members WHERE username = ?");
     try {
@@ -117,7 +117,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member
    */
   public MemberDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
             + "refusal_reason FROM donnamis.members WHERE id_member = ?");
     try {
@@ -184,7 +184,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO createOneMember(MemberDTO member) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement("insert into "
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement("insert into "
         + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
         + "password, refusal_reason) values (?,?,?,?,?,?,?,?) RETURNING id_member;");
     try {
@@ -227,7 +227,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public List<MemberDTO> getAllWithSubStatus(String status) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
             + "refusal_reason FROM donnamis.members WHERE status = ?");
 

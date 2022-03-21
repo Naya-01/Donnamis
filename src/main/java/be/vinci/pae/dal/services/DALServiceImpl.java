@@ -2,27 +2,26 @@ package be.vinci.pae.dal.services;
 
 import be.vinci.pae.utils.Config;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DALServiceImpl implements DALService {
+public class DALServiceImpl implements DALBackendService, DALService {
 
-  private Connection connection;
+  private ThreadLocal<Connection> connection;
+  private BasicDataSource dataSource;
 
   /**
    * Establish the connection of the db.
    */
   public DALServiceImpl() {
-    try {
-      connection = DriverManager.getConnection(Config.getProperty("dbUrl"),
-          Config.getProperty("dbUser"),
-          Config.getProperty("dbPassword"));
+    connection = new ThreadLocal<>();
 
-    } catch (SQLException e) {
-      System.out.println("Impossible de joindre le server !");
-      System.exit(1);
-    }
+    dataSource = new BasicDataSource();
+    dataSource.setDriverClassName("org.postgresql.Driver");
+    dataSource.setUrl(Config.getProperty("dbUrl"));
+    dataSource.setUsername(Config.getProperty("dbUser"));
+    dataSource.setPassword(Config.getProperty("dbPassword"));
 
   }
 
@@ -34,11 +33,48 @@ public class DALServiceImpl implements DALService {
    */
   @Override
   public PreparedStatement getPreparedStatement(String query) {
+    PreparedStatement ps = null;
     try {
-      return connection.prepareStatement(query);
+      Connection conn = connection.get();
+      ps = conn.prepareStatement(query);
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return null;
+    return ps;
+  }
+
+  @Override
+  public void startTransaction() {
+    try {
+      Connection conn = dataSource.getConnection();
+      conn.setAutoCommit(false);
+      connection.set(conn);
+    } catch (SQLException e) {
+      e.printStackTrace(); // impossible de joindre le serveur
+    }
+  }
+
+  @Override
+  public void commitTransaction() {
+    Connection conn = connection.get();
+    try {
+      conn.commit();
+      conn.close();
+      connection.remove();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public void rollBackTransaction() {
+    Connection conn = connection.get();
+    try {
+      conn.rollback();
+      conn.close();
+      connection.remove();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 }

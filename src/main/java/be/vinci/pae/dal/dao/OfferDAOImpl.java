@@ -6,7 +6,7 @@ import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +17,7 @@ import java.util.List;
 public class OfferDAOImpl implements OfferDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
 
   @Inject
   private OfferFactory offerFactory;
@@ -76,7 +76,7 @@ public class OfferDAOImpl implements OfferDAO {
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
         + "WHERE of.id_object = ob.id_object AND of.id_offer = ? AND ty.id_type = ob.id_type";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idOffer);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -105,7 +105,7 @@ public class OfferDAOImpl implements OfferDAO {
         + "RETURNING id_offer, date, time_slot, id_object";
 
     try {
-      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
 
@@ -139,7 +139,7 @@ public class OfferDAOImpl implements OfferDAO {
         + "WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
 
     try {
-      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getIdOffer());
       preparedStatement.executeQuery();
@@ -169,7 +169,7 @@ public class OfferDAOImpl implements OfferDAO {
    * @return a list of six offerDTO
    */
   private List<OfferDTO> getOffersWithQuery(String query) {
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       return getOffersWithResultSet(resultSet);

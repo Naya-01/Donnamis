@@ -36,6 +36,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.OfferDAOImpl;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
+import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.dal.services.DALServiceImpl;
 import be.vinci.pae.ihm.manager.Token;
@@ -53,7 +54,7 @@ public class ApplicationBinder extends AbstractBinder {
     bind(TypeFactoryImpl.class).to(TypeFactory.class).in(Singleton.class);
     bind(AddressFactoryImpl.class).to(AddressFactory.class).in(Singleton.class);
     bind(InterestFactoryImpl.class).to(InterestFactory.class).in(Singleton.class);
-    bind(DALServiceImpl.class).to(DALService.class).in(Singleton.class);
+    bind(DALServiceImpl.class).to(DALBackendService.class).to(DALService.class).in(Singleton.class);
 
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(TypeUCCImpl.class).to(TypeUCC.class).in(Singleton.class);

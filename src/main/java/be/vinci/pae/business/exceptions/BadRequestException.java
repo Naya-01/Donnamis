@@ -20,4 +20,5 @@ public class BadRequestException extends WebApplicationException {
         .type("text/plain")
         .build());
   }
+
 }
