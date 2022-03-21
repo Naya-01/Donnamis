@@ -9,14 +9,11 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Singleton
@@ -60,26 +57,6 @@ public class ObjectResource {
 
     return jsonMapper.createObjectNode()
         .putPOJO("objectList", objectDTOList);
-  }
-
-  /**
-   * Create an object.
-   *
-   * @param objectDTO : object that we want to create.
-   * @return return the added object with his id.
-   */
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Authorize
-  public ObjectDTO addOne(ObjectDTO objectDTO) {
-    if (objectDTO == null || objectDTO.getIdOfferor() == 0 || objectDTO.getType() == null
-        || objectDTO.getType().getIdType() <= 0
-        || objectDTO.getDescription() == null || objectDTO.getDescription().isBlank()) {
-      throw new WebApplicationException("Pseudonyme ou mot de passe requis",
-          Response.Status.BAD_REQUEST);
-    }
-    return objectUCC.addOne(objectDTO);
   }
 
   /**

@@ -2,7 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.TypeFactory;
-import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.util.List;
 public class TypeDAOImpl implements TypeDAO {
 
   @Inject
-  private DALService dalService;
+  private DALBackendService dalBackendService;
   @Inject
   private TypeFactory typeFactory;
 
@@ -25,7 +25,7 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(String typeName) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_type, type_name, is_default FROM donnamis.types WHERE type_name = ?");
     try {
       preparedStatement.setString(1, typeName);
@@ -43,7 +43,7 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(int typeId) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_type, type_name, is_default FROM donnamis.types WHERE id_type = ?");
     try {
       preparedStatement.setInt(1, typeId);
@@ -60,7 +60,7 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public List<TypeDTO> getAllDefaultTypes() {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_type, type_name, is_default FROM donnamis.types WHERE is_default = true");
     try {
       preparedStatement.executeQuery();
@@ -92,7 +92,7 @@ public class TypeDAOImpl implements TypeDAO {
     String query = "INSERT INTO donnamis.types (type_name, is_default) VALUES (?, false) "
         + "RETURNING id_type, type_name, is_default";
     try {
-      PreparedStatement preparedStatement = dalService.getPreparedStatement(query);
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, typeName);
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
