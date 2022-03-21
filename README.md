@@ -24,6 +24,7 @@ dbUrl = <DatabaseURL>
 dbUser = <DatabaseUsername>
 dbPassword = <DatabasePassword>
 JWTSecret = <JWTSecret>
+ImagePath= <Path>
 ```
 
 ## Comment utiliser le back-end ?

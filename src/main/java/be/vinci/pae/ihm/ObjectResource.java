@@ -90,7 +90,7 @@ public class ObjectResource {
 
     ObjectDTO newDTO = objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
 
-    return objectDTO;
+    return newDTO;
   }
 
   /**

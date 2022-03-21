@@ -41,7 +41,7 @@ public class MemberResource {
   private Image imageManager;
 
   /**
-   * Set a picture for the member
+   * Set a picture for the member.
    *
    * @param request  information of the member
    * @param file     data
