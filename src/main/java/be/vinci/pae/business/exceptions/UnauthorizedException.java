@@ -15,7 +15,7 @@ public class UnauthorizedException extends WebApplicationException {
    * @param message custom error message
    */
   public UnauthorizedException(String message) {
-      super(message, Response.Status.UNAUTHORIZED);
+    super(message, Response.Status.UNAUTHORIZED);
   }
 
 }
