@@ -1,6 +1,6 @@
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {getSessionObject} from "../../utils/session";
-import MyObjectPage from "./MyObjectPage";
+import {RedirectWithParamsInUrl} from "../Router/Router";
 
 const offerLibrary = new OfferLibrary();
 
@@ -69,7 +69,8 @@ const HomePage = async () => {
     offer.addEventListener("click", async (e) => {
       e.preventDefault();
       let offerId = parseInt(e.currentTarget.dataset.elementId);
-      await MyObjectPage(offerId);
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          offerId);
     });
   }
 };

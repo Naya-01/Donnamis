@@ -132,4 +132,14 @@ const Redirect = (uri) => {
   }
 };
 
-export {Router, Redirect, refreshToken};
+const RedirectWithParamsInUrl = (page, action) => {
+  window.history.pushState({}, page, window.location.origin + page + action);
+  const componentToRender = routes[page];
+  if (routes[page]) {
+    componentToRender();
+  } else {
+    throw Error("La " + page + " n'existe pas");
+  }
+};
+
+export {Router, Redirect, refreshToken, RedirectWithParamsInUrl};

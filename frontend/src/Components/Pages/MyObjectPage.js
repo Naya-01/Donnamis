@@ -24,17 +24,27 @@ let form = false;
 /**
  * Render the page to see an object
  */
-const MyObjectPage = async (id) => {
+const MyObjectPage = async () => {
   // If he's not log in he's redirect to the homepage
   if (!getSessionObject("user")) {
     Redirect("/");
     return;
   }
+
+  let url_string = window.location;
+  let url = new URL(url_string);
+  let idOfferUrl = url.searchParams.get("idOffer");
+
+  if (!idOfferUrl || isNaN(idOfferUrl) || idOfferUrl <= 0) {
+    Redirect("/");
+    return;
+  }
+
   // Get the id of the member
   let member = await memberLibrary.getUserByHisToken();
   let idMemberConnected = member.user.memberId;
 
-  idOffert = id;
+  idOffert = idOfferUrl;
   // GET all informations of the object
   let offer = await offerLibrary.getOfferById(idOffert);
   idType = offer.object.type.idType;
