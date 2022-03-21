@@ -80,7 +80,11 @@ const MyObjectPage = async () => {
                 <!-- The description -->
                 <div class="col-8">
                     <div class="mb-3">
-                      <h5><label for="description_object" class="form-label">Description</label></h5>
+                      <h5>
+                        <label for="description_object" class="form-label">
+                          Description
+                        </label>
+                       </h5>
                       <p id="description_object">${description}</p>
                     </div>
                 </div>
@@ -89,7 +93,11 @@ const MyObjectPage = async () => {
                 <!-- the time slot-->
                 <div class="col">
                     <div class="mb-3">
-                      <h5><label for="time_slot" class="form-label">Plage horaire</label></h5>
+                      <h5>
+                        <label for="time_slot" class="form-label">
+                          Plage horaire
+                         </label>
+                       </h5>
                       <p id="time_slot">${time_slot}</p>
                     </div>
                 </div>
@@ -110,10 +118,12 @@ const MyObjectPage = async () => {
               </div>
               <!-- The confirm button -->
               <div id="divB" class="text-center p-2">
-                <input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">
+                <input type="button"  class="btn btn-primary" 
+                  id="modifyObjectButton" value="Modifier">
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personnes sont intéressés par cet objet</p>
+                <p>${nbMembersInterested} personnes sont intéressés par 
+                  cet objet</p>
               </div>
           </p>
         </div>
@@ -262,7 +272,8 @@ async function changeToForm(e) {
 function updateObject(e) {
   e.preventDefault();
   // Get all elements from the form
-  let new_image = document.getElementById("file_input"); // TODO : how to get the image ?
+  // TODO : how to get the image ?
+  let new_image = document.getElementById("file_input");
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
   let new_time_slotDOM = document.getElementById("time_slot")
