@@ -107,7 +107,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
       preparedStatement.setString(3, objectDTO.getStatus());
-      preparedStatement.setBytes(4, objectDTO.getImage());
+      preparedStatement.setString(4, objectDTO.getImage());
       preparedStatement.setInt(5, objectDTO.getIdOfferor());
 
       preparedStatement.executeQuery();
@@ -140,7 +140,7 @@ public class ObjectDAOImpl implements ObjectDAO {
     try {
       preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
-      preparedStatement.setBytes(3, objectDTO.getImage());
+      preparedStatement.setString(3, objectDTO.getImage());
       preparedStatement.setInt(4, objectDTO.getIdObject());
 
       preparedStatement.executeQuery();
@@ -179,7 +179,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(resultSet.getBytes(4));
+      objectDTO.setImage(resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
       e.printStackTrace();

@@ -9,7 +9,7 @@ public class ObjectImpl implements ObjectDTO {
   private TypeDTO type;
   private String description;
   private String status;
-  private byte[] image;
+  private String image;
   private int idOfferor;
 
   @Override
@@ -53,12 +53,12 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public byte[] getImage() {
+  public String getImage() {
     return image;
   }
 
   @Override
-  public void setImage(byte[] image) {
+  public void setImage(String image) {
     this.image = image;
   }
 

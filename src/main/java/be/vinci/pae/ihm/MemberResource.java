@@ -43,11 +43,11 @@ public class MemberResource {
 
 
   @POST
-  @Path("/upload")
+  @Path("/setPicture")
   @Authorize
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Produces(MediaType.APPLICATION_JSON)
-  public MemberDTO uploadFile(@Context ContainerRequest request,
+  public MemberDTO setPicture(@Context ContainerRequest request,
       @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime) {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
