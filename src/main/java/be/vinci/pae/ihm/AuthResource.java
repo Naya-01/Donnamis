@@ -17,7 +17,6 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
@@ -200,22 +199,6 @@ public class AuthResource {
         .put("refresh_token", accessToken)
         .putPOJO("member", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
 
-  }
-
-  /**
-   * Get a user by his id.
-   *
-   * @param id the id of the member we want to get
-   * @return return the linked user to his id
-   */
-  @GET
-  @Path("/id/{id}")
-  @Authorize
-  @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getUserById(@PathParam("id") int id) {
-    MemberDTO memberDTO = memberUCC.getMember(id);
-    return jsonMapper.createObjectNode()
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
   }
 
 

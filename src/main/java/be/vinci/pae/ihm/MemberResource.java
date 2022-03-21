@@ -57,7 +57,7 @@ public class MemberResource {
         authorizedType = true;
       }
     }
-    
+
     if (!authorizedType) {
       throw new WebApplicationException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
@@ -168,5 +168,20 @@ public class MemberResource {
     return memberUCC.getInscriptionRequest(status);
   }
 
+  /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public ObjectNode getMemberById(@PathParam("id") int id) {
+    MemberDTO memberDTO = memberUCC.getMember(id);
+    return jsonMapper.createObjectNode()
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+  }
 
 }
