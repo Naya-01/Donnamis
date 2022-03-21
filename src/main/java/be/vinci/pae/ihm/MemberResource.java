@@ -4,7 +4,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
-import be.vinci.pae.utils.Config;
+import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,12 +22,8 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -41,6 +37,9 @@ public class MemberResource {
   @Inject
   private MemberUCC memberUCC;
 
+  @Inject
+  private Image imageManager;
+
 
   @POST
   @Path("/setPicture")
@@ -50,29 +49,14 @@ public class MemberResource {
   public MemberDTO setPicture(@Context ContainerRequest request,
       @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime) {
+
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
 
-    String type = fileMime.getMediaType().getSubtype();
-    String[] typesAllowed = {"png", "jpg", "jpeg"};
-    boolean authorizedType = false;
-    for (String t : typesAllowed) {
-      if (type.equals(t)) {
-        authorizedType = true;
-      }
-    }
+    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\");
 
-    if (!authorizedType) {
+    if (internalPath == null) {
       throw new WebApplicationException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
-    }
-    String internalPath = null;
-    try {
-      internalPath =
-          "img\\profils\\" + UUID.randomUUID() + "." + fileMime.getMediaType().getSubtype();
-      String path = Config.getProperty("ImagePath") + internalPath;
-      Files.copy(file, Paths.get(path));
-    } catch (IOException e) {
-      e.printStackTrace();
     }
 
     MemberDTO newDTO = memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
