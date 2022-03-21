@@ -74,7 +74,7 @@ public class InterestUCCImpl implements InterestUCC {
   public List<InterestDTO> getInterestedCount(int idObject) {
     dalService.startTransaction();
     ObjectDTO objectDTO = objectDAO.getOne(idObject);
-    if(objectDTO==null){
+    if (objectDTO == null) {
       dalService.rollBackTransaction();
       throw new NotFoundException("Object not found");
     }
