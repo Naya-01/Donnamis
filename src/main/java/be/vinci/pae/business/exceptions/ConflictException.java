@@ -5,9 +5,7 @@ import jakarta.ws.rs.core.Response;
 
 public class ConflictException extends WebApplicationException {
 
-  public ConflictException() {
-    super(Response.Status.CONFLICT);
-  }
+  public ConflictException() { super(Response.Status.CONFLICT); }
 
   /**
    * Make an ConflictException with the custom message.
@@ -15,10 +13,7 @@ public class ConflictException extends WebApplicationException {
    * @param message custom error message
    */
   public ConflictException(String message) {
-    super(Response.status(Response.Status.CONFLICT)
-        .entity(message)
-        .type("text/plain")
-        .build());
+    super(message, Response.Status.CONFLICT);
   }
 
 }

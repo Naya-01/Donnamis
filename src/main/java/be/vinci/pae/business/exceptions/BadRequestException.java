@@ -15,10 +15,7 @@ public class BadRequestException extends WebApplicationException {
    * @param message custom error message
    */
   public BadRequestException(String message) {
-    super(Response.status(Response.Status.BAD_REQUEST)
-        .entity(message)
-        .type("text/plain")
-        .build());
+    super(message, Response.Status.BAD_REQUEST);
   }
 
 }

@@ -15,10 +15,7 @@ public class TokenDecodingException extends WebApplicationException {
    * @param message custom error message
    */
   public TokenDecodingException(String message) {
-    super(Response.status(Response.Status.UNAUTHORIZED)
-        .entity(message)
-        .type("text/plain")
-        .build());
+    super(message, Response.Status.UNAUTHORIZED);
   }
 
   public TokenDecodingException(Throwable cause) {

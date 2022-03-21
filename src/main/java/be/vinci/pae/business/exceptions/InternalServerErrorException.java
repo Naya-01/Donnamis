@@ -15,9 +15,6 @@ public class InternalServerErrorException extends WebApplicationException {
    * @param message custom error message
    */
   public InternalServerErrorException(String message) {
-    super(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-        .entity(message)
-        .type("text/plain")
-        .build());
+    super(message, Response.Status.INTERNAL_SERVER_ERROR);
   }
 }
