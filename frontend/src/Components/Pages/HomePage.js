@@ -1,5 +1,6 @@
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {getSessionObject} from "../../utils/session";
+import MyObjectPage from "./MyObjectPage";
 
 const offerLibrary = new OfferLibrary();
 
@@ -28,6 +29,7 @@ const render = async () => {
     let nbColumns = 0;
     //check if we still have offers and if the arrived to the end of row
     while (nbColumns < 3 && nbOffers !== 0) {
+      console.log(lastOffers[actualOffer].idOffer);
       page += `
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 
@@ -63,6 +65,14 @@ const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = await render();
 
+  pageDiv.querySelectorAll(".clickable").forEach(async (offer) => {
+    offer.addEventListener("click", async (e) => {
+      e.preventDefault();
+      let offerId = parseInt(e.currentTarget.dataset.elementId);
+      console.log(offerId);
+      await MyObjectPage(offerId);
+    });
+  });
 };
 
 export default HomePage;
