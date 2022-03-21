@@ -1,3 +1,5 @@
+// source regex phone number : https://ihateregex.io/expr/phone/
+
 import Member from "../../Domain/Member";
 import Address from "../../Domain/Address";
 import Notification from "../Module/Notification";
@@ -14,7 +16,7 @@ const regOnlyLettersAndNumbersOrNothing =
     new RegExp('^([0-9]+[a-zA-Z]?)*$');
 const regOnlyLetters = new RegExp('^[a-zA-Z éàùöèêûî\']+$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification();
+const toast = new Notification().getNotification("top-end");
 
 const htmlPage = `
           <div class="container mt-5">
@@ -158,7 +160,7 @@ const RegisterPage = async () => {
       username.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le pseudonyme est trop grand ou est invalide'
+        title: 'Le pseudonyme est trop grand'
       })
     } else if (lastname.value.trim().length > 50 ||
         !regOnlyLetters.test(lastname.value.trim())) {
@@ -176,7 +178,7 @@ const RegisterPage = async () => {
       })
     } else if (phoneNumber.value.trim().length !== 0
         && !regNumberPhone.test(phoneNumber.value.trim())) {
-      unitNumber.classList.add("border-danger");
+      phoneNumber.classList.add("border-danger");
       toast.fire({
         icon: 'error',
         title: 'Le numéro de téléphone est invalide'
