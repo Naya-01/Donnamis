@@ -13,6 +13,7 @@ public class TypeUCCImpl implements TypeUCC {
   private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
+
   /**
    * Find a type by his id.
    *

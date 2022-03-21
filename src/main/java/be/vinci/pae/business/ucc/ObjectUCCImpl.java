@@ -13,6 +13,7 @@ public class ObjectUCCImpl implements ObjectUCC {
   private ObjectDAO objectDAO;
   @Inject
   private DALService dalService;
+
   /**
    * Find an object with his id.
    *
