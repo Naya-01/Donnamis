@@ -27,7 +27,7 @@ public class ObjectDAOImpl implements ObjectDAO {
   @Override
   public ObjectDTO updateObjectPicture(String path, int id) {
     String query = "UPDATE donnamis.objects SET image=? WHERE id_object=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, path);
       preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();

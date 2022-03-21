@@ -253,7 +253,7 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public MemberDTO updateProfilPicture(String path, int id) {
     String query = "UPDATE donnamis.members SET image=? WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, path);
       preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();
