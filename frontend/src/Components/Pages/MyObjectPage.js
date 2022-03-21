@@ -35,24 +35,29 @@ const MyObjectPage = async () => {
   let url = new URL(url_string);
   let idOfferUrl = url.searchParams.get("idOffer");
 
-  if (!idOfferUrl || isNaN(idOfferUrl) || idOfferUrl <= 0) {
+  if (!idOfferUrl || idOfferUrl <= 0) {
     Redirect("/");
     return;
   }
 
-  // Get the id of the member
-  let member = await memberLibrary.getUserByHisToken();
-  let idMemberConnected = member.user.memberId;
-
   idOffert = idOfferUrl;
   // GET all informations of the object
   let offer = await offerLibrary.getOfferById(idOffert);
+  if (offer === undefined) {
+    Redirect("/");
+    return;
+  }
+
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
 
   english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
+
+  // Get the id of the member
+  let member = await memberLibrary.getUserByHisToken();
+  let idMemberConnected = member.user.memberId;
 
   // GET all interests
   let nbMembersInterested = 3; //TODO : request to have all interests
