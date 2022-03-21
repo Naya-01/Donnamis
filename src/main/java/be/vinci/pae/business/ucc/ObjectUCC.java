@@ -22,4 +22,13 @@ public interface ObjectUCC {
   List<ObjectDTO> getAllObjectMember(int idMember);
 
   ObjectDTO updateOne(ObjectDTO objectDTO);
+
+  /**
+   * Update the object picture.
+   *
+   * @param internalPath location of the picture.
+   * @param id           of the object.
+   * @return Object modified.
+   */
+  ObjectDTO updateObjectPicture(String internalPath, int id);
 }

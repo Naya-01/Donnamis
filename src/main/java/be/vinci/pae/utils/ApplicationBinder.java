@@ -39,6 +39,8 @@ import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.dal.services.DALServiceImpl;
+import be.vinci.pae.ihm.manager.Image;
+import be.vinci.pae.ihm.manager.ImageImpl;
 import be.vinci.pae.ihm.manager.Token;
 import be.vinci.pae.ihm.manager.TokenImpl;
 import jakarta.inject.Singleton;
@@ -73,5 +75,6 @@ public class ApplicationBinder extends AbstractBinder {
     bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
 
     bind(TokenImpl.class).to(Token.class).in(Singleton.class);
+    bind(ImageImpl.class).to(Image.class).in(Singleton.class);
   }
 }

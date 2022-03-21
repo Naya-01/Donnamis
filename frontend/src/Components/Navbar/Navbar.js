@@ -34,10 +34,10 @@ const Navbar = async () => {
   // Get the user object from the localStorage
   let userSession = getSessionObject("user");
   let username = undefined;
-  if(userSession){
+  if (userSession) {
     username = await getUsername();
   }
-  if (username===undefined) {
+  if (username === undefined) {
     navbar = `
           <nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
             <div class="container-fluid">
