@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -10,7 +11,8 @@ public class ObjectUCCImpl implements ObjectUCC {
 
   @Inject
   private ObjectDAO objectDAO;
-
+  @Inject
+  private DALService dalService;
   /**
    * Find an object with his id.
    *
@@ -19,11 +21,14 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO getObject(int id) {
+    dalService.startTransaction();
     ObjectDTO objectDTO = objectDAO.getOne(id);
 
     if (objectDTO == null) {
+      dalService.rollBackTransaction();
       throw new NotFoundException("Objet non trouvé");
     }
+    dalService.commitTransaction();
     return objectDTO;
   }
 
@@ -35,23 +40,15 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public List<ObjectDTO> getAllObjectMember(int idMember) {
+    dalService.startTransaction();
     List<ObjectDTO> objectDTOList = objectDAO.getAllObjectOfMember(idMember);
 
     if (objectDTOList.isEmpty()) {
+      dalService.rollBackTransaction();
       throw new NotFoundException("Aucun objet pour ce membre");
     }
+    dalService.commitTransaction();
     return objectDTOList;
-  }
-
-  /**
-   * Create an object.
-   *
-   * @param objectDTO : object that we want to create.
-   * @return return the added object
-   */
-  public ObjectDTO addOne(ObjectDTO objectDTO) {
-
-    return objectDAO.addOne(objectDTO);
   }
 
   /**
@@ -61,6 +58,14 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @return object updated
    */
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
-    return objectDAO.updateOne(objectDTO);
+    dalService.startTransaction();
+    ObjectDTO object = objectDAO.getOne(objectDTO.getIdObject());
+    if (object == null) {
+      dalService.rollBackTransaction();
+      throw new NotFoundException("Object not found");
+    }
+    object = objectDAO.updateOne(objectDTO);
+    dalService.commitTransaction();
+    return object;
   }
 }
