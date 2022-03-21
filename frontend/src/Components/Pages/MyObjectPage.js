@@ -34,7 +34,6 @@ const MyObjectPage = async (id) => {
   let member = await memberLibrary.getUserByHisToken();
   let idMemberConnected = member.user.memberId;
 
-  id = 1; //TODO : delete this line
   idOffert = id;
   // GET all informations of the object
   let offer = await offerLibrary.getOfferById(idOffert);
