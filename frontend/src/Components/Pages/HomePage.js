@@ -65,14 +65,13 @@ const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = await render();
 
-  pageDiv.querySelectorAll(".clickable").forEach(async (offer) => {
+  for (const offer of pageDiv.querySelectorAll(".clickable")) {
     offer.addEventListener("click", async (e) => {
       e.preventDefault();
       let offerId = parseInt(e.currentTarget.dataset.elementId);
-      console.log(offerId);
       await MyObjectPage(offerId);
     });
-  });
+  }
 };
 
 export default HomePage;
