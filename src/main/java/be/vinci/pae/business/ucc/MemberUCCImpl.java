@@ -10,7 +10,9 @@ import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
+import java.io.File;
 import java.util.List;
 
 public class MemberUCCImpl implements MemberUCC {
@@ -47,6 +49,33 @@ public class MemberUCCImpl implements MemberUCC {
     }
     return memberDTO;
 
+  }
+
+  /**
+   * Update the profil picture of the member.
+   *
+   * @param path of the picture
+   * @param id   of the member
+   * @return memberDTO updated
+   */
+  @Override
+  public MemberDTO updateProfilPicture(String path, int id) {
+    MemberDTO memberDTO = memberDAO.getOne(id);
+    if (memberDTO == null) {
+      throw new NotFoundException("Member not found");
+    }
+
+    if (memberDTO.getImage() != null) {
+      File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
+      if (f.exists()) {
+        f.delete();
+      }
+
+    }
+
+    memberDTO = memberDAO.updateProfilPicture(path, id);
+
+    return memberDTO;
   }
 
   /**

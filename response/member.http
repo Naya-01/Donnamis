@@ -55,6 +55,18 @@ Authorization: {{access}}
   "reason": "Test de refus"
 }
 
+### Upload picture
+
+POST {{baseUri}}/member/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: {{access}}
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="ipl_logo.jpg"
+Content-Type: multipart/form-data
+
+< C:\Users\Mehdi\Pictures\ipl_logo.jpg
+
 ### Get subcription request by status
 GET {{baseUri}}/member/subscriptions/pending
 Authorization: {{access}}

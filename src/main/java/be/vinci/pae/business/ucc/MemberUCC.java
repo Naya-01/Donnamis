@@ -15,6 +15,15 @@ public interface MemberUCC {
   MemberDTO login(String username, String password);
 
   /**
+   * Update the profil picture of the member.
+   *
+   * @param path of the picture
+   * @param id   of the member
+   * @return memberDTO updated
+   */
+  MemberDTO updateProfilPicture(String path, int id);
+
+  /**
    * Find a member with his id.
    *
    * @param id : id of the member.

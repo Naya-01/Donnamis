@@ -241,4 +241,25 @@ public class MemberDAOImpl implements MemberDAO {
     }
     return null;
   }
+
+  /**
+   * Update the profil picture of the member.
+   *
+   * @param path of the picture
+   * @param id   of the member
+   * @return memberDTO updated
+   */
+  @Override
+  public MemberDTO updateProfilPicture(String path, int id) {
+    MemberDTO memberDTO = null;
+    String query = "UPDATE donnamis.members SET image=? WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+      preparedStatement.setString(1, path);
+      preparedStatement.setInt(2, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return getOne(id);
+  }
 }

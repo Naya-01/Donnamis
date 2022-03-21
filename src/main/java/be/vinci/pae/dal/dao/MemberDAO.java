@@ -65,4 +65,13 @@ public interface MemberDAO {
    * @return a list of memberDTO
    */
   List<MemberDTO> getAllWithSubStatus(String status);
+
+  /**
+   * Update the profil picture of the member.
+   *
+   * @param path of the picture
+   * @param id   of the member
+   * @return memberDTO updated
+   */
+  MemberDTO updateProfilPicture(String path, int id);
 }

@@ -2,6 +2,7 @@ package be.vinci.pae.main;
 
 import be.vinci.pae.utils.ApplicationBinder;
 import be.vinci.pae.utils.Config;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -40,7 +41,19 @@ public class Main {
    * @throws IOException : If properties file not find
    */
   public static void main(String[] args) throws IOException {
+
     Config.load("prod.properties");
+
+    //Création des dossiers possiblement manquants
+    String[] paths = {"img//", "img//profils//", "img//offers//"};
+    for (String p : paths) {
+      String directoryName = Config.getProperty("ImagePath") + p;
+      File directory = new File(directoryName);
+      if (!directory.exists()) {
+        directory.mkdir();
+      }
+    }
+
     final HttpServer server = startServer();
     System.out.println(String.format("Jersey app started with WADL available at "
         + "%sapplication.wadl\nHit enter to stop it...", Config.getProperty("BaseUri")));

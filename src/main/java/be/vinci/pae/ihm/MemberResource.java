@@ -4,6 +4,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.Config;
 import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
 
@@ -44,10 +44,13 @@ public class MemberResource {
 
   @POST
   @Path("/upload")
+  @Authorize
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  public Response uploadFile(@FormDataParam("file") InputStream file,
-      @FormDataParam("file") FormDataContentDisposition fileDisposition,
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO uploadFile(@Context ContainerRequest request,
+      @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime) {
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
 
     String type = fileMime.getMediaType().getSubtype();
     String[] typesAllowed = {"png", "jpg", "jpeg"};
@@ -62,16 +65,19 @@ public class MemberResource {
       throw new WebApplicationException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
     }
-
+    String internalPath = null;
     try {
-      String fileName = System.getenv("OneDrive") + "\\img\\"
-          + UUID.randomUUID() + fileDisposition.getFileName();
-      Files.copy(file, Paths.get(fileName));
+      internalPath =
+          "img\\profils\\" + UUID.randomUUID() + "." + fileMime.getMediaType().getSubtype();
+      String path = Config.getProperty("ImagePath") + internalPath;
+      Files.copy(file, Paths.get(path));
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    return Response.ok().build();
+    MemberDTO newDTO = memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
+
+    return newDTO;
   }
 
   /**
