@@ -22,6 +22,7 @@ let idType;
 let description;
 let time_slot;
 let form = false;
+let isInterested;
 
 /**
  * Render the page to see an object
@@ -63,6 +64,9 @@ const MyObjectPage = async () => {
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
+  console.log(jsonInterests)
+  isInterested = jsonInterests.isUserInterested;
+  console.log(isInterested)
   let nbMembersInterested = jsonInterests.count;
 
   // Construct all the HTML
@@ -119,10 +123,13 @@ const MyObjectPage = async () => {
                   </div>
                 </div>
               </div>
-              <!-- The confirm button -->
-              <div id="divB" class="text-center p-2">
-                <input type="button"  class="btn btn-primary" 
-                  id="modifyObjectButton" value="Modifier">
+              <div class="row p-2">
+                <!-- The modify button -->
+                <div id="divB" class="col text-center">
+                  <span id="divDate"></span>
+                  <input type="button"  class="btn btn-primary" 
+                    id="modifyObjectButton" value="Modifier">
+                </div>
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
                 <p>${nbMembersInterested} personnes sont intéressées par 
@@ -134,22 +141,51 @@ const MyObjectPage = async () => {
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
-  if (idMemberConnected === offer.object.idOfferor) { //TODO : put ===
+  if (idMemberConnected === offer.object.idOfferor) {
     document.getElementById("titleObject").textContent = "Votre objet";
     button.addEventListener("click", changeToForm);
   } else {
+
     //TODO : get user by id
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
-    button.id = "interestedButton";
-    button.value = "Je suis interessé";
-    button.addEventListener("click", () => {
-      //TODO : POST an interest
-      interestLibrary.
-      button.disabled = true;
-    });
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.user.username;
+    button.id = "interestedButton";
+    button.value = "Je suis interessé";
+    // Date of disponibility :
+    let labelDate = document.createElement("label");
+    labelDate.for = "input_date";
+    labelDate.innerHTML = "Date de disponibilité : ";
+    let input_date = document.createElement("input");
+    input_date.id = "input_date";
+    input_date.type = "date";
+    let date = new Date();//.toLocaleDateString().replaceAll("/","-");
+    let month = "";
+    if(date.getMonth()%10 !== 0){
+      month = "0"
+    }
+    month += (date.getMonth()+1);
+    let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+    input_date.value = dateActual;
+    input_date.min = dateActual;
+
+    document.getElementById("divDate").appendChild(labelDate);
+    document.getElementById("divDate").appendChild(input_date);
+    //TODO : add the date
+    button.addEventListener("click", async () => {
+      //TODO : POST an interest
+      button.disabled = true;
+      input_date.disabled = true;
+      console.log(input_date.value);
+      await interestLibrary.addOne(offer.object.idObject, input_date.value)
+      //TODO : add the notification
+    });
+    if(isInterested){
+      button.disabled = true;
+      input_date.disabled = true;
+    }
+
   }
 
 }

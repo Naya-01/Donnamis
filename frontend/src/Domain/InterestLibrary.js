@@ -21,6 +21,30 @@ class InterestLibrary {
     }
     return allInterests;
   }
+  async addOne(idObject, date){
+    let response;
+    try {
+      let options = {
+        method: "POST",
+        body: JSON.stringify({
+          "idObject": idObject,
+          "availabilityDate": date
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest", options);
+    } catch (err) {
+      console.log(err);
+    }
+    let newInterest;
+    if (response.status === 200) {
+      newInterest = await response.json();
+    }
+    return newInterest;
+  }
 }
 
 export default InterestLibrary;

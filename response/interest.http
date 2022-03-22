@@ -23,7 +23,7 @@ Content-Type: application/json
 Authorization: {{refresh}}
 
 {
-  "idObject": 3,
+  "idObject": 4,
   "availabilityDate": "2017-01-13"
 }
 
