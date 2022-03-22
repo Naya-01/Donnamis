@@ -78,8 +78,9 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.rollBackTransaction();
       throw new NotFoundException("Object not found");
     }
+    List<InterestDTO> allInterests = interestDAO.getAll(idObject);
     dalService.commitTransaction();
-    return interestDAO.getAll(idObject);
+    return allInterests;
   }
 
 }

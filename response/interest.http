@@ -28,7 +28,7 @@ Authorization: {{refresh}}
 }
 
 ### Get interest count
-GET {{baseUri}}/interest/count/1
+GET {{baseUri}}/interest/count/2
 Authorization: {{refresh}}
 
 
