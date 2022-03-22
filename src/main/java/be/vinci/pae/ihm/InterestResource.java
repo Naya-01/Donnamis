@@ -89,7 +89,6 @@ public class InterestResource {
   @Authorize
   public JsonNode getInterestedCount(@PathParam("idObject") int idObject,
       @Context ContainerRequest request) {
-    System.out.println("getinterestedcount");
     List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
