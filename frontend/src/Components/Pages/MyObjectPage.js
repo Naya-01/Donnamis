@@ -4,9 +4,11 @@ import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
+import InterestLibrary from "../../Domain/InterestLibrary";
 
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
+const interestLibrary = new InterestLibrary();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
@@ -43,7 +45,7 @@ const MyObjectPage = async () => {
   idOffert = idOfferUrl;
   // GET all informations of the object
   let offer = await offerLibrary.getOfferById(idOffert);
-  if (offer === undefined) {
+  if (offer === undefined) { //TODO : à dégager
     Redirect("/");
     return;
   }
@@ -60,9 +62,10 @@ const MyObjectPage = async () => {
   let idMemberConnected = member.user.memberId;
 
   // GET all interests
-  let nbMembersInterested = 3; //TODO : request to have all interests
-  // Construct all the HTML
+  let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
+  let nbMembersInterested = jsonInterests.count;
 
+  // Construct all the HTML
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML =
       `<div class="container p-3">
@@ -142,6 +145,7 @@ const MyObjectPage = async () => {
     button.value = "Je suis interessé";
     button.addEventListener("click", () => {
       //TODO : POST an interest
+      interestLibrary.
       button.disabled = true;
     });
     document.getElementById("titleObject").textContent = "L'objet de "
