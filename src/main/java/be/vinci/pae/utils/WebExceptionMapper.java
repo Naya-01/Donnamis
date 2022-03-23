@@ -13,7 +13,7 @@ public class WebExceptionMapper implements ExceptionMapper<Throwable> {
   @Override
   public Response toResponse(Throwable exception) {
     System.out.println(Logger.getLogger("Log"));
-    Logger.getLogger("Log").log(Level.INFO, exception.getMessage());
+    Logger.getLogger("Log").log(Level.INFO, exception.getMessage(), exception);
     if (exception instanceof WebApplicationException) {
       return Response.status(((WebApplicationException) exception).getResponse().getStatus())
           .entity(exception.getMessage())
