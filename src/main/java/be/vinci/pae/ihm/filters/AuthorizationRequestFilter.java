@@ -1,7 +1,7 @@
 package be.vinci.pae.ihm.filters;
 
-import be.vinci.pae.exceptions.TokenDecodingException;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.exceptions.TokenDecodingException;
 import be.vinci.pae.utils.Config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

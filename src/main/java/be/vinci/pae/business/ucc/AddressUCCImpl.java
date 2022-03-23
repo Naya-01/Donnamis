@@ -1,9 +1,9 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
-import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 
 public class AddressUCCImpl implements AddressUCC {
