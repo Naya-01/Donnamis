@@ -1,6 +1,8 @@
 package be.vinci.pae.dal.dao;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -8,7 +10,9 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class MemberDAOImpl implements MemberDAO {
@@ -18,75 +22,10 @@ public class MemberDAOImpl implements MemberDAO {
   @Inject
   private MemberFactory memberFactory;
 
-
-  /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void promoteAdministrator(int id) {
-    String query = "UPDATE donnamis.members SET role='administrator' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-  }
-
-  /**
-   * Confirm the registration of the member and remove his precedent reason.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmDeniedMemberRegistration(int id) {
-    String query = "UPDATE donnamis.members SET refusal_reason = NULL WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    confirmRegistration(id);
-  }
-
-  /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmRegistration(int id) {
-    String query = "UPDATE donnamis.members SET status='valid' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-  }
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  @Override
-  public void declineRegistration(int id, String reason) {
-    String query = "UPDATE donnamis.members SET status='denied' , "
-        + "refusal_reason=? WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, reason);
-      preparedStatement.setInt(2, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-  }
-
+  @Inject
+  private AddressDAO addressDAO;
+  @Inject
+  private AddressFactory addressFactory;
   /**
    * Get a member we want to retrieve by his username.
    *
@@ -97,14 +36,14 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(String username) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason,image FROM donnamis.members WHERE username = ?");
+            + "refusal_reason, image FROM donnamis.members WHERE username = ?");
     try {
 
       preparedStatement.setString(1, username);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
+    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
     if (memberDTOList.size() != 1) {
       return null;
     }
@@ -120,13 +59,13 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(int id) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason,image FROM donnamis.members WHERE id_member = ?");
+            + "refusal_reason, image FROM donnamis.members WHERE id_member = ?");
     try {
       preparedStatement.setInt(1, id);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
+    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
     if (memberDTOList.size() != 1) {
       return null;
     }
@@ -139,7 +78,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @param preparedStatement : a prepared statement to execute the query.
    * @return the member.
    */
-  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement) {
+  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAdress) {
     List<MemberDTO> memberDTOList = new ArrayList<>();
     try {
       preparedStatement.executeQuery();
@@ -149,6 +88,15 @@ public class MemberDAOImpl implements MemberDAO {
             resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
             resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
             resultSet.getString(9), resultSet.getString(10));
+
+        if (hasAdress) {
+          AddressDTO addressDTO = addressFactory.getAddressDTO();
+          addressDAO.setAddress(addressDTO, resultSet.getInt(11),
+              resultSet.getString(12), resultSet.getString(13),
+              resultSet.getString(14), resultSet.getString(15),
+              resultSet.getString(16), resultSet.getString(17));
+          memberDTO.setAddress(addressDTO);
+        }
         memberDTOList.add(memberDTO);
       }
       preparedStatement.close();
@@ -197,7 +145,6 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
-      preparedStatement.setString(9, member.getImage());
 
       preparedStatement.executeQuery();
 
@@ -221,23 +168,116 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Get all subscription requests according to their status.
+   * Search a member with status and search on firstname, lastname and username.
    *
-   * @param status the status subscription members
-   * @return a list of memberDTO
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
    */
   @Override
-  public List<MemberDTO> getAllWithSubStatus(String status) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason,image FROM donnamis.members WHERE status = ?");
+  public List<MemberDTO> getAll(String search, String status) {
+    boolean hasSearch = false;
+    String query =
+        "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
+            + "m.phone_number, m.password, m.refusal_reason, m.image, a.id_member, a.unit_number, "
+            + "a.building_number, a.street, a.postcode, a.commune, a.country "
+            + "FROM donnamis.members m, donnamis.addresses a "
+            + "WHERE a.id_member = m.id_member ";
 
+    if (status != null && status.equals("waiting")) {
+      query += "AND m.status != 'valid' ";
+    } else if (status != null && status.equals("pending")) {
+      query += "AND m.status = 'pending' ";
+    } else if (status != null && status.equals("denied")) {
+      query += "AND m.status = 'denied' ";
+    } else if (status != null && status.equals("valid")) {
+      query += "AND m.status = 'valid' ";
+    }
+    if (search != null && !search.isEmpty()) {
+      hasSearch = true;
+      query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? "
+          + "OR lower(m.username) LIKE ?)";
+    }
     try {
-      preparedStatement.setString(1, status);
-      preparedStatement.executeQuery();
-      return getMemberList(preparedStatement);
-    } catch (SQLException e) {
-      throw new FatalException(e);
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+      if (hasSearch) {
+        for (int i = 1; i <= 3; i++) {
+          preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
+        }
+      }
+      preparedStatement.execute();
+      return getMemberList(preparedStatement, true);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+      return null;
+    }
+  }
+
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  @Override
+  public MemberDTO updateOne(MemberDTO memberDTO) {
+    Deque<String> memberDTODeque = new ArrayDeque<>();
+    String query = "UPDATE donnamis.members SET ";
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isEmpty()) {
+      query += "username = ?,";
+      memberDTODeque.addLast(memberDTO.getUsername());
+    }
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isEmpty()) {
+      query += "lastname = ?,";
+      memberDTODeque.addLast(memberDTO.getLastname());
+    }
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isEmpty()) {
+      query += "firstname = ?,";
+      memberDTODeque.addLast(memberDTO.getFirstname());
+    }
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isEmpty()) {
+      query += "status = ?,";
+      memberDTODeque.addLast(memberDTO.getStatus());
+    }
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isEmpty()) {
+      query += "role = ?,";
+      memberDTODeque.addLast(memberDTO.getRole());
+    }
+    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isEmpty()) {
+      query += "phone_number = ?,";
+      memberDTODeque.addLast(memberDTO.getPhone());
+    }
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isEmpty()) {
+      query += "refusal_reason = ?,";
+      memberDTODeque.addLast(memberDTO.getReasonRefusal());
+    }
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+      query += "password = ?,";
+      memberDTODeque.addLast(memberDTO.getPassword());
+    }
+    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
+      query += "image = ?,";
+      memberDTODeque.addLast(memberDTO.getImage());
+    }
+
+    query = query.substring(0, query.length() - 1);
+    query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
+        + "role, phone_number, password, refusal_reason, image";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
+      int cnt = 1;
+      for (String str : memberDTODeque) {
+        preparedStatement.setString(cnt++, str);
+      }
+
+      preparedStatement.setInt(cnt, memberDTO.getMemberId());
+      preparedStatement.execute();
+      return getMemberList(preparedStatement, false).get(0);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+      return null;
     }
   }
 

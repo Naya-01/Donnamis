@@ -24,29 +24,36 @@ client.global.set("refresh", response.body.refresh_token);
 POST {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
 
-### Promote Administrator
-
-POST {{baseUri}}/member/promoteAdministrator
-Content-Type: application/json
+### Get a member by his id
+GET {{baseUri}}/member/id/2
 Authorization: {{access}}
 
-{
-  "id": 2
-}
-
-### Confirm registration
-
-POST {{baseUri}}/member/confirmRegistration
-Content-Type: application/json
+### Search 'alb' pattern member
+GET {{baseUri}}/member/search?search=alb
 Authorization: {{access}}
 
-{
-  "id": 1
-}
+### Search wating member
+GET {{baseUri}}/member/search?search=&status=waiting
+Authorization: {{access}}
 
-### Decline registration
+### Search pending member
+GET {{baseUri}}/member/search?search=&status=pending
+Authorization: {{access}}
 
-POST {{baseUri}}/member/declineRegistration
+### Search denied member
+GET {{baseUri}}/member/search?search=&status=denied
+Authorization: {{access}}
+
+### Search valid member
+GET {{baseUri}}/member/search?search=&status=valid
+Authorization: {{access}}
+
+### Search all member
+GET {{baseUri}}/member/search?search=&status=
+Authorization: {{access}}
+
+### Change member status
+POST {{baseUri}}/member/update
 Content-Type: application/json
 Authorization: {{access}}
 
@@ -65,7 +72,3 @@ Authorization: {{access}}
 Content-Disposition: form-data; name="file"; filename="ipl_logo.jpg"
 
 < C:\Users\Mehdi\Pictures\ipl_logo.jpg
-
-### Get subcription request by status
-GET {{baseUri}}/member/subscriptions/pending
-Authorization: {{access}}

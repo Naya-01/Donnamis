@@ -82,9 +82,7 @@ public class MemberUCCImpl implements MemberUCC {
       }
 
     }
-
     memberDTO = memberDAO.updateProfilPicture(path, id);
-
     return memberDTO;
   }
 
@@ -104,64 +102,6 @@ public class MemberUCCImpl implements MemberUCC {
     }
     dalService.commitTransaction();
     return memberDTO;
-  }
-
-  /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmRegistration(int id) {
-    dalService.startTransaction();
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO == null) {
-      dalService.rollBackTransaction();
-      throw new NotFoundException("Member not found");
-    }
-    if (memberDTO.getStatus().equals("denied")) {
-      memberDAO.confirmDeniedMemberRegistration(id);
-    } else {
-      memberDAO.confirmRegistration(id);
-    }
-    dalService.commitTransaction();
-
-  }
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  @Override
-  public void declineRegistration(int id, String reason) {
-    dalService.startTransaction();
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO.getStatus().equals("valid")) {
-      dalService.rollBackTransaction();
-      throw new UnauthorizedException("Vous ne pouvez pas modifier un membre déjà validé");
-    }
-    memberDAO.declineRegistration(id, reason);
-    dalService.commitTransaction();
-  }
-
-  /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void promoteAdministrator(int id) {
-    dalService.startTransaction();
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO.getStatus().equals("administrator")) {
-      // Check if the exception is the good one
-      dalService.rollBackTransaction();
-      throw new ForbiddenException("Already administrator");
-    }
-    memberDAO.promoteAdministrator(id);
-    dalService.commitTransaction();
   }
 
   /*
@@ -216,20 +156,40 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Get all subscription requests according to their status.
+   * Search a member with status and search on firstname, lastname and username.
    *
-   * @param status the status subscription members
-   * @return a list of memberDTO
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members pending -> pending members
+   *               denied -> denied members valid -> valid members empty -> all members
+   * @return a list of MemberDTO
    */
   @Override
-  public List<MemberDTO> getInscriptionRequest(String status) {
+  public List<MemberDTO> searchMembers(String search, String status) {
     dalService.startTransaction();
-    List<MemberDTO> memberDTOList = memberDAO.getAllWithSubStatus(status);
+    List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
     if (memberDTOList == null || memberDTOList.isEmpty()) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune requête d'inscription");
+      throw new NotFoundException("Aucun membre");
     }
     dalService.commitTransaction();
     return memberDTOList;
+  }
+
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  @Override
+  public MemberDTO updateMember(MemberDTO memberDTO) {
+    dalService.startTransaction();
+    MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
+    if (modifierMemberDTO == null) {
+      dalService.rollBackTransaction();
+      throw new ForbiddenException("Problem with updating member");
+    }
+    dalService.commitTransaction();
+    return modifierMemberDTO;
   }
 }

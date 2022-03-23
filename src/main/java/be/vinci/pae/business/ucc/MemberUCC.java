@@ -32,29 +32,6 @@ public interface MemberUCC {
   MemberDTO getMember(int id);
 
   /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  void confirmRegistration(int id);
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  void declineRegistration(int id, String reason);
-
-
-  /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  void promoteAdministrator(int id);
-
-  /**
    * Register a quidam.
    *
    * @param memberDTO : User object with all information.
@@ -63,11 +40,20 @@ public interface MemberUCC {
   MemberDTO register(MemberDTO memberDTO);
 
   /**
-   * Get all subscription requests according to their status.
+   * Search a member with status and search on firstname, lastname and username.
    *
-   * @param status the status subscription members
-   * @return a list of memberDTO
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
    */
-  List<MemberDTO> getInscriptionRequest(String status);
+  List<MemberDTO> searchMembers(String search, String status);
 
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  MemberDTO updateMember(MemberDTO memberDTO);
 }
