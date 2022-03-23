@@ -1,8 +1,5 @@
 package be.vinci.pae.business.domain.dto;
 
-import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
-
 public interface RatingDTO {
 
   int getRating();
