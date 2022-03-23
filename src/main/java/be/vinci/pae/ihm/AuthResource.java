@@ -135,7 +135,7 @@ public class AuthResource {
     }
 
     // Check the number phone if is valid
-    if (member.getPhone() != null) {
+    if (member.getPhone() != null && !member.getPhone().isBlank()) {
       pattern = Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
       matcher = pattern.matcher(member.getPhone());
       if (!matcher.find()) {

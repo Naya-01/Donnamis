@@ -129,6 +129,9 @@ public class MemberUCCImpl implements MemberUCC {
       memberDTO.setRole("member");
       memberDTO.setReasonRefusal(null);
       memberDTO.setImage(null);
+      if (memberDTO.getPhone().isBlank()) {
+        memberDTO.setPhone(null);
+      }
 
       //add the member
       memberFromDao = memberDAO.createOneMember(memberDTO);
