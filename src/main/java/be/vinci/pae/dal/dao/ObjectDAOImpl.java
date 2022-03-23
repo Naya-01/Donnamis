@@ -1,9 +1,9 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
