@@ -90,13 +90,15 @@ public class AddressDAOImpl implements AddressDAO {
 
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        return null;
+        throw new FatalException("L'adresse n'a pas pû être ajoutée à la base de"
+            + " données");
       }
 
       //get id of new member
       int idNewAddressMember = resultSet.getInt(1);
       if (idNewAddressMember != addressDTO.getIdMember()) {
-        return null;
+        throw new FatalException("L'adresse n'a pas pû être ajoutée à la base de"
+            + " données");
       }
 
       preparedStatement.close();

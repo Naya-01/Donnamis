@@ -146,12 +146,14 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
+      preparedStatement.setString(9, member.getImage());
 
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        return null;
+        throw new FatalException("Le membre n'a pas pû être ajouté à la base de"
+            + " données");
       }
 
       //get id of new member

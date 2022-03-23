@@ -235,7 +235,6 @@ const RegisterPage = async () => {
       let member = new Member(username.value.trim(), lastname.value.trim(),
           firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address);
-
       // Requête DB inscription et redirect
       await memberLibrary.registerMember(member);
       toast.fire({
