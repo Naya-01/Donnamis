@@ -26,6 +26,7 @@ public class MemberDAOImpl implements MemberDAO {
   private AddressDAO addressDAO;
   @Inject
   private AddressFactory addressFactory;
+
   /**
    * Get a member we want to retrieve by his username.
    *
