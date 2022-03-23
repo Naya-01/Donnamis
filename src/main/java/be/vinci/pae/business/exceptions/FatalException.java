@@ -17,4 +17,13 @@ public class FatalException extends WebApplicationException {
   public FatalException(String message) {
     super(message, Response.Status.INTERNAL_SERVER_ERROR);
   }
+
+  /**
+   * Make an InternalServerErrorException with the Throwable.
+   *
+   * @param e Throwable.
+   */
+  public FatalException(Throwable e) {
+    super(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+  }
 }
