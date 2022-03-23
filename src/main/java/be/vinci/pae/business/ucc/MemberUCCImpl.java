@@ -129,7 +129,7 @@ public class MemberUCCImpl implements MemberUCC {
       memberDTO.setRole("member");
       memberDTO.setReasonRefusal(null);
       memberDTO.setImage(null);
-      if (memberDTO.getPhone().isBlank()) {
+      if (memberDTO.getPhone() != null && memberDTO.getPhone().isBlank()) {
         memberDTO.setPhone(null);
       }
 
