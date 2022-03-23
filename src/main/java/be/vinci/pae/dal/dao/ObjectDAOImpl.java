@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,7 +63,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       resultSet.close();
       preparedStatement.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return objectDTO;
   }
@@ -84,7 +85,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.setString(1, status);
       setListObject(preparedStatement, objectDTOList);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return objectDTOList;
   }
@@ -106,7 +107,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.setInt(1, idMember);
       setListObject(preparedStatement, objectDTOList);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return objectDTOList;
   }
@@ -140,7 +141,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       setObject(objectDTO, resultSet);
       resultSet.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return objectDTO;
   }
@@ -173,24 +174,28 @@ public class ObjectDAOImpl implements ObjectDAO {
       setObject(objectDTO, resultSet);
       resultSet.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
 
     return objectDTO;
   }
 
-  private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList)
-      throws SQLException {
-    preparedStatement.executeQuery();
-    ResultSet resultSet = preparedStatement.getResultSet();
-    while (resultSet.next()) {
-      ObjectDTO objectDTO = objectFactory.getObjectDTO();
-      setObject(objectDTO, resultSet);
-      objectDTOList.add(objectDTO);
-    }
+  private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList) {
+    try {
+      preparedStatement.executeQuery();
 
-    resultSet.close();
-    preparedStatement.close();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      while (resultSet.next()) {
+        ObjectDTO objectDTO = objectFactory.getObjectDTO();
+        setObject(objectDTO, resultSet);
+        objectDTOList.add(objectDTO);
+      }
+
+      resultSet.close();
+      preparedStatement.close();
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
   }
 
 
@@ -202,7 +207,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setImage(resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
   }
 

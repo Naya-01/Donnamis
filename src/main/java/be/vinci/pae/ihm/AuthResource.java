@@ -4,9 +4,9 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.exceptions.BadRequestException;
-import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
 import be.vinci.pae.utils.JsonViews;

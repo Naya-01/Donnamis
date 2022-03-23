@@ -2,6 +2,8 @@ package be.vinci.pae.main;
 
 import be.vinci.pae.utils.ApplicationBinder;
 import be.vinci.pae.utils.Config;
+import be.vinci.pae.utils.Log;
+import be.vinci.pae.utils.WebExceptionMapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,6 +29,7 @@ public class Main {
     final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.ihm")
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class)
+        .register(WebExceptionMapper.class)
         .register(MultiPartFeature.class);
 
     // create and start a new instance of grizzly http server
@@ -43,6 +46,7 @@ public class Main {
   public static void main(String[] args) throws IOException {
 
     Config.load("prod.properties");
+    Log.config();
 
     //Création des dossiers possiblement manquants
     String[] paths = {"img//", "img//profils//", "img//offers//"};

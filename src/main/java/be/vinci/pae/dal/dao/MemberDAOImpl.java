@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,7 +31,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
   }
 
@@ -46,7 +47,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     confirmRegistration(id);
   }
@@ -63,7 +64,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(1, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
   }
 
@@ -82,7 +83,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
   }
 
@@ -101,7 +102,7 @@ public class MemberDAOImpl implements MemberDAO {
 
       preparedStatement.setString(1, username);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
     if (memberDTOList.size() != 1) {
@@ -123,7 +124,7 @@ public class MemberDAOImpl implements MemberDAO {
     try {
       preparedStatement.setInt(1, id);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     List<MemberDTO> memberDTOList = getMemberList(preparedStatement);
     if (memberDTOList.size() != 1) {
@@ -153,9 +154,8 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.close();
       return memberDTOList;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return memberDTOList;
   }
 
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
@@ -215,10 +215,9 @@ public class MemberDAOImpl implements MemberDAO {
       return member;
 
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
 
-    return null;
   }
 
   /**
@@ -238,9 +237,8 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.executeQuery();
       return getMemberList(preparedStatement);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**

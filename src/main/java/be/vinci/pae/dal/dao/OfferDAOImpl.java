@@ -7,6 +7,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,9 +88,8 @@ public class OfferDAOImpl implements OfferDAO {
       }
       return offerDTOList.get(0);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -122,9 +122,8 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
       return offerDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -155,9 +154,8 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
       return offerDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -174,9 +172,8 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
       return getOffersWithResultSet(resultSet);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -217,9 +214,8 @@ public class OfferDAOImpl implements OfferDAO {
         listOfferDTO.add(offerDTO);
       }
       return listOfferDTO;
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
-    return null;
   }
 }
