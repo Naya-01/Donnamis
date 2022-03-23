@@ -22,9 +22,9 @@ public interface ObjectDTO {
 
   void setStatus(String status);
 
-  byte[] getImage();
+  String getImage();
 
-  void setImage(byte[] image);
+  void setImage(String image);
 
   int getIdOfferor();
 

@@ -4,12 +4,14 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -20,7 +22,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.io.InputStream;
 import java.util.List;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -31,6 +36,40 @@ public class MemberResource {
 
   @Inject
   private MemberUCC memberUCC;
+
+  @Inject
+  private Image imageManager;
+
+  /**
+   * Set a picture for the member.
+   *
+   * @param request  information of the member
+   * @param file     data
+   * @param fileMime mime with the picture type
+   * @return member updated
+   */
+  @POST
+  @Path("/setPicture")
+  @Authorize
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  @Produces(MediaType.APPLICATION_JSON)
+  public MemberDTO setPicture(@Context ContainerRequest request,
+      @FormDataParam("file") InputStream file,
+      @FormDataParam("file") FormDataBodyPart fileMime) {
+
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+
+    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\");
+
+    if (internalPath == null) {
+      throw new WebApplicationException("Le type du fichier est incorrect."
+          + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
+    }
+
+    MemberDTO newDTO = memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
+
+    return newDTO;
+  }
 
   /**
    * Get a user by his token.
@@ -126,5 +165,20 @@ public class MemberResource {
     return memberUCC.getInscriptionRequest(status);
   }
 
+  /**
+   * Get a user by his id.
+   *
+   * @param id the id of the member we want to get
+   * @return return the linked user to his id
+   */
+  @GET
+  @Path("/id/{id}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public ObjectNode getMemberById(@PathParam("id") int id) {
+    MemberDTO memberDTO = memberUCC.getMember(id);
+    return jsonMapper.createObjectNode()
+        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+  }
 
 }

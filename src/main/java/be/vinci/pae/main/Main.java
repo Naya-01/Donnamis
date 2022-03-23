@@ -4,11 +4,13 @@ import be.vinci.pae.utils.ApplicationBinder;
 import be.vinci.pae.utils.Config;
 import be.vinci.pae.utils.Log;
 import be.vinci.pae.utils.WebExceptionMapper;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -28,6 +30,7 @@ public class Main {
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class)
         .register(WebExceptionMapper.class);
+        .register(MultiPartFeature.class);
 
     // create and start a new instance of grizzly http server
     // exposing the Jersey application at BASE_URI
@@ -41,8 +44,20 @@ public class Main {
    * @throws IOException : If properties file not find
    */
   public static void main(String[] args) throws IOException {
+
     Config.load("prod.properties");
     Log.config();
+
+    //Création des dossiers possiblement manquants
+    String[] paths = {"img//", "img//profils//", "img//offers//"};
+    for (String p : paths) {
+      String directoryName = Config.getProperty("ImagePath") + p;
+      File directory = new File(directoryName);
+      if (!directory.exists()) {
+        directory.mkdir();
+      }
+    }
+
     final HttpServer server = startServer();
     System.out.println(String.format("Jersey app started with WADL available at "
         + "%sapplication.wadl\nHit enter to stop it...", Config.getProperty("BaseUri")));

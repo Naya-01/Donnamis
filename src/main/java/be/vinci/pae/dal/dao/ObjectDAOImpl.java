@@ -19,6 +19,26 @@ public class ObjectDAOImpl implements ObjectDAO {
   private ObjectFactory objectFactory;
 
   /**
+   * Update the object picture.
+   *
+   * @param path location of the picture.
+   * @param id   of the object.
+   * @return Object modified.
+   */
+  @Override
+  public ObjectDTO updateObjectPicture(String path, int id) {
+    String query = "UPDATE donnamis.objects SET image=? WHERE id_object=?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setString(1, path);
+      preparedStatement.setInt(2, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return getOne(id);
+  }
+
+  /**
    * Get an object we want to retrieve by his id.
    *
    * @param id : the id of the object that we want to retrieve
@@ -108,7 +128,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
       preparedStatement.setString(3, objectDTO.getStatus());
-      preparedStatement.setBytes(4, objectDTO.getImage());
+      preparedStatement.setString(4, objectDTO.getImage());
       preparedStatement.setInt(5, objectDTO.getIdOfferor());
 
       preparedStatement.executeQuery();
@@ -141,7 +161,7 @@ public class ObjectDAOImpl implements ObjectDAO {
     try {
       preparedStatement.setInt(1, objectDTO.getType().getIdType());
       preparedStatement.setString(2, objectDTO.getDescription());
-      preparedStatement.setBytes(3, objectDTO.getImage());
+      preparedStatement.setString(3, objectDTO.getImage());
       preparedStatement.setInt(4, objectDTO.getIdObject());
 
       preparedStatement.executeQuery();
@@ -184,7 +204,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(resultSet.getBytes(4));
+      objectDTO.setImage(resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
       throw new FatalException(e);

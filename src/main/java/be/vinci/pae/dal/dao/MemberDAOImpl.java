@@ -97,7 +97,7 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(String username) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason FROM donnamis.members WHERE username = ?");
+            + "refusal_reason,image FROM donnamis.members WHERE username = ?");
     try {
 
       preparedStatement.setString(1, username);
@@ -120,7 +120,7 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(int id) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason FROM donnamis.members WHERE id_member = ?");
+            + "refusal_reason,image FROM donnamis.members WHERE id_member = ?");
     try {
       preparedStatement.setInt(1, id);
     } catch (SQLException e) {
@@ -145,11 +145,10 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       while (resultSet.next()) {
-        MemberDTO memberDTO = getMember(resultSet.getInt(1),
-            resultSet.getString(2), resultSet.getString(3),
-            resultSet.getString(4), resultSet.getString(5),
-            resultSet.getString(6), resultSet.getString(7),
-            resultSet.getString(8), resultSet.getString(9));
+        MemberDTO memberDTO = getMember(resultSet.getInt(1), resultSet.getString(2),
+            resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
+            resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
+            resultSet.getString(9), resultSet.getString(10));
         memberDTOList.add(memberDTO);
       }
       preparedStatement.close();
@@ -160,7 +159,8 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
-      String status, String role, String phone, String password, String reasonRefusal) {
+      String status, String role, String phone, String password, String reasonRefusal,
+      String image) {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(memberId);
@@ -172,6 +172,7 @@ public class MemberDAOImpl implements MemberDAO {
     memberDTO.setPhone(phone);
     memberDTO.setPassword(password);
     memberDTO.setReasonRefusal(reasonRefusal);
+    memberDTO.setImage(image);
     return memberDTO;
   }
 
@@ -186,7 +187,7 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO createOneMember(MemberDTO member) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement("insert into "
         + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason) values (?,?,?,?,?,?,?,?) RETURNING id_member;");
+        + "password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
     try {
       preparedStatement.setString(1, member.getUsername());
       preparedStatement.setString(2, member.getLastname());
@@ -196,6 +197,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
+      preparedStatement.setString(9, member.getImage());
 
       preparedStatement.executeQuery();
 
@@ -228,7 +230,7 @@ public class MemberDAOImpl implements MemberDAO {
   public List<MemberDTO> getAllWithSubStatus(String status) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
         "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason FROM donnamis.members WHERE status = ?");
+            + "refusal_reason,image FROM donnamis.members WHERE status = ?");
 
     try {
       preparedStatement.setString(1, status);
@@ -237,5 +239,25 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+  }
+
+  /**
+   * Update the profil picture of the member.
+   *
+   * @param path of the picture
+   * @param id   of the member
+   * @return memberDTO updated
+   */
+  @Override
+  public MemberDTO updateProfilPicture(String path, int id) {
+    String query = "UPDATE donnamis.members SET image=? WHERE id_member=?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setString(1, path);
+      preparedStatement.setInt(2, id);
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return getOne(id);
   }
 }
