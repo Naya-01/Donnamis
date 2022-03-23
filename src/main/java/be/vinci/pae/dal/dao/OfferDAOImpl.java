@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.exceptions.FatalException;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
@@ -87,9 +88,8 @@ public class OfferDAOImpl implements OfferDAO {
       }
       return offerDTOList.get(0);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -122,9 +122,8 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
       return offerDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -155,9 +154,8 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
       return offerDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -174,9 +172,8 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
       return getOffersWithResultSet(resultSet);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -217,9 +214,8 @@ public class OfferDAOImpl implements OfferDAO {
         listOfferDTO.add(offerDTO);
       }
       return listOfferDTO;
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
-    return null;
   }
 }
