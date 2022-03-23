@@ -14,10 +14,11 @@ const AllObjectsPage = async () => {
   const offersList = document.getElementById("offers-list");
 
   await displayOffers("", offersList);
-  // const searchBarInput = document.getElementById("searchBar");
-  // searchBarInput.addEventListener('keyup', async () => {
-  //   await displayOffers(searchBarInput.value, offersList);
-  // });
+  const searchBarInput = document.getElementById("searchBar");
+  const searchButtonInput = document.getElementById("searchButton");
+  searchButtonInput.addEventListener('click', async () => {
+    await displayOffers(searchBarInput.value, offersList);
+  });
 
 };
 
@@ -46,25 +47,6 @@ const displayOffers = async (searchPattern, pageDiv) => {
   }
 }
 
-const getOffers = async (searchPattern) => {
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": getSessionObject("user").refreshToken
-      },
-    };
-    let userData = await fetch(
-        "/api/offers/all?search-pattern=" + searchPattern,
-        options);
-    if (!userData.ok) {
-      return false;
-    }
-    return await userData.json();
-  } catch (err) {
-    console.log(err);
-  }
-}
+
 
 export default AllObjectsPage;

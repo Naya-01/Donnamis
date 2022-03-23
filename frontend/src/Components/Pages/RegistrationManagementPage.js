@@ -1,33 +1,10 @@
 import profilImage from "../../img/profil.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
+import SearchBar from "../Module/SearchBar";
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';
-
-  // Base page HTML
-  const pageDiv = document.querySelector("#page");
-  pageDiv.innerHTML = `
-  <div class="container mt-5">
-    <h1 class="fs-1">Inscriptions</h1>
-    <div class="text-center">
-      <!-- Search Bar -->
-      <div class="input-group mb-3 mt-5" >
-        <div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
-          <input type="radio" class="btn-check" checked name="btnradio" id="btn-radio-all" autocomplete="off">
-          <label class="btn btn-outline-secondary" for="btn-radio-all">Tous</label>
-          
-          <input type="radio" class="btn-check" name="btnradio" id="btn-radio-pending" autocomplete="off">
-          <label class="btn btn-outline-dark" for="btn-radio-pending">En attente</label>
-        
-          <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
-          <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
-        </div>
-        <input type="text" class="form-control fs-4" id="searchBar" placeholder="Rechercher une demande d'inscription">
-        <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>
-      </div>
-      <div id="member-cards"></div>
-    </div>
-  `;
+  await SearchBar("Inscriptions", true, false, "Rechercher une demande d'inscription", false);
 
   // Load base member
   let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("",
@@ -83,7 +60,7 @@ const RegistrationManagementPage = async () => {
 
 const baseMembersList = async (members) => {
   // Create member cards
-  const memberCards = document.getElementById("member-cards");
+  const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
   for (const member of members) {
     const buttonCardId = "button-card-" + member.memberId;
