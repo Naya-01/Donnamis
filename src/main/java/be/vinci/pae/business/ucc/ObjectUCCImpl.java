@@ -1,7 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import jakarta.inject.Inject;

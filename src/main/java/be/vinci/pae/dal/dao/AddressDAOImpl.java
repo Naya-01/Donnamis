@@ -1,7 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
-import be.vinci.pae.business.exceptions.FatalException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
