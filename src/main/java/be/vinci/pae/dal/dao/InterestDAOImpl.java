@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.exceptions.FatalException;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
@@ -36,7 +37,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setInt(2, idMember);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return getInterestDTO(preparedStatement);
   }
@@ -65,9 +66,8 @@ public class InterestDAOImpl implements InterestDAO {
 
       return interestDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
 
@@ -91,7 +91,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.executeQuery();
       preparedStatement.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return item;
   }
@@ -126,8 +126,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.close();
       return interestDTOList;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 }
