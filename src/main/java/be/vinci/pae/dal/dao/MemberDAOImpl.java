@@ -152,7 +152,8 @@ public class MemberDAOImpl implements MemberDAO {
 
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        return null;
+        throw new FatalException("Le membre n'a pas pû être ajouté à la base de"
+            + " données");
       }
 
       //get id of new member
