@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.exceptions.FatalException;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
@@ -30,7 +31,7 @@ public class TypeDAOImpl implements TypeDAO {
     try {
       preparedStatement.setString(1, typeName);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return getTypeDTO(preparedStatement);
   }
@@ -48,7 +49,7 @@ public class TypeDAOImpl implements TypeDAO {
     try {
       preparedStatement.setInt(1, typeId);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return getTypeDTO(preparedStatement);
   }
@@ -76,9 +77,8 @@ public class TypeDAOImpl implements TypeDAO {
       }
       return listTypeDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -96,9 +96,8 @@ public class TypeDAOImpl implements TypeDAO {
       preparedStatement.setString(1, typeName);
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   private TypeDTO getTypeDTO(PreparedStatement preparedStatement) {
@@ -115,8 +114,7 @@ public class TypeDAOImpl implements TypeDAO {
       typeDTO.setIsDefault(resultSet.getBoolean(3));
       return typeDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 }
