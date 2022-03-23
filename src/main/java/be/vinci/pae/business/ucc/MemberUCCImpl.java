@@ -5,13 +5,13 @@ import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
-import be.vinci.pae.utils.Config;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.io.File;
 import java.util.List;
@@ -114,6 +114,7 @@ public class MemberUCCImpl implements MemberUCC {
   public MemberDTO register(MemberDTO memberDTO) {
     MemberDTO memberFromDao;
     try {
+      dalService.startTransaction();
       //check if the member already exists
       MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
       if (memberExistent != null) {
@@ -127,6 +128,7 @@ public class MemberUCCImpl implements MemberUCC {
       memberDTO.setStatus("pending");
       memberDTO.setRole("member");
       memberDTO.setReasonRefusal(null);
+      memberDTO.setImage(null);
 
       //add the member
       memberFromDao = memberDAO.createOneMember(memberDTO);
@@ -152,6 +154,7 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.rollBackTransaction();
       throw e;
     }
+    dalService.commitTransaction();
     return memberFromDao;
   }
 

@@ -26,6 +26,7 @@ public class MemberDAOImpl implements MemberDAO {
   private AddressDAO addressDAO;
   @Inject
   private AddressFactory addressFactory;
+
   /**
    * Get a member we want to retrieve by his username.
    *
@@ -145,6 +146,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
+      preparedStatement.setString(9, member.getImage());
 
       preparedStatement.executeQuery();
 
