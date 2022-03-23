@@ -29,7 +29,7 @@ public class Main {
     final ResourceConfig rc = new ResourceConfig().packages("be.vinci.pae.ihm")
         .register(JacksonFeature.class)
         .register(ApplicationBinder.class)
-        .register(WebExceptionMapper.class);
+        .register(WebExceptionMapper.class)
         .register(MultiPartFeature.class);
 
     // create and start a new instance of grizzly http server
