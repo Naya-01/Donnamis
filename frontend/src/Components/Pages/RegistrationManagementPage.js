@@ -49,7 +49,6 @@ const RegistrationManagementPage = async () => {
   search.addEventListener("click", async () => {
     members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
         searchBar.value, actualStatus);
-    console.log(actualStatus, searchBar.value)
     await baseMembersList(members);
   });
 
@@ -191,11 +190,13 @@ const deniedMemberButtons = (idMember) => {
 
   // Revoke decision button listener
   const reverseDecisionButton = document.getElementById(revokeDecisionButtonId);
-  reverseDecisionButton.addEventListener('click', () => {
+  reverseDecisionButton.addEventListener('click', async () => {
+    // set member valid
+    await MemberLibrary.prototype.updateStatus("valid", idMember, "", "");
+
     // Hide the member card
     const cardMember = document.getElementById("member-card-" + idMember);
     cardMember.hidden = true;
-    // revoke member
   });
 };
 
@@ -232,8 +233,15 @@ const acceptMember = (idMember) => {
   });
 
   // Confirm accept member
-  acceptedButton.addEventListener('click', () => {
+  acceptedButton.addEventListener('click', async () => {
     // accept member db
+    let role = ""
+    if (document.getElementById("flexCheckDefault").checked) {
+      role = "administrator";
+    }
+
+    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role);
+
     const cardMember = document.getElementById("member-card-" + idMember);
     cardMember.hidden = true;
   });
@@ -246,14 +254,25 @@ const refuseMember = (idMember) => {
   const acceptedButton = document.getElementById("accepted-button-" + idMember);
   acceptedButton.innerText = "Confirmer";
 
-  // Add textarea to put the ban reason
+  // Add textarea
   const cardForm = document.getElementById("card-form-" + idMember);
-  cardForm.innerHTML = `
-      <div class="form-floating m-auto">
-        <textarea class="form-control fs-5 mt-1" placeholder="Indiquez la raison du refus" id="raisonRefus" style="height: 100px"></textarea>
-        <label class="fs-4 mb-1" for="raisonRefus">Raison du refus</label>
-      </div>
-  `;
+
+  const divTextArea = document.createElement("div");
+  divTextArea.className = "form-floating m-auto";
+
+  const textArea = document.createElement("textarea");
+  textArea.className = "form-control fs-5 mt-1";
+  textArea.placeholder = "Indiquez la raison du refus";
+  textArea.id = "raisonRefus";
+
+  const label = document.createElement("label");
+  label.className = "fs-4 mb-1";
+  label.for = "raisonRefus";
+  label.innerText = "Raison du refus";
+
+  divTextArea.appendChild(textArea);
+  divTextArea.appendChild(label);
+  cardForm.appendChild(divTextArea);
 
   // Cancel ban
   refusedButton.addEventListener('click', () => {
@@ -261,8 +280,9 @@ const refuseMember = (idMember) => {
   });
 
   // Confirm ban
-  acceptedButton.addEventListener('click', () => {
+  acceptedButton.addEventListener('click', async () => {
     // refuse member db
+    await MemberLibrary.prototype.updateStatus("denied", idMember, "", "");
 
     // Hide the card
     const cardMember = document.getElementById("member-card-" + idMember);

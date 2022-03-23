@@ -24,41 +24,6 @@ client.global.set("refresh", response.body.refresh_token);
 POST {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
 
-### Promote Administrator
-
-POST {{baseUri}}/member/promoteAdministrator
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "id": 2
-}
-
-### Confirm registration
-
-POST {{baseUri}}/member/confirmRegistration
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "id": 1
-}
-
-### Decline registration
-
-POST {{baseUri}}/member/declineRegistration
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "id": 1,
-  "reason": "Test de refus"
-}
-
-### Get subcription request by status
-GET {{baseUri}}/member/subscriptions/pending
-Authorization: {{access}}
-
 ### Get a member by his id
 GET {{baseUri}}/member/id/2
 Authorization: {{access}}
@@ -86,3 +51,13 @@ Authorization: {{access}}
 ### Search all member
 GET {{baseUri}}/member/search?search=&status=
 Authorization: {{access}}
+
+### Change member status
+POST {{baseUri}}/member/update
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "status": "pending"
+}

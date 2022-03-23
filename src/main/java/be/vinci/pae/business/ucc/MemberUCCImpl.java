@@ -64,52 +64,6 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmRegistration(int id) {
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO.getStatus().equals("denied")) {
-      memberDAO.confirmDeniedMemberRegistration(id);
-    } else {
-      memberDAO.confirmRegistration(id);
-    }
-
-  }
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  @Override
-  public void declineRegistration(int id, String reason) {
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO.getStatus().equals("valid")) {
-      throw new UnauthorizedException("Vous ne pouvez pas modifier un membre déjà validé");
-    }
-    memberDAO.declineRegistration(id, reason);
-  }
-
-  /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void promoteAdministrator(int id) {
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO.getStatus().equals("administrator")) {
-      // Check if the exception is the good one
-      throw new ForbiddenException("Already administrator");
-    }
-    memberDAO.promoteAdministrator(id);
-  }
-
-  /*
    * Register a quidam.
    *
    * @param memberDTO : User object with all information.
@@ -155,21 +109,6 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Get all subscription requests according to their status.
-   *
-   * @param status the status subscription members
-   * @return a list of memberDTO
-   */
-  @Override
-  public List<MemberDTO> getInscriptionRequest(String status) {
-    List<MemberDTO> memberDTOList = memberDAO.getAllWithSubStatus(status);
-    if (memberDTOList == null || memberDTOList.isEmpty()) {
-      throw new NotFoundException("Aucune requête d'inscription");
-    }
-    return memberDTOList;
-  }
-
-  /**
    * Search a member with status and search on firstname, lastname and username.
    *
    * @param search the search pattern (if empty -> all)
@@ -184,5 +123,20 @@ public class MemberUCCImpl implements MemberUCC {
       throw new NotFoundException("Aucun membre");
     }
     return memberDTOList;
+  }
+
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  @Override
+  public MemberDTO updateMember(MemberDTO memberDTO) {
+    MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
+    if (modifierMemberDTO == null) {
+      throw new ForbiddenException("Problem with updating member");
+    }
+    return modifierMemberDTO;
   }
 }

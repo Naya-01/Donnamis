@@ -9,7 +9,9 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class MemberDAOImpl implements MemberDAO {
@@ -22,75 +24,6 @@ public class MemberDAOImpl implements MemberDAO {
   private AddressDAO addressDAO;
   @Inject
   private AddressFactory addressFactory;
-
-
-  /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void promoteAdministrator(int id) {
-    String query = "UPDATE donnamis.members SET role='administrator' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Confirm the registration of the member and remove his precedent reason.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmDeniedMemberRegistration(int id) {
-    String query = "UPDATE donnamis.members SET refusal_reason = NULL WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    confirmRegistration(id);
-  }
-
-  /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  @Override
-  public void confirmRegistration(int id) {
-    String query = "UPDATE donnamis.members SET status='valid' WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  @Override
-  public void declineRegistration(int id, String reason) {
-    String query = "UPDATE donnamis.members SET status='denied' , "
-        + "refusal_reason=? WHERE id_member=?";
-    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, reason);
-      preparedStatement.setInt(2, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Get a member we want to retrieve by his username.
@@ -233,28 +166,6 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Get all subscription requests according to their status.
-   *
-   * @param status the status subscription members
-   * @return a list of memberDTO
-   */
-  @Override
-  public List<MemberDTO> getAllWithSubStatus(String status) {
-    PreparedStatement preparedStatement = dalService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason FROM donnamis.members WHERE status = ?");
-
-    try {
-      preparedStatement.setString(1, status);
-      preparedStatement.executeQuery();
-      return getMemberList(preparedStatement, false);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  /**
    * Search a member with status and search on firstname, lastname and username.
    *
    * @param search the search pattern (if empty -> all)
@@ -295,6 +206,73 @@ public class MemberDAOImpl implements MemberDAO {
       }
       preparedStatement.execute();
       return getMemberList(preparedStatement, true);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+      return null;
+    }
+  }
+
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  @Override
+  public MemberDTO updateOne(MemberDTO memberDTO) {
+    Deque<String> memberDTODeque = new ArrayDeque<>();
+    String query = "UPDATE donnamis.members SET ";
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isEmpty()) {
+      query += "username = ?,";
+      memberDTODeque.addLast(memberDTO.getUsername());
+    }
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isEmpty()) {
+      query += "lastname = ?,";
+      memberDTODeque.addLast(memberDTO.getLastname());
+    }
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isEmpty()) {
+      query += "firstname = ?,";
+      memberDTODeque.addLast(memberDTO.getFirstname());
+    }
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isEmpty()) {
+      query += "status = ?,";
+      memberDTODeque.addLast(memberDTO.getStatus());
+    }
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isEmpty()) {
+      query += "role = ?,";
+      memberDTODeque.addLast(memberDTO.getRole());
+    }
+    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isEmpty()) {
+      query += "phone_number = ?,";
+      memberDTODeque.addLast(memberDTO.getPhone());
+    }
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isEmpty()) {
+      query += "refusal_reason = ?,";
+      memberDTODeque.addLast(memberDTO.getReasonRefusal());
+    }
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+      query += "password = ?,";
+      memberDTODeque.addLast(memberDTO.getPassword());
+    }
+    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
+      query += "image = ?,";
+      memberDTODeque.addLast(memberDTO.getImage());
+    }
+
+    query = query.substring(0, query.length() - 1);
+    query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
+        + "role, phone_number, password, refusal_reason, image";
+
+    try (PreparedStatement preparedStatement = dalService.getPreparedStatement(query)) {
+
+      int cnt = 1;
+      for (String str : memberDTODeque) {
+        preparedStatement.setString(cnt++, str);
+      }
+
+      preparedStatement.setInt(cnt, memberDTO.getMemberId());
+      preparedStatement.execute();
+      return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
       return null;

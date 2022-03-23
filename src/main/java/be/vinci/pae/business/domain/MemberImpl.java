@@ -29,6 +29,8 @@ public class MemberImpl implements Member {
   private String password;
   @JsonView(Views.Public.class)
   private AddressDTO address;
+  @JsonView(Views.Public.class)
+  private String image;
 
   @Override
   public int getMemberId() {
@@ -120,12 +122,24 @@ public class MemberImpl implements Member {
     this.password = password;
   }
 
+  @Override
   public AddressDTO getAddress() {
     return address;
   }
 
+  @Override
   public void setAddress(AddressDTO address) {
     this.address = address;
+  }
+
+  @Override
+  public String getImage() {
+    return image;
+  }
+
+  @Override
+  public void setImage(String image) {
+    this.image = image;
   }
 
   /**
@@ -147,5 +161,5 @@ public class MemberImpl implements Member {
   public String hashPassword(String password) {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
-  
+
 }

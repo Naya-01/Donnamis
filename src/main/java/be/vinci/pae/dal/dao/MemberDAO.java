@@ -6,35 +6,6 @@ import java.util.List;
 public interface MemberDAO {
 
   /**
-   * Promote the member with his id to the admin status.
-   *
-   * @param id of the member
-   */
-  void promoteAdministrator(int id);
-
-  /**
-   * Confirm the registration of the member and remove his precedent reason.
-   *
-   * @param id of the member
-   */
-  void confirmDeniedMemberRegistration(int id);
-
-  /**
-   * Confirm the registration of the member with his id.
-   *
-   * @param id of the member
-   */
-  void confirmRegistration(int id);
-
-  /**
-   * Decline the registration of a member with his id and the reason.
-   *
-   * @param id     of the member
-   * @param reason for denial
-   */
-  void declineRegistration(int id, String reason);
-
-  /**
    * Get a member we want to retrieve by his username.
    *
    * @param username : the username of the member we want to retrieve
@@ -59,14 +30,6 @@ public interface MemberDAO {
   MemberDTO createOneMember(MemberDTO member);
 
   /**
-   * Get all subscription requests according to their status.
-   *
-   * @param status the status subscription members
-   * @return a list of memberDTO
-   */
-  List<MemberDTO> getAllWithSubStatus(String status);
-
-  /**
    * Search a member with status and search on firstname, lastname and username.
    *
    * @param search the search pattern (if empty -> all)
@@ -75,4 +38,12 @@ public interface MemberDAO {
    * @return a list of MemberDTO
    */
   List<MemberDTO> getAll(String search, String status);
+
+  /**
+   * Update any attribute of a member.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  MemberDTO updateOne(MemberDTO memberDTO);
 }

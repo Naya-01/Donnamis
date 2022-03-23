@@ -46,4 +46,8 @@ public interface MemberDTO {
 
   void setAddress(AddressDTO address);
 
+  String getImage();
+  
+  void setImage(String image);
+
 }
