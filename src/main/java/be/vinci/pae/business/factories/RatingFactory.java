@@ -5,4 +5,5 @@ import be.vinci.pae.business.domain.dto.RatingDTO;
 public interface RatingFactory {
 
   RatingDTO getRatingDTO();
+
 }

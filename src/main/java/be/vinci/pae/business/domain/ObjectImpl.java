@@ -2,15 +2,25 @@ package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ObjectImpl implements ObjectDTO {
-
+  @JsonView(Views.Public.class)
   private int idObject;
+  @JsonView(Views.Public.class)
   private TypeDTO type;
+  @JsonView(Views.Public.class)
   private String description;
+  @JsonView(Views.Public.class)
   private String status;
+  @JsonView(Views.Public.class)
   private String image;
+  @JsonView(Views.Public.class)
   private int idOfferor;
+  @JsonView(Views.Public.class)
 
   @Override
   public int getIdObject() {

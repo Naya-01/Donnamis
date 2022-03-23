@@ -3,11 +3,19 @@ package be.vinci.pae.business.domain;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RatingImpl implements RatingDTO {
+  @JsonView(Views.Public.class)
   private int rating;
+  @JsonView(Views.Public.class)
   private String comment;
+  @JsonView(Views.Public.class)
   private MemberDTO memberDTO;
+  @JsonView(Views.Public.class)
   private ObjectDTO objectDTO;
 
   @Override
