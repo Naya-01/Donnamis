@@ -12,16 +12,16 @@ const RegistrationManagementPage = async () => {
     <div class="text-center">
       <!-- Search Bar -->
       <div class="input-group mb-3 mt-5" >
-      <div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
-        <input type="radio" class="btn-check" checked name="btnradio" id="btn-radio-all" autocomplete="off">
-        <label class="btn btn-outline-secondary" for="btn-radio-all">Tous</label>
+        <div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+          <input type="radio" class="btn-check" checked name="btnradio" id="btn-radio-all" autocomplete="off">
+          <label class="btn btn-outline-secondary" for="btn-radio-all">Tous</label>
+          
+          <input type="radio" class="btn-check" name="btnradio" id="btn-radio-pending" autocomplete="off">
+          <label class="btn btn-outline-dark" for="btn-radio-pending">En attente</label>
         
-        <input type="radio" class="btn-check" name="btnradio" id="btn-radio-pending" autocomplete="off">
-        <label class="btn btn-outline-dark" for="btn-radio-pending">En attente</label>
-      
-        <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
-        <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
-      </div>
+          <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
+          <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
+        </div>
         <input type="text" class="form-control fs-4" id="searchBar" placeholder="Rechercher une demande d'inscription">
         <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>
       </div>

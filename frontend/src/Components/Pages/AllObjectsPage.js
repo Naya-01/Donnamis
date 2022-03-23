@@ -6,7 +6,7 @@ import searchBar from "../Module/SearchBar";
  */
 
 const AllObjectsPage = async () => {
-  await searchBar();
+  await searchBar("Tous les objets", false, true, "Recherche un objet", true);
 
   const pageDiv = document.querySelector("#page");
 
@@ -14,10 +14,10 @@ const AllObjectsPage = async () => {
   const offersList = document.getElementById("offers-list");
 
   await displayOffers("", offersList);
-  const searchBarInput = document.getElementById("search-bar-input");
-  searchBarInput.addEventListener('keyup', async () => {
-    await displayOffers(searchBarInput.value, offersList);
-  });
+  // const searchBarInput = document.getElementById("searchBar");
+  // searchBarInput.addEventListener('keyup', async () => {
+  //   await displayOffers(searchBarInput.value, offersList);
+  // });
 
 };
 
