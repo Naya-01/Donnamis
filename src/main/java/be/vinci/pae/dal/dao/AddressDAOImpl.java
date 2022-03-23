@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
+import be.vinci.pae.business.exceptions.FatalException;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import jakarta.inject.Inject;
@@ -61,9 +62,8 @@ public class AddressDAOImpl implements AddressDAO {
           country);
       return addressDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -102,9 +102,8 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.close();
       return addressDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
 
