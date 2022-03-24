@@ -95,7 +95,7 @@ public class ObjectUCCImpl implements ObjectUCC {
     }
 
     objectDTO = objectDAO.updateObjectPicture(internalPath, id);
-    if(objectDTO == null){
+    if (objectDTO == null) {
       dalService.rollBackTransaction();
       throw new NotFoundException("Object not found");
     }
