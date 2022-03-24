@@ -63,15 +63,10 @@ public class AddressDAOImpl implements AddressDAO {
       for (String str : addressDTODeque) {
         preparedStatement.setString(cnt++, str);
       }
-
       preparedStatement.setInt(cnt, addressDTO.getIdMember());
       preparedStatement.execute();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      resultSet.next();
-      return getAddress(resultSet.getInt(1), resultSet.getString(2),
-          resultSet.getString(3), resultSet.getString(4),
-          resultSet.getString(5), resultSet.getString(6),
-          resultSet.getString(7));
+
+      return getAddressByResultSet(preparedStatement.getResultSet());
     } catch (SQLException throwables) {
       return null;
     }
@@ -85,11 +80,11 @@ public class AddressDAOImpl implements AddressDAO {
    */
   @Override
   public AddressDTO createOne(AddressDTO addressDTO) {
-    // Insert in the db
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "insert into donnamis.addresses (id_member, unit_number, building_number, street, "
-            + "postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member;");
-    try {
+    String query = "INSERT INTO donnamis.addresses (id_member, unit_number, building_number, "
+        + "street, postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member, "
+        + "unit_number, building_number, street, postcode, commune, country";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, addressDTO.getIdMember());
       preparedStatement.setString(2, addressDTO.getUnitNumber());
       preparedStatement.setString(3, addressDTO.getBuildingNumber());
@@ -99,28 +94,15 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.setString(7, addressDTO.getCountry());
       preparedStatement.executeQuery();
 
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return null;
-      }
-
-      //get id of new member
-      int idNewAddressMember = resultSet.getInt(1);
-      if (idNewAddressMember != addressDTO.getIdMember()) {
-        return null;
-      }
-
-      preparedStatement.close();
-      return addressDTO;
+      return getAddressByResultSet(preparedStatement.getResultSet());
     } catch (SQLException e) {
       throw new FatalException(e);
     }
   }
 
   /**
-   * Add values to an AddressDTO instance.
+   * Create an AddressDTO instance.
    *
-   * @param addressDTO     the instance
    * @param idMember       the member id
    * @param unitNumber     the unit number
    * @param buildingNumber the building number
@@ -128,19 +110,9 @@ public class AddressDAOImpl implements AddressDAO {
    * @param postcode       the postcode
    * @param commune        the commune
    * @param country        the country
+   * @return the addressDTO created
    */
   @Override
-  public void setAddress(AddressDTO addressDTO, int idMember, String unitNumber,
-      String buildingNumber, String street, String postcode, String commune, String country) {
-    addressDTO.setIdMember(idMember);
-    addressDTO.setStreet(street);
-    addressDTO.setPostcode(postcode);
-    addressDTO.setUnitNumber(unitNumber);
-    addressDTO.setBuildingNumber(buildingNumber);
-    addressDTO.setCommune(commune);
-    addressDTO.setCountry(country);
-  }
-
   public AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
       String street, String postcode, String commune, String country) {
 
@@ -153,5 +125,27 @@ public class AddressDAOImpl implements AddressDAO {
     addressDTO.setCommune(commune);
     addressDTO.setCountry(country);
     return addressDTO;
+  }
+
+  /**
+   * Get an addressDTO with a resultSet.
+   *
+   * @param resultSet a resultSet that contain id_member, unit_number, building_number, street,
+   *                  postcode, commune, country in this order
+   * @return the matching addressDTO
+   */
+  private AddressDTO getAddressByResultSet(ResultSet resultSet) {
+    try {
+      if (!resultSet.next()) {
+        return null;
+      }
+      return getAddress(resultSet.getInt(1), resultSet.getString(2),
+          resultSet.getString(3), resultSet.getString(4),
+          resultSet.getString(5), resultSet.getString(6),
+          resultSet.getString(7));
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

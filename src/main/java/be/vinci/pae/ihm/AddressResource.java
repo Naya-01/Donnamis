@@ -5,7 +5,6 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.AddressUCC;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -19,8 +18,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Singleton
 @Path("/address")
 public class AddressResource {
-
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
 
   @Inject
   private AddressUCC addressUCC;
