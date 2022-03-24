@@ -43,8 +43,8 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query += "AND (ob.status LIKE '%" + searchPattern + "%' OR of.time_slot LIKE '%" +
-          searchPattern + "%') ";
+      query += "AND (ob.status LIKE '%" + searchPattern + "%' OR of.time_slot LIKE '%"
+          + searchPattern + "%') ";
     }
     if (idMember != 0) {
       query += "AND ob.id_offeror = " + idMember;
