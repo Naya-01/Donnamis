@@ -5,10 +5,13 @@ import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
+import ObjectLibrary from "../../Domain/ObjectLibrary";
 
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
+const objectLibrary = new ObjectLibrary();
 const interestLibrary = new InterestLibrary();
+const notificationModule = new Notification();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
@@ -16,7 +19,8 @@ const dictionnary = new Map([
   ['given', 'Donné'],
   ['cancelled', 'Annulé']
 ]);
-let idOffert;
+let idOffer;
+let idObject;
 let english_status;
 let idType;
 let description;
@@ -36,37 +40,34 @@ const MyObjectPage = async () => {
 
   let url_string = window.location;
   let url = new URL(url_string);
-  let idOfferUrl = url.searchParams.get("idOffer");
+  idOffer = url.searchParams.get("idOffer");
 
-  if (!idOfferUrl || idOfferUrl <= 0) {
+  if (!idOffer || idOffer <= 0) {
     Redirect("/");
     return;
   }
 
-  idOffert = idOfferUrl;
-  // GET all informations of the object
-  let offer = await offerLibrary.getOfferById(idOffert);
-  if (offer === undefined) { //TODO : à dégager
+  // GET all informations of the object (and offer)
+  let offer = await offerLibrary.getOfferById(idOffer);
+  if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
   }
-
+  idObject = offer.object.idObject;
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
-
+  // translate the status to french
   english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
 
-  // Get the id of the member
+  // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
   let idMemberConnected = member.user.memberId;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
-  console.log(jsonInterests)
   isInterested = jsonInterests.isUserInterested;
-  console.log(isInterested)
   let nbMembersInterested = jsonInterests.count;
 
   // Construct all the HTML
@@ -132,7 +133,7 @@ const MyObjectPage = async () => {
                 </div>
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personnes sont intéressées par 
+                <p>${nbMembersInterested} personne(s) intéressée(s) par 
                   cet objet</p>
               </div>
           </p>
@@ -172,14 +173,16 @@ const MyObjectPage = async () => {
 
     document.getElementById("divDate").appendChild(labelDate);
     document.getElementById("divDate").appendChild(input_date);
-    //TODO : add the date
     button.addEventListener("click", async () => {
-      //TODO : POST an interest
       button.disabled = true;
       input_date.disabled = true;
-      console.log(input_date.value);
       await interestLibrary.addOne(offer.object.idObject, input_date.value)
-      //TODO : add the notification
+      // the notification to show that the interest is send
+      let notif = notificationModule.getNotification();
+      notif.fire({
+        icon: 'success',
+        title: 'Votre intérêt a bien été pris en compte.'
+      })
     });
     if(isInterested){
       button.disabled = true;
@@ -237,7 +240,6 @@ async function changeToText(e) {
  * @param {Event} e : evenement
  */
 async function changeToForm(e) {
-  e.preventDefault();
   // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
@@ -253,6 +255,7 @@ async function changeToForm(e) {
   let input_file = document.createElement("input");
   input_file.id = "file_input";
   input_file.type = "file";
+  input_file.name = "file";
   span_image.appendChild(label_image);
   span_image.appendChild(input_file);
   old.parentNode.replaceChild(span_image, old);
@@ -310,7 +313,7 @@ async function changeToForm(e) {
  * Send to the backend all informations to update an object
  * @param {Event} e : evenement
  */
-function updateObject(e) {
+async function updateObject(e) {
   e.preventDefault();
   // Get all elements from the form
   // TODO : how to get the image ?
@@ -341,20 +344,36 @@ function updateObject(e) {
   }
   // Check if there is an empty parameter
   if (emptyParameters > 0) {
-    let notif = new Notification().getNotification();
+    let notif = notificationModule.getNotification();
     notif.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'
     })
     return;
   }
+  // Update the image
+  let fileInput = document.querySelector('input[name=file]');
+  if (fileInput.files[0] !== undefined) { // if there is an image
+    let formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    await objectLibrary.setImage(formData, idObject);
+    //TODO : get the path
+    //TODO : replace the src of the image
+  }
+
   // Call the function to update the offer
-  offerLibrary.updateOffer(idOffert, new_time_slot, new_description, idType,
+  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description, idType,
       english_status);
 
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
+  let notif = notificationModule.getNotification();
+  notif.fire({
+    icon: 'success',
+    title: 'Votre objet a bien été mis à jour.'
+  })
+
 
   // Put text back
   changeToText(e);

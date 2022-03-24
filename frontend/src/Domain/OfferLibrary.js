@@ -4,7 +4,7 @@ class OfferLibrary {
   /**
    * Get an offer by its id.
    * @param id the id of the offer
-   * @returns {Promise<*>} the offer in json
+   * @returns {Promise<*>} the offer in json and the status
    */
   async getOfferById(id) {
     let response;
