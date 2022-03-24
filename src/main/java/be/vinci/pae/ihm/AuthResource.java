@@ -109,7 +109,6 @@ public class AuthResource {
     Pattern regOnlyLettersAndNumbers = Pattern.compile("^[0-9]+[a-zA-Z]?$");
     //starting with numbers
     Pattern regOnlyLettersAndNumbersOrNothing = Pattern.compile("^([0-9]+[a-zA-Z]?)*$");
-    Pattern regOnlyLetters = Pattern.compile("^[a-zA-Z éàùöèêûî\']+$");
     Pattern regOnlyLettersAndDash = Pattern.compile("^[a-zA-Z éàùöèê\'ûî-]+$");
 
     // Check if there is a member, and then if there is an address
@@ -137,13 +136,13 @@ public class AuthResource {
       throw new BadRequestException("Le pseudonyme est trop grand");
     }
     if (member.getLastname().length() > 50) {
-      Matcher matcher = regOnlyLetters.matcher(member.getLastname());
+      Matcher matcher = regOnlyLettersAndDash.matcher(member.getLastname());
       if (!matcher.find()) {
         throw new BadRequestException("Le nom est trop grand ou est invalide");
       }
     }
     if (member.getFirstname().length() > 50) {
-      Matcher matcher = regOnlyLetters.matcher(member.getFirstname());
+      Matcher matcher = regOnlyLettersAndDash.matcher(member.getFirstname());
       if (!matcher.find()) {
         throw new BadRequestException("Le prénom est trop grand ou est invalide");
       }

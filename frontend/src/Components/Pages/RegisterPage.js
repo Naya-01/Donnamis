@@ -14,7 +14,6 @@ const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 //starting with numbers
 const regOnlyLettersAndNumbersOrNothing =
     new RegExp('^([0-9]+[a-zA-Z]?)*$');
-const regOnlyLetters = new RegExp('^[a-zA-Z éàùöèêûî\']+$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 const toast = new Notification().getNotification("top-end");
 
@@ -163,14 +162,14 @@ const RegisterPage = async () => {
         title: 'Le pseudonyme est trop grand'
       })
     } else if (lastname.value.trim().length > 50 ||
-        !regOnlyLetters.test(lastname.value.trim())) {
+        !regOnlyLettersAndDash.test(lastname.value.trim())) {
       lastname.classList.add("border-danger");
       toast.fire({
         icon: 'error',
         title: 'Le nom est trop grand ou est invalide'
       })
     } else if (firstname.value.trim().length > 50 ||
-        !regOnlyLetters.test(firstname.value.trim())) {
+        !regOnlyLettersAndDash.test(firstname.value.trim())) {
       firstname.classList.add("border-danger");
       toast.fire({
         icon: 'error',
@@ -232,8 +231,8 @@ const RegisterPage = async () => {
       let address = new Address(unitNumber.value.trim(),
           buildingNumber.value.trim(), street.value.trim(),
           postcode.value.trim(), commune.value.trim(), country.value.trim());
-      let member = new Member(username.value.trim(), lastname.value.trim(),
-          firstname.value.trim(), password.value.trim(),
+      let member = new Member(username.value.split(' ').join(''),
+          lastname.value.trim(), firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address);
       // Requête DB inscription et redirect
       await memberLibrary.registerMember(member);

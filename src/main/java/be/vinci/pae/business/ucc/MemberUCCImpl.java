@@ -114,6 +114,9 @@ public class MemberUCCImpl implements MemberUCC {
     MemberDTO memberFromDao;
     try {
       dalService.startTransaction();
+
+      memberDTO.setUsername(memberDTO.getUsername().replaceAll(" ", ""));
+
       //check if the member already exists
       MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
       if (memberExistent != null) {
