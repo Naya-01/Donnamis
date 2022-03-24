@@ -81,21 +81,25 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id) {
+    dalService.startTransaction();
     ObjectDTO objectDTO = objectDAO.getOne(id);
     if (objectDTO == null) {
-      throw new NotFoundException("Member not found");
+      dalService.rollBackTransaction();
+      throw new NotFoundException("Object not found");
     }
-
     if (objectDTO.getImage() != null) {
       File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
       if (f.exists()) {
         f.delete();
       }
-
     }
 
     objectDTO = objectDAO.updateObjectPicture(internalPath, id);
-
+    if(objectDTO == null){
+      dalService.rollBackTransaction();
+      throw new NotFoundException("Object not found");
+    }
+    dalService.commitTransaction();
     return objectDTO;
   }
 }

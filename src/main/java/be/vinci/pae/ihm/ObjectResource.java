@@ -82,15 +82,13 @@ public class ObjectResource {
       throw new WebApplicationException("Cette objet ne vous appartient pas", Status.UNAUTHORIZED);
     }
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\");
-
-    if (imageManager.writeImageOnDisk(file, fileMime, "objects\\") == null) {
+    if (internalPath == null) {
+      System.out.println("erreur osecour");
       throw new WebApplicationException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
     }
 
-    ObjectDTO newDTO = objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
-
-    return newDTO;
+    return objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
   }
 
   /**
