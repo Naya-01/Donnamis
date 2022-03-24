@@ -20,7 +20,6 @@ public class ObjectImpl implements ObjectDTO {
   private String image;
   @JsonView(Views.Public.class)
   private int idOfferor;
-  @JsonView(Views.Public.class)
 
   @Override
   public int getIdObject() {
