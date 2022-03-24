@@ -37,11 +37,10 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-
+  //GET the id of the offer by the url
   let url_string = window.location;
   let url = new URL(url_string);
   idOffer = url.searchParams.get("idOffer");
-
   if (!idOffer || idOffer <= 0) {
     Redirect("/");
     return;
@@ -53,6 +52,7 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
+  //Set all fields
   idObject = offer.object.idObject;
   idType = offer.object.type.idType;
   description = offer.object.description;
@@ -142,19 +142,22 @@ const MyObjectPage = async () => {
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
+  // if this is the object of the member connected
   if (idMemberConnected === offer.object.idOfferor) {
     document.getElementById("titleObject").textContent = "Votre objet";
     button.addEventListener("click", changeToForm);
-  } else {
-
-    //TODO : get user by id
+  }
+  // if this is not the object of the member connected
+  else {
+    // we get the member that gives the object
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
+    // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.user.username;
     button.id = "interestedButton";
     button.value = "Je suis interessé";
-    // Date of disponibility :
+    // date of disponibility
     let labelDate = document.createElement("label");
     labelDate.for = "input_date";
     labelDate.innerHTML = "Date de disponibilité : ";
@@ -170,9 +173,9 @@ const MyObjectPage = async () => {
     let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
     input_date.value = dateActual;
     input_date.min = dateActual;
-
     document.getElementById("divDate").appendChild(labelDate);
     document.getElementById("divDate").appendChild(input_date);
+
     button.addEventListener("click", async () => {
       button.disabled = true;
       input_date.disabled = true;
@@ -184,6 +187,7 @@ const MyObjectPage = async () => {
         title: 'Votre intérêt a bien été pris en compte.'
       })
     });
+    // if the member connected is already interested
     if(isInterested){
       button.disabled = true;
       input_date.disabled = true;
@@ -314,10 +318,7 @@ async function changeToForm(e) {
  * @param {Event} e : evenement
  */
 async function updateObject(e) {
-  e.preventDefault();
   // Get all elements from the form
-  // TODO : how to get the image ?
-  let new_image = document.getElementById("file_input");
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
   let new_time_slotDOM = document.getElementById("time_slot")
@@ -373,8 +374,6 @@ async function updateObject(e) {
     icon: 'success',
     title: 'Votre objet a bien été mis à jour.'
   })
-
-
   // Put text back
   changeToText(e);
 }
