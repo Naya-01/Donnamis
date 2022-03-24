@@ -28,13 +28,14 @@ public class OfferDAOImpl implements OfferDAO {
   private TypeFactory typeFactory;
 
   /**
-   * Get all offers that match with the search pattern.
+   * Get all offers.
    *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of offerDTO
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param idMember      the member id if you want only your offers (0 -> all)
+   * @return list of offers
    */
   @Override
-  public List<OfferDTO> getAll(String searchPattern) {
+  public List<OfferDTO> getAll(String searchPattern, int idMember) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
@@ -42,10 +43,13 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query +=
-          "AND (ob.status LIKE '%" + searchPattern + "%' OR of.time_slot LIKE '%" + searchPattern
-              + "%')";
+      query += "AND (ob.status LIKE '%" + searchPattern + "%' OR of.time_slot LIKE '%" +
+          searchPattern + "%') ";
     }
+    if (idMember != 0) {
+      query += "AND ob.id_offeror = " + idMember;
+    }
+
     return getOffersWithQuery(query);
   }
 

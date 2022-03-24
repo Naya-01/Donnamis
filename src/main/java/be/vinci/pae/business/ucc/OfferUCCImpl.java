@@ -25,24 +25,6 @@ public class OfferUCCImpl implements OfferUCC {
   private DALService dalService;
 
   /**
-   * Get all the offers that matche with a search pattern.
-   *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of all offerDTO that match with the search pattern
-   */
-  @Override
-  public List<OfferDTO> getAllPosts(String searchPattern) {
-    dalService.startTransaction();
-    List<OfferDTO> offers = offerDAO.getAll(searchPattern);
-    if (offers.isEmpty()) {
-      dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
-    }
-    dalService.commitTransaction();
-    return offers;
-  }
-
-  /**
    * Get the last six offers posted.
    *
    * @return a list of six offerDTO
@@ -158,5 +140,24 @@ public class OfferUCCImpl implements OfferUCC {
       typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
     }
     offerDTO.getObject().setType(typeDTO);
+  }
+
+  /**
+   * Get all offers.
+   *
+   * @param search   the search pattern (empty -> all) according to their type, description
+   * @param idMember the member id if you want only your offers (0 -> all)
+   * @return list of offers
+   */
+  @Override
+  public List<OfferDTO> getOffers(String search, int idMember) {
+    dalService.startTransaction();
+    List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember);
+    if (offerDTO == null) {
+      dalService.rollBackTransaction();
+      throw new NotFoundException("Aucune offre");
+    }
+    dalService.commitTransaction();
+    return offerDTO;
   }
 }

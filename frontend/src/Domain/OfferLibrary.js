@@ -127,7 +127,7 @@ class OfferLibrary {
     return allLastOffers;
   }
 
-  async getOffers (searchPattern) {
+  async getOffers(searchPattern) {
     try {
       let options = {
         method: "GET",
@@ -137,7 +137,7 @@ class OfferLibrary {
         },
       };
       let userData = await fetch(
-          "/api/offers/all?search-pattern=" + searchPattern,
+          "/api/offers/search-pattern=" + searchPattern,
           options);
       if (!userData.ok) {
         return false;

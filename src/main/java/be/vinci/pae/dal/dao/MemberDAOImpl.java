@@ -96,7 +96,6 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-
   }
 
   /**
