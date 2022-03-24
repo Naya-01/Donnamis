@@ -35,12 +35,12 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO getOne(String username) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE username = ?");
+    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image FROM donnamis.members WHERE LOWER(username) = ?";
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
     try {
 
-      preparedStatement.setString(1, username);
+      preparedStatement.setString(1, username.toLowerCase());
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -79,7 +79,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @param preparedStatement : a prepared statement to execute the query.
    * @return the member.
    */
-  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAdress) {
+  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAddress) {
     List<MemberDTO> memberDTOList = new ArrayList<>();
     try {
       preparedStatement.executeQuery();
@@ -90,7 +90,7 @@ public class MemberDAOImpl implements MemberDAO {
             resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
             resultSet.getString(9), resultSet.getString(10));
 
-        if (hasAdress) {
+        if (hasAddress) {
           AddressDTO addressDTO = addressFactory.getAddressDTO();
           addressDAO.setAddress(addressDTO, resultSet.getInt(11),
               resultSet.getString(12), resultSet.getString(13),
@@ -100,6 +100,7 @@ public class MemberDAOImpl implements MemberDAO {
         }
         memberDTOList.add(memberDTO);
       }
+      resultSet.close();
       preparedStatement.close();
       return memberDTOList;
     } catch (SQLException e) {
@@ -107,6 +108,21 @@ public class MemberDAOImpl implements MemberDAO {
     }
   }
 
+  /**
+   * Create a memberDTO objet from fields.
+   *
+   * @param memberId      : id of member
+   * @param username      : username of member
+   * @param lastName      : lastname of member
+   * @param firstname     : firstname of member
+   * @param status        : status of member
+   * @param role          : role of member
+   * @param phone         : phone of member
+   * @param password      : password of member
+   * @param reasonRefusal : reason of why member couldn't be confirmed
+   * @param image         : profil picture of member
+   * @return member as a memberDTO
+   */
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
@@ -162,6 +178,7 @@ public class MemberDAOImpl implements MemberDAO {
       //update memberDTO
       member.setMemberId(idNewMember);
       preparedStatement.close();
+      resultSet.close();
       return member;
 
     } catch (SQLException e) {
@@ -209,7 +226,6 @@ public class MemberDAOImpl implements MemberDAO {
           preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
         }
       }
-      preparedStatement.execute();
       return getMemberList(preparedStatement, true);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -268,15 +284,14 @@ public class MemberDAOImpl implements MemberDAO {
     query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
         + "role, phone_number, password, refusal_reason, image";
 
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-
+    try {
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       int cnt = 1;
       for (String str : memberDTODeque) {
         preparedStatement.setString(cnt++, str);
       }
 
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
-      preparedStatement.execute();
       return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException throwables) {
       throwables.printStackTrace();

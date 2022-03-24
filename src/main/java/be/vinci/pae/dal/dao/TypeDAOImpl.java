@@ -75,6 +75,8 @@ public class TypeDAOImpl implements TypeDAO {
         typeDTO.setIsDefault(resultSet.getBoolean(3));
         listTypeDTO.add(typeDTO);
       }
+      preparedStatement.close();
+      resultSet.close();
       return listTypeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -112,6 +114,9 @@ public class TypeDAOImpl implements TypeDAO {
       typeDTO.setId(resultSet.getInt(1));
       typeDTO.setTypeName(resultSet.getString(2));
       typeDTO.setIsDefault(resultSet.getBoolean(3));
+
+      preparedStatement.close();
+      resultSet.close();
       return typeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

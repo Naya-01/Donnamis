@@ -46,6 +46,12 @@ class MemberLibrary {
     return user;
   }
 
+  /**
+   * Register a quidam
+   *
+   * @param member member having al data of the member to register
+   * @returns {Promise<void>} nothing
+   */
   async registerMember(member) {
 
     let userData;

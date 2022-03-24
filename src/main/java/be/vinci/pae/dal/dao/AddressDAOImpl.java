@@ -102,6 +102,7 @@ public class AddressDAOImpl implements AddressDAO {
       }
 
       preparedStatement.close();
+      resultSet.close();
       return addressDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
