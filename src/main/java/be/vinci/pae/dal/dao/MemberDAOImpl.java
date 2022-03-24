@@ -79,7 +79,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @param preparedStatement : a prepared statement to execute the query.
    * @return the member.
    */
-  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAdress) {
+  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAddress) {
     List<MemberDTO> memberDTOList = new ArrayList<>();
     try {
       preparedStatement.executeQuery();
@@ -90,7 +90,7 @@ public class MemberDAOImpl implements MemberDAO {
             resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
             resultSet.getString(9), resultSet.getString(10));
 
-        if (hasAdress) {
+        if (hasAddress) {
           AddressDTO addressDTO = addressFactory.getAddressDTO();
           addressDAO.setAddress(addressDTO, resultSet.getInt(11),
               resultSet.getString(12), resultSet.getString(13),
@@ -108,6 +108,21 @@ public class MemberDAOImpl implements MemberDAO {
     }
   }
 
+  /**
+   * Create a memberDTO objet from fields
+   *
+   * @param memberId      : id of member
+   * @param username      : username of member
+   * @param lastName      : lastname of member
+   * @param firstname     : firstname of member
+   * @param status        : status of member
+   * @param role          : role of member
+   * @param phone         : phone of member
+   * @param password      : password of member
+   * @param reasonRefusal : reason of why member couldn't be confirmed
+   * @param image         : profil picture of member
+   * @return member as a memberDTO
+   */
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
