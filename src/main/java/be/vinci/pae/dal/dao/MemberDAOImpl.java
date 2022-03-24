@@ -35,12 +35,12 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO getOne(String username) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE username = ?");
+    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image FROM donnamis.members WHERE LOWER(username) = ?";
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
     try {
 
-      preparedStatement.setString(1, username);
+      preparedStatement.setString(1, username.toLowerCase());
     } catch (SQLException e) {
       throw new FatalException(e);
     }
