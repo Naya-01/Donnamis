@@ -139,6 +139,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       }
 
       setObject(objectDTO, resultSet);
+      preparedStatement.close();
       resultSet.close();
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -172,6 +173,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       }
 
       setObject(objectDTO, resultSet);
+      preparedStatement.close();
       resultSet.close();
     } catch (SQLException e) {
       throw new FatalException(e);

@@ -100,6 +100,7 @@ public class MemberDAOImpl implements MemberDAO {
         }
         memberDTOList.add(memberDTO);
       }
+      resultSet.close();
       preparedStatement.close();
       return memberDTOList;
     } catch (SQLException e) {
@@ -162,6 +163,7 @@ public class MemberDAOImpl implements MemberDAO {
       //update memberDTO
       member.setMemberId(idNewMember);
       preparedStatement.close();
+      resultSet.close();
       return member;
 
     } catch (SQLException e) {
@@ -209,7 +211,6 @@ public class MemberDAOImpl implements MemberDAO {
           preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
         }
       }
-      preparedStatement.execute();
       return getMemberList(preparedStatement, true);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -268,15 +269,14 @@ public class MemberDAOImpl implements MemberDAO {
     query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
         + "role, phone_number, password, refusal_reason, image";
 
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-
+    try {
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       int cnt = 1;
       for (String str : memberDTODeque) {
         preparedStatement.setString(cnt++, str);
       }
 
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
-      preparedStatement.execute();
       return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
