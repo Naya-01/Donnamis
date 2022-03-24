@@ -3,7 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.BadRequestException;
 import jakarta.inject.Inject;
 
 public class AddressUCCImpl implements AddressUCC {
@@ -14,28 +14,20 @@ public class AddressUCCImpl implements AddressUCC {
   private DALService dalService;
 
   /**
-   * Update one address.
+   * Update any attribute of an address.
    *
-   * @param idMember       : the id of the member that have this address
-   * @param unitNumber     : the unit number
-   * @param buildingNumber : the building number
-   * @param street         : the name of the street
-   * @param postcode       : the postcode
-   * @param commune        : the name of the commune
-   * @param country        : the name of the country
-   * @return the updated address
+   * @param addressDTO the address that need to be updated
+   * @return the addressDTO modified
    */
   @Override
-  public AddressDTO updateOne(int idMember, String unitNumber, String buildingNumber, String street,
-      String postcode, String commune, String country) {
+  public AddressDTO updateOne(AddressDTO addressDTO) {
     dalService.startTransaction();
-    AddressDTO addressDTO = addressDAO.updateOne(idMember, unitNumber, buildingNumber, street,
-        postcode, commune, country);
-    if (addressDTO == null) {
+    AddressDTO addressDTOReturned = addressDAO.updateOne(addressDTO);
+    if (addressDTOReturned == null) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Adresse non mise à jour"); //TODO : changer cette exception
+      throw new BadRequestException("Adresse non mise à jour");
     }
     dalService.commitTransaction();
-    return addressDTO;
+    return addressDTOReturned;
   }
 }
