@@ -48,6 +48,28 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
+   * Get a member we want to retrieve by his id.
+   *
+   * @param id : the id of the member we want to retrieve
+   * @return the member
+   */
+  public MemberDTO getOne(int id) {
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
+        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
+            + "refusal_reason, image FROM donnamis.members WHERE id_member = ?");
+    try {
+      preparedStatement.setInt(1, id);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
+    if (memberDTOList.size() != 1) {
+      return null;
+    }
+    return memberDTOList.get(0);
+  }
+
+  /**
    * Add a member in the DB and make a memberDTO.
    *
    * @param member : member we want to add in the DB
@@ -221,28 +243,6 @@ public class MemberDAOImpl implements MemberDAO {
       e.printStackTrace();
     }
     return getOne(id);
-  }
-
-  /**
-   * Get a member we want to retrieve by his id.
-   *
-   * @param id : the id of the member we want to retrieve
-   * @return the member
-   */
-  public MemberDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE id_member = ?");
-    try {
-      preparedStatement.setInt(1, id);
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
-    if (memberDTOList.size() != 1) {
-      return null;
-    }
-    return memberDTOList.get(0);
   }
 
   /**
