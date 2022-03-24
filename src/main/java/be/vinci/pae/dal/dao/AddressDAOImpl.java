@@ -54,6 +54,9 @@ public class AddressDAOImpl implements AddressDAO {
       addressDTODeque.addLast(addressDTO.getCountry());
     }
     query = query.substring(0, query.length() - 1);
+    if (query.endsWith("SET")) {
+      return null;
+    }
     query += " WHERE id_member = ? RETURNING id_member, unit_number, building_number, street, "
         + "postcode, commune, country";
 
@@ -64,9 +67,8 @@ public class AddressDAOImpl implements AddressDAO {
         preparedStatement.setString(cnt++, str);
       }
       preparedStatement.setInt(cnt, addressDTO.getIdMember());
-      preparedStatement.execute();
 
-      return getAddressByResultSet(preparedStatement.getResultSet());
+      return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException throwables) {
       return null;
     }
@@ -92,9 +94,8 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.setString(5, addressDTO.getPostcode());
       preparedStatement.setString(6, addressDTO.getCommune());
       preparedStatement.setString(7, addressDTO.getCountry());
-      preparedStatement.executeQuery();
 
-      return getAddressByResultSet(preparedStatement.getResultSet());
+      return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -130,12 +131,14 @@ public class AddressDAOImpl implements AddressDAO {
   /**
    * Get an addressDTO with a resultSet.
    *
-   * @param resultSet a resultSet that contain id_member, unit_number, building_number, street,
-   *                  postcode, commune, country in this order
+   * @param preparedStatement a prepared statement that contain id_member, unit_number,
+   *                          building_number, street, postcode, commune, country in this order
    * @return the matching addressDTO
    */
-  private AddressDTO getAddressByResultSet(ResultSet resultSet) {
+  private AddressDTO getAddressByPreparedStatement(PreparedStatement preparedStatement) {
     try {
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
         return null;
       }

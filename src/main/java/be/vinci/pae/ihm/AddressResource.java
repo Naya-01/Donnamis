@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.AddressUCC;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -35,10 +36,9 @@ public class AddressResource {
   @Produces(MediaType.APPLICATION_JSON)
   public AddressDTO updateOne(AddressDTO addressDTO, @Context ContainerRequest containerRequest) {
     MemberDTO memberDTO = (MemberDTO) containerRequest.getProperty("user");
-    System.out.println(memberDTO);
     if (memberDTO.getMemberId() != addressDTO.getIdMember()) {
       throw new UnauthorizedException("Not your address");
     }
-    return addressUCC.updateOne(addressDTO);
+    return JsonViews.filterPublicJsonView(addressUCC.updateOne(addressDTO), AddressDTO.class);
   }
 }

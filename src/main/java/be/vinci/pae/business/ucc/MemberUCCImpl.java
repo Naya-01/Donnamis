@@ -104,7 +104,7 @@ public class MemberUCCImpl implements MemberUCC {
     return memberDTO;
   }
 
-  /*
+  /**
    * Register a quidam.
    *
    * @param memberDTO : User object with all information.

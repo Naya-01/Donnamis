@@ -9,7 +9,7 @@ const getUsername = async () => {
   let userData;
   try {
     let options = {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: getSessionObject("user").accessToken
       },
@@ -17,14 +17,14 @@ const getUsername = async () => {
     userData = await fetch("/api/member/getMemberByToken", options);
     if (!userData.ok) {
       Redirect("/login");
-      Navbar();
+      await Navbar();
       return;
     }
   } catch (err) {
     console.log(err);
   }
   userData = await userData.json();
-  return userData.user.username;
+  return userData.username;
 }
 
 const Navbar = async () => {

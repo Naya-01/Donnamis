@@ -31,20 +31,20 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO getOne(String username) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE username = ?");
-    try {
+    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image FROM donnamis.members WHERE username = ?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setString(1, username);
+      List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
+      if (memberDTOList.size() != 1) {
+        return null;
+      }
+      return memberDTOList.get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
-    if (memberDTOList.size() != 1) {
-      return null;
-    }
-    return memberDTOList.get(0);
   }
 
   /**
@@ -54,19 +54,19 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member
    */
   public MemberDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE id_member = ?");
-    try {
+    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image FROM donnamis.members WHERE id_member = ?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
+      List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
+      if (memberDTOList.size() != 1) {
+        return null;
+      }
+      return memberDTOList.get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
-    if (memberDTOList.size() != 1) {
-      return null;
-    }
-    return memberDTOList.get(0);
   }
 
   /**
@@ -77,10 +77,12 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO createOneMember(MemberDTO member) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement("insert into "
-        + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
-    try {
+    String query = "INSERT INTO donnamis.members (username, lastname, firstname, status, role, "
+        + "phone_number, password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) "
+        + "RETURNING id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, member.getUsername());
       preparedStatement.setString(2, member.getLastname());
       preparedStatement.setString(3, member.getFirstname());
@@ -90,21 +92,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
 
-      preparedStatement.executeQuery();
-
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return null;
-      }
-
-      //get id of new member
-      int idNewMember = resultSet.getInt(1);
-
-      //update memberDTO
-      member.setMemberId(idNewMember);
-      preparedStatement.close();
-      return member;
-
+      return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -121,7 +109,6 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public List<MemberDTO> getAll(String search, String status) {
-    boolean hasSearch = false;
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
             + "m.phone_number, m.password, m.refusal_reason, m.image, a.id_member, a.unit_number, "
@@ -139,22 +126,18 @@ public class MemberDAOImpl implements MemberDAO {
       query += "AND m.status = 'valid' ";
     }
     if (search != null && !search.isEmpty()) {
-      hasSearch = true;
       query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? "
           + "OR lower(m.username) LIKE ?)";
     }
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
-      if (hasSearch) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      if (search != null && !search.isEmpty()) {
         for (int i = 1; i <= 3; i++) {
           preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
         }
       }
-      preparedStatement.execute();
       return getMemberList(preparedStatement, true);
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-      return null;
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
   }
 
@@ -206,6 +189,9 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     query = query.substring(0, query.length() - 1);
+    if (query.endsWith("SET")) {
+      return null;
+    }
     query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
         + "role, phone_number, password, refusal_reason, image";
 
@@ -215,13 +201,11 @@ public class MemberDAOImpl implements MemberDAO {
       for (String str : memberDTODeque) {
         preparedStatement.setString(cnt++, str);
       }
-
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
-      preparedStatement.execute();
+
       return getMemberList(preparedStatement, false).get(0);
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-      return null;
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
   }
 
@@ -273,7 +257,6 @@ public class MemberDAOImpl implements MemberDAO {
         }
         memberDTOList.add(memberDTO);
       }
-      preparedStatement.close();
       return memberDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);

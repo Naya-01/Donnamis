@@ -6,14 +6,13 @@ import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -32,11 +31,8 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/member")
 public class MemberResource {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
-
   @Inject
   private MemberUCC memberUCC;
-
   @Inject
   private Image imageManager;
 
@@ -74,14 +70,12 @@ public class MemberResource {
    * @param request to get information request
    * @return return the linked user to his token
    */
-  @POST
+  @GET
   @Path("/getMemberByToken")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getMemberByToken(@Context ContainerRequest request) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return jsonMapper.createObjectNode()
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+  public MemberDTO getMemberByToken(@Context ContainerRequest request) {
+    return JsonViews.filterPublicJsonView((MemberDTO) request.getProperty("user"), MemberDTO.class);
   }
 
   /**
@@ -95,7 +89,7 @@ public class MemberResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public MemberDTO getMemberById(@PathParam("id") int id) {
-    return memberUCC.getMember(id);
+    return JsonViews.filterPublicJsonView(memberUCC.getMember(id), MemberDTO.class);
   }
 
   /**
@@ -122,7 +116,7 @@ public class MemberResource {
    * @param memberDTO a memberDTO
    * @return the modified member
    */
-  @POST
+  @PUT
   @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)

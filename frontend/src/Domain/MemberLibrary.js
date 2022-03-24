@@ -5,7 +5,7 @@ class MemberLibrary {
     let response;
     try {
       let options = {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           "Authorization": getSessionObject("user").accessToken,
@@ -94,7 +94,7 @@ class MemberLibrary {
     let response;
     try {
       let options = {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify({
           "status": status,
           "reasonRefusal": reasonRefusal,
