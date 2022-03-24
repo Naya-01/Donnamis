@@ -99,6 +99,12 @@ const htmlPage = `
       </div>
       `
 
+/**
+ * Make register page.
+ *
+ * @returns {Promise<void>}
+ * @constructor
+ */
 const RegisterPage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = htmlPage;

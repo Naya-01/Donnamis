@@ -109,7 +109,7 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Create a memberDTO objet from fields
+   * Create a memberDTO objet from fields.
    *
    * @param memberId      : id of member
    * @param username      : username of member
