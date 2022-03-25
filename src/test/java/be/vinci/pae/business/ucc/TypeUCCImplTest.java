@@ -54,5 +54,16 @@ class TypeUCCImplTest {
     );
   }
 
+  @DisplayName("Test getType with id function with an inexistant id")
+  @Test
+  public void testGetTypeWithInexistantId(){
+    Mockito.when(mockTypeDAO.getOne(1000)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(1000)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
 
 }
