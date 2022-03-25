@@ -23,6 +23,7 @@ class InterestUCCImplTest {
   private InterestDAO mockInterestDAO;
   private DALService mockDalService;
   private InterestDTO mockInterestDTO;
+  private InterestDTO newMockInterestDTO;
 
   @BeforeEach
   void initAll() {
@@ -31,6 +32,11 @@ class InterestUCCImplTest {
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
     this.mockInterestDTO = locator.getService(InterestDTO.class);
+    Mockito.when(mockInterestDTO.getIdObject()).thenReturn(10);
+    Mockito.when(mockInterestDTO.getIdMember()).thenReturn(1);
+    Mockito.when(mockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
+    Mockito.when(mockInterestDTO.getStatus()).thenReturn("published");
+    this.newMockInterestDTO = locator.getService(InterestDTO.class);
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
@@ -69,10 +75,6 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with an existent object, member and interest")
   @Test
   public void testGetInterestWithExistentObjectAndExistentMemberAndExistingInterest() {
-    Mockito.when(mockInterestDTO.getIdObject()).thenReturn(10);
-    Mockito.when(mockInterestDTO.getIdMember()).thenReturn(1);
-    Mockito.when(mockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
-    Mockito.when(mockInterestDTO.getStatus()).thenReturn("published");
     Mockito.when(mockInterestDAO.getOne(10, 1)).thenReturn(mockInterestDTO);
     assertAll(
         () -> assertEquals(mockInterestDTO, interestUCC.getInterest(10, 1)),
@@ -84,16 +86,21 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with an existent object, member and non-existent interest")
   @Test
   public void testGetInterestWithExistentObjectAndExistentMemberAndNonExistentInterest() {
-    Mockito.when(mockInterestDTO.getIdObject()).thenReturn(10);
-    Mockito.when(mockInterestDTO.getIdMember()).thenReturn(1);
-    Mockito.when(mockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
-    Mockito.when(mockInterestDTO.getStatus()).thenReturn("published");
     Mockito.when(mockInterestDAO.getOne(10, 1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.getInterest(10, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
+  }
+
+  @DisplayName("")
+  @Test
+  public void testAddOneWithAGoodInterest(){
+    Mockito.when(newMockInterestDTO.getIdObject()).thenReturn(10);
+    Mockito.when(newMockInterestDTO.getIdMember()).thenReturn(1);
+    Mockito.when(newMockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
+
   }
 
 }
