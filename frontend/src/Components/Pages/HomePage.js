@@ -60,6 +60,13 @@ const render = async () => {
   }
   return page;
 }
+
+/**
+ * Make homepage
+ *
+ * @returns {Promise<void>}
+ * @constructor
+ */
 const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = await render();

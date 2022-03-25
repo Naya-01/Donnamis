@@ -66,9 +66,10 @@ const refreshToken = async () => {
 }
 
 /**
- * Deal with call and auto-render of Functional Components following click events
- * on Navbar, Load / Refresh operations, Browser history operation (back or next) or redirections.
- * A Functional Component is responsible to auto-render itself : Pages, Header...
+ * Deal with call and auto-render of Functional Components following click
+ * events on Navbar, Load / Refresh operations, Browser history operation
+ * (back or next) or redirections.
+ * A Functional Component is responsible to auto-render itself : Pages, ...
  */
 
 const Router = () => {
@@ -119,11 +120,13 @@ const Router = () => {
 
 /**
  * Call and auto-render of Functional Components associated to the given URL
- * @param {*} uri - Provides an URL that is associated to a functional component in the
+ * @param {*} uri - Provides an URL that is associated to a functional component
+ * in the
  * routes array of the Router
  */
 const Redirect = (uri) => {
-  // use Web History API to add current page URL to the user's navigation history & set right URL in the browser (instead of "#")
+  // use Web History API to add current page URL to the user's navigation
+  // history & set right URL in the browser (instead of "#")
   window.history.pushState({}, uri, window.location.origin + uri);
   // render the requested component
   const componentToRender = routes[uri];
@@ -134,8 +137,16 @@ const Redirect = (uri) => {
   }
 };
 
+/**
+ * Redirect to another page adding information in URL.
+ *
+ * @param page path to destination (.e.g /registerPage)
+ * @param action information to add (.e.g ?id=5)
+ * @constructor
+ */
 const RedirectWithParamsInUrl = (page, action) => {
-  window.history.pushState({}, page, window.location.origin + page + action);
+  window.history.pushState({}, page, window.location.origin + page
+      + action);
   const componentToRender = routes[page];
   if (routes[page]) {
     componentToRender();

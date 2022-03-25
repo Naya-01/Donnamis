@@ -136,6 +136,9 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.setDate(resultSet.getDate(2).toLocalDate());
       offerDTO.setTimeSlot(resultSet.getString(3));
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
+
+      preparedStatement.close();
+      resultSet.close();
       return offerDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -244,6 +247,7 @@ public class OfferDAOImpl implements OfferDAO {
 
         listOfferDTO.add(offerDTO);
       }
+      resultSet.close();
       return listOfferDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

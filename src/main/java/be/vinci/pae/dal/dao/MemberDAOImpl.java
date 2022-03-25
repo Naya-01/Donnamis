@@ -2,6 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -91,11 +92,13 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(6, member.getPhone());
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
+      preparedStatement.setString(9, member.getImage());
 
       return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+
   }
 
   /**

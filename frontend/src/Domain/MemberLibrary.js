@@ -1,4 +1,7 @@
 import {getSessionObject} from "../utils/session";
+import Notification from "../Components/Module/Notification";
+
+const Toast = new Notification().getNotification("top-end");
 
 class MemberLibrary {
   async getUserByHisToken() {
@@ -43,6 +46,12 @@ class MemberLibrary {
     return user;
   }
 
+  /**
+   * Register a quidam
+   *
+   * @param member member having al data of the member to register
+   * @returns {Promise<void>} nothing
+   */
   async registerMember(member) {
 
     let userData;
