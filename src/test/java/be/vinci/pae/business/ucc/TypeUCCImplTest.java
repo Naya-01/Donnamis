@@ -118,4 +118,15 @@ class TypeUCCImplTest {
     );
   }
 
+  @DisplayName("Test getAllDefaultTypes function when there are no default types in the DB")
+  @Test
+  public void testGetAllDefaultTypesWithoutDefaultTypesInTheDB(){
+    Mockito.when(mockTypeDAO.getAllDefaultTypes()).thenReturn(new ArrayList<>());
+    assertAll(
+        () -> assertThrows(NotFoundException.class, ()-> typeUCC.getAllDefaultTypes()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
 }
