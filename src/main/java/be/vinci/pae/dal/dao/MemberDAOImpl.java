@@ -225,7 +225,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(2, id);
       preparedStatement.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return getOne(id);
   }

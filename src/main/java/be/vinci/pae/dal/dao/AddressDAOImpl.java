@@ -69,8 +69,8 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.setInt(cnt, addressDTO.getIdMember());
 
       return getAddressByPreparedStatement(preparedStatement);
-    } catch (SQLException throwables) {
-      return null;
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
   }
 
@@ -147,8 +147,7 @@ public class AddressDAOImpl implements AddressDAO {
           resultSet.getString(5), resultSet.getString(6),
           resultSet.getString(7));
     } catch (SQLException e) {
-      e.printStackTrace();
-      return null;
+      throw new FatalException(e);
     }
   }
 }
