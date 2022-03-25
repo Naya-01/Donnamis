@@ -24,12 +24,18 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO getObject(int id) {
-    dalService.startTransaction();
-    ObjectDTO objectDTO = objectDAO.getOne(id);
+    ObjectDTO objectDTO;
+    try {
+      dalService.startTransaction();
+      objectDTO = objectDAO.getOne(id);
 
-    if (objectDTO == null) {
+      if (objectDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Objet non trouvé");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Objet non trouvé");
+      throw e;
     }
     dalService.commitTransaction();
     return objectDTO;
@@ -43,12 +49,18 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public List<ObjectDTO> getAllObjectMember(int idMember) {
-    dalService.startTransaction();
-    List<ObjectDTO> objectDTOList = objectDAO.getAllObjectOfMember(idMember);
+    List<ObjectDTO> objectDTOList;
+    try {
+      dalService.startTransaction();
+      objectDTOList = objectDAO.getAllObjectOfMember(idMember);
 
-    if (objectDTOList.isEmpty()) {
+      if (objectDTOList.isEmpty()) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucun objet pour ce membre");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucun objet pour ce membre");
+      throw e;
     }
     dalService.commitTransaction();
     return objectDTOList;
@@ -61,14 +73,20 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @return object updated
    */
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
-    dalService.startTransaction();
-    ObjectDTO object = objectDAO.getOne(objectDTO.getIdObject());
-    if (object == null) {
+    ObjectDTO object;
+    try {
+      dalService.startTransaction();
+      object = objectDAO.getOne(objectDTO.getIdObject());
+      if (object == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Object not found");
+      }
+      object = objectDAO.updateOne(objectDTO);
+      dalService.commitTransaction();
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Object not found");
+      throw e;
     }
-    object = objectDAO.updateOne(objectDTO);
-    dalService.commitTransaction();
     return object;
   }
 
@@ -81,21 +99,27 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id) {
-    ObjectDTO objectDTO = objectDAO.getOne(id);
-    if (objectDTO == null) {
-      throw new NotFoundException("Member not found");
-    }
-
-    if (objectDTO.getImage() != null) {
-      File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
-      if (f.exists()) {
-        f.delete();
+    ObjectDTO objectDTO;
+    try {
+      objectDTO = objectDAO.getOne(id);
+      if (objectDTO == null) {
+        throw new NotFoundException("Member not found");
       }
 
+      if (objectDTO.getImage() != null) {
+        File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
+        if (f.exists()) {
+          f.delete();
+        }
+
+      }
+
+      objectDTO = objectDAO.updateObjectPicture(internalPath, id);
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
     }
-
-    objectDTO = objectDAO.updateObjectPicture(internalPath, id);
-
+    dalService.commitTransaction();
     return objectDTO;
   }
 }
