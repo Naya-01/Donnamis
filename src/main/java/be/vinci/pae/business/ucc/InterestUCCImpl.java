@@ -56,7 +56,7 @@ public class InterestUCCImpl implements InterestUCC {
         //change name exception
         throw new NotFoundException("Interest not added");
       }
-    } catch (NotFoundException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -72,14 +72,21 @@ public class InterestUCCImpl implements InterestUCC {
    */
   @Override
   public List<InterestDTO> getInterestedCount(int idObject) {
-    dalService.startTransaction();
-    ObjectDTO objectDTO = objectDAO.getOne(idObject);
-    if (objectDTO == null) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+      ObjectDTO objectDTO = objectDAO.getOne(idObject);
+      if (objectDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Object not found");
+      }
+      interestDTOList = interestDAO.getAll(idObject);
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Object not found");
+      throw e;
     }
     dalService.commitTransaction();
-    return interestDAO.getAll(idObject);
+    return interestDTOList;
   }
 
 }
