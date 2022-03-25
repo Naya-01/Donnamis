@@ -70,20 +70,26 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO updateProfilPicture(String path, int id) {
+    dalService.startTransaction();
     MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO == null) {
-      throw new NotFoundException("Member not found");
-    }
-
-    if (memberDTO.getImage() != null) {
-      File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
-      if (f.exists()) {
-        f.delete();
+    try {
+      if (memberDTO == null) {
+        throw new NotFoundException("Member not found");
       }
 
-    }
+      if (memberDTO.getImage() != null) {
+        File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
+        if (f.exists()) {
+          f.delete();
+        }
 
-    memberDTO = memberDAO.updateProfilPicture(path, id);
+      }
+
+      memberDTO = memberDAO.updateProfilPicture(path, id);
+    } catch (NotFoundException e) {
+      dalService.rollBackTransaction();
+    }
+    dalService.commitTransaction();
 
     return memberDTO;
   }
