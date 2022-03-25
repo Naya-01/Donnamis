@@ -112,13 +112,12 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with an interest that already exists")
   @Test
   public void testAddOneWithAnAlreadyExistentInterest(){
-    Mockito.when(newMockInterestDTO.getIdMember()).thenReturn(1);
-    Mockito.when(newMockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
+    Mockito.when(mockInterestDAO.getOne(mockInterestDTO.getIdObject(),
+        mockInterestDTO.getIdMember())).thenReturn(mockInterestDTO);
     assertAll(
-        () -> assertEquals(newMockInterestDTO, interestUCC.addOne(newMockInterestDTO)),
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(mockInterestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).addOne(newMockInterestDTO),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
 
