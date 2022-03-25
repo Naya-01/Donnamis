@@ -10,7 +10,6 @@ import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 
 public class OfferUCCImpl implements OfferUCC {
@@ -139,19 +138,19 @@ public class OfferUCCImpl implements OfferUCC {
    */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
-      if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-          .getTypeName().isEmpty()) {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-          if (typeDTO == null) {
-            throw new BadRequestException("Problème lors de la création du type");
-          }
+          throw new BadRequestException("Problème lors de la création du type");
         }
-      } else {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
       }
-      offerDTO.getObject().setType(typeDTO);
+    } else {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
+    }
+    offerDTO.getObject().setType(typeDTO);
   }
 
   /**
