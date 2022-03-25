@@ -175,4 +175,18 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(100)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.getMember(100));
   }
+
+  @DisplayName("Test updateProfilPicture with a non existent id for member")
+  @Test
+  public void updateProfilPictureForNonExistentMember() {
+    int idMember = 1000;
+    Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> memberUCC.updateProfilPicture("C:/img", idMember)),
+        () -> Mockito.verify(mockMemberDAO).getOne(idMember)
+    );
+
+
+  }
 }

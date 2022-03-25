@@ -25,6 +25,5 @@ public class TestBinder extends AbstractBinder {
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(Mockito.mock(AddressDAOImpl.class)).to(AddressDAO.class);
     bind(Mockito.mock(MemberDAOImpl.class)).to(MemberDAO.class);
-
   }
 }
