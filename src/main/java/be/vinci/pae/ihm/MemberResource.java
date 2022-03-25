@@ -1,6 +1,7 @@
 package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.exceptions.BadRequestException;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -62,8 +63,8 @@ public class MemberResource {
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\");
 
     if (internalPath == null) {
-      throw new WebApplicationException("Le type du fichier est incorrect."
-          + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Le type du fichier est incorrect."
+          + "\nVeuillez soumettre une image");
     }
 
     MemberDTO newDTO = memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
