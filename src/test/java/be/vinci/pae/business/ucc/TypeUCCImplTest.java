@@ -11,6 +11,8 @@ import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,7 @@ class TypeUCCImplTest {
   private TypeDAO mockTypeDAO;
   private TypeDTO mockRealType;
   private DALService mockDalService;
+  private List<TypeDTO> allDefaultTypesMock;
 
   @BeforeEach
   void initAll() {
@@ -34,6 +37,8 @@ class TypeUCCImplTest {
     this.mockDalService = locator.getService(DALService.class);
     Mockito.when(mockRealType.getIdType()).thenReturn(1);
     Mockito.when(mockRealType.getTypeName()).thenReturn("Bon type");
+    this.allDefaultTypesMock = new ArrayList<>();
+    this.allDefaultTypesMock.add(mockRealType);
   }
 
   @DisplayName("Test getType with id function with an id that correspond to an existing type")
@@ -99,6 +104,17 @@ class TypeUCCImplTest {
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test getAllDefaultTypes function when there are default types in the DB")
+  @Test
+  public void testGetAllDefaultTypesWithDefaultTypesInTheDB(){
+    Mockito.when(mockTypeDAO.getAllDefaultTypes()).thenReturn(allDefaultTypesMock);
+    assertAll(
+        () -> assertEquals(allDefaultTypesMock, typeUCC.getAllDefaultTypes()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
 
