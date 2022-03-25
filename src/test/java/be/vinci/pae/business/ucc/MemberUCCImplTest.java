@@ -230,8 +230,8 @@ class MemberUCCImplTest {
         () -> assertNotEquals(0, memberRegistered.getMemberId()),
         () -> assertEquals(memberRegistered.getMemberId(),
             memberRegistered.getAddress().getIdMember()),
-        () -> Mockito.verify(mockDalService).startTransaction(),
-        () -> Mockito.verify(mockDalService).commitTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.never()).rollBackTransaction()
     );
   }
