@@ -1,17 +1,11 @@
 package be.vinci.pae.business.ucc;
 
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
-import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
-import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -20,7 +14,6 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class InterestUCCImplTest {
