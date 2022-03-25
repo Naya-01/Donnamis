@@ -2,12 +2,17 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
+import be.vinci.pae.business.domain.AddressImpl;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
+import be.vinci.pae.business.domain.dto.AddressDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.dal.dao.MemberDAO;
+import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -30,12 +35,14 @@ class MemberUCCImplTest {
   private MemberUCC memberUCC;
   private MemberDAO mockMemberDAO;
   private Member mockMember;
+  private DALService mockDalService;
 
   @BeforeEach
   void initAll() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
+    this.mockDalService = locator.getService(DALService.class);
     mockMember = Mockito.mock(MemberImpl.class);
 
     Mockito.when(mockMember.getUsername()).thenReturn(username);
@@ -176,9 +183,12 @@ class MemberUCCImplTest {
     assertThrows(NotFoundException.class, () -> memberUCC.getMember(100));
   }
 
+  //  ----------------------------  UPDATE PROFIL PICTURE UCC  -------------------------------  //
+
+  //FINIR L UCC UPDATE PROFIL PICTURE
   @DisplayName("Test updateProfilPicture with a non existent id for member")
   @Test
-  public void updateProfilPictureForNonExistentMember() {
+  public void testUpdateProfilPictureForNonExistentMember() {
     int idMember = 1000;
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
@@ -186,7 +196,43 @@ class MemberUCCImplTest {
             () -> memberUCC.updateProfilPicture("C:/img", idMember)),
         () -> Mockito.verify(mockMemberDAO).getOne(idMember)
     );
+  }
 
+  //  -----------------------------  REGISTER UCC  ----------------------------------------  //
 
+  @DisplayName("Test inscription tout va bien")
+  @Test
+  public void testRegisterSuccess() {
+    AddressDTO newAddress = Mockito.mock(AddressImpl.class);
+    Mockito.when(newAddress.getIdMember()).thenReturn(6);
+    Mockito.when(newAddress.getUnitNumber()).thenReturn("4");
+    Mockito.when(newAddress.getBuildingNumber()).thenReturn("2");
+    Mockito.when(newAddress.getStreet()).thenReturn("Rue de l'aérosol");
+    Mockito.when(newAddress.getPostcode()).thenReturn("1234");
+    Mockito.when(newAddress.getCommune()).thenReturn("Wolluwe");
+    Mockito.when(newAddress.getCountry()).thenReturn("Belgique");
+
+    Member newMember = Mockito.mock(MemberImpl.class);
+    Mockito.when(newMember.getMemberId()).thenReturn(6);
+    Mockito.when(newMember.getUsername()).thenReturn("MatthieuDu42");
+    Mockito.when(newMember.getLastname()).thenReturn("Du bois");
+    Mockito.when(newMember.getFirstname()).thenReturn("Matthieu");
+    Mockito.when(newMember.getPhone()).thenReturn("0412345678");
+    Mockito.when(newMember.getPassword()).thenReturn("matthieuLeChien");
+    Mockito.when(newMember.getAddress()).thenReturn(newAddress);
+
+    Mockito.when(mockMemberDAO.getOne("MatthieuDu42")).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(newMember);
+
+    MemberDTO memberRegistered = memberUCC.register(newMember);
+
+    assertAll(
+        () -> assertNotEquals(0, memberRegistered.getMemberId()),
+        () -> assertEquals(memberRegistered.getMemberId(),
+            memberRegistered.getAddress().getIdMember()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.never()).rollBackTransaction()
+    );
   }
 }
