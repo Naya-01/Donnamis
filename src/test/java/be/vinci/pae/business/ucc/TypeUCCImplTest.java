@@ -1,6 +1,9 @@
 package be.vinci.pae.business.ucc;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.TypeDTO;
@@ -34,7 +37,7 @@ class TypeUCCImplTest {
 
   @DisplayName("Test getType with id function with an id that correspond to an existing type")
   @Test
-  public void testGetTypeWithGoodId(){
+  public void testGetTypeWithGoodId() {
     Mockito.when(mockTypeDAO.getOne(mockRealType.getIdType())).thenReturn(mockRealType);
     assertAll(
         () -> assertEquals(typeUCC.getType(mockRealType.getIdType()), mockRealType),
@@ -45,7 +48,7 @@ class TypeUCCImplTest {
 
   @DisplayName("Test getType with id function with a negative id")
   @Test
-  public void testGetTypeWithANegativeId(){
+  public void testGetTypeWithANegativeId() {
     Mockito.when(mockTypeDAO.getOne(-1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(-1)),
@@ -56,7 +59,7 @@ class TypeUCCImplTest {
 
   @DisplayName("Test getType with id function with a non-existent id")
   @Test
-  public void testGetTypeWithNonExistentId(){
+  public void testGetTypeWithNonExistentId() {
     Mockito.when(mockTypeDAO.getOne(1000)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(1000)),
@@ -67,7 +70,7 @@ class TypeUCCImplTest {
 
   @DisplayName("Test getType with typeName function with a non-existent name")
   @Test
-  public void testGetTypeWithNonExistentName(){
+  public void testGetTypeWithNonExistentName() {
     Mockito.when(mockTypeDAO.getOne("non-existent Type")).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("non-existent Type")),
