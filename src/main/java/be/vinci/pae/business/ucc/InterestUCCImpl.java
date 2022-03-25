@@ -49,6 +49,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       if (interestDAO.getOne(item.getIdObject(), item.getIdMember()) != null) {
         //change name exception
+        dalService.rollBackTransaction();
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
       interestDAO.addOne(item);
