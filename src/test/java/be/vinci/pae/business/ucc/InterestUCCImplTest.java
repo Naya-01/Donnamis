@@ -81,4 +81,19 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test getInterest with an existent object, member and non-existent interest")
+  @Test
+  public void testGetInterestWithExistentObjectAndExistentMemberAndNonExistentInterest() {
+    Mockito.when(mockInterestDTO.getIdObject()).thenReturn(10);
+    Mockito.when(mockInterestDTO.getIdMember()).thenReturn(1);
+    Mockito.when(mockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
+    Mockito.when(mockInterestDTO.getStatus()).thenReturn("published");
+    Mockito.when(mockInterestDAO.getOne(10, 1)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.getInterest(10, 1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
 }
