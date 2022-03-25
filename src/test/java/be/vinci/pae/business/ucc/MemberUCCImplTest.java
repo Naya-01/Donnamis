@@ -231,8 +231,7 @@ class MemberUCCImplTest {
         () -> assertEquals(memberRegistered.getMemberId(),
             memberRegistered.getAddress().getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.never()).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 }
