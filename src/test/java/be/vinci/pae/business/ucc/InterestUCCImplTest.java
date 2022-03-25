@@ -53,4 +53,15 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test getInterest with a non existent object and a non existent member")
+  @Test
+  public void testGetInterestWithNonExistentObjectAndNonExistentMember() {
+    Mockito.when(mockInterestDAO.getOne(1000, 1000)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,() ->interestUCC.getInterest(1000, 1000)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
 }
