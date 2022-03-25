@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
@@ -87,6 +88,17 @@ class TypeUCCImplTest {
         () -> assertEquals(mockRealType, typeUCC.getType(mockRealType.getTypeName())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test getType with typeName function with an empty name")
+  @Test
+  public void testGetTypeWithEmptyName() {
+    Mockito.when(mockTypeDAO.getOne("")).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
 
