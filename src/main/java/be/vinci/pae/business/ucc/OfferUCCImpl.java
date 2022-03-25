@@ -31,11 +31,17 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getLastOffers() {
-    dalService.startTransaction();
-    List<OfferDTO> offers = offerDAO.getAllLast();
-    if (offers.isEmpty()) {
+    List<OfferDTO> offers;
+    try {
+      dalService.startTransaction();
+      offers = offerDAO.getAllLast();
+      if (offers.isEmpty()) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offres");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
+      throw e;
     }
     dalService.commitTransaction();
     return offers;
@@ -49,11 +55,17 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO getOfferById(int idOffer) {
-    dalService.startTransaction();
-    OfferDTO offerDTO = offerDAO.getOne(idOffer);
-    if (offerDTO == null) {
+    OfferDTO offerDTO;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getOne(idOffer);
+      if (offerDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offres");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
+      throw e;
     }
     dalService.commitTransaction();
     return offerDTO;
@@ -82,7 +94,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer.getIdOffer() == 0) {
         throw new BadRequestException("Problème lors de la création d'une offre");
       }
-    } catch (BadRequestException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -112,7 +124,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (objectDTO == null) {
         throw new BadRequestException("Problème lors de la mise à jour de l'objet");
       }
-    } catch (WebApplicationException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -127,19 +139,19 @@ public class OfferUCCImpl implements OfferUCC {
    */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
-    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isEmpty()) {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
-      if (typeDTO == null) {
-        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+      if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+          .getTypeName().isEmpty()) {
+        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          throw new BadRequestException("Problème lors de la création du type");
+          typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+          if (typeDTO == null) {
+            throw new BadRequestException("Problème lors de la création du type");
+          }
         }
+      } else {
+        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
       }
-    } else {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
-    }
-    offerDTO.getObject().setType(typeDTO);
+      offerDTO.getObject().setType(typeDTO);
   }
 
   /**
@@ -151,11 +163,17 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getOffers(String search, int idMember) {
-    dalService.startTransaction();
-    List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember);
-    if (offerDTO == null) {
+    List<OfferDTO> offerDTO = null;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getAll(search, idMember);
+      if (offerDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offre");
+      }
+    } catch (NotFoundException e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offre");
+      throw e;
     }
     dalService.commitTransaction();
     return offerDTO;
