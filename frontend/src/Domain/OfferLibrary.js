@@ -127,7 +127,7 @@ class OfferLibrary {
     return allLastOffers;
   }
 
-  async getOffers(searchPattern) {
+  async getOffers(searchPattern, self) {
     try {
       let options = {
         method: "GET",
@@ -136,9 +136,11 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").refreshToken
         },
       };
-      let userData = await fetch(
-          "/api/offers?search-pattern=" + searchPattern + "&self=true",
-          options);
+      let query = "/api/offers?search-pattern=" + searchPattern;
+      if (self) {
+        query += "&self=true";
+      }
+      let userData = await fetch(query, options);
       if (!userData.ok) {
         return false;
       }

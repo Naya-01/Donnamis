@@ -15,23 +15,23 @@ const MyObjectsPage = async () => {
 
   await searchBar("Mes objets", false, true, "Recherche un objet", true);
   const searchBarDiv = document.getElementById("searchBar");
-  await objectCard(searchBarDiv.value);
+  await objectCards(searchBarDiv.value);
   searchBarDiv.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
-      await objectCard(searchBarDiv.value);
+      await objectCards(searchBarDiv.value);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
-    await objectCard(searchBarDiv.value);
+    await objectCards(searchBarDiv.value);
   });
 
 }
 
-const objectCard = async (searchPattern) => {
+const objectCards = async (searchPattern) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern);
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true);
   memberCards.innerHTML = ``;
   for (const object of objects) {
     const buttonCardId = "button-card-" + object.memberId;
