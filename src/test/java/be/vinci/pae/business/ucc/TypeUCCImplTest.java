@@ -54,9 +54,9 @@ class TypeUCCImplTest {
     );
   }
 
-  @DisplayName("Test getType with id function with an inexistant id")
+  @DisplayName("Test getType with id function with a non-existent id")
   @Test
-  public void testGetTypeWithInexistantId(){
+  public void testGetTypeWithNonExistentId(){
     Mockito.when(mockTypeDAO.getOne(1000)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(1000)),
@@ -65,5 +65,15 @@ class TypeUCCImplTest {
     );
   }
 
+  @DisplayName("Test getType with typeName function with a non-existent name")
+  @Test
+  public void testGetTypeWithNonExistentName(){
+    Mockito.when(mockTypeDAO.getOne("non-existent Type")).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("non-existent Type")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
 
 }
