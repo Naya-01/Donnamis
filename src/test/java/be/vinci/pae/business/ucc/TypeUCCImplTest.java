@@ -6,6 +6,7 @@ import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.NotFoundException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,19 @@ class TypeUCCImplTest {
         () -> Mockito.verify(mockDalService).commitTransaction(),
         () -> Mockito.verify(mockDalService,Mockito.never()).rollBackTransaction()
     );
-
   }
+
+  @DisplayName("Test getType with id function with a negative id")
+  @Test
+  public void testGetTypeWithANegativeId(){
+    Mockito.when(mockTypeDAO.getOne(-1)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(-1)),
+        () -> Mockito.verify(mockDalService).startTransaction(),
+        () -> Mockito.verify(mockDalService).rollBackTransaction(),
+        () -> Mockito.verify(mockDalService,Mockito.never()).commitTransaction()
+    );
+  }
+
+
 }
