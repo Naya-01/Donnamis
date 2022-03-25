@@ -43,7 +43,7 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query += "AND (ob.status LIKE '%?%' OR of.time_slot LIKE '%?%') ";
+      query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?) ";
     }
     if (idMember != 0) {
       query += "AND ob.id_offeror = ?";
@@ -53,7 +53,7 @@ public class OfferDAOImpl implements OfferDAO {
       int argCounter = 1;
       if (searchPattern != null && !searchPattern.isEmpty()) {
         for (argCounter = 1; argCounter <= 2; argCounter++) {
-          preparedStatement.setString(argCounter, searchPattern);
+          preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
         }
       }
       if (idMember != 0) {
@@ -247,7 +247,6 @@ public class OfferDAOImpl implements OfferDAO {
 
         listOfferDTO.add(offerDTO);
       }
-      resultSet.close();
       return listOfferDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

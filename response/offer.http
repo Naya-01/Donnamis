@@ -21,7 +21,7 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ###
-GET {{baseUri}}/offers/all?search-pattern=t
+GET {{baseUri}}/offers?search-pattern=sam&self=true
 Authorization: {{refresh}}
 
 ###
@@ -81,5 +81,5 @@ Content-Type: application/json
 }
 
 ### get all offer
-GET {{baseUri}}/offers?search-pattern=&self=true
+GET {{baseUri}}/offers?search-pattern=samEdi&self=true
 Authorization: {{refresh}}
