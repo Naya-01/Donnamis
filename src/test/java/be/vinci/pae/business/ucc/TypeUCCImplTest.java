@@ -38,9 +38,8 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(mockRealType.getIdType())).thenReturn(mockRealType);
     assertAll(
         () -> assertEquals(typeUCC.getType(mockRealType.getIdType()), mockRealType),
-        () -> Mockito.verify(mockDalService).startTransaction(),
-        () -> Mockito.verify(mockDalService).commitTransaction(),
-        () -> Mockito.verify(mockDalService,Mockito.never()).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
 
@@ -50,9 +49,8 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(-1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(-1)),
-        () -> Mockito.verify(mockDalService).startTransaction(),
-        () -> Mockito.verify(mockDalService).rollBackTransaction(),
-        () -> Mockito.verify(mockDalService,Mockito.never()).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
 
