@@ -57,7 +57,7 @@ const MyObjectPage = async () => {
 
   // Get the id of the member
   let member = await memberLibrary.getUserByHisToken();
-  let idMemberConnected = member.user.memberId;
+  let idMemberConnected = member.memberId;
 
   // GET all interests
   let nbMembersInterested = 3; //TODO : request to have all interests

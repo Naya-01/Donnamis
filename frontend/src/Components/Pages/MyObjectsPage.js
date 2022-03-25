@@ -1,7 +1,7 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
-import profilImage from "../../img/profil.png";
+import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
 /**
@@ -15,13 +15,24 @@ const MyObjectsPage = async () => {
 
   await searchBar("Mes objets", false, true, "Recherche un objet", true);
   const searchBarDiv = document.getElementById("searchBar");
+  await objectCard(searchBarDiv.value);
+  searchBarDiv.addEventListener('keyup', async (e) => {
+    if (e.key === 'Enter') {
+      await objectCard(searchBarDiv.value);
+    }
+  });
 
-  // Create object cards
+  const searchButtonDiv = document.getElementById("searchButton");
+  searchButtonDiv.addEventListener('click', async () => {
+    await objectCard(searchBarDiv.value);
+  });
+
+}
+
+const objectCard = async (searchPattern) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchBarDiv.value);
-  console.log(objects)
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern);
   memberCards.innerHTML = ``;
-
   for (const object of objects) {
     const buttonCardId = "button-card-" + object.memberId;
 
@@ -34,8 +45,8 @@ const MyObjectsPage = async () => {
 
     const profileImage = document.createElement("img");
     profileImage.className = "img-thumbnail";
-    profileImage.src = profilImage;
-    profileImage.alt = "profile image"
+    profileImage.src = itemImage;
+    profileImage.alt = "item image"
     profileImageDiv.appendChild(profileImage);
 
     divCard.appendChild(profileImageDiv);
@@ -45,9 +56,8 @@ const MyObjectsPage = async () => {
 
     const memberBaseInformationSpan = document.createElement("span");
     memberBaseInformationSpan.className = "fs-4";
-    memberBaseInformationSpan.innerText =  "" + object.object.type.typeName + ": " + object.object.description;
-
-
+    memberBaseInformationSpan.innerText = "" + object.object.type.typeName
+        + ": " + object.object.description;
 
     const memberAddressInformationSpan = document.createElement("span")
     memberAddressInformationSpan.className = "text-secondary fs-5";
@@ -75,7 +85,6 @@ const MyObjectsPage = async () => {
 
     memberCards.appendChild(divCard);
   }
-
 }
 
 export default MyObjectsPage;

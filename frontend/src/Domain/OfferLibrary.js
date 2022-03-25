@@ -137,7 +137,7 @@ class OfferLibrary {
         },
       };
       let userData = await fetch(
-          "/api/offers/search-pattern=" + searchPattern,
+          "/api/offers?search-pattern=" + searchPattern + "&self=true",
           options);
       if (!userData.ok) {
         return false;
