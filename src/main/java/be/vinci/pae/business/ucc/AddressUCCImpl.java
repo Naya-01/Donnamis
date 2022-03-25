@@ -21,11 +21,17 @@ public class AddressUCCImpl implements AddressUCC {
    */
   @Override
   public AddressDTO updateOne(AddressDTO addressDTO) {
-    dalService.startTransaction();
-    AddressDTO addressDTOReturned = addressDAO.updateOne(addressDTO);
-    if (addressDTOReturned == null) {
+    AddressDTO addressDTOReturned;
+    try {
+      dalService.startTransaction();
+      addressDTOReturned = addressDAO.updateOne(addressDTO);
+      if (addressDTOReturned == null) {
+        dalService.rollBackTransaction();
+        throw new BadRequestException("Adresse non mise à jour");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new BadRequestException("Adresse non mise à jour");
+      throw e;
     }
     dalService.commitTransaction();
     return addressDTOReturned;
