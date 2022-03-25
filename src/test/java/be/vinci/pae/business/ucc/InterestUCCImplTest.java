@@ -15,6 +15,7 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class InterestUCCImplTest {
@@ -94,13 +95,18 @@ class InterestUCCImplTest {
     );
   }
 
-  @DisplayName("")
+  @DisplayName("test addOne with a good interest")
   @Test
   public void testAddOneWithAGoodInterest(){
     Mockito.when(newMockInterestDTO.getIdObject()).thenReturn(10);
     Mockito.when(newMockInterestDTO.getIdMember()).thenReturn(1);
     Mockito.when(newMockInterestDTO.getAvailabilityDate()).thenReturn(LocalDate.now());
-
+    assertAll(
+        () -> assertEquals(newMockInterestDTO, interestUCC.addOne(newMockInterestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).addOne(newMockInterestDTO),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
   }
 
 }
