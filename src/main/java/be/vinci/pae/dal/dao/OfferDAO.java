@@ -6,12 +6,13 @@ import java.util.List;
 public interface OfferDAO {
 
   /**
-   * Get all offers that match with the search pattern.
+   * Get all offers.
    *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of offerDTO
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param idMember      the member id if you want only your offers (0 -> all)
+   * @return list of offers
    */
-  List<OfferDTO> getAll(String searchPattern);
+  List<OfferDTO> getAll(String searchPattern, int idMember);
 
   /**
    * Get the last six offers posted.

@@ -20,8 +20,7 @@ public class AdminRequestFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    String token = requestContext.getHeaderString("Authorization");
-    MemberDTO memberDTO = tokenManager.verifyToken(token);
+    MemberDTO memberDTO = tokenManager.verifyToken(requestContext.getHeaderString("Authorization"));
     if (memberDTO == null || !memberDTO.getRole().equals("administrator")) {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED)
           .entity("Vous n'êtes pas administrateur pour accéder à cette ressource").build());

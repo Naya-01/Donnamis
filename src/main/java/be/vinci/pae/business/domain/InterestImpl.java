@@ -1,13 +1,20 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.time.LocalDate;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class InterestImpl implements InterestDTO {
-
+  @JsonView(Views.Public.class)
   private int idObject;
+  @JsonView(Views.Public.class)
   private int idMember;
+  @JsonView(Views.Public.class)
   private LocalDate availabilityDate;
+  @JsonView(Views.Public.class)
   private String status;
 
   @Override

@@ -2,7 +2,6 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -21,11 +20,8 @@ public class MemberDAOImpl implements MemberDAO {
   private DALBackendService dalBackendService;
   @Inject
   private MemberFactory memberFactory;
-
   @Inject
   private AddressDAO addressDAO;
-  @Inject
-  private AddressFactory addressFactory;
 
   /**
    * Get a member we want to retrieve by his username.
@@ -36,19 +32,19 @@ public class MemberDAOImpl implements MemberDAO {
   @Override
   public MemberDTO getOne(String username) {
     String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason, image FROM donnamis.members WHERE LOWER(username) = ?";
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
-    try {
+        + "password, refusal_reason, image FROM donnamis.members WHERE username = ?";
 
-      preparedStatement.setString(1, username.toLowerCase());
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
+      preparedStatement.setString(1, username);
+      List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
+      if (memberDTOList.size() != 1) {
+        return null;
+      }
+      return memberDTOList.get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
-    if (memberDTOList.size() != 1) {
-      return null;
-    }
-    return memberDTOList.get(0);
   }
 
   /**
@@ -58,89 +54,20 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member
    */
   public MemberDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_member, username, lastname, firstname, status, role, phone_number, password, "
-            + "refusal_reason, image FROM donnamis.members WHERE id_member = ?");
-    try {
+    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image FROM donnamis.members WHERE id_member = ?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
-    if (memberDTOList.size() != 1) {
-      return null;
-    }
-    return memberDTOList.get(0);
-  }
-
-  /**
-   * Make a memberDTO with the result set.
-   *
-   * @param preparedStatement : a prepared statement to execute the query.
-   * @return the member.
-   */
-  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAddress) {
-    List<MemberDTO> memberDTOList = new ArrayList<>();
-    try {
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      while (resultSet.next()) {
-        MemberDTO memberDTO = getMember(resultSet.getInt(1), resultSet.getString(2),
-            resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
-            resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
-            resultSet.getString(9), resultSet.getString(10));
-
-        if (hasAddress) {
-          AddressDTO addressDTO = addressFactory.getAddressDTO();
-          addressDAO.setAddress(addressDTO, resultSet.getInt(11),
-              resultSet.getString(12), resultSet.getString(13),
-              resultSet.getString(14), resultSet.getString(15),
-              resultSet.getString(16), resultSet.getString(17));
-          memberDTO.setAddress(addressDTO);
-        }
-        memberDTOList.add(memberDTO);
+      List<MemberDTO> memberDTOList = getMemberList(preparedStatement, false);
+      if (memberDTOList.size() != 1) {
+        return null;
       }
-      resultSet.close();
-      preparedStatement.close();
-      return memberDTOList;
+      return memberDTOList.get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
   }
-
-  /**
-   * Create a memberDTO objet from fields.
-   *
-   * @param memberId      : id of member
-   * @param username      : username of member
-   * @param lastName      : lastname of member
-   * @param firstname     : firstname of member
-   * @param status        : status of member
-   * @param role          : role of member
-   * @param phone         : phone of member
-   * @param password      : password of member
-   * @param reasonRefusal : reason of why member couldn't be confirmed
-   * @param image         : profil picture of member
-   * @return member as a memberDTO
-   */
-  private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
-      String status, String role, String phone, String password, String reasonRefusal,
-      String image) {
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(memberId);
-    memberDTO.setUsername(username);
-    memberDTO.setLastname(lastName);
-    memberDTO.setFirstname(firstname);
-    memberDTO.setStatus(status);
-    memberDTO.setRole(role);
-    memberDTO.setPhone(phone);
-    memberDTO.setPassword(password);
-    memberDTO.setReasonRefusal(reasonRefusal);
-    memberDTO.setImage(image);
-    return memberDTO;
-  }
-
 
   /**
    * Add a member in the DB and make a memberDTO.
@@ -150,10 +77,12 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO createOneMember(MemberDTO member) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement("insert into "
-        + "donnamis.members (username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) RETURNING id_member;");
-    try {
+    String query = "INSERT INTO donnamis.members (username, lastname, firstname, status, role, "
+        + "phone_number, password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) "
+        + "RETURNING id_member, username, lastname, firstname, status, role, phone_number, "
+        + "password, refusal_reason, image";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, member.getUsername());
       preparedStatement.setString(2, member.getLastname());
       preparedStatement.setString(3, member.getFirstname());
@@ -164,23 +93,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(8, member.getReasonRefusal());
       preparedStatement.setString(9, member.getImage());
 
-      preparedStatement.executeQuery();
-
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        throw new FatalException("Le membre n'a pas pû être ajouté à la base de"
-            + " données");
-      }
-
-      //get id of new member
-      int idNewMember = resultSet.getInt(1);
-
-      //update memberDTO
-      member.setMemberId(idNewMember);
-      preparedStatement.close();
-      resultSet.close();
-      return member;
-
+      return getMemberList(preparedStatement, false).get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -197,7 +110,6 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public List<MemberDTO> getAll(String search, String status) {
-    boolean hasSearch = false;
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
             + "m.phone_number, m.password, m.refusal_reason, m.image, a.id_member, a.unit_number, "
@@ -215,21 +127,18 @@ public class MemberDAOImpl implements MemberDAO {
       query += "AND m.status = 'valid' ";
     }
     if (search != null && !search.isEmpty()) {
-      hasSearch = true;
       query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? "
           + "OR lower(m.username) LIKE ?)";
     }
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
-      if (hasSearch) {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      if (search != null && !search.isEmpty()) {
         for (int i = 1; i <= 3; i++) {
           preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
         }
       }
       return getMemberList(preparedStatement, true);
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-      return null;
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
   }
 
@@ -281,21 +190,23 @@ public class MemberDAOImpl implements MemberDAO {
     }
 
     query = query.substring(0, query.length() - 1);
+    if (query.endsWith("SET")) {
+      return null;
+    }
     query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
         + "role, phone_number, password, refusal_reason, image";
 
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
       int cnt = 1;
       for (String str : memberDTODeque) {
         preparedStatement.setString(cnt++, str);
       }
-
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
+
       return getMemberList(preparedStatement, false).get(0);
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-      return null;
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
   }
 
@@ -317,5 +228,72 @@ public class MemberDAOImpl implements MemberDAO {
       e.printStackTrace();
     }
     return getOne(id);
+  }
+
+  /**
+   * Make a memberDTO with the result set.
+   *
+   * @param preparedStatement : a prepared statement to execute the query with these attributes :
+   *                          id_member, username, lastname, firstname, status, role, phone_number,
+   *                          password, refusal_reason, image
+   * @return the member.
+   */
+  private List<MemberDTO> getMemberList(PreparedStatement preparedStatement, boolean hasAdress) {
+    List<MemberDTO> memberDTOList = new ArrayList<>();
+    try {
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      while (resultSet.next()) {
+        MemberDTO memberDTO = getMember(resultSet.getInt(1), resultSet.getString(2),
+            resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
+            resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
+            resultSet.getString(9), resultSet.getString(10));
+
+        if (hasAdress) {
+          AddressDTO addressDTO = addressDAO.getAddress(resultSet.getInt(11),
+              resultSet.getString(12), resultSet.getString(13),
+              resultSet.getString(14), resultSet.getString(15),
+              resultSet.getString(16), resultSet.getString(17));
+          memberDTO.setAddress(addressDTO);
+        }
+        memberDTOList.add(memberDTO);
+      }
+      return memberDTOList;
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
+  /**
+   * Create a MemberDTO ith all attributes.
+   *
+   * @param memberId      the member id
+   * @param username      the username
+   * @param lastName      the lastname
+   * @param firstname     the firstname
+   * @param status        the status
+   * @param role          the role
+   * @param phone         the phone
+   * @param password      the password
+   * @param reasonRefusal the refusal reason
+   * @param image         the image
+   * @return a memberDTO
+   */
+  private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
+      String status, String role, String phone, String password, String reasonRefusal,
+      String image) {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(memberId);
+    memberDTO.setUsername(username);
+    memberDTO.setLastname(lastName);
+    memberDTO.setFirstname(firstname);
+    memberDTO.setStatus(status);
+    memberDTO.setRole(role);
+    memberDTO.setPhone(phone);
+    memberDTO.setPassword(password);
+    memberDTO.setReasonRefusal(reasonRefusal);
+    memberDTO.setImage(image);
+    return memberDTO;
   }
 }
