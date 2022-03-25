@@ -79,4 +79,15 @@ class TypeUCCImplTest {
     );
   }
 
+  @DisplayName("Test getType with typeName function with an existent name")
+  @Test
+  public void testGetTypeWithExistentName() {
+    Mockito.when(mockTypeDAO.getOne(mockRealType.getTypeName())).thenReturn(mockRealType);
+    assertAll(
+        () -> assertEquals(mockRealType, typeUCC.getType(mockRealType.getTypeName())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
 }
