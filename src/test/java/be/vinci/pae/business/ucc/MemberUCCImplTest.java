@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
-import be.vinci.pae.business.domain.AddressImpl;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.AddressFactory;
+import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.services.DALService;
@@ -37,26 +38,28 @@ class MemberUCCImplTest {
   private AddressDAO mockAddressDAO;
   private Member mockMember;
   private DALService mockDalService;
+  private AddressFactory addressFactory;
+  private MemberFactory memberFactory;
 
-  private Member getMemberToRegister() {
+  private MemberDTO getMemberToRegister() {
     // member to register
-    AddressDTO newAddress = Mockito.mock(AddressImpl.class);
-    Mockito.when(newAddress.getIdMember()).thenReturn(0);
-    Mockito.when(newAddress.getUnitNumber()).thenReturn("4");
-    Mockito.when(newAddress.getBuildingNumber()).thenReturn("2");
-    Mockito.when(newAddress.getStreet()).thenReturn("Rue de l'aérosol");
-    Mockito.when(newAddress.getPostcode()).thenReturn("1234");
-    Mockito.when(newAddress.getCommune()).thenReturn("Wolluwe");
-    Mockito.when(newAddress.getCountry()).thenReturn("Belgique");
+    AddressDTO newAddress = addressFactory.getAddressDTO();
+    newAddress.setIdMember(0);
+    newAddress.setUnitNumber("4");
+    newAddress.setBuildingNumber("2");
+    newAddress.setStreet("Rue de l'aérosol");
+    newAddress.setPostcode("1234");
+    newAddress.setCommune("Wolluwe");
+    newAddress.setCountry("Belgique");
 
-    Member newMember = Mockito.mock(MemberImpl.class);
-    Mockito.when(newMember.getMemberId()).thenReturn(0);
-    Mockito.when(newMember.getUsername()).thenReturn("MatthieuDu42");
-    Mockito.when(newMember.getLastname()).thenReturn("Du bois");
-    Mockito.when(newMember.getFirstname()).thenReturn("Matthieu");
-    Mockito.when(newMember.getPhone()).thenReturn("0412345678");
-    Mockito.when(newMember.getPassword()).thenReturn("matthieuLeChien");
-    Mockito.when(newMember.getAddress()).thenReturn(newAddress);
+    MemberDTO newMember = memberFactory.getMemberDTO();
+    newMember.setMemberId(0);
+    newMember.setUsername("MatthieuDu42");
+    newMember.setLastname("Du bois");
+    newMember.setFirstname("Matthieu");
+    newMember.setPhone("0412345678");
+    newMember.setPassword("matthieuLeChien");
+    newMember.setAddress(newAddress);
 
     return newMember;
   }
@@ -68,6 +71,8 @@ class MemberUCCImplTest {
     this.mockMemberDAO = locator.getService(MemberDAO.class);
     this.mockAddressDAO = locator.getService(AddressDAO.class);
     this.mockDalService = locator.getService(DALService.class);
+    this.addressFactory = locator.getService(AddressFactory.class);
+    this.memberFactory = locator.getService(MemberFactory.class);
     this.mockMember = Mockito.mock(MemberImpl.class);
 
     Mockito.when(mockMember.getUsername()).thenReturn(username);
@@ -230,13 +235,13 @@ class MemberUCCImplTest {
   @DisplayName("Test inscription tout va bien")
   @Test
   public void testRegisterSuccess() {
-    Member newMember = this.getMemberToRegister();
+    MemberDTO newMember = this.getMemberToRegister();
 
-    Member memberFromCreateOneDao = this.getMemberToRegister();
-    Mockito.when(memberFromCreateOneDao.getMemberId()).thenReturn(6);
+    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    memberFromCreateOneDao.setMemberId(6);
 
     AddressDTO addressFromCreateOneDao = memberFromCreateOneDao.getAddress();
-    Mockito.when(addressFromCreateOneDao.getIdMember()).thenReturn(6);
+    addressFromCreateOneDao.setIdMember(6);
 
     Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
     Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);

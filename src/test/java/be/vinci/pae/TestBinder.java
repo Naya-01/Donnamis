@@ -6,6 +6,8 @@ import be.vinci.pae.business.domain.TypeImpl;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.factories.AddressFactory;
+import be.vinci.pae.business.factories.AddressFactoryImpl;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.InterestFactoryImpl;
 import be.vinci.pae.business.factories.MemberFactory;
@@ -16,7 +18,6 @@ import be.vinci.pae.business.ucc.InterestUCC;
 import be.vinci.pae.business.ucc.InterestUCCImpl;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.business.ucc.MemberUCCImpl;
-import be.vinci.pae.business.ucc.ObjectUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
@@ -44,6 +45,8 @@ public class TestBinder extends AbstractBinder {
     bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
     bind(TypeFactoryImpl.class).to(TypeFactory.class).in(Singleton.class);
     bind(InterestFactoryImpl.class).to(InterestFactory.class).in(Singleton.class);
+    bind(AddressFactoryImpl.class).to(AddressFactory.class).in(Singleton.class);
+    bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
 
     bind(Mockito.mock(DALServiceImpl.class)).to(DALService.class);
 
