@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -491,6 +492,27 @@ class MemberUCCImplTest {
             .updateMember(nonExistentMemberInDB)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test update member succès")
+  @Test
+  public void testUpdateMemberSuccess() {
+    MemberDTO existentMemberInDB = getMemberNewMember();
+    existentMemberInDB.setMemberId(5);
+
+    MemberDTO existentMemberInDBUpdated = getMemberNewMember();
+    existentMemberInDBUpdated.setMemberId(5);
+    existentMemberInDBUpdated.setUsername("lol");
+
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
+    assertAll(
+        () -> assertEquals(existentMemberInDB.getMemberId(),
+            memberUCC.updateMember(existentMemberInDB).getMemberId()),
+        () -> assertNotEquals(existentMemberInDB.getUsername(),
+            memberUCC.updateMember(existentMemberInDB).getUsername()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 }
