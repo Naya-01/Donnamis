@@ -481,7 +481,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test update member avec un membre ayant ses attributs par défaut")
+  @DisplayName("Test update member avec un membre qui n'est pas dans la DB")
   @Test
   public void testUpdateMemberNonExistentInDB() {
     MemberDTO nonExistentMemberInDB = getMemberNewMember();
