@@ -92,10 +92,16 @@ class MemberUCCImplTest {
 
     this.memberPending1 = getMemberNewMember();
     this.memberPending1.setStatus(statusPending);
+
     this.memberPending2 = getMemberNewMember();
     this.memberPending2.setStatus(statusPending);
+    this.memberPending2.setMemberId(1);
+    this.memberPending2.setUsername("Marc");
+
     this.memberValid1 = getMemberNewMember();
     this.memberValid1.setStatus(statusValid);
+    this.memberValid1.setMemberId(2);
+    this.memberValid1.setUsername("Michel");
 
   }
 
@@ -383,7 +389,7 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche de membre avec status et recherche vide")
+  @DisplayName("Test recherche avec aucun membre retourné par le DAO")
   @Test
   public void testSearchMembersEmptyReturnListFromDAO() {
     List<MemberDTO> allDeniedMemberDTOList = List.of();
@@ -394,6 +400,22 @@ class MemberUCCImplTest {
             .searchMembers("", "denied")),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+
+  }
+
+  @DisplayName("Test recherche avec status waiting")
+  @Test
+  public void testSearchWaitingStatus() {
+    List<MemberDTO> allWaitingMemberDTOList = List.of(memberPending1, memberPending2);
+
+    Mockito.when(mockMemberDAO.getAll("", "waiting"))
+        .thenReturn(allWaitingMemberDTOList);
+    assertAll(
+        () -> assertEquals(allWaitingMemberDTOList, memberUCC
+            .searchMembers("", "waiting")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
 
   }
