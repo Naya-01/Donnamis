@@ -383,4 +383,19 @@ class MemberUCCImplTest {
 
   }
 
+  @DisplayName("Test recherche de membre avec status et recherche vide")
+  @Test
+  public void testSearchMembersEmptyReturnListFromDAO() {
+    List<MemberDTO> allDeniedMemberDTOList = List.of();
+
+    Mockito.when(mockMemberDAO.getAll("", "denied")).thenReturn(allDeniedMemberDTOList);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> memberUCC
+            .searchMembers("", "denied")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+
+  }
+
 }
