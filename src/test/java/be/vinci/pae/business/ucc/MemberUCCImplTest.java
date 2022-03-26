@@ -5,9 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
+import be.vinci.pae.business.domain.AddressImpl;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.MemberImpl;
+import be.vinci.pae.business.domain.dto.AddressDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
+import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -29,14 +34,41 @@ class MemberUCCImplTest {
   private final String statusPending = "pending";
   private MemberUCC memberUCC;
   private MemberDAO mockMemberDAO;
+  private AddressDAO mockAddressDAO;
   private Member mockMember;
+  private DALService mockDalService;
+
+  private Member getMemberToRegister() {
+    // member to register
+    AddressDTO newAddress = Mockito.mock(AddressImpl.class);
+    Mockito.when(newAddress.getIdMember()).thenReturn(0);
+    Mockito.when(newAddress.getUnitNumber()).thenReturn("4");
+    Mockito.when(newAddress.getBuildingNumber()).thenReturn("2");
+    Mockito.when(newAddress.getStreet()).thenReturn("Rue de l'aérosol");
+    Mockito.when(newAddress.getPostcode()).thenReturn("1234");
+    Mockito.when(newAddress.getCommune()).thenReturn("Wolluwe");
+    Mockito.when(newAddress.getCountry()).thenReturn("Belgique");
+
+    Member newMember = Mockito.mock(MemberImpl.class);
+    Mockito.when(newMember.getMemberId()).thenReturn(0);
+    Mockito.when(newMember.getUsername()).thenReturn("MatthieuDu42");
+    Mockito.when(newMember.getLastname()).thenReturn("Du bois");
+    Mockito.when(newMember.getFirstname()).thenReturn("Matthieu");
+    Mockito.when(newMember.getPhone()).thenReturn("0412345678");
+    Mockito.when(newMember.getPassword()).thenReturn("matthieuLeChien");
+    Mockito.when(newMember.getAddress()).thenReturn(newAddress);
+
+    return newMember;
+  }
 
   @BeforeEach
   void initAll() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
-    mockMember = Mockito.mock(MemberImpl.class);
+    this.mockAddressDAO = locator.getService(AddressDAO.class);
+    this.mockDalService = locator.getService(DALService.class);
+    this.mockMember = Mockito.mock(MemberImpl.class);
 
     Mockito.when(mockMember.getUsername()).thenReturn(username);
     Mockito.when(mockMember.getPassword()).thenReturn(passwd1);
@@ -44,6 +76,8 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(username)).thenReturn(mockMember);
     Mockito.when(mockMemberDAO.getOne(1)).thenReturn(mockMember);
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
+
+
   }
 
   @DisplayName("Test login function with a good username, a good password, a valid member that "
@@ -174,5 +208,55 @@ class MemberUCCImplTest {
   public void testGetMemberFunctionWithNonExistentIdPositive() {
     Mockito.when(mockMemberDAO.getOne(100)).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.getMember(100));
+  }
+
+  //  ----------------------------  UPDATE PROFIL PICTURE UCC  -------------------------------  //
+
+  //FINIR L UCC UPDATE PROFIL PICTURE
+  @DisplayName("Test updateProfilPicture with a non existent id for member")
+  @Test
+  public void testUpdateProfilPictureForNonExistentMember() {
+    int idMember = 1000;
+    Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> memberUCC.updateProfilPicture("C:/img", idMember)),
+        () -> Mockito.verify(mockMemberDAO).getOne(idMember)
+    );
+  }
+
+  //  -----------------------------  REGISTER UCC  ----------------------------------------  //
+
+  @DisplayName("Test inscription tout va bien")
+  @Test
+  public void testRegisterSuccess() {
+    Member newMember = this.getMemberToRegister();
+
+    Member memberFromCreateOneDao = this.getMemberToRegister();
+    Mockito.when(memberFromCreateOneDao.getMemberId()).thenReturn(6);
+
+    AddressDTO addressFromCreateOneDao = memberFromCreateOneDao.getAddress();
+    Mockito.when(addressFromCreateOneDao.getIdMember()).thenReturn(6);
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);
+
+    Mockito.when(mockAddressDAO.createOne(newMember.getAddress()))
+        .thenReturn(addressFromCreateOneDao);
+
+    MemberDTO memberRegistered = memberUCC.register(newMember);
+
+    assertAll(
+        () -> assertEquals(6, memberRegistered.getMemberId()),
+        () -> assertEquals(memberRegistered.getMemberId(),
+            memberRegistered.getAddress().getIdMember()),
+        () -> assertEquals(memberFromCreateOneDao, memberRegistered),
+        () -> assertEquals(addressFromCreateOneDao, memberRegistered.getAddress()),
+        () -> Mockito.verify(mockMemberDAO).getOne(newMember.getUsername()),
+        () -> Mockito.verify(mockMemberDAO).createOneMember(newMember),
+        () -> Mockito.verify(mockAddressDAO).createOne(newMember.getAddress()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
   }
 }
