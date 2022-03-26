@@ -317,4 +317,40 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test inscription avec champs pouvant êtres null (tel (member) et boite (address))")
+  @Test
+  public void testRegisterNullFields() {
+    MemberDTO newMember = this.getMemberToRegister();
+    newMember.setPhone(null);
+    newMember.getAddress().setUnitNumber(null);
+
+    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    memberFromCreateOneDao.setMemberId(6);
+    memberFromCreateOneDao.setPhone(null);
+
+    AddressDTO addressFromCreateOneDao = memberFromCreateOneDao.getAddress();
+    addressFromCreateOneDao.setIdMember(6);
+    addressFromCreateOneDao.setUnitNumber(null);
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);
+
+    Mockito.when(mockAddressDAO.createOne(newMember.getAddress()))
+        .thenReturn(addressFromCreateOneDao);
+
+    MemberDTO memberRegistered = memberUCC.register(newMember);
+
+    assertAll(
+        () -> assertEquals(6, memberRegistered.getMemberId()),
+        () -> assertEquals(memberRegistered.getMemberId(),
+            memberRegistered.getAddress().getIdMember()),
+        () -> assertEquals(memberFromCreateOneDao, memberRegistered),
+        () -> assertEquals(addressFromCreateOneDao, memberRegistered.getAddress()),
+        () -> assertNull(newMember.getPhone()),
+        () -> assertNull(newMember.getAddress().getUnitNumber()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
