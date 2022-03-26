@@ -28,6 +28,7 @@ class ObjectUCCImplTest {
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
   private int inexistentId = 1000;
+  private String pathImage = "C:/img";
 
   @BeforeEach
   void initAll() {
@@ -148,6 +149,25 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
+
+  @DisplayName("test updateOne with existent object that has no image")
+  @Test
+  public void updateObjectPictureWithExistentObjectThatHasNoImage() {
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    assertAll(
+        () -> assertEquals(objectDTO, objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .updateObjectPicture(pathImage, objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+
 
 
 
