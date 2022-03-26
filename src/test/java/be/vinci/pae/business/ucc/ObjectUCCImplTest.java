@@ -10,6 +10,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.utils.Config;
 import java.util.ArrayList;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -47,6 +48,7 @@ class ObjectUCCImplTest {
     this.objectDTOUpdated.setDescription("the description2");
     this.objectDTOUpdated.setIdOfferor(1);
     this.objectDTOUpdated.setStatus("available");
+    Config.load("prod.properties");
   }
 
   @DisplayName("test getObject with an existent id")
@@ -153,6 +155,24 @@ class ObjectUCCImplTest {
   @DisplayName("test updateOne with existent object that has no image")
   @Test
   public void updateObjectPictureWithExistentObjectThatHasNoImage() {
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    assertAll(
+        () -> assertEquals(objectDTO, objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .updateObjectPicture(pathImage, objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+  @DisplayName("test updateOne with existent object that has an image")
+  @Test
+  public void updateObjectPictureWithExistentObjectThatHasAnImage() {
+    objectDTO.setImage("C:/img2");
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
         .thenReturn(objectDTO);

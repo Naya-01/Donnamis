@@ -36,6 +36,7 @@ import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.dal.services.DALServiceImpl;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -70,5 +71,7 @@ public class TestBinder extends AbstractBinder {
     bind(Mockito.mock(ObjectImpl.class)).to(ObjectDTO.class);
 
     bind(Mockito.mock(TypeImpl.class)).to(TypeDTO.class);
+
+    bind(Mockito.mock(Config.class)).to(Config.class);
   }
 }
