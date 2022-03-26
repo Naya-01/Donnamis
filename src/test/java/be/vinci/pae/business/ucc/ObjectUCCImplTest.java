@@ -1,7 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.TypeDAO;
