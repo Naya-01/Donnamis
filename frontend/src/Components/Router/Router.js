@@ -11,8 +11,8 @@ import {
 } from "../../utils/session";
 import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
 import AllObjectsPage from "../Pages/AllObjectsPage";
-import ObjectDetails from "../Pages/ObjectDetails";
 import RegisterPage from "../Pages/RegisterPage";
+import MyObjectsPage from "../Pages/MyObjectsPage";
 
 // Configure your routes here
 const routes = {
@@ -20,11 +20,11 @@ const routes = {
   "/addNewObjectPage": AddNewObjectPage,
   "/registrationManagement": RegistrationManagementPage,
   "/objects": AllObjectsPage,
-  "/detailsObject": ObjectDetails,
   "/login": LoginPage,
   "/logout": Logout,
   "/register": RegisterPage,
-  "/myObjectPage": MyObjectPage
+  "/myObjectPage": MyObjectPage,
+  "/myObjectsPage": MyObjectsPage
 };
 
 const refreshToken = async () => {

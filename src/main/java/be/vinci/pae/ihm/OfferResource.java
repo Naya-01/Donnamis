@@ -1,5 +1,6 @@
 package be.vinci.pae.ihm;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -29,18 +30,25 @@ public class OfferResource {
   private OfferUCC offerUcc;
 
   /**
-   * Get all the offers that matche with a search pattern.
+   * Get all offers.
    *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of all offerDTO that match with the search pattern
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param selfStr       if you want your offers
+   * @param request       information of the member
+   * @return list of offers
    */
   @GET
-  @Path("/all")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getOffers(
-      @DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
-    return offerUcc.getAllPosts(searchPattern);
+      @DefaultValue("") @QueryParam("search-pattern") String searchPattern,
+      @DefaultValue("") @QueryParam("self") String selfStr, @Context ContainerRequest request) {
+    int idOffer = 0;
+    if (selfStr.equals("true")) {
+      MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+      idOffer = memberDTO.getMemberId();
+    }
+    return offerUcc.getOffers(searchPattern, idOffer);
   }
 
   /**

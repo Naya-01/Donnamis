@@ -51,7 +51,7 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getStatus().equals("pending")) {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
-    } catch (NotFoundException | ForbiddenException | UnauthorizedException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -69,19 +69,27 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO updateProfilPicture(String path, int id) {
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO == null) {
-      throw new NotFoundException("Member not found");
-    }
-
-    if (memberDTO.getImage() != null) {
-      File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
-      if (f.exists()) {
-        f.delete();
+    MemberDTO memberDTO;
+    try {
+      dalService.startTransaction();
+      memberDTO = memberDAO.getOne(id);
+      if (memberDTO == null) {
+        throw new NotFoundException("Member not found");
       }
 
+      if (memberDTO.getImage() != null) {
+        File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
+        if (f.exists()) {
+          f.delete();
+        }
+
+      }
+      memberDTO = memberDAO.updateProfilPicture(path, id);
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
     }
-    memberDTO = memberDAO.updateProfilPicture(path, id);
+    dalService.commitTransaction();
     return memberDTO;
   }
 
@@ -93,11 +101,17 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO getMember(int id) {
-    dalService.startTransaction();
-    MemberDTO memberDTO = memberDAO.getOne(id);
-    if (memberDTO == null) {
+    MemberDTO memberDTO;
+    try {
+      dalService.startTransaction();
+      memberDTO = memberDAO.getOne(id);
+      if (memberDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Member not found");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Member not found");
+      throw e;
     }
     dalService.commitTransaction();
     return memberDTO;
@@ -146,7 +160,7 @@ public class MemberUCCImpl implements MemberUCC {
       //add the address
       AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
       memberFromDao.setAddress(addressDTO);
-    } catch (ConflictException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -164,11 +178,17 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public List<MemberDTO> searchMembers(String search, String status) {
-    dalService.startTransaction();
-    List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
-    if (memberDTOList == null || memberDTOList.isEmpty()) {
+    List<MemberDTO> memberDTOList;
+    try {
+      dalService.startTransaction();
+      memberDTOList = memberDAO.getAll(search, status);
+      if (memberDTOList == null || memberDTOList.isEmpty()) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucun membre");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucun membre");
+      throw e;
     }
     dalService.commitTransaction();
     return memberDTOList;
@@ -182,11 +202,17 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO updateMember(MemberDTO memberDTO) {
-    dalService.startTransaction();
-    MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
-    if (modifierMemberDTO == null) {
+    MemberDTO modifierMemberDTO;
+    try {
+      dalService.startTransaction();
+      modifierMemberDTO = memberDAO.updateOne(memberDTO);
+      if (modifierMemberDTO == null) {
+        dalService.rollBackTransaction();
+        throw new ForbiddenException("Problem with updating member");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new ForbiddenException("Problem with updating member");
+      throw e;
     }
     dalService.commitTransaction();
     return modifierMemberDTO;

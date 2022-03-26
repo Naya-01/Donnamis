@@ -79,3 +79,7 @@ Content-Type: application/json
     }
   }
 }
+
+### get all offer
+GET {{baseUri}}/offers?search-pattern=&self=true
+Authorization: {{refresh}}

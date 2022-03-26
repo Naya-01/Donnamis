@@ -20,8 +20,7 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) {
-    String token = requestContext.getHeaderString("Authorization");
-    MemberDTO memberDTO = tokenManager.verifyToken(token);
+    MemberDTO memberDTO = tokenManager.verifyToken(requestContext.getHeaderString("Authorization"));
     if (memberDTO == null) {
       requestContext.abortWith(Response.status(Status.UNAUTHORIZED)
           .entity("A token is needed to access this resource").build());

@@ -10,7 +10,6 @@ import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
 
 public class OfferUCCImpl implements OfferUCC {
@@ -25,35 +24,23 @@ public class OfferUCCImpl implements OfferUCC {
   private DALService dalService;
 
   /**
-   * Get all the offers that matche with a search pattern.
-   *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of all offerDTO that match with the search pattern
-   */
-  @Override
-  public List<OfferDTO> getAllPosts(String searchPattern) {
-    dalService.startTransaction();
-    List<OfferDTO> offers = offerDAO.getAll(searchPattern);
-    if (offers.isEmpty()) {
-      dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
-    }
-    dalService.commitTransaction();
-    return offers;
-  }
-
-  /**
    * Get the last six offers posted.
    *
    * @return a list of six offerDTO
    */
   @Override
   public List<OfferDTO> getLastOffers() {
-    dalService.startTransaction();
-    List<OfferDTO> offers = offerDAO.getAllLast();
-    if (offers.isEmpty()) {
+    List<OfferDTO> offers;
+    try {
+      dalService.startTransaction();
+      offers = offerDAO.getAllLast();
+      if (offers.isEmpty()) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offres");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
+      throw e;
     }
     dalService.commitTransaction();
     return offers;
@@ -67,11 +54,17 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO getOfferById(int idOffer) {
-    dalService.startTransaction();
-    OfferDTO offerDTO = offerDAO.getOne(idOffer);
-    if (offerDTO == null) {
+    OfferDTO offerDTO;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getOne(idOffer);
+      if (offerDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offres");
+      }
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Aucune offres");
+      throw e;
     }
     dalService.commitTransaction();
     return offerDTO;
@@ -100,7 +93,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer.getIdOffer() == 0) {
         throw new BadRequestException("Problème lors de la création d'une offre");
       }
-    } catch (BadRequestException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -130,7 +123,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (objectDTO == null) {
         throw new BadRequestException("Problème lors de la mise à jour de l'objet");
       }
-    } catch (WebApplicationException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -158,5 +151,30 @@ public class OfferUCCImpl implements OfferUCC {
       typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
     }
     offerDTO.getObject().setType(typeDTO);
+  }
+
+  /**
+   * Get all offers.
+   *
+   * @param search   the search pattern (empty -> all) according to their type, description
+   * @param idMember the member id if you want only your offers (0 -> all)
+   * @return list of offers
+   */
+  @Override
+  public List<OfferDTO> getOffers(String search, int idMember) {
+    List<OfferDTO> offerDTO = null;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getAll(search, idMember);
+      if (offerDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Aucune offre");
+      }
+    } catch (NotFoundException e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    dalService.commitTransaction();
+    return offerDTO;
   }
 }
