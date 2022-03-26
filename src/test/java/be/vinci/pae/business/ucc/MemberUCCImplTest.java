@@ -530,4 +530,15 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test get member with non existent member id")
+  @Test
+  public void testGetMemberNonExistentMemberId() {
+    Mockito.when(mockMemberDAO.getOne(0)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> memberUCC.getMember(0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
