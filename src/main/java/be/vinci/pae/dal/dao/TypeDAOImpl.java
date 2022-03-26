@@ -61,7 +61,8 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public List<TypeDTO> getAllDefaultTypes() {
-    String query = "SELECT id_type, type_name, is_default FROM donnamis.types WHERE is_default = true";
+    String query = "SELECT id_type, type_name, is_default FROM donnamis.types "
+        + "WHERE is_default = true";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();

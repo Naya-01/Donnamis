@@ -82,15 +82,4 @@ public class ObjectImpl implements ObjectDTO {
     this.idOfferor = idOfferor;
   }
 
-  @Override
-  public String toString() {
-    return "ObjectImpl{" +
-        "idObject=" + idObject +
-        ", type=" + type +
-        ", description='" + description + '\'' +
-        ", status='" + status + '\'' +
-        ", image='" + image + '\'' +
-        ", idOfferor=" + idOfferor +
-        '}';
-  }
 }
