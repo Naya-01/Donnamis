@@ -6,17 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class InterestUCCImplTest {
@@ -28,10 +30,11 @@ class InterestUCCImplTest {
   private InterestDTO mockInterestDTO;
   private InterestDTO newMockInterestDTO;
   private int nonExistentId = 1000;
+  private ServiceLocator locator;
 
   @BeforeEach
   void initAll() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
+    locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.interestUCC = locator.getService(InterestUCC.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
@@ -133,6 +136,21 @@ class InterestUCCImplTest {
         () -> assertThrows(NotFoundException.class, () -> interestUCC.getInterestedCount(nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test getInterestedCount with existent object")
+  @Test
+  public void testGetInterestedCountWithExistentObject(){
+    List<InterestDTO> allInterests = new ArrayList<>();
+    allInterests.add(newMockInterestDTO);
+    ObjectDTO object = locator.getService(ObjectDTO.class);
+    Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
+    Mockito.when(mockInterestDAO.getAll(1)).thenReturn(allInterests);
+    assertAll(
+        () -> assertEquals(allInterests, interestUCC.getInterestedCount(1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
 
