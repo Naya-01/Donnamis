@@ -52,6 +52,7 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
+  console.log(offer);
   //Set all fields
   idObject = offer.object.idObject;
   idType = offer.object.type.idType;
