@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
@@ -11,6 +12,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -28,6 +30,7 @@ class ObjectUCCImplTest {
   private DALService mockDalService;
   private ObjectFactory objectFactory;
   private ObjectDTO objectDTO;
+  private int inexistentId = 1000;
 
   @BeforeEach
   void initAll() {
@@ -51,6 +54,17 @@ class ObjectUCCImplTest {
         () -> assertEquals(objectDTO, objectUCC.getObject(objectDTO.getIdObject())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+  @DisplayName("test getObject with a non existent id")
+  @Test
+  public void testGetObjectWithNonExistentId(){
+    Mockito.when(mockObjectDAO.getOne(inexistentId)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.getObject(inexistentId)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
 
