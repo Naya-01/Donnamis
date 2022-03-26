@@ -145,7 +145,7 @@ const MyObjectPage = async () => {
       button.disabled = true;
     });
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.user.username;
+        + memberGiver.username;
   }
 
 }

@@ -112,7 +112,8 @@ public class MemberResource {
   }
 
   /**
-   * Update any attribute of a member.
+   * Update any attribute of a member. You need to be an administrator to change other member,
+   * status or role.
    *
    * @param memberDTO a memberDTO
    * @return the modified member

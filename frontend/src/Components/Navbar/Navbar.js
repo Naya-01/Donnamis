@@ -87,22 +87,19 @@ const Navbar = async () => {
                 <li class="nav-item">
                     <a class="nav-link fs-4 " data-uri="/objects" href="#">Objets</a>
                 </li>
-                <li class="nav-item button-dot">
-                    <a class="nav-link fs-4" href="#">Objets attribués</a>
-                    <span class="dot">5</span>
-                </li>
+<!--                <li class="nav-item button-dot">-->
+<!--                    <a class="nav-link fs-4" href="#">Objets attribués</a>-->
+<!--                    <span class="dot">5</span>-->
+<!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link fs-4 " href="#" data-uri="/myObjectsPage">Mes objets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#" data-uri="/myObjectPage">MY OBJECT PAGE</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link fs-4 " data-uri="/registrationManagement" href="#">Inscriptions</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#">Membres</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link fs-4 " href="#">Membres</a>-->
+<!--                </li>-->
 
             </ul>
             <div class="d-flex">

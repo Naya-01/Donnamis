@@ -7,6 +7,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
@@ -26,6 +27,8 @@ public class OfferDAOImpl implements OfferDAO {
   private ObjectFactory objectFactory;
   @Inject
   private TypeFactory typeFactory;
+  @Inject
+  private ObjectDAO objectDAO;
 
   /**
    * Get all offers.
@@ -153,29 +156,51 @@ public class OfferDAOImpl implements OfferDAO {
    */
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
-    String query = "UPDATE donnamis.offers SET time_slot = ? "
-        + "WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
+    String query = "UPDATE donnamis.offers SET time_slot = ? ";
+    ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
 
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+    ObjectDTO objectDTO = null;
+    if (offerDTO.getObject() != null) {
+      offerDTO.getObject().setIdObject(realObject.getIdObject());
+      objectDTO = objectDAO.updateOne(offerDTO.getObject());
+    }
+
+    if (offerDTO.getTimeSlot() != null && !offerDTO.getTimeSlot().isEmpty()) {
+      query += " WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
+    } else {
+      if (objectDTO != null) {
+        offerDTO.setObject(objectDTO);
+        return offerDTO;
+      }
+      throw new BadRequestException("Vous ne modifiez rien");
+    }
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getIdOffer());
       preparedStatement.executeQuery();
-
       ResultSet resultSet = preparedStatement.getResultSet();
+
       if (!resultSet.next()) {
         return null;
       }
 
-      offerDTO.setIdOffer(resultSet.getInt(1));
-      offerDTO.setDate(resultSet.getDate(2).toLocalDate());
-      offerDTO.setTimeSlot(resultSet.getString(3));
-      offerDTO.getObject().setIdObject(resultSet.getInt(4));
-      return offerDTO;
+      OfferDTO offerDTOUpdated = offerFactory.getOfferDTO();
+      offerDTOUpdated.setIdOffer(resultSet.getInt(1));
+      offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
+      offerDTOUpdated.setTimeSlot(resultSet.getString(3));
+      if (objectDTO != null) {
+        offerDTOUpdated.setObject(objectDTO);
+        offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));
+      }
+
+      return offerDTOUpdated;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
   }
+
 
   /**
    * Get a list of offers according to the query.

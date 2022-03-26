@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ObjectImpl implements ObjectDTO {
+
   @JsonView(Views.Public.class)
   private int idObject;
   @JsonView(Views.Public.class)
@@ -81,4 +82,15 @@ public class ObjectImpl implements ObjectDTO {
     this.idOfferor = idOfferor;
   }
 
+  @Override
+  public String toString() {
+    return "ObjectImpl{" +
+        "idObject=" + idObject +
+        ", type=" + type +
+        ", description='" + description + '\'' +
+        ", status='" + status + '\'' +
+        ", image='" + image + '\'' +
+        ", idOfferor=" + idOfferor +
+        '}';
+  }
 }
