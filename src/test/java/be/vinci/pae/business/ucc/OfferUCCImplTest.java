@@ -76,4 +76,19 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test get offer by id avec un id d'offre non existant")
+  @Test
+  public void testGetOfferByIdWithANonExistentIdOffer() {
+    OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
+    Mockito.when(offerDTO.getIdOffer()).thenReturn(0);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getOfferById(0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
