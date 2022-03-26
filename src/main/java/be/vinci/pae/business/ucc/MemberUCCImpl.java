@@ -153,7 +153,6 @@ public class MemberUCCImpl implements MemberUCC {
       memberFromDao = memberDAO.createOneMember(memberDTO);
 
       AddressDTO addressOfMember = memberDTO.getAddress();
-      //add the address
       if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().isBlank()) {
         addressOfMember.setUnitNumber(null);
       }
