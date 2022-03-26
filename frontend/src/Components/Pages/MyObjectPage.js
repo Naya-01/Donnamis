@@ -1,6 +1,6 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
-import noImage from "../../img/noImage.png";
+import imageOfObject from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
@@ -54,7 +54,6 @@ const MyObjectPage = async () => {
     return;
   }
   image = offer.object.image;
-  console.log(offer.object.image);
   //Set all fields
   idObject = offer.object.idObject;
   idType = offer.object.type.idType;
@@ -72,6 +71,10 @@ const MyObjectPage = async () => {
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
+  // test if there is an image
+  if(!image.endsWith("\\null")){
+    imageOfObject = image;
+  }
 
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
@@ -85,17 +88,8 @@ const MyObjectPage = async () => {
           <p class="card-text">
               <div class="row justify-content-start p-2">
                 <!-- The image -->
-                <div class="col-4">`
-                let imgHTML;
-                if(image === null){
-                  imgHTML = `<img id="image" alt="no image" width="75%" src="${noImage}"/>`;
-                }
-                else{
-                  imgHTML = `<img id="image" alt="no image" width="75%" src="${image}"/>`;
-                }
-                pageDiv.innerHTML += imgHTML +
-          `
-                  
+                <div class="col-4">
+                  <img id="image" alt="no image" width="75%" src="${imageOfObject}"/>
                 </div>
                 <!-- The description -->
                 <div class="col-8">
@@ -220,7 +214,7 @@ async function changeToText(e) {
   image.id = "image";
   image.alt = "no image";
   image.style.width = "75%";
-  image.setAttribute("src", noImage);
+  image.setAttribute("src", imageOfObject);
   old.parentNode.replaceChild(image, old);
 
   // Make a simple paragraph for description
@@ -266,7 +260,7 @@ async function changeToForm(e) {
   let image = document.createElement("img");
   image.alt = "no image";
   image.style.width = "75%";
-  image.setAttribute("src", noImage);
+  image.setAttribute("src", imageOfObject);
   label_image.appendChild(image);
   let input_file = document.createElement("input");
   input_file.id = "file_input";
