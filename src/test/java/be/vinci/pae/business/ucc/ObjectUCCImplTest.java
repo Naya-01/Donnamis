@@ -123,6 +123,20 @@ class ObjectUCCImplTest {
     );
   }
 
+  @DisplayName("test updateOne without changing the existent object")
+  @Test
+  public void testUpdateOneWithoutChangingExistentObject(){
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockObjectDAO.updateOne(objectDTO)).thenReturn(objectDTO);
+    assertAll(
+        () -> assertEquals(objectDTO, objectUCC.updateOne(objectDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+
+
 
 
 
