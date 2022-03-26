@@ -450,4 +450,18 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test recherche avec une liste de membres ayant la valeur null retourné par le DAO")
+  @Test
+  public void testSearchMembersNullListReturnedFromDAO() {
+
+    Mockito.when(mockMemberDAO.getAll("", "denied")).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> memberUCC
+            .searchMembers("", "denied")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+
+  }
 }
