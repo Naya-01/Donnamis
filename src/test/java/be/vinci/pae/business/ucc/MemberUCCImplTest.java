@@ -479,6 +479,18 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
+  }
 
+  @DisplayName("Test update member avec un membre ayant ses attributs par défaut")
+  @Test
+  public void testUpdateMemberNonExistentInDB() {
+    MemberDTO nonExistentMemberInDB = getMemberNewMember();
+    Mockito.when(mockMemberDAO.updateOne(nonExistentMemberInDB)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(nonExistentMemberInDB)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
   }
 }
