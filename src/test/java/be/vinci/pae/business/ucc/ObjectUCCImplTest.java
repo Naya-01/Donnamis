@@ -79,18 +79,31 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
-    }
-    @DisplayName("test getAllObjectMember with non-existent id")
-    @Test
-    public void testGetAllObjectMemberWithNonExistentId() {
-      List<ObjectDTO> allObjectsList = new ArrayList<>();
-      Mockito.when(mockObjectDAO.getAllObjectOfMember(inexistentId)).thenReturn(allObjectsList);
-      assertAll(
-          () -> assertThrows(NotFoundException.class, () -> objectUCC.getAllObjectMember(inexistentId)),
-          () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-          () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
-      );
-    }
+  }
+
+  @DisplayName("test getAllObjectMember with non-existent id")
+  @Test
+  public void testGetAllObjectMemberWithNonExistentId() {
+    List<ObjectDTO> allObjectsList = new ArrayList<>();
+    Mockito.when(mockObjectDAO.getAllObjectOfMember(inexistentId)).thenReturn(allObjectsList);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.getAllObjectMember(inexistentId)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test getAllObjectMember with a member that has no object")
+  @Test
+  public void testGetAllObjectMemberWithAMemberThatHasNoObject() {
+    List<ObjectDTO> allObjectsList = new ArrayList<>();
+    Mockito.when(mockObjectDAO.getAllObjectOfMember(1)).thenReturn(allObjectsList);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.getAllObjectMember(1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
 
 
 
