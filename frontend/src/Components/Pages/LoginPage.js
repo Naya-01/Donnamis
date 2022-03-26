@@ -78,7 +78,7 @@ const connectClientAndRedirect = async (username, password, remember) => {
       accessToken: userData.access_token,
     }
 
-    await Toast.fire({
+    Toast.fire({
       icon: 'success',
       title: "Bienvenue !"
     })
