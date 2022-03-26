@@ -101,6 +101,7 @@ public class ObjectUCCImpl implements ObjectUCC {
   public ObjectDTO updateObjectPicture(String internalPath, int id) {
     ObjectDTO objectDTO;
     try {
+      dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
         throw new NotFoundException("Member not found");
