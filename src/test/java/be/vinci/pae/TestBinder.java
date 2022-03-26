@@ -66,12 +66,5 @@ public class TestBinder extends AbstractBinder {
     bind(Mockito.mock(MemberDAOImpl.class)).to(MemberDAO.class);
     bind(Mockito.mock(InterestDAOImpl.class)).to(InterestDAO.class);
     bind(Mockito.mock(ObjectDAOImpl.class)).to(ObjectDAO.class);
-
-    bind(Mockito.mock(InterestImpl.class)).to(InterestDTO.class);
-    bind(Mockito.mock(ObjectImpl.class)).to(ObjectDTO.class);
-
-    bind(Mockito.mock(TypeImpl.class)).to(TypeDTO.class);
-
-    bind(Mockito.mock(Config.class)).to(Config.class);
   }
 }

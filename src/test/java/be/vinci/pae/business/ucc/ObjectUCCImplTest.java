@@ -25,7 +25,6 @@ class ObjectUCCImplTest {
   private ObjectUCC objectUCC;
   private ObjectDAO mockObjectDAO;
   private DALService mockDalService;
-  private ObjectFactory objectFactory;
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
   private int inexistentId = 1000;
@@ -37,7 +36,7 @@ class ObjectUCCImplTest {
     this.objectUCC = locator.getService(ObjectUCC.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
-    this.objectFactory = locator.getService(ObjectFactory.class);
+    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(1);
     objectDTO.setDescription("the description");
