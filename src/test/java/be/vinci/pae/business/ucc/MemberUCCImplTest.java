@@ -515,4 +515,19 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
+
+  @DisplayName("Test get member succès")
+  @Test
+  public void testGetMemberSuccess() {
+    MemberDTO existentMemberInDB = getMemberNewMember();
+    existentMemberInDB.setMemberId(5);
+    Mockito.when(mockMemberDAO.getOne(5)).thenReturn(existentMemberInDB);
+    assertAll(
+        () -> assertEquals(existentMemberInDB, memberUCC.getMember(5)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
