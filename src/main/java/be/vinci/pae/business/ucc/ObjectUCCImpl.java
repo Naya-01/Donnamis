@@ -100,7 +100,6 @@ public class ObjectUCCImpl implements ObjectUCC {
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id) {
     ObjectDTO objectDTO;
-    System.out.println(Config.getProperty("ImagePath"));
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);

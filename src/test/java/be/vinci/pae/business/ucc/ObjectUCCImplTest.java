@@ -48,7 +48,7 @@ class ObjectUCCImplTest {
     this.objectDTOUpdated.setDescription("the description2");
     this.objectDTOUpdated.setIdOfferor(1);
     this.objectDTOUpdated.setStatus("available");
-    Config.load("prod.properties");
+    Config.load("test.properties");
   }
 
   @DisplayName("test getObject with an existent id")
@@ -154,7 +154,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test updateOne with existent object that has no image")
   @Test
-  public void updateObjectPictureWithExistentObjectThatHasNoImage() {
+  public void testUpdateObjectPictureWithExistentObjectThatHasNoImage() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
         .thenReturn(objectDTO);
@@ -171,7 +171,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test updateOne with existent object that has an image")
   @Test
-  public void updateObjectPictureWithExistentObjectThatHasAnImage() {
+  public void testUpdateObjectPictureWithExistentObjectThatHasAnImage() {
     objectDTO.setImage("C:/img2");
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
@@ -189,7 +189,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test updateOne with non-existent object")
   @Test
-  public void updateObjectPictureWithNonExistentObject() {
+  public void testUpdateObjectPictureWithNonExistentObject() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
