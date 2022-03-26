@@ -116,7 +116,7 @@ async function addObject(e) {
   //TODO : get the image if it exists
 
   // Call the backend to add the offert
-  offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
+  await offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
   Redirect("/");
   let notif = new Notification().getNotification("top-end");
   notif.fire({
