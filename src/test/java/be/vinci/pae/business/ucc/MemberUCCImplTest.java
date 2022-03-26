@@ -464,4 +464,21 @@ class MemberUCCImplTest {
     );
 
   }
+
+  //  -----------------------------  UPDATE MEMBER UCC  -----------------------------------  //
+
+
+  @DisplayName("Test update member avec un membre ayant ses attributs par défaut")
+  @Test
+  public void testUpdateMemberWithEmptyFieldsMember() {
+    MemberDTO nonExistentMember = memberFactory.getMemberDTO();
+    Mockito.when(mockMemberDAO.updateOne(nonExistentMember)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(nonExistentMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+
+  }
 }
