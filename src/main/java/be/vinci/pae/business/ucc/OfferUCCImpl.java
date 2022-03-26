@@ -1,6 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -8,6 +7,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -60,9 +60,9 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
         dalService.rollBackTransaction();
-        throw new NotFoundException("Aucune offres");
+        throw new NotFoundException("Offre inexistante");
       }
-    } catch (Exception e) {
+    } catch (FatalException e) {
       dalService.rollBackTransaction();
       throw e;
     }
@@ -112,16 +112,9 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offer;
     try {
       dalService.startTransaction();
-      setCorrectType(offerDTO);
-
       offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
-        throw new BadRequestException("Problème lors de la mise à jour du time slot");
-      }
-
-      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-      if (objectDTO == null) {
-        throw new BadRequestException("Problème lors de la mise à jour de l'objet");
+        throw new BadRequestException("Problème lors de la mise à jour de l'offre");
       }
     } catch (Exception e) {
       dalService.rollBackTransaction();

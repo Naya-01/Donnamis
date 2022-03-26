@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ObjectImpl implements ObjectDTO {
+
   @JsonView(Views.Public.class)
   private int idObject;
   @JsonView(Views.Public.class)

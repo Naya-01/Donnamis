@@ -2,6 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
@@ -111,7 +112,8 @@ public class MemberResource {
   }
 
   /**
-   * Update any attribute of a member.
+   * Update any attribute of a member. You need to be an administrator to change other member,
+   * status or role.
    *
    * @param memberDTO a memberDTO
    * @return the modified member
@@ -120,8 +122,14 @@ public class MemberResource {
   @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Admin
-  public MemberDTO updateMember(MemberDTO memberDTO) {
+  @Authorize
+  public MemberDTO updateMember(MemberDTO memberDTO, @Context ContainerRequest request) {
+    MemberDTO requestMember = (MemberDTO) request.getProperty("user");
+    if (!requestMember.getRole().equals("administrator")
+        && (memberDTO.getMemberId() != requestMember.getMemberId() || memberDTO.getRole() != null
+        || memberDTO.getStatus() != null || memberDTO.getReasonRefusal() != null)) {
+      throw new UnauthorizedException();
+    }
     return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);
   }
 }

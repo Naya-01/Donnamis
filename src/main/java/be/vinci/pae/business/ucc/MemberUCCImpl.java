@@ -183,7 +183,6 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       memberDTOList = memberDAO.getAll(search, status);
       if (memberDTOList == null || memberDTOList.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucun membre");
       }
     } catch (Exception e) {

@@ -4,7 +4,8 @@ import SearchBar from "../Module/SearchBar";
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';
-  await SearchBar("Inscriptions", true, false, "Rechercher une demande d'inscription", false);
+  await SearchBar("Inscriptions", true, true, false,
+      "Rechercher une demande d'inscription", false);
 
   // Load base member
   let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("",
