@@ -29,6 +29,7 @@ class ObjectUCCImplTest {
   private DALService mockDalService;
   private ObjectFactory objectFactory;
   private ObjectDTO objectDTO;
+  private ObjectDTO objectDTOUpdated;
   private int inexistentId = 1000;
 
   @BeforeEach
@@ -43,6 +44,11 @@ class ObjectUCCImplTest {
     objectDTO.setDescription("the description");
     objectDTO.setIdOfferor(1);
     objectDTO.setStatus("available");
+    this.objectDTOUpdated = objectFactory.getObjectDTO();
+    this.objectDTOUpdated.setIdObject(1);
+    this.objectDTOUpdated.setDescription("the description2");
+    this.objectDTOUpdated.setIdOfferor(1);
+    this.objectDTOUpdated.setStatus("available");
   }
 
   @DisplayName("test getObject with an existent id")
@@ -104,6 +110,20 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
+
+  @DisplayName("test updateOne with an existent object")
+  @Test
+  public void testUpdateOneWithExistentObject(){
+    Mockito.when(mockObjectDAO.getOne(objectDTOUpdated.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockObjectDAO.updateOne(objectDTOUpdated)).thenReturn(objectDTOUpdated);
+    assertAll(
+        () -> assertEquals(objectDTOUpdated, objectUCC.updateOne(objectDTOUpdated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+  }
+
+
 
 
 
