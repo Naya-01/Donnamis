@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
@@ -278,6 +279,42 @@ class MemberUCCImplTest {
         () -> assertThrows(ConflictException.class, () -> memberUCC.register(newMember)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test inscription avec champs pouvant êtres vides (tel (member) et boite (address))")
+  @Test
+  public void testRegisterEmptyFields() {
+    MemberDTO newMember = this.getMemberToRegister();
+    newMember.setPhone("");
+    newMember.getAddress().setUnitNumber("");
+
+    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    memberFromCreateOneDao.setMemberId(6);
+    memberFromCreateOneDao.setPhone(null);
+
+    AddressDTO addressFromCreateOneDao = memberFromCreateOneDao.getAddress();
+    addressFromCreateOneDao.setIdMember(6);
+    addressFromCreateOneDao.setUnitNumber(null);
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);
+
+    Mockito.when(mockAddressDAO.createOne(newMember.getAddress()))
+        .thenReturn(addressFromCreateOneDao);
+
+    MemberDTO memberRegistered = memberUCC.register(newMember);
+
+    assertAll(
+        () -> assertEquals(6, memberRegistered.getMemberId()),
+        () -> assertEquals(memberRegistered.getMemberId(),
+            memberRegistered.getAddress().getIdMember()),
+        () -> assertEquals(memberFromCreateOneDao, memberRegistered),
+        () -> assertEquals(addressFromCreateOneDao, memberRegistered.getAddress()),
+        () -> assertNull(newMember.getPhone()),
+        () -> assertNull(newMember.getAddress().getUnitNumber()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 }
