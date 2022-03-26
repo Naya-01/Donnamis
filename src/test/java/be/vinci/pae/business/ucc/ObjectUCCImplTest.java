@@ -151,7 +151,7 @@ class ObjectUCCImplTest {
     );
   }
 
-  @DisplayName("test updateOne with existent object that has no image")
+  @DisplayName("test updateObjectPicture with existent object that has no image")
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasNoImage() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
@@ -169,7 +169,7 @@ class ObjectUCCImplTest {
     );
   }
 
-  @DisplayName("test updateOne with existent object that has an image")
+  @DisplayName("test updateObjectPicture with existent object that has an image")
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasAnImage() {
     objectDTO.setImage("C:/img2");
@@ -188,7 +188,7 @@ class ObjectUCCImplTest {
     );
   }
 
-  @DisplayName("test updateOne with non-existent object")
+  @DisplayName("test updateObjectPicture with non-existent object")
   @Test
   public void testUpdateObjectPictureWithNonExistentObject() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(null);
@@ -201,15 +201,6 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
-
-
-
-
-
-
-
-
-
 
 
 }
