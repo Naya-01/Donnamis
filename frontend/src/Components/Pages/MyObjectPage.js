@@ -27,6 +27,7 @@ let description;
 let time_slot;
 let form = false;
 let isInterested;
+let image;
 
 /**
  * Render the page to see an object
@@ -52,7 +53,8 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-  console.log(offer);
+  image = offer.object.image;
+  console.log(offer.object.image);
   //Set all fields
   idObject = offer.object.idObject;
   idType = offer.object.type.idType;
@@ -83,8 +85,17 @@ const MyObjectPage = async () => {
           <p class="card-text">
               <div class="row justify-content-start p-2">
                 <!-- The image -->
-                <div class="col-4">
-                  <img id="image" alt="no image" width="75%" src="${noImage}"/>
+                <div class="col-4">`
+                let imgHTML;
+                if(image === null){
+                  imgHTML = `<img id="image" alt="no image" width="75%" src="${noImage}"/>`;
+                }
+                else{
+                  imgHTML = `<img id="image" alt="no image" width="75%" src="${image}"/>`;
+                }
+                pageDiv.innerHTML += imgHTML +
+          `
+                  
                 </div>
                 <!-- The description -->
                 <div class="col-8">
