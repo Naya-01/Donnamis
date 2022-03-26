@@ -46,8 +46,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(mockRealType.getIdType())).thenReturn(mockRealType);
     assertAll(
         () -> assertEquals(typeUCC.getType(mockRealType.getIdType()), mockRealType),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
 
@@ -57,8 +59,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(-1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(-1)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 
@@ -68,8 +72,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(1000)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType(1000)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 
@@ -78,9 +84,12 @@ class TypeUCCImplTest {
   public void testGetTypeWithNonExistentName() {
     Mockito.when(mockTypeDAO.getOne("non-existent Type")).thenReturn(null);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("non-existent Type")),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+        () -> assertThrows(NotFoundException.class, () -> typeUCC
+            .getType("non-existent Type")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 
@@ -90,8 +99,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne(mockRealType.getTypeName())).thenReturn(mockRealType);
     assertAll(
         () -> assertEquals(mockRealType, typeUCC.getType(mockRealType.getTypeName())),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
 
@@ -101,8 +112,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getOne("")).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getType("")),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 
@@ -112,8 +125,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getAllDefaultTypes()).thenReturn(allDefaultTypesMock);
     assertAll(
         () -> assertEquals(allDefaultTypesMock, typeUCC.getAllDefaultTypes()),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
 
@@ -123,8 +138,10 @@ class TypeUCCImplTest {
     Mockito.when(mockTypeDAO.getAllDefaultTypes()).thenReturn(new ArrayList<>());
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> typeUCC.getAllDefaultTypes()),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 }
