@@ -435,4 +435,19 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test recherche avec un valid status et une recherche en param")
+  @Test
+  public void testSearchWithSearchParamAndValidStatus() {
+    List<MemberDTO> allWaitingMemberDTOList = List.of(memberValid1);
+
+    Mockito.when(mockMemberDAO.getAll("mi", "valid"))
+        .thenReturn(allWaitingMemberDTOList);
+    assertAll(
+        () -> assertEquals(allWaitingMemberDTOList, memberUCC
+            .searchMembers("mi", "valid")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
