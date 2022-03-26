@@ -48,7 +48,7 @@ class ObjectUCCImplTest {
     this.objectDTOUpdated.setDescription("the description2");
     this.objectDTOUpdated.setIdOfferor(1);
     this.objectDTOUpdated.setStatus("available");
-    //Config.load("test.properties");
+    Config.load("test.properties");
   }
 
   @DisplayName("test getObject with an existent id")
@@ -168,7 +168,7 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
-/*
+
   @DisplayName("test updateOne with existent object that has an image")
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasAnImage() {
@@ -198,7 +198,7 @@ class ObjectUCCImplTest {
             .getOne(objectDTO.getIdObject()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
-  }*/
+  }
 
 
 
