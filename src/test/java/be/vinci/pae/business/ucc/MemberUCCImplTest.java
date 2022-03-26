@@ -418,6 +418,21 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
 
+
   }
 
+  @DisplayName("Test recherche avec aucun status mais une recherche en param")
+  @Test
+  public void testSearchWithSearchParamAndNoStatus() {
+    List<MemberDTO> allWaitingMemberDTOList = List.of(memberPending1, memberPending2);
+
+    Mockito.when(mockMemberDAO.getAll("ma", ""))
+        .thenReturn(allWaitingMemberDTOList);
+    assertAll(
+        () -> assertEquals(allWaitingMemberDTOList, memberUCC
+            .searchMembers("ma", "")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
