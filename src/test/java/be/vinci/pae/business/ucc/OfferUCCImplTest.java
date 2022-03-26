@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +34,7 @@ class OfferUCCImplTest {
     this.offerUCC = locator.getService(OfferUCC.class);
   }
 
+  //  ----------------------------  GET LAST OFFERS UCC  -------------------------------  //
   @DisplayName("Test get last offers avec aucune offre recue du DAO")
   @Test
   public void testGetAllLastOffersWithDAOReturningEmptyListOfOffers() {
@@ -53,6 +55,23 @@ class OfferUCCImplTest {
     Mockito.when(offerDAO.getAllLast()).thenReturn(List.of(offerDTO));
     assertAll(
         () -> assertTrue(offerUCC.getLastOffers().contains(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  //  ----------------------------  GET OFFER BY ID UCC  -------------------------------  //
+
+  @DisplayName("Test get offer by id avec un id d'offre existant")
+  @Test
+  public void testGetOfferByIdSuccess() {
+    OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
+    Mockito.when(offerDTO.getIdOffer()).thenReturn(1);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+    assertAll(
+        () -> assertEquals(offerDTO, offerUCC.getOfferById(1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );

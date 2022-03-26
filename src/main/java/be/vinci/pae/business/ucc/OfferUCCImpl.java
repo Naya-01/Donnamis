@@ -58,7 +58,6 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offres");
       }
     } catch (Exception e) {
