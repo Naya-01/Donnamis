@@ -424,12 +424,12 @@ class MemberUCCImplTest {
   @DisplayName("Test recherche avec aucun status mais une recherche en param")
   @Test
   public void testSearchWithSearchParamAndNoStatus() {
-    List<MemberDTO> allWaitingMemberDTOList = List.of(memberPending1, memberPending2);
+    List<MemberDTO> allMemberDTOListMatchingSearch = List.of(memberPending1, memberPending2);
 
     Mockito.when(mockMemberDAO.getAll("ma", ""))
-        .thenReturn(allWaitingMemberDTOList);
+        .thenReturn(allMemberDTOListMatchingSearch);
     assertAll(
-        () -> assertEquals(allWaitingMemberDTOList, memberUCC
+        () -> assertEquals(allMemberDTOListMatchingSearch, memberUCC
             .searchMembers("ma", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
@@ -439,12 +439,12 @@ class MemberUCCImplTest {
   @DisplayName("Test recherche avec un valid status et une recherche en param")
   @Test
   public void testSearchWithSearchParamAndValidStatus() {
-    List<MemberDTO> allWaitingMemberDTOList = List.of(memberValid1);
+    List<MemberDTO> allValidMemberDTOMatchingSearch = List.of(memberValid1);
 
     Mockito.when(mockMemberDAO.getAll("mi", "valid"))
-        .thenReturn(allWaitingMemberDTOList);
+        .thenReturn(allValidMemberDTOMatchingSearch);
     assertAll(
-        () -> assertEquals(allWaitingMemberDTOList, memberUCC
+        () -> assertEquals(allValidMemberDTOMatchingSearch, memberUCC
             .searchMembers("mi", "valid")),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
