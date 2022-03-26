@@ -54,6 +54,7 @@ class InterestUCCImplTest {
     assertAll(
         () -> assertThrows(NotFoundException.class,() -> interestUCC.getInterest(nonExistentId, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(nonExistentId, 1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
@@ -65,6 +66,7 @@ class InterestUCCImplTest {
     assertAll(
         () -> assertThrows(NotFoundException.class,() -> interestUCC.getInterest(1, nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(1, nonExistentId),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
@@ -77,6 +79,7 @@ class InterestUCCImplTest {
         () -> assertThrows(NotFoundException.class,() ->
             interestUCC.getInterest(nonExistentId, nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(nonExistentId, nonExistentId),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
@@ -88,6 +91,7 @@ class InterestUCCImplTest {
     assertAll(
         () -> assertEquals(mockInterestDTO, interestUCC.getInterest(10, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(10, 1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
@@ -99,6 +103,7 @@ class InterestUCCImplTest {
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.getInterest(10, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(10, 1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
@@ -137,6 +142,7 @@ class InterestUCCImplTest {
         () -> assertThrows(NotFoundException.class,
             () -> interestUCC.getInterestedCount(nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
@@ -152,6 +158,8 @@ class InterestUCCImplTest {
     assertAll(
         () -> assertEquals(allInterests, interestUCC.getInterestedCount(1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(1),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getAll(1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
