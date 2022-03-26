@@ -6,11 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
-import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.dao.ObjectDAO;
-import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.util.ArrayList;
@@ -93,7 +90,8 @@ class ObjectUCCImplTest {
     List<ObjectDTO> allObjectsList = new ArrayList<>();
     Mockito.when(mockObjectDAO.getAllObjectOfMember(inexistentId)).thenReturn(allObjectsList);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> objectUCC.getAllObjectMember(inexistentId)),
+        () -> assertThrows(NotFoundException.class,
+            () -> objectUCC.getAllObjectMember(inexistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
@@ -113,27 +111,45 @@ class ObjectUCCImplTest {
 
   @DisplayName("test updateOne with an existent object")
   @Test
-  public void testUpdateOneWithExistentObject(){
+  public void testUpdateOneWithExistentObject() {
     Mockito.when(mockObjectDAO.getOne(objectDTOUpdated.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateOne(objectDTOUpdated)).thenReturn(objectDTOUpdated);
     assertAll(
         () -> assertEquals(objectDTOUpdated, objectUCC.updateOne(objectDTOUpdated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).updateOne(objectDTOUpdated),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
 
   @DisplayName("test updateOne without changing the existent object")
   @Test
-  public void testUpdateOneWithoutChangingExistentObject(){
+  public void testUpdateOneWithoutChangingExistentObject() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateOne(objectDTO)).thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO, objectUCC.updateOne(objectDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).updateOne(objectDTO),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
     );
   }
+
+  @DisplayName("test updateOne with non-existent object")
+  @Test
+  public void testUpdateOneWithNonExistentObject() {
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.updateOne(objectDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+
 
 
 
