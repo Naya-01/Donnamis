@@ -19,6 +19,7 @@ import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,12 @@ class MemberUCCImplTest {
   private AddressFactory addressFactory;
   private MemberFactory memberFactory;
 
-  private MemberDTO getMemberToRegister() {
+  private MemberDTO memberPending1;
+  private MemberDTO memberPending2;
+  private MemberDTO memberValid1;
+
+
+  private MemberDTO getMemberNewMember() {
     // member to register
     AddressDTO newAddress = addressFactory.getAddressDTO();
     newAddress.setIdMember(0);
@@ -84,6 +90,12 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(1)).thenReturn(mockMember);
     Mockito.when(mockMember.checkPassword(passwd1)).thenReturn(true);
 
+    this.memberPending1 = getMemberNewMember();
+    this.memberPending1.setStatus(statusPending);
+    this.memberPending2 = getMemberNewMember();
+    this.memberPending2.setStatus(statusPending);
+    this.memberValid1 = getMemberNewMember();
+    this.memberValid1.setStatus(statusValid);
 
   }
 
@@ -237,9 +249,9 @@ class MemberUCCImplTest {
   @DisplayName("Test inscription tout va bien")
   @Test
   public void testRegisterSuccess() {
-    MemberDTO newMember = this.getMemberToRegister();
+    MemberDTO newMember = this.getMemberNewMember();
 
-    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
     memberFromCreateOneDao.setMemberId(6);
 
     AddressDTO addressFromCreateOneDao = memberFromCreateOneDao.getAddress();
@@ -268,9 +280,9 @@ class MemberUCCImplTest {
   @DisplayName("Test inscription avec membre déjà existant")
   @Test
   public void testRegisterConflict() {
-    MemberDTO newMember = this.getMemberToRegister();
+    MemberDTO newMember = this.getMemberNewMember();
 
-    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
     memberFromCreateOneDao.setMemberId(6);
 
     Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(memberFromCreateOneDao);
@@ -285,11 +297,11 @@ class MemberUCCImplTest {
   @DisplayName("Test inscription avec champs pouvant êtres vides (tel (member) et boite (address))")
   @Test
   public void testRegisterEmptyFields() {
-    MemberDTO newMember = this.getMemberToRegister();
+    MemberDTO newMember = this.getMemberNewMember();
     newMember.setPhone("");
     newMember.getAddress().setUnitNumber("");
 
-    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
     memberFromCreateOneDao.setMemberId(6);
     memberFromCreateOneDao.setPhone(null);
 
@@ -321,11 +333,11 @@ class MemberUCCImplTest {
   @DisplayName("Test inscription avec champs pouvant êtres null (tel (member) et boite (address))")
   @Test
   public void testRegisterNullFields() {
-    MemberDTO newMember = this.getMemberToRegister();
+    MemberDTO newMember = this.getMemberNewMember();
     newMember.setPhone(null);
     newMember.getAddress().setUnitNumber(null);
 
-    MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
     memberFromCreateOneDao.setMemberId(6);
     memberFromCreateOneDao.setPhone(null);
 
@@ -353,4 +365,22 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  -----------------------------  SEARCH MEMBERS UCC  -----------------------------------  //
+
+
+  @DisplayName("Test recherche de membre avec status et recherche vide")
+  @Test
+  public void testSearchMembersEmptySearchAndEmptyStatus() {
+    List<MemberDTO> allMemberDTOList = List.of(memberPending1, memberPending2, memberValid1);
+
+    Mockito.when(mockMemberDAO.getAll("", "")).thenReturn(allMemberDTOList);
+    assertAll(
+        () -> assertEquals(allMemberDTOList, memberUCC.searchMembers("", "")),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+
+  }
+
 }

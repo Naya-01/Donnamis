@@ -106,7 +106,6 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Member not found");
       }
     } catch (Exception e) {
@@ -172,8 +171,8 @@ public class MemberUCCImpl implements MemberUCC {
    * Search a member with status and search on firstname, lastname and username.
    *
    * @param search the search pattern (if empty -> all)
-   * @param status the status : waiting -> pending and denied members pending -> pending members
-   *               denied -> denied members valid -> valid members empty -> all members
+   * @param status the status : waiting -> pending and denied members. pending -> pending members.
+   *               denied -> denied members. valid -> valid members. empty -> all members.
    * @return a list of MemberDTO
    */
   @Override
@@ -183,7 +182,6 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       memberDTOList = memberDAO.getAll(search, status);
       if (memberDTOList == null || memberDTOList.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucun membre");
       }
     } catch (Exception e) {
