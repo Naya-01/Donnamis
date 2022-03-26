@@ -1,11 +1,5 @@
 package be.vinci.pae;
 
-import be.vinci.pae.business.domain.InterestImpl;
-import be.vinci.pae.business.domain.ObjectImpl;
-import be.vinci.pae.business.domain.TypeImpl;
-import be.vinci.pae.business.domain.dto.InterestDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.AddressFactoryImpl;
 import be.vinci.pae.business.factories.InterestFactory;
@@ -14,6 +8,8 @@ import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.MemberFactoryImpl;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.ObjectFactoryImpl;
+import be.vinci.pae.business.factories.OfferFactory;
+import be.vinci.pae.business.factories.OfferFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
 import be.vinci.pae.business.ucc.InterestUCC;
@@ -22,6 +18,8 @@ import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.business.ucc.MemberUCCImpl;
 import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.business.ucc.ObjectUCCImpl;
+import be.vinci.pae.business.ucc.OfferUCC;
+import be.vinci.pae.business.ucc.OfferUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
@@ -32,11 +30,12 @@ import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.MemberDAOImpl;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.ObjectDAOImpl;
+import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.OfferDAOImpl;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.dal.services.DALServiceImpl;
-import be.vinci.pae.utils.Config;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.ext.Provider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -53,6 +52,7 @@ public class TestBinder extends AbstractBinder {
     bind(AddressFactoryImpl.class).to(AddressFactory.class).in(Singleton.class);
     bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
     bind(ObjectFactoryImpl.class).to(ObjectFactory.class).in(Singleton.class);
+    bind(OfferFactoryImpl.class).to(OfferFactory.class).in(Singleton.class);
 
     bind(Mockito.mock(DALServiceImpl.class)).to(DALService.class);
 
@@ -60,11 +60,13 @@ public class TestBinder extends AbstractBinder {
     bind(TypeUCCImpl.class).to(TypeUCC.class).in(Singleton.class);
     bind(InterestUCCImpl.class).to(InterestUCC.class).in(Singleton.class);
     bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
+    bind(OfferUCCImpl.class).to(OfferUCC.class).in(Singleton.class);
 
     bind(Mockito.mock(AddressDAOImpl.class)).to(AddressDAO.class);
     bind(Mockito.mock(TypeDAOImpl.class)).to(TypeDAO.class);
     bind(Mockito.mock(MemberDAOImpl.class)).to(MemberDAO.class);
     bind(Mockito.mock(InterestDAOImpl.class)).to(InterestDAO.class);
     bind(Mockito.mock(ObjectDAOImpl.class)).to(ObjectDAO.class);
+    bind(Mockito.mock(OfferDAOImpl.class)).to(OfferDAO.class);
   }
 }
