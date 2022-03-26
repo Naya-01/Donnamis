@@ -258,9 +258,6 @@ class MemberUCCImplTest {
             memberRegistered.getAddress().getIdMember()),
         () -> assertEquals(memberFromCreateOneDao, memberRegistered),
         () -> assertEquals(addressFromCreateOneDao, memberRegistered.getAddress()),
-        () -> Mockito.verify(mockMemberDAO).getOne(newMember.getUsername()),
-        () -> Mockito.verify(mockMemberDAO).createOneMember(newMember),
-        () -> Mockito.verify(mockAddressDAO).createOne(newMember.getAddress()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
@@ -274,11 +271,13 @@ class MemberUCCImplTest {
 
     MemberDTO memberFromCreateOneDao = this.getMemberToRegister();
     memberFromCreateOneDao.setMemberId(6);
-    
+
     Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(memberFromCreateOneDao);
 
     assertAll(
-        () -> assertThrows(ConflictException.class, () -> memberUCC.register(newMember))
+        () -> assertThrows(ConflictException.class, () -> memberUCC.register(newMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
