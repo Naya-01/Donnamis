@@ -20,7 +20,6 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class ObjectUCCImplTest {
@@ -48,7 +47,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test getObject with an existent id")
   @Test
-  public void testGetObjectWithExistentId(){
+  public void testGetObjectWithExistentId() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO, objectUCC.getObject(objectDTO.getIdObject())),
@@ -59,7 +58,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test getObject with a non existent id")
   @Test
-  public void testGetObjectWithNonExistentId(){
+  public void testGetObjectWithNonExistentId() {
     Mockito.when(mockObjectDAO.getOne(inexistentId)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> objectUCC.getObject(inexistentId)),
@@ -67,6 +66,31 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
+
+  @DisplayName("test getAllObjectMember with existent id and "
+      + "at least one object in the db for the member")
+  @Test
+  public void testGetAllObjectMemberWithExistentIdAndSomeObjectsInTheDB() {
+    List<ObjectDTO> allObjectsList = new ArrayList<>();
+    allObjectsList.add(objectDTO);
+    Mockito.when(mockObjectDAO.getAllObjectOfMember(1)).thenReturn(allObjectsList);
+    assertAll(
+        () -> assertEquals(allObjectsList, objectUCC.getAllObjectMember(1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).commitTransaction()
+    );
+    }
+    @DisplayName("test getAllObjectMember with non-existent id")
+    @Test
+    public void testGetAllObjectMemberWithNonExistentId() {
+      List<ObjectDTO> allObjectsList = new ArrayList<>();
+      Mockito.when(mockObjectDAO.getAllObjectOfMember(inexistentId)).thenReturn(allObjectsList);
+      assertAll(
+          () -> assertThrows(NotFoundException.class, () -> objectUCC.getAllObjectMember(inexistentId)),
+          () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+          () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+      );
+    }
 
 
 
