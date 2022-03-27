@@ -13,7 +13,7 @@ public interface OfferDAO {
    * @param type          the type of object that we want
    * @return list of offers
    */
-  List<OfferDTO> getAll(String searchPattern, int idMember, String type);
+  List<OfferDTO> getAll(String searchPattern, int idMember, String type, String objectStatus);
 
   /**
    * Get the last six offers posted.

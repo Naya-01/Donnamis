@@ -1,7 +1,7 @@
 import TypeLibrary from "../../Domain/TypeLibrary";
 
 const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
-    hasNewObjectButton) => {
+    hasNewObjectButton, hasStatus) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
@@ -23,6 +23,21 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
             
               <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
               <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
+            </div>`;
+    }
+    if(hasStatus){
+      searchBarHtml +=`<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check" checked name="btnradio" id="btn-status-all" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
+            
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-given" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-given">En cours</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
+              <label class="btn btn-outline-danger" for="btn-status-assigned">Donné</label>
             </div>`;
     }
     if (hasType) {
