@@ -86,7 +86,7 @@ public class ObjectResource {
           + "\nVeuillez soumettre une image");
     }
 
-    return objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
+    return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject());
   }
 
   /**

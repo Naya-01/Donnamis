@@ -25,26 +25,6 @@ public class ObjectDAOImpl implements ObjectDAO {
   private TypeDAO typeDAO;
 
   /**
-   * Update the object picture.
-   *
-   * @param path location of the picture.
-   * @param id   of the object.
-   * @return Object modified.
-   */
-  @Override
-  public ObjectDTO updateObjectPicture(String path, int id) {
-    String query = "UPDATE donnamis.objects SET image=? WHERE id_object=?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, path);
-      preparedStatement.setInt(2, id);
-      preparedStatement.executeUpdate();
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    return getOne(id);
-  }
-
-  /**
    * Get an object we want to retrieve by his id.
    *
    * @param id : the id of the object that we want to retrieve

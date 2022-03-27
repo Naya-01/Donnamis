@@ -3,8 +3,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "AlbertDeBucarest",
-  "password": "albertLePoulet",
+  "username": "bazz",
+  "password": "Mdpuser.1",
   "rememberMe": true
 }
 > {%
@@ -41,12 +41,11 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "idObject": 15,
+  "idObject": 2,
   "type": {
-    "idType": 4
+    "idType": 3
   },
-  "description": "test",
+  "description": "Cadre représentant un chien noir sur un fond noir.",
   "status": "available",
-  "image": null,
-  "idOfferor": 1
+  "idOfferor": 3
 }

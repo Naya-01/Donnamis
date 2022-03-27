@@ -19,7 +19,7 @@ const cardList = async (offers) => {
              data-element-id="
                     ${isMemberConnected ? offers[nbOffers].idOffer : ""}"
              >
-             <img src="${noImage}" width="100%">
+             <img src="${noImage}" height="250px" >
             <div class="card-body">
               <p class="card-text">
                 ${offers[nbOffers].object.description}
