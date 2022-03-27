@@ -114,8 +114,7 @@ public class ObjectUCCImpl implements ObjectUCC {
         }
       }
       
-      objectDTO.setImage(internalPath);
-      objectDTO = objectDAO.updateOne(objectDTO);
+      objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
