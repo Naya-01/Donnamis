@@ -261,8 +261,8 @@ class OfferUCCImplTest {
 
     OfferDTO offerDTO = getNewOffer();
     offerDTO.getObject().getType().setTypeName("");
-    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType())).
-        thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
+        .thenReturn(typeDTOFromDaoGetOne);
 
     Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
 
@@ -290,8 +290,8 @@ class OfferUCCImplTest {
 
     OfferDTO offerDTO = getNewOffer();
     offerDTO.getObject().getType().setTypeName(null);
-    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType())).
-        thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
+        .thenReturn(typeDTOFromDaoGetOne);
 
     Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
 
