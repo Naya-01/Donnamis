@@ -83,7 +83,6 @@ class OfferLibrary {
           "timeSlot": timeSlot,
           "object": {
             "description": description,
-            "image": null,
             "status": status,
           }
         }),
@@ -134,7 +133,8 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").refreshToken
         },
       };
-      let query = "/api/offers?search-pattern=" + searchPattern +"&type="+type;
+      let query = "/api/offers?search-pattern=" + searchPattern + "&type="
+          + type;
       if (self) {
         query += "&self=true";
       }
