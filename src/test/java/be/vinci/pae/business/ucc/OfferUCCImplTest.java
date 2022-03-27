@@ -404,4 +404,38 @@ class OfferUCCImplTest {
             .commitTransaction()
     );
   }
+
+  @DisplayName("Test get offers avec toutes les offres d'une personne pour une recherche")
+  @Test
+  public void testGetOffersWithAMemberOffersWithGivenStatusSearch() {
+    OfferDTO offerDTO1 = getNewOffer();
+    Mockito.when(offerDTO1.getIdOffer()).thenReturn(4);
+    Mockito.when(offerDTO1.getObject().getIdObject()).thenReturn(55);
+    Mockito.when(offerDTO1.getObject().getStatus()).thenReturn("given");
+    Mockito.when(offerDTO1.getObject().getIdOfferor()).thenReturn(13);
+
+    OfferDTO offerDTO2 = getNewOffer();
+    Mockito.when(offerDTO2.getIdOffer()).thenReturn(5);
+    Mockito.when(offerDTO2.getObject().getIdObject()).thenReturn(56);
+    Mockito.when(offerDTO2.getObject().getStatus()).thenReturn("given");
+    Mockito.when(offerDTO2.getObject().getIdOfferor()).thenReturn(13);
+
+    OfferDTO offerDTO3 = getNewOffer();
+    Mockito.when(offerDTO3.getIdOffer()).thenReturn(6);
+    Mockito.when(offerDTO3.getObject().getIdObject()).thenReturn(57);
+    Mockito.when(offerDTO3.getObject().getIdOfferor()).thenReturn(33);
+    Mockito.when(offerDTO3.getObject().getStatus()).thenReturn("available");
+    Mockito.when(offerDTO3.getObject().getIdOfferor()).thenReturn(10);
+
+    List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2);
+
+    Mockito.when(offerDAO.getAll("given", 13)).thenReturn(offerDTOS);
+    assertAll(
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 13)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
+    );
+  }
 }
