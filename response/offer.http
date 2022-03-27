@@ -21,7 +21,7 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ###
-GET {{baseUri}}/offers?search-pattern=sam&self=true&type=Vêtements
+GET {{baseUri}}/offers?search-pattern=bu&self=false
 Authorization: {{refresh}}
 
 

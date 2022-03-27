@@ -48,7 +48,8 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?) ";
+      query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?"
+          + " OR LOWER(ob.description) LIKE ?) ";
     }
     if (type != null && !type.isEmpty()) {
       query += "AND ty.type_name = ?";
@@ -60,7 +61,7 @@ public class OfferDAOImpl implements OfferDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       int argCounter = 1;
       if (searchPattern != null && !searchPattern.isEmpty()) {
-        for (argCounter = 1; argCounter <= 2; argCounter++) {
+        for (argCounter = 1; argCounter <= 3; argCounter++) {
           preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
         }
       }
