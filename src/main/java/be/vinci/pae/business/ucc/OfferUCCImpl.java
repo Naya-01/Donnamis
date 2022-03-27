@@ -80,9 +80,8 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO addOffer(OfferDTO offerDTO) {
     OfferDTO offer;
     try {
-      setCorrectType(offerDTO);
       dalService.startTransaction();
-
+      setCorrectType(offerDTO);
 
       if (offerDTO.getObject().getIdObject() == 0) {
         objectDAO.addOne(offerDTO.getObject());
@@ -132,26 +131,19 @@ public class OfferUCCImpl implements OfferUCC {
    */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
-    try {
-      dalService.startTransaction();
-      if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-          .getTypeName().isEmpty()) {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-          if (typeDTO == null) {
-            throw new BadRequestException("Problème lors de la création du type");
-          }
+          throw new BadRequestException("Problème lors de la création du type");
         }
-      } else {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
       }
-      offerDTO.getObject().setType(typeDTO);
-      dalService.commitTransaction();
-    } catch (BadRequestException e) {
-      dalService.rollBackTransaction();
-      throw e;
+    } else {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
     }
+    offerDTO.getObject().setType(typeDTO);
   }
 
   /**
