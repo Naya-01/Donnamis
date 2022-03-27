@@ -337,9 +337,11 @@ class OfferUCCImplTest {
   @DisplayName("Test getOffers with non offer returned")
   @Test
   public void testGetOffersWithEmptyListOfOffersReturned() {
-    Mockito.when(offerDAO.getAll("", 0)).thenReturn(new ArrayList<>());
+    Mockito.when(offerDAO.getAll("", 0, "", ""))
+        .thenReturn(new ArrayList<>());
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> offerUCC.getOffers("", 0)),
+        () -> assertThrows(NotFoundException.class, () -> offerUCC
+            .getOffers("", 0, "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -363,9 +365,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2, offerDTO3);
 
-    Mockito.when(offerDAO.getAll("", 0)).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("", 0, "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("", 0)),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("", 0, "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -392,9 +394,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2);
 
-    Mockito.when(offerDAO.getAll("given", 0)).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("given", 0, "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 0)),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 0, "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -426,9 +428,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2);
 
-    Mockito.when(offerDAO.getAll("given", 13)).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("given", 13, "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 13)),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 13, "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
