@@ -17,6 +17,7 @@ import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -370,6 +371,20 @@ class MemberUCCImplTest {
         () -> assertNull(newMember.getAddress().getUnitNumber()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test inscription avec ajout du membre échoué")
+  @Test
+  public void testRegisterWithNullReceivedFromDAOWhenCreateAMember() {
+    MemberDTO newMember = this.getMemberNewMember();
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> memberUCC.register(newMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 
