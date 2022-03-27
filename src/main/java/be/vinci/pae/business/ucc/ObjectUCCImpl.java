@@ -99,7 +99,6 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id) {
-    dalService.startTransaction();
     ObjectDTO objectDTO = null;
     try {
       dalService.startTransaction();
@@ -121,6 +120,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
+      throw e;
     }
     return objectDTO;
   }

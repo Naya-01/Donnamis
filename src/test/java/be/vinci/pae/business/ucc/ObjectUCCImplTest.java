@@ -191,10 +191,10 @@ class ObjectUCCImplTest {
   @DisplayName("test updateObjectPicture with non-existent object")
   @Test
   public void testUpdateObjectPictureWithNonExistentObject() {
-    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
+            () -> objectUCC.updateObjectPicture(pathImage, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
