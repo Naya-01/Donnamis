@@ -21,9 +21,13 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ###
-GET {{baseUri}}/offers?search-pattern=sam&self=true
+GET {{baseUri}}/offers?search-pattern=sam&self=true&type=Vêtements
 Authorization: {{refresh}}
 
+
+### GET type object
+GET {{baseUri}}/offers?self=false&type=Décoration
+Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 
