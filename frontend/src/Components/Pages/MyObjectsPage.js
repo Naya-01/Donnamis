@@ -56,7 +56,13 @@ const MyObjectsPage = async () => {
   all.addEventListener('click', (e) =>{
     status="";
   });
+
+  const addButton = document.getElementById("add-new-object-button");
+  addButton.addEventListener('click', () => {
+    Redirect("/addNewObjectPage")
+  });
 }
+
 
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
