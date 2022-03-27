@@ -6,7 +6,6 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
@@ -113,7 +112,7 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
-        throw new BadRequestException("Problème lors de la mise à jour de l'offre");
+        throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
       dalService.commitTransaction();
     } catch (Exception e) {

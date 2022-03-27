@@ -438,4 +438,19 @@ class OfferUCCImplTest {
             .commitTransaction()
     );
   }
+
+  //  ----------------------------  UPDATE OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test get last offers avec aucune offre recue du DAO")
+  @Test
+  public void testUpdateOfferWithEmptyFields() {
+    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 }
