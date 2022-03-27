@@ -7,7 +7,6 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
-import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -35,10 +34,10 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offers = offerDAO.getAllLast();
       if (offers.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
+
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
@@ -59,15 +58,16 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
-        dalService.rollBackTransaction();
-        throw new NotFoundException("Offre inexistante");
+        throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
-    } catch (FatalException e) {
+
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
     return offerDTO;
+
   }
 
   /**
@@ -131,26 +131,19 @@ public class OfferUCCImpl implements OfferUCC {
    */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
-    try {
-      dalService.startTransaction();
-      if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-          .getTypeName().isEmpty()) {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-          if (typeDTO == null) {
-            throw new BadRequestException("Problème lors de la création du type");
-          }
+          throw new BadRequestException("Problème lors de la création du type");
         }
-      } else {
-        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
       }
-      offerDTO.getObject().setType(typeDTO);
-      dalService.commitTransaction();
-    } catch (BadRequestException e) {
-      dalService.rollBackTransaction();
-      throw e;
+    } else {
+      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
     }
+    offerDTO.getObject().setType(typeDTO);
   }
 
   /**
@@ -171,7 +164,7 @@ public class OfferUCCImpl implements OfferUCC {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
-    } catch (NotFoundException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }

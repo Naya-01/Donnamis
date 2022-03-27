@@ -5,10 +5,12 @@ import TypeLibrary from "../../Domain/TypeLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
+import ObjectLibrary from "../../Domain/ObjectLibrary";
 
 const typeLibrary = new TypeLibrary();
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
+const objectLibrary = new ObjectLibrary();
 let idOfferor;
 
 /**
@@ -53,7 +55,7 @@ const AddNewObjectPage = async () => {
                       <label for="file_input">
                         <img alt="no image"  height="75%" width="75%" src="${noImage}"/>
                       </label>
-                      <input id="file_input" type="file"/>
+                      <input id="file_input" name="file" type="file"/>
                     </div>
                   </div>
                   <!-- The description -->
@@ -114,9 +116,26 @@ async function addObject(e) {
   let timeSlot = document.getElementById("availability_date").value;
 
   //TODO : get the image if it exists
+  /*
+  let fileInput = document.querySelector('input[name=file]');
+  let objectWithImage;
+  if (fileInput.files[0] !== undefined) { // if there is an image
+    let formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    await objectLibrary.setImage(formData, idObject);
+  }*/
+
 
   // Call the backend to add the offert
-  await offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
+  let newOffer = await offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
+  let idObject = newOffer.object.idObject;
+  let fileInput = document.getElementById("file_input");
+  if (fileInput.files[0] !== undefined) { // if there is an image
+    let formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    await objectLibrary.setImage(formData, idObject);
+  }
+
   Redirect("/");
   let notif = new Notification().getNotification("top-end");
   notif.fire({
