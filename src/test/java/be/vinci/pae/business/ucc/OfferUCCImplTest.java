@@ -15,6 +15,7 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -148,6 +149,32 @@ class OfferUCCImplTest {
         () -> assertNotEquals(offerDTO.getObject().getType(), offerFromAdd.getObject().getType()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+
+  @DisplayName("Test ajouter une offre avec  type d'objet existant et ajout de l'offre impossible")
+  @Test
+  public void testAddOfferSuccessWithExistentTypeAndAddOneOfferReturnsNull() {
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
+
+    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setTypeName("Jouets");
+    typeDTOFromDaoGetOne.setIsDefault(true);
+
+    OfferDTO offerDTO = getNewOffer();
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> offerUCC.addOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
