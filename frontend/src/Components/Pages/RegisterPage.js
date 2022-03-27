@@ -16,7 +16,7 @@ const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndNumbersOrNothing =
     new RegExp('^([0-9]+[a-zA-Z]?)*$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification("top-end");
+const toast = new Notification().getNotification("bottom");
 
 const htmlPage = `
           <div class="container mt-5">
@@ -191,9 +191,7 @@ const RegisterPage = async () => {
       })
     } else if (
         unitNumber.value.trim().length > 15
-        || (unitNumber.value.trim().length !== 0
-            && !regOnlyLettersAndNumbersOrNothing.test(unitNumber.value.trim())
-        )) {
+        || (unitNumber.value.trim().length <= 0)) {
       unitNumber.classList.add("border-danger");
       toast.fire({
         icon: 'error',
