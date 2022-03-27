@@ -12,33 +12,56 @@ const MyObjectsPage = async () => {
     Redirect("/");
     return;
   }
-
-  await searchBar("Mes objets", true, false, true, "Recherche un objet", true, true);
+  let status = "";
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true,
+      true);
   const searchBarDiv = document.getElementById("searchBar");
-  await objectCards(searchBarDiv.value, "");
+  await objectCards(searchBarDiv.value, "", status);
   const typeObject = document.getElementById("default-type-list");
   searchBarDiv.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
-      console.log(typeObject.options[typeObject.selectedIndex].value);
       let type = typeObject.options[typeObject.selectedIndex].value;
-      if(type==="Tout") type="";
-      await objectCards(searchBarDiv.value, type);
+      if (type === "Tout") {
+        type = "";
+      }
+      await objectCards(searchBarDiv.value, type, status);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
-    console.log(typeObject.options[typeObject.selectedIndex].value);
     let type = typeObject.options[typeObject.selectedIndex].value;
-    if(type==="Tout") type="";
-    await objectCards(searchBarDiv.value, type);
+    if (type === "Tout") {
+      type = "";
+    }
+    await objectCards(searchBarDiv.value, type, status);
   });
 
+  let available = document.getElementById("btn-status-available");
+  available.addEventListener('click', (e) =>{
+    status="available";
+  });
+
+  let given = document.getElementById("btn-status-given");
+  given.addEventListener('click', (e) =>{
+    status="given";
+  });
+
+  let assigned = document.getElementById("btn-status-assigned");
+  assigned.addEventListener('click', (e) =>{
+    status="assigned";
+  });
+
+  let all = document.getElementById("btn-status-all");
+  all.addEventListener('click', (e) =>{
+    status="";
+  });
 }
 
-const objectCards = async (searchPattern, type) => {
+const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,type);
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,
+      type, status);
   memberCards.innerHTML = ``;
   for (const object of objects) {
     const buttonCardId = "button-card-" + object.memberId;
@@ -88,7 +111,7 @@ const objectCards = async (searchPattern, type) => {
     buttonInput.className = "d-grid gap-2 d-md-block";
     buttonInput.id = buttonCardId;
 
-    if(object.object.status!=="cancelled"){
+    if (object.object.status !== "cancelled") {
       const cancelButton = document.createElement("button");
       cancelButton.innerText = "Annuler";
       cancelButton.type = "button";
