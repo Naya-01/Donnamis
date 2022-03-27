@@ -135,7 +135,6 @@ public class OfferDAOImpl implements OfferDAO {
       if (!resultSet.next()) {
         return null;
       }
-
       offerDTO.setIdOffer(resultSet.getInt(1));
       offerDTO.setDate(resultSet.getDate(2).toLocalDate());
       offerDTO.setTimeSlot(resultSet.getString(3));

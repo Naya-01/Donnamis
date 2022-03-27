@@ -87,12 +87,12 @@ public class OfferUCCImpl implements OfferUCC {
       if (offerDTO.getObject().getIdObject() == 0) {
         objectDAO.addOne(offerDTO.getObject());
         if (offerDTO.getObject().getIdObject() == 0) {
-          throw new BadRequestException("Problème lors de la création d'un objet");
+          throw new FatalException("Problème lors de la création d'un objet");
         }
       }
       offer = offerDAO.addOne(offerDTO);
-      if (offer.getIdOffer() == 0) {
-        throw new BadRequestException("Problème lors de la création d'une offre");
+      if (offer == null) {
+        throw new FatalException("Problème lors de la création d'une offre");
       }
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -133,7 +133,7 @@ public class OfferUCCImpl implements OfferUCC {
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
     if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isEmpty()) {
+        .getTypeName().isBlank()) {
       typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
       if (typeDTO == null) {
         typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
