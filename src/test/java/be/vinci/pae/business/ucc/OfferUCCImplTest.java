@@ -6,8 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.factories.TypeFactory;
+import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -24,14 +29,20 @@ class OfferUCCImplTest {
 
   private DALService mockDalService;
   private OfferDAO offerDAO;
+  private TypeDAO typeDAO;
+  private ObjectDAO objectDAO;
   private OfferUCC offerUCC;
+  private TypeFactory typeFactory;
 
   @BeforeEach
   void setUp() {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.mockDalService = locator.getService(DALService.class);
     this.offerDAO = locator.getService(OfferDAO.class);
+    this.typeDAO = locator.getService(TypeDAO.class);
+    this.objectDAO = locator.getService(ObjectDAO.class);
     this.offerUCC = locator.getService(OfferUCC.class);
+    this.typeFactory = locator.getService(TypeFactory.class);
   }
 
   //  ----------------------------  GET LAST OFFERS UCC  -------------------------------  //
@@ -91,4 +102,31 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  //  ----------------------------  SET CORRECT TYPE UCC  -------------------------------  //
+
+  @DisplayName("Test set correct type avec succès")
+  @Test
+  public void testSetCorrectTypeWithExistentType() {
+    TypeDTO typeDTO = typeFactory.getTypeDTO();
+    typeDTO.setTypeName("Jouets");
+
+    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setTypeName("Jouets");
+    typeDTOFromDaoGetOne.setIsDefault(true);
+
+    ObjectDTO objectDTO = Mockito.mock(ObjectDTO.class);
+    Mockito.when(objectDTO.getType()).thenReturn(typeDTO);
+
+    OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
+    Mockito.when(offerDTO.getIdOffer()).thenReturn(0);
+    Mockito.when(offerDTO.getObject()).thenReturn(objectDTO);
+
+    Mockito.when(typeDAO.getOne(typeDTO.getTypeName())).thenReturn(typeDTOFromDaoGetOne);
+
+
+  }
+
 }
