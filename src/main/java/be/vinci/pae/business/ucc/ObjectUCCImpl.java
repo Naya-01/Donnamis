@@ -118,10 +118,10 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
     }
-    dalService.commitTransaction();
     return objectDTO;
   }
 }
