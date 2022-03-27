@@ -3,7 +3,6 @@ import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import {stat} from "@babel/core/lib/gensync-utils/fs";
 
 /**
  * Render the page to see an object
@@ -31,7 +30,6 @@ const MyObjectsPage = async () => {
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
-    console.log(typeObject.options[typeObject.selectedIndex].value);
     let type = typeObject.options[typeObject.selectedIndex].value;
     if (type === "Tout") {
       type = "";
@@ -40,26 +38,22 @@ const MyObjectsPage = async () => {
   });
 
   let available = document.getElementById("btn-status-available");
-  available.addEventListener("click", (e) =>{
-    e.preventDefault();
+  available.addEventListener('click', (e) =>{
     status="available";
   });
 
   let given = document.getElementById("btn-status-given");
-  available.addEventListener("click", (e) =>{
-    e.preventDefault();
+  given.addEventListener('click', (e) =>{
     status="given";
   });
 
   let assigned = document.getElementById("btn-status-assigned");
-  available.addEventListener("click", (e) =>{
-    e.preventDefault();
+  assigned.addEventListener('click', (e) =>{
     status="assigned";
   });
 
   let all = document.getElementById("btn-status-all");
-  available.addEventListener("click", (e) =>{
-    e.preventDefault();
+  all.addEventListener('click', (e) =>{
     status="";
   });
 }
