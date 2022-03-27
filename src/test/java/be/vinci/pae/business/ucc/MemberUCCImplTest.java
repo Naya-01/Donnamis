@@ -388,6 +388,25 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test inscription avec ajout de l'adresse échouée")
+  @Test
+  public void testRegisterWithNullReceivedFromDAOWhenCreateAnAddress() {
+    MemberDTO newMember = this.getMemberNewMember();
+
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
+    memberFromCreateOneDao.setMemberId(6);
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);
+    Mockito.when(mockAddressDAO.createOne(newMember.getAddress())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> memberUCC.register(newMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //  -----------------------------  SEARCH MEMBERS UCC  -----------------------------------  //
 
 
