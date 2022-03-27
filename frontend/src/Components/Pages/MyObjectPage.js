@@ -72,9 +72,11 @@ const MyObjectPage = async () => {
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
   // test if there is an image
+  //TODO : show the image
+  /*
   if(!image.endsWith("\\null")){
     imageOfObject = image;
-  }
+  }*/
 
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
@@ -360,12 +362,11 @@ async function updateObject(e) {
   }
   // Update the image
   let fileInput = document.querySelector('input[name=file]');
+  let objectWithImage;
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    await objectLibrary.setImage(formData, idObject);
-    //TODO : get the path
-    //TODO : replace the src of the image
+    objectWithImage = await objectLibrary.setImage(formData, idObject);
   }
 
   // Call the function to update the offer
@@ -382,6 +383,14 @@ async function updateObject(e) {
   })
   // Put text back
   changeToText(e);
+  //TODO : show the image
+  /*
+  if(objectWithImage !== undefined){
+    // replace the src of the image
+    document.getElementById("image").src = objectWithImage.image;
+  }*/
+
+
 }
 
 export default MyObjectPage;
