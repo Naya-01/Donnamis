@@ -7,6 +7,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -137,7 +138,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (typeDTO == null) {
         typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          throw new BadRequestException("Problème lors de la création du type");
+          throw new FatalException("Problème lors de la création du type");
         }
       }
     } else {

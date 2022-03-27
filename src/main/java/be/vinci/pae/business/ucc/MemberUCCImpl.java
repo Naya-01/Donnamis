@@ -7,6 +7,7 @@ import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
@@ -151,6 +152,9 @@ public class MemberUCCImpl implements MemberUCC {
 
       //add the member
       memberFromDao = memberDAO.createOneMember(memberDTO);
+      if (memberFromDao == null) {
+        throw new FatalException("Le membre n'a pas pu être ajouté à la base de données");
+      }
 
       AddressDTO addressOfMember = memberDTO.getAddress();
       if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().isBlank()) {
@@ -159,6 +163,9 @@ public class MemberUCCImpl implements MemberUCC {
       addressOfMember.setIdMember(memberFromDao.getMemberId());
       //add the address
       AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
+      if (addressDTO == null) {
+        throw new FatalException("L'adresse n'a pas pu être ajoutée à la base de données");
+      }
       memberFromDao.setAddress(addressDTO);
       dalService.commitTransaction();
     } catch (Exception e) {
