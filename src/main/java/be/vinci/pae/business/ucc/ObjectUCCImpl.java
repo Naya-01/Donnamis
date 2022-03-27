@@ -33,11 +33,11 @@ public class ObjectUCCImpl implements ObjectUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Objet non trouvé");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return objectDTO;
   }
 
@@ -58,11 +58,11 @@ public class ObjectUCCImpl implements ObjectUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Aucun objet pour ce membre");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return objectDTOList;
   }
 
@@ -115,11 +115,11 @@ public class ObjectUCCImpl implements ObjectUCC {
       }
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return objectDTO;
   }
 }
