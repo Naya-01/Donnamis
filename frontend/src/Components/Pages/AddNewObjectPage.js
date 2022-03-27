@@ -22,7 +22,7 @@ const AddNewObjectPage = async () => {
   }
   // Get the id of the member
   let member = await memberLibrary.getUserByHisToken();
-  idOfferor = member.user.memberId;
+  idOfferor = member.memberId;
 
   // Get all types from the backend
   let allDefaultTypes = await typeLibrary.getAllDefaultTypes();
@@ -116,7 +116,7 @@ async function addObject(e) {
   //TODO : get the image if it exists
 
   // Call the backend to add the offert
-  offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
+  await offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
   Redirect("/");
   let notif = new Notification().getNotification("top-end");
   notif.fire({

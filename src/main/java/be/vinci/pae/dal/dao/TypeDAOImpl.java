@@ -61,13 +61,12 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public List<TypeDTO> getAllDefaultTypes() {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_type, type_name, is_default FROM donnamis.types WHERE is_default = true");
-    try {
+    String query = "SELECT id_type, type_name, is_default FROM donnamis.types "
+        + "WHERE is_default = true";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       List<TypeDTO> listTypeDTO = new ArrayList<>();
-      // Create a typeDTO for each tuple
       while (resultSet.next()) {
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(1));
@@ -75,8 +74,6 @@ public class TypeDAOImpl implements TypeDAO {
         typeDTO.setIsDefault(resultSet.getBoolean(3));
         listTypeDTO.add(typeDTO);
       }
-      preparedStatement.close();
-      resultSet.close();
       return listTypeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -93,8 +90,7 @@ public class TypeDAOImpl implements TypeDAO {
   public TypeDTO addOne(String typeName) {
     String query = "INSERT INTO donnamis.types (type_name, is_default) VALUES (?, false) "
         + "RETURNING id_type, type_name, is_default";
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, typeName);
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
@@ -109,14 +105,11 @@ public class TypeDAOImpl implements TypeDAO {
       if (!resultSet.next()) {
         return null;
       }
-      // Create the typeDTO if we have a result
       TypeDTO typeDTO = typeFactory.getTypeDTO();
       typeDTO.setId(resultSet.getInt(1));
       typeDTO.setTypeName(resultSet.getString(2));
       typeDTO.setIsDefault(resultSet.getBoolean(3));
 
-      preparedStatement.close();
-      resultSet.close();
       return typeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

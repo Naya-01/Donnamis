@@ -1,6 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -8,6 +7,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -38,11 +38,11 @@ public class OfferUCCImpl implements OfferUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offres");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offers;
   }
 
@@ -60,13 +60,13 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
         dalService.rollBackTransaction();
-        throw new NotFoundException("Aucune offres");
+        throw new NotFoundException("Offre inexistante");
       }
-    } catch (Exception e) {
+      dalService.commitTransaction();
+    } catch (FatalException e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offerDTO;
   }
 
@@ -93,11 +93,11 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer.getIdOffer() == 0) {
         throw new BadRequestException("Problème lors de la création d'une offre");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offer;
   }
 
@@ -112,22 +112,15 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offer;
     try {
       dalService.startTransaction();
-      setCorrectType(offerDTO);
-
       offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
-        throw new BadRequestException("Problème lors de la mise à jour du time slot");
+        throw new BadRequestException("Problème lors de la mise à jour de l'offre");
       }
-
-      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-      if (objectDTO == null) {
-        throw new BadRequestException("Problème lors de la mise à jour de l'objet");
-      }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offer;
   }
 
@@ -138,19 +131,26 @@ public class OfferUCCImpl implements OfferUCC {
    */
   private void setCorrectType(OfferDTO offerDTO) {
     TypeDTO typeDTO;
-    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isEmpty()) {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
-      if (typeDTO == null) {
-        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+    try {
+      dalService.startTransaction();
+      if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
+          .getTypeName().isEmpty()) {
+        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
         if (typeDTO == null) {
-          throw new BadRequestException("Problème lors de la création du type");
+          typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
+          if (typeDTO == null) {
+            throw new BadRequestException("Problème lors de la création du type");
+          }
         }
+      } else {
+        typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
       }
-    } else {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
+      offerDTO.getObject().setType(typeDTO);
+      dalService.commitTransaction();
+    } catch (BadRequestException e) {
+      dalService.rollBackTransaction();
+      throw e;
     }
-    offerDTO.getObject().setType(typeDTO);
   }
 
   /**
@@ -170,11 +170,11 @@ public class OfferUCCImpl implements OfferUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offre");
       }
+      dalService.commitTransaction();
     } catch (NotFoundException e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offerDTO;
   }
 }

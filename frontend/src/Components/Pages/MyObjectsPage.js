@@ -1,5 +1,5 @@
 import {getSessionObject} from "../../utils/session";
-import {Redirect} from "../Router/Router";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
@@ -13,7 +13,7 @@ const MyObjectsPage = async () => {
     return;
   }
 
-  await searchBar("Mes objets", false, true, "Recherche un objet", true);
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true);
   const searchBarDiv = document.getElementById("searchBar");
   await objectCards(searchBarDiv.value);
   searchBarDiv.addEventListener('keyup', async (e) => {
@@ -38,7 +38,7 @@ const objectCards = async (searchPattern) => {
 
     const divCard = document.createElement("div");
     divCard.id = "member-card-" + object.idOffer;
-    divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
+    divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded clickable";
 
     const profileImageDiv = document.createElement("div");
     profileImageDiv.className = "col-1 m-auto";
@@ -84,6 +84,15 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(cardForm);
 
     memberCards.appendChild(divCard);
+    const card = document.getElementById("member-card-" + object.idOffer)
+    card.addEventListener("click", async () => {
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          object.idOffer);
+    });
+    const addButton = document.getElementById("add-new-object-button");
+    addButton.addEventListener('click', () => {
+      Redirect("/addNewObjectPage")
+    });
   }
 }
 

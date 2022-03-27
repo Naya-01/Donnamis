@@ -79,7 +79,8 @@ class InterestUCCImplTest {
         () -> assertThrows(NotFoundException.class,() ->
             interestUCC.getInterest(nonExistentId, nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
-        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1)).getOne(nonExistentId, nonExistentId),
+        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
+            .getOne(nonExistentId, nonExistentId),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }

@@ -3,6 +3,8 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,11 +18,8 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.io.InputStream;
 import java.util.List;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -79,18 +78,15 @@ public class ObjectResource {
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
-      throw new WebApplicationException("Cette objet ne vous appartient pas", Status.UNAUTHORIZED);
+      throw new UnauthorizedException("Cette objet ne vous appartient pas");
     }
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\");
-
-    if (imageManager.writeImageOnDisk(file, fileMime, "objects\\") == null) {
-      throw new WebApplicationException("Le type du fichier est incorrect."
-          + "\nVeuillez soumettre une image", Response.Status.BAD_REQUEST);
+    if (internalPath == null) {
+      throw new BadRequestException("Le type du fichier est incorrect."
+          + "\nVeuillez soumettre une image");
     }
 
-    ObjectDTO newDTO = objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
-
-    return newDTO;
+    return objectUCC.updateObjectPicture(internalPath, memberDTO.getMemberId());
   }
 
   /**

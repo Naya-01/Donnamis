@@ -4,7 +4,7 @@ class OfferLibrary {
   /**
    * Get an offer by its id.
    * @param id the id of the offer
-   * @returns {Promise<*>} the offer in json
+   * @returns {Promise<*>} the offer in json and the status
    */
   async getOfferById(id) {
     let response;
@@ -74,9 +74,10 @@ class OfferLibrary {
    */
   async updateOffer(id, timeSlot, description, idType, status) {
     let response;
+    console.log(id)
     try {
       let options = {
-        method: "POST", //TODO : change to PUT
+        method: "PUT", //TODO : change to PUT
         body: JSON.stringify({
           "idOffer": id,
           "timeSlot": timeSlot,
@@ -84,9 +85,6 @@ class OfferLibrary {
             "description": description,
             "image": null,
             "status": status,
-            "type": {
-              "idType": idType
-            }
           }
         }),
         headers: {
@@ -94,7 +92,7 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/offers/update", options);
+      response = await fetch("api/offers", options);
     } catch (err) {
       console.log(err);
     }

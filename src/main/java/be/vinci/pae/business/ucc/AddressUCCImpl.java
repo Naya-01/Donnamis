@@ -29,11 +29,11 @@ public class AddressUCCImpl implements AddressUCC {
         dalService.rollBackTransaction();
         throw new BadRequestException("Adresse non mise à jour");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return addressDTOReturned;
   }
 }
