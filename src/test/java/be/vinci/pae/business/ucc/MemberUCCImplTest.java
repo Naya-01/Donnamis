@@ -21,6 +21,7 @@ import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.utils.Config;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -50,6 +51,8 @@ class MemberUCCImplTest {
   private MemberDTO memberPending2;
   private MemberDTO memberValid1;
 
+  private String pathImage;
+
 
   private MemberDTO getMemberNewMember() {
     // member to register
@@ -76,6 +79,8 @@ class MemberUCCImplTest {
 
   @BeforeEach
   void initAll() {
+    Config.load("test.properties");
+    this.pathImage = Config.getProperty("ImagePath");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
@@ -239,7 +244,7 @@ class MemberUCCImplTest {
 
   //  ----------------------------  UPDATE PROFIL PICTURE UCC  -------------------------------  //
 
-  //FINIR L UCC UPDATE PROFIL PICTURE
+
   @DisplayName("Test updateProfilPicture with a non existent id for member")
   @Test
   public void testUpdateProfilPictureForNonExistentMember() {
@@ -247,8 +252,34 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.updateProfilPicture("C:/img", idMember)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember)),
         () -> Mockito.verify(mockMemberDAO).getOne(idMember)
+    );
+  }
+
+  @DisplayName("Test updateProfilPicture avec success")
+  @Test
+  public void testUpdateProfilPictureSuccess() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+    memberDTO.setImage(pathImage);
+
+    MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
+    memberDTOWithNewProfilPic.setMemberId(2);
+    memberDTOWithNewProfilPic.setImage(pathImage + "test");
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getMemberId())).thenReturn(memberDTO);
+
+    Mockito.when(mockMemberDAO.updateProfilPicture(pathImage + "test", memberDTO.getMemberId()))
+        .thenReturn(memberDTOWithNewProfilPic);
+
+    assertAll(
+        () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
+        () -> assertNotEquals(memberDTO.getImage(), memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 
