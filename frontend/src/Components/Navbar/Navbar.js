@@ -1,31 +1,6 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
-import {Redirect, refreshToken} from "../Router/Router";
-
-const getUsername = async () => {
-  if (!await refreshToken()) {
-    return;
-  }
-  let userData;
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        Authorization: getSessionObject("user").accessToken
-      },
-    };
-    userData = await fetch("/api/member/getMemberByToken", options);
-    if (!userData.ok) {
-      Redirect("/login");
-      await Navbar();
-      return;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  userData = await userData.json();
-  return userData;
-}
+import MemberLibrary from "../../Domain/MemberLibrary";
 
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
@@ -36,7 +11,8 @@ const Navbar = async () => {
   let username = undefined;
   let user_role = undefined;
   if (userSession) {
-    let user = await getUsername();
+    let memberLibraryModal = new MemberLibrary();
+    let user = await memberLibraryModal.getUserByHisToken();
     username = user.username;
     user_role = user.role;
   }
@@ -97,14 +73,13 @@ const Navbar = async () => {
                 <li class="nav-item">
                     <a class="nav-link fs-4 " href="#" data-uri="/myObjectsPage">Mes objets</a>
                 </li>`
-                if(user_role === "administrator"){
-                  navbar += `<li class="nav-item">
+    if (user_role === "administrator") {
+      navbar += `<li class="nav-item">
                     <a class="nav-link fs-4 " data-uri="/registrationManagement" href="#">Inscriptions</a>
                 </li>`;
-                }
+    }
 
-
-                navbar +=
+    navbar +=
         `
                 
 <!--                <li class="nav-item">-->
