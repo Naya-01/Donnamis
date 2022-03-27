@@ -257,12 +257,37 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test updateProfilPicture avec success")
+  @DisplayName("Test updateProfilPicture avec success n'ayant pas de photo de profil")
   @Test
-  public void testUpdateProfilPictureSuccess() {
+  public void testUpdateProfilPictureSuccessNotHavingAProfilPicture() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
     memberDTO.setImage(pathImage);
+
+    MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
+    memberDTOWithNewProfilPic.setMemberId(2);
+    memberDTOWithNewProfilPic.setImage(pathImage + "test");
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getMemberId())).thenReturn(memberDTO);
+
+    Mockito.when(mockMemberDAO.updateProfilPicture(pathImage + "test", memberDTO.getMemberId()))
+        .thenReturn(memberDTOWithNewProfilPic);
+
+    assertAll(
+        () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
+        () -> assertNotEquals(memberDTO.getImage(), memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test updateProfilPicture avec success ayant déjà une photo de profil")
+  @Test
+  public void testUpdateProfilPictureSuccessAlreadyHavingAProfilPicture() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
 
     MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
     memberDTOWithNewProfilPic.setMemberId(2);
