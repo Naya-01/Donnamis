@@ -306,4 +306,33 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test ajouter une offre avec un type d'objet non existant et a été ajouté à la DB")
+  @Test
+  public void testAddOfferWithNonExistentTypeAndAddOneTypeReturnsANewType() {
+
+    TypeDTO typeDTOFromDaoAddOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoAddOne.setId(5);
+    typeDTOFromDaoAddOne.setTypeName("Jouets");
+    typeDTOFromDaoAddOne.setIsDefault(true);
+
+    OfferDTO offerDTO = getNewOffer();
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
+    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(null);
+    Mockito.when(typeDAO.addOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(typeDTOFromDaoAddOne);
+
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+
+    assertAll(
+        () -> assertEquals(offerFromAdd, offerDTOFromDAO),
+        () -> assertNotEquals(offerFromAdd.getIdOffer(), offerDTO.getIdOffer()),
+        () -> assertNotEquals(offerDTO.getObject().getType(), offerFromAdd.getObject().getType()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }
