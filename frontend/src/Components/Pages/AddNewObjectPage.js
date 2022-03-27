@@ -124,7 +124,7 @@ async function addObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    //await objectLibrary.setImage(formData, idObject); TODO : get the image
+    await objectLibrary.setImage(formData, idObject);
   }
 
   Redirect("/");
