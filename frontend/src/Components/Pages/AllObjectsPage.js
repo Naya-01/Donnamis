@@ -16,15 +16,23 @@ const AllObjectsPage = async () => {
   pageDiv.innerHTML += `<div id="offers-list"></div>`;
   const offersList = document.getElementById("offers-list");
 
-  await displayOffers("", offersList);
+  await displayOffers("", offersList,"");
   const searchBarInput = document.getElementById("searchBar");
   const searchButtonInput = document.getElementById("searchButton");
   searchButtonInput.addEventListener('click', async () => {
-    await displayOffers(searchBarInput.value, offersList);
+    console.log(typeObject.options[typeObject.selectedIndex].value);
+    let type = typeObject.options[typeObject.selectedIndex].value;
+    if(type==="Tout") type="";
+    await displayOffers(searchBarInput.value, offersList,type);
   });
+  const typeObject = document.getElementById("default-type-list");
+
   searchBarInput.addEventListener('keyup', async (e) => {
     if (e.key === "Enter") {
-      await displayOffers(searchBarInput.value, offersList);
+      console.log(typeObject.options[typeObject.selectedIndex].value);
+      let type = typeObject.options[typeObject.selectedIndex].value;
+      if(type==="Tout") type="";
+      await displayOffers(searchBarInput.value, offersList,type);
     }
   });
   const addButton = document.getElementById("add-new-object-button");
@@ -35,8 +43,8 @@ const AllObjectsPage = async () => {
 };
 
 // Display clients
-const displayOffers = async (searchPattern, pageDiv) => {
-  const offers = await OfferLibrary.prototype.getOffers(searchPattern, false);
+const displayOffers = async (searchPattern, pageDiv, type) => {
+  const offers = await OfferLibrary.prototype.getOffers(searchPattern, false, type);
   pageDiv.innerHTML = ``;
   if (!offers) {
     pageDiv.innerHTML = `<p>Aucun objet</p>`;
