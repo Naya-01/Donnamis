@@ -80,8 +80,9 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO addOffer(OfferDTO offerDTO) {
     OfferDTO offer;
     try {
-      dalService.startTransaction();
       setCorrectType(offerDTO);
+      dalService.startTransaction();
+
 
       if (offerDTO.getObject().getIdObject() == 0) {
         objectDAO.addOne(offerDTO.getObject());
@@ -93,11 +94,11 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer.getIdOffer() == 0) {
         throw new BadRequestException("Problème lors de la création d'une offre");
       }
-      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
+    dalService.commitTransaction();
     return offer;
   }
 
