@@ -206,9 +206,9 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       modifierMemberDTO = memberDAO.updateOne(memberDTO);
       if (modifierMemberDTO == null) {
-        dalService.rollBackTransaction();
         throw new ForbiddenException("Problem with updating member");
       }
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
