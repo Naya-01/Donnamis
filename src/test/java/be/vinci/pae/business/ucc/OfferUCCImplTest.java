@@ -122,41 +122,9 @@ class OfferUCCImplTest {
 
   //  ----------------------------  ADD OFFER UCC  -------------------------------  //
 
-  /*
-  @DisplayName("Test set correct type avec succès")
-  @Test
-  public void testSetCorrectTypeWithExistentType() {
-    TypeDTO typeDTO = typeFactory.getTypeDTO();
-    typeDTO.setTypeName("Jouets");
-
-    ObjectDTO objectDTO = Mockito.mock(ObjectDTO.class);
-    Mockito.when(objectDTO.getType()).thenReturn(typeDTO);
-
-    OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
-    Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
-    Mockito.when(offerDTO.getIdOffer()).thenReturn(0);
-    Mockito.when(offerDTO.getObject()).thenReturn(objectDTO);
-
-    //------------------------------------------
-    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoGetOne.setId(5);
-    typeDTOFromDaoGetOne.setTypeName("Jouets");
-    typeDTOFromDaoGetOne.setIsDefault(true);
-
-    Mockito.when(typeDAO.getOne(typeDTO.getTypeName())).thenReturn(typeDTOFromDaoGetOne);
-
-    assertAll(
-        () -> assertEquals(typeDTOFromDaoGetOne,),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-
-  }*/
-
   @DisplayName("Test ajouter une offre avec un type d'objet existant")
   @Test
   public void testAddOfferSuccessWithExistentType() {
-    OfferDTO offerDTO = getNewOffer();
     OfferDTO offerDTOFromDAO = getNewOffer();
     Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
 
@@ -165,6 +133,7 @@ class OfferUCCImplTest {
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
+    OfferDTO offerDTO = getNewOffer();
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoGetOne);
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
