@@ -3,6 +3,9 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import SearchBar from "../Module/SearchBar";
 
 const RegistrationManagementPage = async () => {
+  let user = await MemberLibrary.prototype.getUserByHisToken();
+  console.log(user);
+
   let actualStatus = 'waiting';
   await SearchBar("Inscriptions", true, true, false,
       "Rechercher une demande d'inscription", false);
@@ -170,11 +173,14 @@ const deniedMemberButtons = (idMember) => {
   const reverseDecisionButton = document.getElementById(revokeDecisionButtonId);
   reverseDecisionButton.addEventListener('click', async () => {
     // set member valid
-    await MemberLibrary.prototype.updateStatus("valid", idMember, "", "");
+    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "");
 
     // Hide the member card
     const cardMember = document.getElementById("member-card-" + idMember);
     cardMember.hidden = true;
+
+    let pendingButton = document.getElementById("btn-radio-pending");
+    pendingButton.click();
   });
 };
 
