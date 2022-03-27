@@ -277,4 +277,33 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test ajouter une offre avec un id type et nom du type null")
+  @Test
+  public void testAddOfferWithNullTypeNameOfOfferType() {
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
+
+    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setTypeName("Jouets");
+    typeDTOFromDaoGetOne.setIsDefault(true);
+
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().getType().setTypeName(null);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType())).
+        thenReturn(typeDTOFromDaoGetOne);
+
+    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
+
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+
+    assertAll(
+        () -> assertEquals(offerFromAdd, offerDTOFromDAO),
+        () -> assertNotEquals(offerFromAdd.getIdOffer(), offerDTO.getIdOffer()),
+        () -> assertNotEquals(offerDTO.getObject().getType(), offerFromAdd.getObject().getType()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }
