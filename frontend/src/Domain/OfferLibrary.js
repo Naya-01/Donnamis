@@ -83,7 +83,6 @@ class OfferLibrary {
           "timeSlot": timeSlot,
           "object": {
             "description": description,
-            "image": null,
             "status": status,
           }
         }),
@@ -125,7 +124,7 @@ class OfferLibrary {
     return allLastOffers;
   }
 
-  async getOffers(searchPattern, self, type) {
+  async getOffers(searchPattern, self, type, objStatus) {
     try {
       let options = {
         method: "GET",
@@ -134,7 +133,8 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").refreshToken
         },
       };
-      let query = "/api/offers?search-pattern=" + searchPattern +"&type="+type;
+      let query = "/api/offers?search-pattern=" + searchPattern + "&type="
+          + type;
       if (self) {
         query += "&self=true";
       }
