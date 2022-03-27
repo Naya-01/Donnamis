@@ -369,7 +369,7 @@ async function updateObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, idObject);
+    //objectWithImage = await objectLibrary.setImage(formData, idObject); //TODO : add when we have images
   }
 
   // Call the function to update the offer
