@@ -85,8 +85,7 @@ public class OfferUCCImpl implements OfferUCC {
       setCorrectType(offerDTO);
 
       if (offerDTO.getObject().getIdObject() == 0) {
-        objectDAO.addOne(offerDTO.getObject());
-        if (offerDTO.getObject().getIdObject() == 0) {
+        if (objectDAO.addOne(offerDTO.getObject()) == null) {
           throw new FatalException("Problème lors de la création d'un objet");
         }
       }

@@ -177,4 +177,31 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  /*
+  @DisplayName("Test ajouter une offre avec  type d'objet existant et ajout de l'offre impossible")
+  @Test
+  public void testAddOfferSuccessWithExistentTypeAnd() {
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
+
+    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setTypeName("Jouets");
+    typeDTOFromDaoGetOne.setIsDefault(true);
+
+    OfferDTO offerDTO = getNewOffer();
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> offerUCC.addOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }*/
+
 }
