@@ -44,5 +44,5 @@ public interface OfferUCC {
    * @param type     the type of object that we want
    * @return list of offers
    */
-  List<OfferDTO> getOffers(String search, int idMember, String type);
+  List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus);
 }

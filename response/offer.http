@@ -28,6 +28,10 @@ Authorization: {{refresh}}
 ### GET type object
 GET {{baseUri}}/offers?self=false&type=Décoration
 Authorization: {{refresh}}
+
+### GET object by status
+GET {{baseUri}}/offers?status=
+Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 

@@ -124,7 +124,7 @@ class OfferLibrary {
     return allLastOffers;
   }
 
-  async getOffers(searchPattern, self, type) {
+  async getOffers(searchPattern, self, type, objStatus) {
     try {
       let options = {
         method: "GET",

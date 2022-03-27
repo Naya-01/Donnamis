@@ -13,7 +13,7 @@ const MyObjectsPage = async () => {
     return;
   }
 
-  await searchBar("Mes objets", true, false, true, "Recherche un objet", true);
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true, true);
   const searchBarDiv = document.getElementById("searchBar");
   await objectCards(searchBarDiv.value, "");
   const typeObject = document.getElementById("default-type-list");

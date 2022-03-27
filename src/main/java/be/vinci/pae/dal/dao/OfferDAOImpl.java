@@ -40,7 +40,8 @@ public class OfferDAOImpl implements OfferDAO {
    * @return list of offers
    */
   @Override
-  public List<OfferDTO> getAll(String searchPattern, int idMember, String type) {
+  public List<OfferDTO> getAll(String searchPattern, int idMember, String type,
+      String objectStatus) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
@@ -52,10 +53,17 @@ public class OfferDAOImpl implements OfferDAO {
           + " OR LOWER(ob.description) LIKE ?) ";
     }
     if (type != null && !type.isEmpty()) {
-      query += "AND ty.type_name = ?";
+      query += "AND ty.type_name = ? ";
     }
     if (idMember != 0) {
-      query += "AND ob.id_offeror = ?";
+      query += "AND ob.id_offeror = ? ";
+    }
+    if (objectStatus != null && !objectStatus.isEmpty()) {
+      if (objectStatus.equals("available")) {
+        query += "AND (LOWER(ob.status) LIKE 'available' OR LOWER(ob.status) LIKE 'interested') ";
+      } else {
+        query += "AND LOWER(ob.status) LIKE ?";
+      }
     }
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -71,6 +79,10 @@ public class OfferDAOImpl implements OfferDAO {
       }
       if (idMember != 0) {
         preparedStatement.setInt(argCounter, idMember);
+        argCounter++;
+      }
+      if (objectStatus != null && !objectStatus.isEmpty() && !objectStatus.equals("available")) {
+        preparedStatement.setString(argCounter, objectStatus);
       }
       return getOffersWithPreparedStatement(preparedStatement);
     } catch (SQLException e) {
