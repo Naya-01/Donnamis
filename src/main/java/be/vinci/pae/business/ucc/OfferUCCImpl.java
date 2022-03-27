@@ -1,6 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -8,6 +7,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -37,11 +37,11 @@ public class OfferUCCImpl implements OfferUCC {
       if (offers.isEmpty()) {
         throw new NotFoundException("Aucune offres");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offers;
   }
 
@@ -60,11 +60,11 @@ public class OfferUCCImpl implements OfferUCC {
       if (offerDTO == null) {
         throw new NotFoundException("Aucune offres");
       }
-    } catch (Exception e) {
+      dalService.commitTransaction();
+    } catch (FatalException e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offerDTO;
   }
 
@@ -110,22 +110,15 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offer;
     try {
       dalService.startTransaction();
-      setCorrectType(offerDTO);
-
       offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
-        throw new BadRequestException("Problème lors de la mise à jour du time slot");
+        throw new BadRequestException("Problème lors de la mise à jour de l'offre");
       }
-
-      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-      if (objectDTO == null) {
-        throw new BadRequestException("Problème lors de la mise à jour de l'objet");
-      }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offer;
   }
 
@@ -168,11 +161,11 @@ public class OfferUCCImpl implements OfferUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offre");
       }
+      dalService.commitTransaction();
     } catch (NotFoundException e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offerDTO;
   }
 }

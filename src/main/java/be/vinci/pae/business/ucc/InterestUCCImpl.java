@@ -27,13 +27,19 @@ public class InterestUCCImpl implements InterestUCC {
    */
   @Override
   public InterestDTO getInterest(int idObject, int idMember) {
-    dalService.startTransaction();
-    InterestDTO interestDTO = interestDAO.getOne(idObject, idMember);
-    if (interestDTO == null) {
+    InterestDTO interestDTO;
+    try {
+      dalService.startTransaction();
+      interestDTO = interestDAO.getOne(idObject, idMember);
+      if (interestDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Interest not found");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Interest not found");
+      throw e;
     }
-    dalService.commitTransaction();
     return interestDTO;
   }
 
@@ -77,11 +83,11 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAll(idObject);
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return interestDTOList;
   }
 

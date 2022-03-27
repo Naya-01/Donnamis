@@ -30,11 +30,11 @@ public class TypeUCCImpl implements TypeUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Type not found");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 
@@ -54,11 +54,11 @@ public class TypeUCCImpl implements TypeUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("Type not found");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 
@@ -77,11 +77,11 @@ public class TypeUCCImpl implements TypeUCC {
         dalService.rollBackTransaction();
         throw new NotFoundException("No default types found");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 }

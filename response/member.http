@@ -58,8 +58,12 @@ Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "memberId": 1,
-  "reasonRefusal": "Test de refus"
+  "memberId": 2,
+  "username": "AlbertDeBucarest",
+  "lastname": "Dubous",
+  "firstname": "Albert",
+  "status": "valid",
+  "role": "member"
 }
 
 ### Upload picture
