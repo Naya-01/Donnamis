@@ -39,7 +39,6 @@ class OfferUCCImplTest {
 
   private OfferDTO getNewOffer() {
     TypeDTO typeDTO = typeFactory.getTypeDTO();
-    typeDTO.setId(5);
     typeDTO.setTypeName("Jouets");
 
     ObjectDTO objectDTO = Mockito.mock(ObjectDTO.class);
@@ -335,4 +334,19 @@ class OfferUCCImplTest {
     );
   }
 
+  //  ----------------------------  GET OFFERS UCC  -------------------------------  //
+
+
+  @DisplayName("Test get offers avec aucune offre retournée")
+  @Test
+  public void testGetOffersWithEmptyListOfOffersReturned() {
+    Mockito.when(offerDAO.getAll("", 0)).thenReturn(new ArrayList<>());
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getOffers("", 0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
 }

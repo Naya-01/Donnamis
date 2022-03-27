@@ -154,12 +154,11 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getOffers(String search, int idMember) {
-    List<OfferDTO> offerDTO = null;
+    List<OfferDTO> offerDTO;
     try {
       dalService.startTransaction();
       offerDTO = offerDAO.getAll(search, idMember);
-      if (offerDTO == null) {
-        dalService.rollBackTransaction();
+      if (offerDTO.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
