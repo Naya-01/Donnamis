@@ -69,7 +69,6 @@ const MyObjectPage = async () => {
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
-  console.log(jsonInterests);
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
   //TODO : show the image
@@ -150,6 +149,9 @@ const MyObjectPage = async () => {
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
+  if(english_status === "given"){
+    button.disabled = true;
+  }
   // if this is the object of the member connected
   if (idMemberConnected === offer.object.idOfferor) {
     document.getElementById("titleObject").textContent = "Votre objet";
@@ -163,47 +165,45 @@ const MyObjectPage = async () => {
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-    button.id = "interestedButton";
-    button.value = "Je suis interessé";
-    // date of disponibility
-    let labelDate = document.createElement("label");
-    labelDate.for = "input_date";
-    labelDate.innerHTML = "Date de disponibilité : ";
-    let input_date = document.createElement("input");
-    input_date.id = "input_date";
-    input_date.type = "date";
-    let date = new Date();//.toLocaleDateString().replaceAll("/","-");
-    let month = "";
-    if(date.getMonth()%10 !== 0){
-      month = "0"
-    }
-    month += (date.getMonth()+1);
-    let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
-    input_date.value = dateActual;
-    input_date.min = dateActual;
-    document.getElementById("divDate").appendChild(labelDate);
-    document.getElementById("divDate").appendChild(input_date);
 
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      input_date.disabled = true;
-      console.log(offer);
-      console.log(input_date.value);
-      await interestLibrary.addOne(offer.object.idObject, input_date.value)
-      // the notification to show that the interest is send
-      let notif = notificationModule.getNotification();
-      notif.fire({
-        icon: 'success',
-        title: 'Votre intérêt a bien été pris en compte.'
-      })
-    });
-    // if the member connected is already interested
-    if(isInterested){
-      button.disabled = true;
-      input_date.disabled = true;
+      button.id = "interestedButton";
+      button.value = "Je suis interessé";
+      // date of disponibility
+      let labelDate = document.createElement("label");
+      labelDate.for = "input_date";
+      labelDate.innerHTML = "Date de disponibilité : ";
+      let input_date = document.createElement("input");
+      input_date.id = "input_date";
+      input_date.type = "date";
+      let date = new Date();//.toLocaleDateString().replaceAll("/","-");
+      let month = "";
+      if (date.getMonth() % 10 !== 0) {
+        month = "0"
+      }
+      month += (date.getMonth() + 1);
+      let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+      input_date.value = dateActual;
+      input_date.min = dateActual;
+      document.getElementById("divDate").appendChild(labelDate);
+      document.getElementById("divDate").appendChild(input_date);
+
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        input_date.disabled = true;
+        await interestLibrary.addOne(offer.object.idObject, input_date.value)
+        // the notification to show that the interest is send
+        let notif = notificationModule.getNotification();
+        notif.fire({
+          icon: 'success',
+          title: 'Votre intérêt a bien été pris en compte.'
+        })
+      });
+    if(isInterested || (english_status !== "interested" && english_status !== "available")) {
+      document.getElementById("divDate").remove();
+      document.getElementById("interestedButton").remove();
+
     }
-    document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username;
+
   }
 
 }
