@@ -257,7 +257,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test updateProfilPicture avec success n'ayant pas de photo de profil")
+  @DisplayName("Test updateProfilPicture with success not already having a profil picture")
   @Test
   public void testUpdateProfilPictureSuccessNotHavingAProfilPicture() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
@@ -283,7 +283,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test updateProfilPicture avec success ayant déjà une photo de profil")
+  @DisplayName("Test updateProfilPicture with success already having a profil picture")
   @Test
   public void testUpdateProfilPictureSuccessAlreadyHavingAProfilPicture() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
@@ -310,7 +310,7 @@ class MemberUCCImplTest {
 
   //  -----------------------------  REGISTER UCC  ----------------------------------------  //
 
-  @DisplayName("Test inscription tout va bien")
+  @DisplayName("Test register success")
   @Test
   public void testRegisterSuccess() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -341,7 +341,7 @@ class MemberUCCImplTest {
   }
 
 
-  @DisplayName("Test inscription avec membre déjà existant")
+  @DisplayName("Test register with a member already existent")
   @Test
   public void testRegisterConflict() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -358,7 +358,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec champs pouvant êtres vides (tel (member) et boite (address))")
+  @DisplayName("Test register with fields allowed to be empty (phone and unit number)")
   @Test
   public void testRegisterEmptyFields() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -394,7 +394,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec champs pouvant êtres null (tel (member) et boite (address))")
+  @DisplayName("Test register with fields allowed to be null (phone and unit number)")
   @Test
   public void testRegisterNullFields() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -430,7 +430,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec ajout du membre échoué")
+  @DisplayName("Test register add a member failed")
   @Test
   public void testRegisterWithNullReceivedFromDAOWhenCreateAMember() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -444,7 +444,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec ajout de l'adresse échouée")
+  @DisplayName("Test register add an address failed")
   @Test
   public void testRegisterWithNullReceivedFromDAOWhenCreateAnAddress() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -466,7 +466,7 @@ class MemberUCCImplTest {
   //  -----------------------------  SEARCH MEMBERS UCC  -----------------------------------  //
 
 
-  @DisplayName("Test recherche de membre avec status et recherche vide")
+  @DisplayName("Test searchMembers with status and search empty")
   @Test
   public void testSearchMembersEmptySearchAndEmptyStatus() {
     List<MemberDTO> allMemberDTOList = List.of(memberPending1, memberPending2, memberValid1);
@@ -480,7 +480,7 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec aucun membre retourné par le DAO")
+  @DisplayName("Test searchMembers with none member received from DAO")
   @Test
   public void testSearchMembersEmptyReturnListFromDAO() {
     List<MemberDTO> allDeniedMemberDTOList = List.of();
@@ -495,9 +495,9 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec status waiting")
+  @DisplayName("Test searchMembers with waiting status")
   @Test
-  public void testSearchWaitingStatus() {
+  public void testSearchMembersWaitingStatus() {
     List<MemberDTO> allWaitingMemberDTOList = List.of(memberPending1, memberPending2);
 
     Mockito.when(mockMemberDAO.getAll("", "waiting"))
@@ -512,9 +512,9 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec aucun status mais une recherche en param")
+  @DisplayName("Test searchMembers with non status but a search param")
   @Test
-  public void testSearchWithSearchParamAndNoStatus() {
+  public void testSearchMembersWithSearchParamAndNoStatus() {
     List<MemberDTO> allMemberDTOListMatchingSearch = List.of(memberPending1, memberPending2);
 
     Mockito.when(mockMemberDAO.getAll("ma", ""))
@@ -527,9 +527,9 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test recherche avec un valid status et une recherche en param")
+  @DisplayName("Test searchMembers with a valid status and a search param")
   @Test
-  public void testSearchWithSearchParamAndValidStatus() {
+  public void testSearchMembersWithSearchParamAndValidStatus() {
     List<MemberDTO> allValidMemberDTOMatchingSearch = List.of(memberValid1);
 
     Mockito.when(mockMemberDAO.getAll("mi", "valid"))
@@ -542,7 +542,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test recherche avec une liste de membres ayant la valeur null retourné par le DAO")
+  @DisplayName("Test searchMembers with a null list received from DAO")
   @Test
   public void testSearchMembersNullListReturnedFromDAO() {
 
@@ -559,7 +559,7 @@ class MemberUCCImplTest {
   //  -----------------------------  UPDATE MEMBER UCC  -----------------------------------  //
 
 
-  @DisplayName("Test update member avec un membre ayant ses attributs par défaut")
+  @DisplayName("Test updateMember with a member having his fields by default")
   @Test
   public void testUpdateMemberWithEmptyFieldsMember() {
     MemberDTO nonExistentMember = memberFactory.getMemberDTO();
@@ -572,7 +572,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test update member avec un membre qui n'est pas dans la DB")
+  @DisplayName("Test updateMember with a non existent member")
   @Test
   public void testUpdateMemberNonExistentInDB() {
     MemberDTO nonExistentMemberInDB = getMemberNewMember();
@@ -585,7 +585,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test update member succès")
+  @DisplayName("Test updateMember success")
   @Test
   public void testUpdateMemberSuccess() {
     MemberDTO existentMemberInDB = getMemberNewMember();
@@ -608,7 +608,7 @@ class MemberUCCImplTest {
 
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
-  @DisplayName("Test get member succès")
+  @DisplayName("Test getMember success")
   @Test
   public void testGetMemberSuccess() {
     MemberDTO existentMemberInDB = getMemberNewMember();
@@ -621,7 +621,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test get member with non existent member id")
+  @DisplayName("Test getMember with non existent member id")
   @Test
   public void testGetMemberNonExistentMemberId() {
     Mockito.when(mockMemberDAO.getOne(0)).thenReturn(null);

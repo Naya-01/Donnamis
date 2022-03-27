@@ -64,7 +64,7 @@ class OfferUCCImplTest {
   }
 
   //  ----------------------------  GET LAST OFFERS UCC  -------------------------------  //
-  @DisplayName("Test get last offers avec aucune offre recue du DAO")
+  @DisplayName("Test getLastOffers with none offer received from DAO")
   @Test
   public void testGetAllLastOffersWithDAOReturningEmptyListOfOffers() {
     Mockito.when(offerDAO.getAllLast()).thenReturn(new ArrayList<>());
@@ -75,7 +75,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test get last offers avec les dernières offres venant du DAO")
+  @DisplayName("Test getLastOffers with the last offers received from DAO")
   @Test
   public void testGetAllLastOffersSuccess() {
     OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
@@ -91,7 +91,7 @@ class OfferUCCImplTest {
 
   //  ----------------------------  GET OFFER BY ID UCC  -------------------------------  //
 
-  @DisplayName("Test get offer by id avec un id d'offre existant")
+  @DisplayName("Test getOfferById with an existent id offer")
   @Test
   public void testGetOfferByIdSuccess() {
     OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
@@ -106,7 +106,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test get offer by id avec un id d'offre non existant")
+  @DisplayName("Test getOfferById with a non existent id offer")
   @Test
   public void testGetOfferByIdWithANonExistentIdOffer() {
     OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
@@ -123,7 +123,7 @@ class OfferUCCImplTest {
 
   //  ----------------------------  ADD OFFER UCC  -------------------------------  //
 
-  @DisplayName("Test ajouter une offre avec un type d'objet existant")
+  @DisplayName("Test addOffer with an existent object type")
   @Test
   public void testAddOfferSuccessWithExistentType() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -150,8 +150,7 @@ class OfferUCCImplTest {
     );
   }
 
-
-  @DisplayName("Test ajouter une offre avec  type d'objet existant et ajout de l'offre impossible")
+  @DisplayName("Test addOffer with an object type existent and insertion of offer failed")
   @Test
   public void testAddOfferWithExistentTypeAndAddOneOfferReturnsNull() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -175,7 +174,7 @@ class OfferUCCImplTest {
   }
 
 
-  @DisplayName("Test ajouter une offre avec type d'objet existant et object de l'offre non ajouté")
+  @DisplayName("Test addOffer with an existent object type and the object non added in the DB")
   @Test
   public void testAddOfferWithExistentTypeAndAddOneObjectReturnsNull() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -199,7 +198,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test ajouter une offre avec type d'objet existant et object de l'offre ajouté")
+  @DisplayName("Test addOffer an existent object type and then the object offer added in the DB")
   @Test
   public void testAddOfferSuccessWithExistentTypeAndAddOneObject() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -230,7 +229,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test ajouter une offre avec un type d'objet non existant et pas été ajouté en DB")
+  @DisplayName("Test addOffer with a non existent object type and then not added in the DB")
   @Test
   public void testAddOfferWithNonExistentTypeAndAddOneTypeReturnsNull() {
     OfferDTO offerDTO = getNewOffer();
@@ -246,8 +245,7 @@ class OfferUCCImplTest {
     );
   }
 
-
-  @DisplayName("Test ajouter une offre avec un id type et nom du type vide")
+  @DisplayName("Test addOffer with an id type and type name empty")
   @Test
   public void testAddOfferWithEmptyTypeNameOfOfferType() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -276,7 +274,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test ajouter une offre avec un id type et nom du type null")
+  @DisplayName("Test addOffer with an id type and type name null")
   @Test
   public void testAddOfferWithNullTypeNameOfOfferType() {
     OfferDTO offerDTOFromDAO = getNewOffer();
@@ -305,7 +303,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test ajouter une offre avec un type d'objet non existant et a été ajouté à la DB")
+  @DisplayName("Test addOffer with a non existent object type and then added in the DB")
   @Test
   public void testAddOfferWithNonExistentTypeAndAddOneTypeReturnsANewType() {
 
@@ -336,8 +334,7 @@ class OfferUCCImplTest {
 
   //  ----------------------------  GET OFFERS UCC  -------------------------------  //
 
-
-  @DisplayName("Test get offers avec aucune offre retournée")
+  @DisplayName("Test getOffers with non offer returned")
   @Test
   public void testGetOffersWithEmptyListOfOffersReturned() {
     Mockito.when(offerDAO.getAll("", 0)).thenReturn(new ArrayList<>());
@@ -350,7 +347,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test get offers avec toutes les offres retournées")
+  @DisplayName("Test getOffers with all offers returned")
   @Test
   public void testGetOffersWithAllOffers() {
     OfferDTO offerDTO1 = getNewOffer();
@@ -376,7 +373,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test get offers avec toutes les offres retournées correspondant à une recherche")
+  @DisplayName("Test getOffers with all offers returned correspondent to a research")
   @Test
   public void testGetOffersWithAllOffersWithGivenStatusSearch() {
     OfferDTO offerDTO1 = getNewOffer();
@@ -405,7 +402,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test get offers avec toutes les offres d'une personne pour une recherche")
+  @DisplayName("Test getOffers with all offers of someone for a research")
   @Test
   public void testGetOffersWithAMemberOffersWithGivenStatusSearch() {
     OfferDTO offerDTO1 = getNewOffer();
@@ -441,7 +438,7 @@ class OfferUCCImplTest {
 
   //  ----------------------------  UPDATE OFFER UCC  -------------------------------  //
 
-  @DisplayName("Test update offer avec les champs de l'offre vides")
+  @DisplayName("Test updateOffer with the fields of the offers empty")
   @Test
   public void testUpdateOfferWithEmptyFields() {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
@@ -453,7 +450,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test update offer avec un id d'offre inexistant")
+  @DisplayName("Test updateOffer with a non existent id offer")
   @Test
   public void testUpdateOfferNotExistentIdOffer() {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
@@ -467,7 +464,7 @@ class OfferUCCImplTest {
     );
   }
 
-  @DisplayName("Test update offer succès")
+  @DisplayName("Test updateOffer success")
   @Test
   public void testUpdateOfferSuccess() {
     OfferDTO mockOfferDTO = getNewOffer();
