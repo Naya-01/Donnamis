@@ -1,31 +1,6 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
-import {Redirect, refreshToken} from "../Router/Router";
-
-const getUsername = async () => {
-  if (!await refreshToken()) {
-    return;
-  }
-  let userData;
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        Authorization: getSessionObject("user").accessToken
-      },
-    };
-    userData = await fetch("/api/member/getMemberByToken", options);
-    if (!userData.ok) {
-      Redirect("/login");
-      await Navbar();
-      return;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  userData = await userData.json();
-  return userData.username;
-}
+import MemberLibrary from "../../Domain/MemberLibrary";
 
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
@@ -34,14 +9,18 @@ const Navbar = async () => {
   // Get the user object from the localStorage
   let userSession = getSessionObject("user");
   let username = undefined;
+  let user_role = undefined;
   if (userSession) {
-    username = await getUsername();
+    let memberLibraryModal = new MemberLibrary();
+    let user = await memberLibraryModal.getUserByHisToken();
+    username = user.username;
+    user_role = user.role;
   }
   if (username === undefined) {
     navbar = `
           <nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
             <div class="container-fluid">
-              <a class="navbar-brand fs-1" href="#">DONNAMIS</a>
+              <a class="navbar-brand fs-1" href="#" data-uri="/">DONNAMIS</a>
               <button aria-controls="navbarSupportedContent" aria-expanded="false"
                       aria-label="Toggle navigation"
                       class="navbar-toggler" data-bs-target="#navbarSupportedContent"
@@ -72,7 +51,7 @@ const Navbar = async () => {
   } else {
     navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
     <div class="container-fluid">
-        <a class="navbar-brand fs-1" href="#">DONNAMIS</a>
+        <a class="navbar-brand fs-1" href="#" data-uri="/">DONNAMIS</a>
         <button aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation"
                 class="navbar-toggler" data-bs-target="#navbarSupportedContent"
@@ -93,10 +72,16 @@ const Navbar = async () => {
 <!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link fs-4 " href="#" data-uri="/myObjectsPage">Mes objets</a>
-                </li>
-                <li class="nav-item">
+                </li>`
+    if (user_role === "administrator") {
+      navbar += `<li class="nav-item">
                     <a class="nav-link fs-4 " data-uri="/registrationManagement" href="#">Inscriptions</a>
-                </li>
+                </li>`;
+    }
+
+    navbar +=
+        `
+                
 <!--                <li class="nav-item">-->
 <!--                    <a class="nav-link fs-4 " href="#">Membres</a>-->
 <!--                </li>-->

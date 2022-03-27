@@ -4,6 +4,7 @@ import Member from "../../Domain/Member";
 import Address from "../../Domain/Address";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
+import {Redirect} from "../Router/Router";
 
 const memberLibrary = new MemberLibrary();
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
@@ -247,6 +248,7 @@ const RegisterPage = async () => {
         title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`
       });
+      Redirect("/");
     }
   });
 };

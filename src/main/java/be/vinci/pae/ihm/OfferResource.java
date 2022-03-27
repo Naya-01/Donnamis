@@ -45,13 +45,17 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getOffers(
       @DefaultValue("") @QueryParam("search-pattern") String searchPattern,
-      @DefaultValue("") @QueryParam("self") String selfStr, @Context ContainerRequest request) {
+      @DefaultValue("") @QueryParam("self") String selfStr,
+      @DefaultValue("") @QueryParam("type") String type,
+      @DefaultValue("") @QueryParam("status") String objectStatus,
+      @Context ContainerRequest request
+  ) {
     int idOffer = 0;
     if (selfStr.equals("true")) {
       MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
       idOffer = memberDTO.getMemberId();
     }
-    return offerUcc.getOffers(searchPattern, idOffer);
+    return offerUcc.getOffers(searchPattern, idOffer, type, objectStatus);
   }
 
   /**

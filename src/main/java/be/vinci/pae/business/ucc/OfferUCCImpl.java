@@ -149,15 +149,17 @@ public class OfferUCCImpl implements OfferUCC {
    *
    * @param search   the search pattern (empty -> all) according to their type, description
    * @param idMember the member id if you want only your offers (0 -> all)
+   * @param type     the type of object that we want
    * @return list of offers
    */
   @Override
-  public List<OfferDTO> getOffers(String search, int idMember) {
-    List<OfferDTO> offerDTO;
+  public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus) {
+    List<OfferDTO> offerDTO = null;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getAll(search, idMember);
-      if (offerDTO.isEmpty()) {
+      offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
+      if (offerDTO == null) {
+        dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();

@@ -232,7 +232,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(resultSet.getString(4));
+      objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
       throw new FatalException(e);

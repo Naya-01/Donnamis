@@ -4,6 +4,15 @@ import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
+
+const dictionnary = new Map([
+  ['interested', 'Disponible'],
+  ['available', 'Disponible'],
+  ['assigned', 'En cours de donnation'],
+  ['given', 'Donné'],
+  ['cancelled', 'Annulé']
+]);
+
 /**
  * Render the page to see an object
  */
@@ -12,26 +21,62 @@ const MyObjectsPage = async () => {
     Redirect("/");
     return;
   }
-
-  await searchBar("Mes objets", true, false, true, "Recherche un objet", true);
+  let status = "";
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true,
+      true);
   const searchBarDiv = document.getElementById("searchBar");
-  await objectCards(searchBarDiv.value);
+  await objectCards(searchBarDiv.value, "", status);
+  const typeObject = document.getElementById("default-type-list");
   searchBarDiv.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
-      await objectCards(searchBarDiv.value);
+      let type = typeObject.options[typeObject.selectedIndex].value;
+      if (type === "Tout") {
+        type = "";
+      }
+      await objectCards(searchBarDiv.value, type, status);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
-    await objectCards(searchBarDiv.value);
+    let type = typeObject.options[typeObject.selectedIndex].value;
+    if (type === "Tout") {
+      type = "";
+    }
+    await objectCards(searchBarDiv.value, type, status);
   });
 
+  let available = document.getElementById("btn-status-available");
+  available.addEventListener('click', (e) =>{
+    status="available";
+  });
+
+  let given = document.getElementById("btn-status-given");
+  given.addEventListener('click', (e) =>{
+    status="given";
+  });
+
+  let assigned = document.getElementById("btn-status-assigned");
+  assigned.addEventListener('click', (e) =>{
+    status="assigned";
+  });
+
+  let all = document.getElementById("btn-status-all");
+  all.addEventListener('click', (e) =>{
+    status="";
+  });
+
+  const addButton = document.getElementById("add-new-object-button");
+  addButton.addEventListener('click', () => {
+    Redirect("/addNewObjectPage")
+  });
 }
 
-const objectCards = async (searchPattern) => {
+
+const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true);
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,
+      type, status);
   memberCards.innerHTML = ``;
   for (const object of objects) {
     const buttonCardId = "button-card-" + object.memberId;
@@ -53,7 +98,11 @@ const objectCards = async (searchPattern) => {
 
     const informationMemberDiv = document.createElement("div");
     informationMemberDiv.className = "col-7 mt-3 clickable";
-    informationMemberDiv.id="object-info";
+    informationMemberDiv.id = "object-info";
+    informationMemberDiv.addEventListener("click", async () => {
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          object.idOffer);
+    });
 
     const memberBaseInformationSpan = document.createElement("span");
     memberBaseInformationSpan.className = "fs-4";
@@ -62,7 +111,7 @@ const objectCards = async (searchPattern) => {
 
     const memberAddressInformationSpan = document.createElement("span")
     memberAddressInformationSpan.className = "text-secondary fs-5";
-    memberAddressInformationSpan.innerText = object.object.status;
+    memberAddressInformationSpan.innerText = dictionnary.get(object.object.status);
 
     informationMemberDiv.appendChild(memberBaseInformationSpan);
     informationMemberDiv.appendChild(document.createElement("br"));
@@ -77,12 +126,25 @@ const objectCards = async (searchPattern) => {
     buttonInput.className = "d-grid gap-2 d-md-block";
     buttonInput.id = buttonCardId;
 
-    const cancelButton = document.createElement("button");
-    cancelButton.innerText="Annuler";
-    cancelButton.type="button";
-    cancelButton.className="btn btn-danger";
-    buttonInput.appendChild(cancelButton);
+    if (object.object.status !== "cancelled") {
+      const cancelButton = document.createElement("button");
+      cancelButton.innerText = "Annuler";
+      cancelButton.type = "button";
+      cancelButton.className = "btn btn-danger";
+      cancelButton.addEventListener("click", async (e) => {
+        // e.preventDefault();
+        await OfferLibrary.prototype.updateOffer(
+            object.idOffer,
+            object.timeSlot,
+            object.object.description,
+            object.object.type.idType,
+            "cancelled");
+        Redirect("/myObjectsPage")
+        // console.log(object);
 
+      });
+      buttonInput.appendChild(cancelButton);
+    }
 
     buttonsCard.appendChild(buttonInput);
     divCard.appendChild(buttonsCard);
@@ -92,11 +154,7 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(cardForm);
 
     memberCards.appendChild(divCard);
-    const card = document.getElementById("object-info")
-    card.addEventListener("click", async () => {
-      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
-          object.idOffer);
-    });
+
     const addButton = document.getElementById("add-new-object-button");
     addButton.addEventListener('click', () => {
       Redirect("/addNewObjectPage")

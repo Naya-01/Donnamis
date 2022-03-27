@@ -1,7 +1,7 @@
 import TypeLibrary from "../../Domain/TypeLibrary";
 
 const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
-    hasNewObjectButton) => {
+    hasNewObjectButton, hasStatus) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
@@ -25,17 +25,35 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
               <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
             </div>`;
     }
+    if(hasStatus){
+      searchBarHtml +=`<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check" checked name="btnradio" id="btn-status-all" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
+            
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-given" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-given">Donné</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
+              <label class="btn btn-outline-danger" for="btn-status-assigned">En cours</label>
+            </div>`;
+    }
     if (hasType) {
       searchBarHtml +=
           `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                  Type
                </button>
-               <ul id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">`;
+               <select id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <option class="dropdown-item" value="Tout" href="#"> Tout </option>`;
       const types = await TypeLibrary.prototype.getAllDefaultTypes();
+      // types.push("Tous");
+      console.log(types)
       for (const type of types.type) {
-        searchBarHtml += `<li><a class="dropdown-item" href="#">${type.typeName}</a></li>`;
+        searchBarHtml += `<option class="dropdown-item" value="${type.typeName}" href="#"> ${type.typeName} </option>`;
       }
-      searchBarHtml += `</ul>`;
+      searchBarHtml += `</select>`;
     }
     searchBarHtml +=
         `<input type="text" class="form-control fs-4" id="searchBar" placeholder="${placeholder}">
