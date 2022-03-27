@@ -69,6 +69,7 @@ const MyObjectPage = async () => {
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
+  console.log(jsonInterests);
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
   //TODO : show the image
@@ -161,7 +162,7 @@ const MyObjectPage = async () => {
         offer.object.idOfferor);
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.user.username;
+        + memberGiver.username;
     button.id = "interestedButton";
     button.value = "Je suis interessé";
     // date of disponibility
@@ -186,6 +187,8 @@ const MyObjectPage = async () => {
     button.addEventListener("click", async () => {
       button.disabled = true;
       input_date.disabled = true;
+      console.log(offer);
+      console.log(input_date.value);
       await interestLibrary.addOne(offer.object.idObject, input_date.value)
       // the notification to show that the interest is send
       let notif = notificationModule.getNotification();
