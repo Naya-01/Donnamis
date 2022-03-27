@@ -15,23 +15,30 @@ const MyObjectsPage = async () => {
 
   await searchBar("Mes objets", true, false, true, "Recherche un objet", true);
   const searchBarDiv = document.getElementById("searchBar");
-  await objectCards(searchBarDiv.value);
+  await objectCards(searchBarDiv.value, "");
+  const typeObject = document.getElementById("default-type-list");
   searchBarDiv.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
-      await objectCards(searchBarDiv.value);
+      console.log(typeObject.options[typeObject.selectedIndex].value);
+      let type = typeObject.options[typeObject.selectedIndex].value;
+      if(type==="Tout") type="";
+      await objectCards(searchBarDiv.value, type);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
-    await objectCards(searchBarDiv.value);
+    console.log(typeObject.options[typeObject.selectedIndex].value);
+    let type = typeObject.options[typeObject.selectedIndex].value;
+    if(type==="Tout") type="";
+    await objectCards(searchBarDiv.value, type);
   });
 
 }
 
-const objectCards = async (searchPattern) => {
+const objectCards = async (searchPattern, type) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true);
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,type);
   memberCards.innerHTML = ``;
   for (const object of objects) {
     const buttonCardId = "button-card-" + object.memberId;
