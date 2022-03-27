@@ -38,7 +38,7 @@ const objectCards = async (searchPattern) => {
 
     const divCard = document.createElement("div");
     divCard.id = "member-card-" + object.idOffer;
-    divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded clickable";
+    divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
 
     const profileImageDiv = document.createElement("div");
     profileImageDiv.className = "col-1 m-auto";
@@ -52,7 +52,8 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(profileImageDiv);
 
     const informationMemberDiv = document.createElement("div");
-    informationMemberDiv.className = "col-7 mt-3";
+    informationMemberDiv.className = "col-7 mt-3 clickable";
+    informationMemberDiv.id="object-info";
 
     const memberBaseInformationSpan = document.createElement("span");
     memberBaseInformationSpan.className = "fs-4";
@@ -76,6 +77,13 @@ const objectCards = async (searchPattern) => {
     buttonInput.className = "d-grid gap-2 d-md-block";
     buttonInput.id = buttonCardId;
 
+    const cancelButton = document.createElement("button");
+    cancelButton.innerText="Annuler";
+    cancelButton.type="button";
+    cancelButton.className="btn btn-danger";
+    buttonInput.appendChild(cancelButton);
+
+
     buttonsCard.appendChild(buttonInput);
     divCard.appendChild(buttonsCard);
 
@@ -84,7 +92,7 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(cardForm);
 
     memberCards.appendChild(divCard);
-    const card = document.getElementById("member-card-" + object.idOffer)
+    const card = document.getElementById("object-info")
     card.addEventListener("click", async () => {
       RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
           object.idOffer);
