@@ -2,9 +2,9 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.exceptions.BadRequestException;
-import be.vinci.pae.business.exceptions.UnauthorizedException;
 import be.vinci.pae.business.ucc.ObjectUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
