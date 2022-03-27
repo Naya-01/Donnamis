@@ -1,12 +1,17 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
-import noImage from "../../img/noImage.png";
+import imageOfObject from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
+import InterestLibrary from "../../Domain/InterestLibrary";
+import ObjectLibrary from "../../Domain/ObjectLibrary";
 
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
+const objectLibrary = new ObjectLibrary();
+const interestLibrary = new InterestLibrary();
+const notificationModule = new Notification();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
@@ -14,12 +19,15 @@ const dictionnary = new Map([
   ['given', 'Donné'],
   ['cancelled', 'Annulé']
 ]);
-let idOffert;
+let idOffer;
+let idObject;
 let english_status;
 let idType;
 let description;
 let time_slot;
 let form = false;
+let isInterested;
+let image;
 
 /**
  * Render the page to see an object
@@ -30,39 +38,46 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-
+  //GET the id of the offer by the url
   let url_string = window.location;
   let url = new URL(url_string);
-  let idOfferUrl = url.searchParams.get("idOffer");
-
-  if (!idOfferUrl || idOfferUrl <= 0) {
+  idOffer = url.searchParams.get("idOffer");
+  if (!idOffer || idOffer <= 0) {
     Redirect("/");
     return;
   }
 
-  idOffert = idOfferUrl;
-  // GET all informations of the object
-  let offer = await offerLibrary.getOfferById(idOffert);
-  if (offer === undefined) {
+  // GET all informations of the object (and offer)
+  let offer = await offerLibrary.getOfferById(idOffer);
+  if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
   }
-
+  image = offer.object.image;
+  //Set all fields
+  idObject = offer.object.idObject;
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
-
+  // translate the status to french
   english_status = offer.object.status;
   let french_status = dictionnary.get(english_status);
 
-  // Get the id of the member
+  // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
   let idMemberConnected = member.memberId;
 
   // GET all interests
-  let nbMembersInterested = 3; //TODO : request to have all interests
-  // Construct all the HTML
+  let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
+  isInterested = jsonInterests.isUserInterested;
+  let nbMembersInterested = jsonInterests.count;
+  //TODO : show the image
+  /*
+  if(!image.endsWith("\\null")){
+    imageOfObject = image;
+  }*/
 
+  // Construct all the HTML
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML =
       `<div class="container p-3">
@@ -75,7 +90,7 @@ const MyObjectPage = async () => {
               <div class="row justify-content-start p-2">
                 <!-- The image -->
                 <div class="col-4">
-                  <img id="image" alt="no image" width="75%" src="${noImage}"/>
+                  <img id="image" alt="no image" width="75%" src="${imageOfObject}"/>
                 </div>
                 <!-- The description -->
                 <div class="col-8">
@@ -116,13 +131,16 @@ const MyObjectPage = async () => {
                   </div>
                 </div>
               </div>
-              <!-- The confirm button -->
-              <div id="divB" class="text-center p-2">
-                <input type="button"  class="btn btn-primary" 
-                  id="modifyObjectButton" value="Modifier">
+              <div class="row p-2">
+                <!-- The modify button -->
+                <div id="divB" class="col text-center">
+                  <span id="divDate"></span>
+                  <input type="button"  class="btn btn-primary" 
+                    id="modifyObjectButton" value="Modifier">
+                </div>
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personnes sont intéressées par 
+                <p>${nbMembersInterested} personne(s) intéressée(s) par 
                   cet objet</p>
               </div>
           </p>
@@ -131,19 +149,56 @@ const MyObjectPage = async () => {
     </div>
   </div>`;
   let button = document.getElementById("modifyObjectButton");
-  if (idMemberConnected === offer.object.idOfferor) { //TODO : put ===
+  // if this is the object of the member connected
+  if (idMemberConnected === offer.object.idOfferor) {
     document.getElementById("titleObject").textContent = "Votre objet";
     button.addEventListener("click", changeToForm);
-  } else {
-    //TODO : get user by id
+  }
+  // if this is not the object of the member connected
+  else {
+    // we get the member that gives the object
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
+    // change buttons
+    document.getElementById("titleObject").textContent = "L'objet de "
+        + memberGiver.user.username;
     button.id = "interestedButton";
     button.value = "Je suis interessé";
-    button.addEventListener("click", () => {
-      //TODO : POST an interest
+    // date of disponibility
+    let labelDate = document.createElement("label");
+    labelDate.for = "input_date";
+    labelDate.innerHTML = "Date de disponibilité : ";
+    let input_date = document.createElement("input");
+    input_date.id = "input_date";
+    input_date.type = "date";
+    let date = new Date();//.toLocaleDateString().replaceAll("/","-");
+    let month = "";
+    if(date.getMonth()%10 !== 0){
+      month = "0"
+    }
+    month += (date.getMonth()+1);
+    let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+    input_date.value = dateActual;
+    input_date.min = dateActual;
+    document.getElementById("divDate").appendChild(labelDate);
+    document.getElementById("divDate").appendChild(input_date);
+
+    button.addEventListener("click", async () => {
       button.disabled = true;
+      input_date.disabled = true;
+      await interestLibrary.addOne(offer.object.idObject, input_date.value)
+      // the notification to show that the interest is send
+      let notif = notificationModule.getNotification();
+      notif.fire({
+        icon: 'success',
+        title: 'Votre intérêt a bien été pris en compte.'
+      })
     });
+    // if the member connected is already interested
+    if(isInterested){
+      button.disabled = true;
+      input_date.disabled = true;
+    }
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
   }
@@ -161,7 +216,7 @@ async function changeToText(e) {
   image.id = "image";
   image.alt = "no image";
   image.style.width = "75%";
-  image.setAttribute("src", noImage);
+  image.setAttribute("src", imageOfObject);
   old.parentNode.replaceChild(image, old);
 
   // Make a simple paragraph for description
@@ -197,7 +252,6 @@ async function changeToText(e) {
  * @param {Event} e : evenement
  */
 async function changeToForm(e) {
-  e.preventDefault();
   // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
@@ -208,11 +262,12 @@ async function changeToForm(e) {
   let image = document.createElement("img");
   image.alt = "no image";
   image.style.width = "75%";
-  image.setAttribute("src", noImage);
+  image.setAttribute("src", imageOfObject);
   label_image.appendChild(image);
   let input_file = document.createElement("input");
   input_file.id = "file_input";
   input_file.type = "file";
+  input_file.name = "file";
   span_image.appendChild(label_image);
   span_image.appendChild(input_file);
   old.parentNode.replaceChild(span_image, old);
@@ -270,11 +325,8 @@ async function changeToForm(e) {
  * Send to the backend all informations to update an object
  * @param {Event} e : evenement
  */
-function updateObject(e) {
-  e.preventDefault();
+async function updateObject(e) {
   // Get all elements from the form
-  // TODO : how to get the image ?
-  let new_image = document.getElementById("file_input");
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
   let new_time_slotDOM = document.getElementById("time_slot")
@@ -301,23 +353,44 @@ function updateObject(e) {
   }
   // Check if there is an empty parameter
   if (emptyParameters > 0) {
-    let notif = new Notification().getNotification();
+    let notif = notificationModule.getNotification();
     notif.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'
     })
     return;
   }
+  // Update the image
+  let fileInput = document.querySelector('input[name=file]');
+  let objectWithImage;
+  if (fileInput.files[0] !== undefined) { // if there is an image
+    let formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    objectWithImage = await objectLibrary.setImage(formData, idObject);
+  }
+
   // Call the function to update the offer
-  offerLibrary.updateOffer(idOffert, new_time_slot, new_description, idType,
+  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description, idType,
       english_status);
 
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-
+  let notif = notificationModule.getNotification();
+  notif.fire({
+    icon: 'success',
+    title: 'Votre objet a bien été mis à jour.'
+  })
   // Put text back
   changeToText(e);
+  //TODO : show the image
+  /*
+  if(objectWithImage !== undefined){
+    // replace the src of the image
+    document.getElementById("image").src = objectWithImage.image;
+  }*/
+
+
 }
 
 export default MyObjectPage;

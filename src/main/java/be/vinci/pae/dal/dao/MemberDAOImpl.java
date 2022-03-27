@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -252,6 +253,24 @@ public class MemberDAOImpl implements MemberDAO {
     }
   }
 
+  private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
+      String status, String role, String phone, String password, String reasonRefusal,
+      String image) {
+    image = Config.getProperty("ImagePath") + image;
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(memberId);
+    memberDTO.setUsername(username);
+    memberDTO.setLastname(lastName);
+    memberDTO.setFirstname(firstname);
+    memberDTO.setStatus(status);
+    memberDTO.setRole(role);
+    memberDTO.setPhone(phone);
+    memberDTO.setPassword(password);
+    memberDTO.setReasonRefusal(reasonRefusal);
+    memberDTO.setImage(image);
+    return memberDTO;
+  }
+
   /**
    * Make a memberDTO with the result set.
    *
@@ -290,38 +309,5 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-  }
-
-  /**
-   * Create a MemberDTO ith all attributes.
-   *
-   * @param memberId      the member id
-   * @param username      the username
-   * @param lastName      the lastname
-   * @param firstname     the firstname
-   * @param status        the status
-   * @param role          the role
-   * @param phone         the phone
-   * @param password      the password
-   * @param reasonRefusal the refusal reason
-   * @param image         the image
-   * @return a memberDTO
-   */
-  private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
-      String status, String role, String phone, String password, String reasonRefusal,
-      String image) {
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(memberId);
-    memberDTO.setUsername(username);
-    memberDTO.setLastname(lastName);
-    memberDTO.setFirstname(firstname);
-    memberDTO.setStatus(status);
-    memberDTO.setRole(role);
-    memberDTO.setPhone(phone);
-    memberDTO.setPassword(password);
-    memberDTO.setReasonRefusal(reasonRefusal);
-    memberDTO.setImage(image);
-    return memberDTO;
   }
 }

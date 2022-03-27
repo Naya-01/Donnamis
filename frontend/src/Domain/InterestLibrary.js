@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
 
-class ObjectLibrary {
-  async getObject(id) {
+class InterestLibrary {
+  async getInterestedCount(idObject) {
     let response;
     try {
       let options = {
@@ -11,29 +11,31 @@ class ObjectLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/object/" + id, options);
+      response = await fetch("api/interest/count/"+idObject, options);
     } catch (err) {
       console.log(err);
     }
-    let actualObject;
+    let allInterests;
     if (response.status === 200) {
-      actualObject = await response.json();
+      allInterests = await response.json();
     }
-    return actualObject;
-
+    return allInterests;
   }
-
-  async setImage(formData, idObject) {
+  async addOne(idObject, date){
     let response;
     try {
       let options = {
-        method: 'POST',
-        body: formData,
+        method: "POST",
+        body: JSON.stringify({
+          "idObject": idObject,
+          "availabilityDate": date
+        }),
         headers: {
+          "Content-Type": "application/json",
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/object/setPicture/'+idObject, options)
+      response = await fetch("api/interest", options);
     } catch (err) {
       console.log(err);
     }
@@ -45,4 +47,4 @@ class ObjectLibrary {
   }
 }
 
-export default ObjectLibrary;
+export default InterestLibrary;

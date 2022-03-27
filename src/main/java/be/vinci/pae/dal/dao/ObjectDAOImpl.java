@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -251,7 +252,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(resultSet.getString(4));
+      objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
       return objectDTO;
     } catch (SQLException e) {

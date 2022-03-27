@@ -9,6 +9,7 @@ import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -265,7 +266,7 @@ public class OfferDAOImpl implements OfferDAO {
 
         objectDTO.setDescription(resultSet.getString(6));
         objectDTO.setStatus(resultSet.getString(7));
-        objectDTO.setImage(resultSet.getString(8));
+        objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(8));
         objectDTO.setIdOfferor(resultSet.getInt(9));
 
         offerDTO.setObject(objectDTO);
