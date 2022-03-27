@@ -5,16 +5,6 @@ import java.util.List;
 
 public interface ObjectDAO {
 
-
-  /**
-   * Update the object picture.
-   *
-   * @param path location of the picture.
-   * @param id   of the object.
-   * @return Object modified.
-   */
-  ObjectDTO updateObjectPicture(String path, int id);
-
   /**
    * Get an object we want to retrieve by his id.
    *
