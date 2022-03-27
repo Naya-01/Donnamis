@@ -1,15 +1,13 @@
 package be.vinci.pae.business.ucc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.AddressDTO;
-import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.factories.AddressFactory;
-import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.dao.AddressDAO;
-import be.vinci.pae.dal.dao.InterestDAO;
-import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import org.glassfish.hk2.api.ServiceLocator;
