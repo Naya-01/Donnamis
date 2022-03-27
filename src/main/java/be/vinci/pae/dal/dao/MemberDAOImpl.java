@@ -96,7 +96,8 @@ public class MemberDAOImpl implements MemberDAO {
    *
    * @param search the search pattern (if empty -> all)
    * @param status the status : waiting -> pending and denied members, pending -> pending members,
-   *               denied -> denied members, valid -> valid members, empty -> all members
+   *               denied -> denied members, valid -> valid members, empty ("") -> all members,
+   *               other than these -> all members
    * @return a list of MemberDTO
    */
   @Override

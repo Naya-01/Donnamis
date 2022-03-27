@@ -7,7 +7,6 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.BadRequestException;
-import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -35,10 +34,10 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offers = offerDAO.getAllLast();
       if (offers.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
+
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
@@ -59,15 +58,16 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
-        dalService.rollBackTransaction();
-        throw new NotFoundException("Offre inexistante");
+        throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
-    } catch (FatalException e) {
+
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
     return offerDTO;
+
   }
 
   /**
@@ -93,11 +93,11 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer.getIdOffer() == 0) {
         throw new BadRequestException("Problème lors de la création d'une offre");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return offer;
   }
 
@@ -164,7 +164,7 @@ public class OfferUCCImpl implements OfferUCC {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
-    } catch (NotFoundException e) {
+    } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
