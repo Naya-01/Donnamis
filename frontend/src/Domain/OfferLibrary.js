@@ -74,9 +74,10 @@ class OfferLibrary {
    */
   async updateOffer(id, timeSlot, description, idType, status) {
     let response;
+    console.log(id)
     try {
       let options = {
-        method: "POST", //TODO : change to PUT
+        method: "PUT", //TODO : change to PUT
         body: JSON.stringify({
           "idOffer": id,
           "timeSlot": timeSlot,
@@ -84,9 +85,6 @@ class OfferLibrary {
             "description": description,
             "image": null,
             "status": status,
-            "type": {
-              "idType": idType
-            }
           }
         }),
         headers: {
@@ -94,7 +92,7 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/offers/update", options);
+      response = await fetch("api/offers", options);
     } catch (err) {
       console.log(err);
     }
@@ -125,6 +123,29 @@ class OfferLibrary {
     }
 
     return allLastOffers;
+  }
+
+  async getOffers(searchPattern, self) {
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").refreshToken
+        },
+      };
+      let query = "/api/offers?search-pattern=" + searchPattern;
+      if (self) {
+        query += "&self=true";
+      }
+      let userData = await fetch(query, options);
+      if (!userData.ok) {
+        return false;
+      }
+      return await userData.json();
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

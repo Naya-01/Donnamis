@@ -2,13 +2,21 @@ package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.time.LocalDate;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OfferImpl implements OfferDTO {
 
+  @JsonView(Views.Public.class)
   private int idOffer;
+  @JsonView(Views.Public.class)
   private LocalDate date;
+  @JsonView(Views.Public.class)
   private String timeSlot;
+  @JsonView(Views.Public.class)
   private ObjectDTO object;
 
   @Override

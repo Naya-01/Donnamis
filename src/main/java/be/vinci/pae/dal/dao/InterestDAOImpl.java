@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -36,7 +37,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setInt(2, idMember);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return getInterestDTO(preparedStatement);
   }
@@ -62,12 +63,12 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
       interestDTO.setStatus(resultSet.getString(4));
       preparedStatement.close();
+      resultSet.close();
 
       return interestDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
 
@@ -91,7 +92,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.executeQuery();
       preparedStatement.close();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
     return item;
   }
@@ -124,10 +125,10 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTOList.add(interestDTO);
       }
       preparedStatement.close();
+      resultSet.close();
       return interestDTOList;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 }

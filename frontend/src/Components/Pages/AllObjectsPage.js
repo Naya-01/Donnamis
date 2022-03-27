@@ -1,12 +1,15 @@
-import {getSessionObject} from "../../utils/session";
 import searchBar from "../Module/SearchBar";
+import OfferLibrary from "../../Domain/OfferLibrary";
+import cardList from "../Module/CardList";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 
 /**
  * Render the Objects page
  */
 
 const AllObjectsPage = async () => {
-  await searchBar();
+  await searchBar("Tous les objets", true, false, true, "Recherche un objet",
+      true);
 
   const pageDiv = document.querySelector("#page");
 
@@ -14,57 +17,40 @@ const AllObjectsPage = async () => {
   const offersList = document.getElementById("offers-list");
 
   await displayOffers("", offersList);
-  const searchBarInput = document.getElementById("search-bar-input");
-  searchBarInput.addEventListener('keyup', async () => {
+  const searchBarInput = document.getElementById("searchBar");
+  const searchButtonInput = document.getElementById("searchButton");
+  searchButtonInput.addEventListener('click', async () => {
     await displayOffers(searchBarInput.value, offersList);
+  });
+  searchBarInput.addEventListener('keyup', async (e) => {
+    if (e.key === "Enter") {
+      await displayOffers(searchBarInput.value, offersList);
+    }
+  });
+  const addButton = document.getElementById("add-new-object-button");
+  addButton.addEventListener('click', () => {
+    Redirect("/addNewObjectPage")
   });
 
 };
 
 // Display clients
 const displayOffers = async (searchPattern, pageDiv) => {
-  const offers = await getOffers(searchPattern);
+  const offers = await OfferLibrary.prototype.getOffers(searchPattern, false);
   pageDiv.innerHTML = ``;
   if (!offers) {
     pageDiv.innerHTML = `<p>Aucun objet</p>`;
   }
-  for (const property in offers) {
-    pageDiv.innerHTML += `
-      <p>
-          ${offers[property].idOffer} 
-          ${offers[property].date} 
-          ${offers[property].timeSlot}
-          ${offers[property].object.description}
-          ${offers[property].object.status}
-          ${offers[property].object.image}
-          ${offers[property].object.idOfferor}
-          ${offers[property].object.type.idType}
-          ${offers[property].object.type.typeName}
-          ${offers[property].object.type.default}
-      </p>
-    `;
+  pageDiv.innerHTML = await cardList(offers);
+  for (const offer of pageDiv.querySelectorAll(".clickable")) {
+    offer.addEventListener("click", async (e) => {
+      e.preventDefault();
+      let offerId = parseInt(e.currentTarget.dataset.elementId);
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          offerId);
+    });
   }
-}
 
-const getOffers = async (searchPattern) => {
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": getSessionObject("user").refreshToken
-      },
-    };
-    let userData = await fetch(
-        "/api/offers/all?search-pattern=" + searchPattern,
-        options);
-    if (!userData.ok) {
-      return false;
-    }
-    return await userData.json();
-  } catch (err) {
-    console.log(err);
-  }
 }
 
 export default AllObjectsPage;

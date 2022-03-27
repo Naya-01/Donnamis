@@ -1,57 +1,54 @@
-import {getSessionObject} from "../../utils/session";
+import TypeLibrary from "../../Domain/TypeLibrary";
 
-const searchBar = async () => {
+const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
+    hasNewObjectButton) => {
   const pageDiv = document.querySelector("#page");
-  let searchBar = `
-    <form class="form row">
-      <div class="input-group mb-3 col">
-        <div class="input-group-prepend">
-          <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-              Type
-            </button>
-            <ul id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">`;
+  let searchBarHtml = ``;
+  searchBarHtml = `
+    <div class="container mt-5">
+      <h1 class="fs-1">${pageName}</h1>`;
+  if (hasNav) {
+    searchBarHtml +=
+        `<div class="text-center">
+          <div class="input-group mb-3 mt-5" >`;
 
-  const types = await getDefaultTypes();
-  for (const type in types) {
-    searchBar += `<li><a class="dropdown-item" href="#">${types[type].typeName}</a></li>`;
-  }
-  searchBar += `
-            </ul>
-          </div>
-        </div>
-        <input id="search-bar-input" type="text" class="form-control" aria-label="Text input with dropdown button">
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" type="button">Rechercher</button>
-        </div>
-      </div>
-      <div class="col">
-        <button type="submit" class="btn btn-primary mb-2">Ajouter un objet</button>
-      </div>
-    </form>
-  `;
-  pageDiv.innerHTML = searchBar;
-
-};
-
-const getDefaultTypes = async () => {
-  try {
-    let options = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": getSessionObject("user").refreshToken
-      },
-    };
-    let userData = await fetch(
-        "/api/types/allDefault", options);
-    if (!userData.ok) {
-      return false;
+    if (hasFilter) {
+      searchBarHtml +=
+          `<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+              <input type="radio" class="btn-check" checked name="btnradio" id="btn-radio-all" autocomplete="off">
+              <label class="btn btn-outline-secondary" for="btn-radio-all">Tous</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-radio-pending" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-radio-pending">En attente</label>
+            
+              <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
+              <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
+            </div>`;
     }
-    return await userData.json();
-  } catch (err) {
-    console.log(err);
+    if (hasType) {
+      searchBarHtml +=
+          `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                 Type
+               </button>
+               <ul id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">`;
+      const types = await TypeLibrary.prototype.getAllDefaultTypes();
+      for (const type of types.type) {
+        searchBarHtml += `<li><a class="dropdown-item" href="#">${type.typeName}</a></li>`;
+      }
+      searchBarHtml += `</ul>`;
+    }
+    searchBarHtml +=
+        `<input type="text" class="form-control fs-4" id="searchBar" placeholder="${placeholder}">
+            <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>`
+    if (hasNewObjectButton) {
+      searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-primary mx-2">Ajouter un objet</button>`;
+    }
+    searchBarHtml += `</div>
+        <div id="page-body"></div>
+      </div>`;
   }
-}
+  searchBarHtml += `</div>`;
+  pageDiv.innerHTML = searchBarHtml;
+};
 
 export default searchBar;

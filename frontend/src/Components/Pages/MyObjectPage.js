@@ -65,7 +65,7 @@ const MyObjectPage = async () => {
 
   // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
-  let idMemberConnected = member.user.memberId;
+  let idMemberConnected = member.memberId;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
@@ -200,7 +200,8 @@ const MyObjectPage = async () => {
       button.disabled = true;
       input_date.disabled = true;
     }
-
+    document.getElementById("titleObject").textContent = "L'objet de "
+        + memberGiver.username;
   }
 
 }

@@ -22,7 +22,7 @@ const AddNewObjectPage = async () => {
   }
   // Get the id of the member
   let member = await memberLibrary.getUserByHisToken();
-  idOfferor = member.user.memberId;
+  idOfferor = member.memberId;
 
   // Get all types from the backend
   let allDefaultTypes = await typeLibrary.getAllDefaultTypes();

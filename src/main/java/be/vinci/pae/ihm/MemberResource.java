@@ -3,26 +3,26 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.exceptions.BadRequestException;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.io.InputStream;
 import java.util.List;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -33,11 +33,8 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/member")
 public class MemberResource {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
-
   @Inject
   private MemberUCC memberUCC;
-
   @Inject
   private Image imageManager;
 
@@ -66,10 +63,7 @@ public class MemberResource {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
-
-    MemberDTO newDTO = memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
-
-    return newDTO;
+    return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
   }
 
   /**
@@ -78,92 +72,12 @@ public class MemberResource {
    * @param request to get information request
    * @return return the linked user to his token
    */
-  @POST
+  @GET
   @Path("/getMemberByToken")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getMemberByToken(@Context ContainerRequest request) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return jsonMapper.createObjectNode()
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
-  }
-
-  /**
-   * Promote a member to admin status with his id.
-   *
-   * @param json to get id of the member to promote
-   */
-  @POST
-  @Path("/promoteAdministrator")
-  @Authorize
-  @Admin
-  public void promoteAdministrator(JsonNode json) {
-    if (!json.hasNonNull("id")) {
-      throw new WebApplicationException("id du membre introuvable",
-          Response.Status.BAD_REQUEST);
-    }
-    int id = json.get("id").asInt();
-    memberUCC.promoteAdministrator(id);
-    throw new WebApplicationException("Le membre est désormais administrateur", Response.Status.OK);
-  }
-
-  /**
-   * Confirm the registration of the member.
-   *
-   * @param json to get id of the member to promote
-   */
-  @POST
-  @Path("/confirmRegistration")
-  @Authorize
-  @Admin
-  public void confirmRegistration(JsonNode json) {
-    if (!json.hasNonNull("id")) {
-      throw new WebApplicationException("id du membre introuvable",
-          Response.Status.BAD_REQUEST);
-    }
-    int id = json.get("id").asInt();
-    memberUCC.confirmRegistration(id);
-    throw new WebApplicationException("Le membre est désormais validé", Response.Status.OK);
-  }
-
-  /**
-   * Decline the registration of the member.
-   *
-   * @param json to get id of the member to promote
-   */
-  @POST
-  @Path("/declineRegistration")
-  @Authorize
-  @Admin
-  public void declineRegistration(JsonNode json) {
-    if (!json.hasNonNull("id") || !json.hasNonNull("reason")) {
-      throw new WebApplicationException("id du membre introuvable ou raison de refus introuvable",
-          Status.BAD_REQUEST);
-    }
-    int id = json.get("id").asInt();
-    String reason = json.get("reason").asText();
-    if (reason.length() == 0) {
-      throw new WebApplicationException("Raison non spécifié",
-          Status.BAD_REQUEST);
-    }
-
-    memberUCC.declineRegistration(id, reason);
-    throw new WebApplicationException("Le membre est désormais validé", Status.OK);
-  }
-
-  /**
-   * Get all subscription requests according to their status. Need admin rights
-   *
-   * @param status the status subscription members
-   * @return a list of memberDTO
-   */
-  @GET
-  @Authorize
-  @Admin
-  @Path("/subscriptions/{status}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<MemberDTO> getAllInscriptionRequest(@PathParam("status") String status) {
-    return memberUCC.getInscriptionRequest(status);
+  public MemberDTO getMemberByToken(@Context ContainerRequest request) {
+    return JsonViews.filterPublicJsonView((MemberDTO) request.getProperty("user"), MemberDTO.class);
   }
 
   /**
@@ -176,10 +90,47 @@ public class MemberResource {
   @Path("/id/{id}")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getMemberById(@PathParam("id") int id) {
-    MemberDTO memberDTO = memberUCC.getMember(id);
-    return jsonMapper.createObjectNode()
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+  public MemberDTO getMemberById(@PathParam("id") int id) {
+    return JsonViews.filterPublicJsonView(memberUCC.getMember(id), MemberDTO.class);
   }
 
+  /**
+   * Search a member with status and search on firstname, lastname and username.
+   *
+   * @param search the search pattern (if empty -> all)
+   * @param status the status : waiting -> pending and denied members, pending -> pending members,
+   *               denied -> denied members, valid -> valid members, empty -> all members
+   * @return a list of MemberDTO
+   */
+  @GET
+  @Path("/search")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public List<MemberDTO> searchMembers(@DefaultValue("") @QueryParam("search") String search,
+      @DefaultValue("") @QueryParam("status") String status) {
+    return JsonViews.filterPublicJsonViewAsList(memberUCC.searchMembers(search, status),
+        MemberDTO.class);
+  }
+
+  /**
+   * Update any attribute of a member. You need to be an administrator to change other member,
+   * status or role.
+   *
+   * @param memberDTO a memberDTO
+   * @return the modified member
+   */
+  @PUT
+  @Path("/update")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public MemberDTO updateMember(MemberDTO memberDTO, @Context ContainerRequest request) {
+    MemberDTO requestMember = (MemberDTO) request.getProperty("user");
+    if (!requestMember.getRole().equals("administrator")
+        && (memberDTO.getMemberId() != requestMember.getMemberId() || memberDTO.getRole() != null
+        || memberDTO.getStatus() != null || memberDTO.getReasonRefusal() != null)) {
+      throw new UnauthorizedException();
+    }
+    return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);
+  }
 }

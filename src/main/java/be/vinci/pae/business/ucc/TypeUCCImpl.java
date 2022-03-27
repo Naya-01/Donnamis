@@ -1,9 +1,9 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.TypeDTO;
-import be.vinci.pae.business.exceptions.NotFoundException;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -22,13 +22,19 @@ public class TypeUCCImpl implements TypeUCC {
    */
   @Override
   public TypeDTO getType(int id) {
-    dalService.startTransaction();
-    TypeDTO typeDTO = typeDAO.getOne(id);
-    if (typeDTO == null) {
+    TypeDTO typeDTO;
+    try {
+      dalService.startTransaction();
+      typeDTO = typeDAO.getOne(id);
+      if (typeDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Type not found");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Type not found");
+      throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 
@@ -40,13 +46,19 @@ public class TypeUCCImpl implements TypeUCC {
    */
   @Override
   public TypeDTO getType(String typeName) {
-    dalService.startTransaction();
-    TypeDTO typeDTO = typeDAO.getOne(typeName);
-    if (typeDTO == null) {
+    TypeDTO typeDTO;
+    try {
+      dalService.startTransaction();
+      typeDTO = typeDAO.getOne(typeName);
+      if (typeDTO == null) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("Type not found");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("Type not found");
+      throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 
@@ -57,13 +69,19 @@ public class TypeUCCImpl implements TypeUCC {
    */
   @Override
   public List<TypeDTO> getAllDefaultTypes() {
-    dalService.startTransaction();
-    List<TypeDTO> typeDTO = typeDAO.getAllDefaultTypes();
-    if (typeDTO.isEmpty()) {
+    List<TypeDTO> typeDTO;
+    try {
+      dalService.startTransaction();
+      typeDTO = typeDAO.getAllDefaultTypes();
+      if (typeDTO.isEmpty()) {
+        dalService.rollBackTransaction();
+        throw new NotFoundException("No default types found");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
       dalService.rollBackTransaction();
-      throw new NotFoundException("No default types found");
+      throw e;
     }
-    dalService.commitTransaction();
     return typeDTO;
   }
 }

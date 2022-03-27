@@ -1,7 +1,10 @@
 package be.vinci.pae.ihm;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -9,6 +12,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -29,18 +33,25 @@ public class OfferResource {
   private OfferUCC offerUcc;
 
   /**
-   * Get all the offers that matche with a search pattern.
+   * Get all offers.
    *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of all offerDTO that match with the search pattern
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param selfStr       if you want your offers
+   * @param request       information of the member
+   * @return list of offers
    */
   @GET
-  @Path("/all")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getOffers(
-      @DefaultValue("") @QueryParam("search-pattern") String searchPattern) {
-    return offerUcc.getAllPosts(searchPattern);
+      @DefaultValue("") @QueryParam("search-pattern") String searchPattern,
+      @DefaultValue("") @QueryParam("self") String selfStr, @Context ContainerRequest request) {
+    int idOffer = 0;
+    if (selfStr.equals("true")) {
+      MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+      idOffer = memberDTO.getMemberId();
+    }
+    return offerUcc.getOffers(searchPattern, idOffer);
   }
 
   /**
@@ -85,8 +96,7 @@ public class OfferResource {
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
         .isEmpty() || offerDTO.getObject().getIdOfferor() == 0)) {
-      throw new WebApplicationException("Bad json object sent",
-          Response.Status.BAD_REQUEST);
+      throw new WebApplicationException("Bad json object sent", Response.Status.BAD_REQUEST);
     }
     return offerUcc.addOffer(offerDTO);
   }
@@ -97,28 +107,22 @@ public class OfferResource {
    * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
    * @return an offerDTO with the id and the new time slot
    */
-  @POST
+  @PUT
   @Authorize
-  @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO updateOffer(OfferDTO offerDTO, @Context ContainerRequest request) {
-    if (offerDTO.getIdOffer() <= 0
-        || offerDTO.getTimeSlot() == null
-        || offerDTO.getTimeSlot().isEmpty()) {
-      throw new WebApplicationException("Offer need more informations", Status.BAD_REQUEST);
+    MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
+
+    if (offerDTO.getIdOffer() == 0) {
+      throw new BadRequestException("Aucun id de l'offre");
     }
 
-    if (offerDTO.getObject() == null
-        || offerDTO.getObject().getDescription() == null
-        || offerDTO.getObject().getDescription().isEmpty()
-        || offerDTO.getObject().getStatus() == null
-        || offerDTO.getObject().getStatus().isEmpty()) {
-      throw new WebApplicationException("Object need more informations", Status.BAD_REQUEST);
+    OfferDTO initialOfferDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
+
+    if (initialOfferDTO.getObject().getIdOfferor() != memberRequest.getMemberId()) {
+      throw new UnauthorizedException("Vous n'avez pas créé cet offre.");
     }
-
-    verifyType(offerDTO);
-
     return offerUcc.updateOffer(offerDTO);
   }
 

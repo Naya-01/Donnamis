@@ -122,10 +122,12 @@ public class MemberImpl implements Member {
     this.password = password;
   }
 
+  @Override
   public AddressDTO getAddress() {
     return address;
   }
 
+  @Override
   public void setAddress(AddressDTO address) {
     this.address = address;
   }

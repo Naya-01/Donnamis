@@ -13,15 +13,15 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 
-###
-POST {{baseUri}}/address/update
+### update any part of an address
+PUT {{baseUri}}/address/update
 Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idAddress": 1,
+  "idMember": 2,
   "unitNumber": "",
-  "buildingNumber": "95",
+  "buildingNumber": "96",
   "street": "chaussée de Waterloo",
   "postcode": "1410",
   "commune": "Waterloo",

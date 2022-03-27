@@ -13,6 +13,7 @@ class Member {
     this.password = password;
     this.reasonRefusal = null;
     this.address = address;
+    this.image = null;
   }
 }
 

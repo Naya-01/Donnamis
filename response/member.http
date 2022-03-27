@@ -21,38 +21,49 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ### Get user by his token
-POST {{baseUri}}/member/getMemberByToken
+GET {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
 
-### Promote Administrator
+### Get a member by his id
+GET {{baseUri}}/member/id/2
+Authorization: {{access}}
 
-POST {{baseUri}}/member/promoteAdministrator
+### Search 'alb' pattern member
+GET {{baseUri}}/member/search?search=alb
+Authorization: {{access}}
+
+### Search wating member
+GET {{baseUri}}/member/search?search=&status=waiting
+Authorization: {{access}}
+
+### Search pending member
+GET {{baseUri}}/member/search?search=&status=pending
+Authorization: {{access}}
+
+### Search denied member
+GET {{baseUri}}/member/search?search=&status=denied
+Authorization: {{access}}
+
+### Search valid member
+GET {{baseUri}}/member/search?search=&status=valid
+Authorization: {{access}}
+
+### Search all member
+GET {{baseUri}}/member/search?search=&status=
+Authorization: {{access}}
+
+### Change member status
+PUT {{baseUri}}/member/update
 Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "id": 2
-}
-
-### Confirm registration
-
-POST {{baseUri}}/member/confirmRegistration
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "id": 1
-}
-
-### Decline registration
-
-POST {{baseUri}}/member/declineRegistration
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "id": 1,
-  "reason": "Test de refus"
+  "memberId": 2,
+  "username": "AlbertDeBucarest",
+  "lastname": "Dubous",
+  "firstname": "Albert",
+  "status": "valid",
+  "role": "member"
 }
 
 ### Upload picture
@@ -65,7 +76,3 @@ Authorization: {{access}}
 Content-Disposition: form-data; name="file"; filename="ipl_logo.jpg"
 
 < C:\Users\Mehdi\Pictures\ipl_logo.jpg
-
-### Get subcription request by status
-GET {{baseUri}}/member/subscriptions/pending
-Authorization: {{access}}

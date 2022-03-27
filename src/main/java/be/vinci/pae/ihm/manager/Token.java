@@ -19,4 +19,12 @@ public interface Token {
    * @return a token
    */
   String withoutRememberMe(MemberDTO memberDTO);
+
+  /**
+   * Verify a token given.
+   *
+   * @param token a string of the token
+   * @return the member bound to the given token or null
+   */
+  MemberDTO verifyToken(String token);
 }

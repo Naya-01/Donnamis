@@ -8,6 +8,8 @@ import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.utils.Config;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,15 +28,18 @@ public class OfferDAOImpl implements OfferDAO {
   private ObjectFactory objectFactory;
   @Inject
   private TypeFactory typeFactory;
+  @Inject
+  private ObjectDAO objectDAO;
 
   /**
-   * Get all offers that match with the search pattern.
+   * Get all offers.
    *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of offerDTO
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param idMember      the member id if you want only your offers (0 -> all)
+   * @return list of offers
    */
   @Override
-  public List<OfferDTO> getAll(String searchPattern) {
+  public List<OfferDTO> getAll(String searchPattern, int idMember) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
@@ -42,11 +47,26 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query +=
-          "AND (ob.status LIKE '%" + searchPattern + "%' OR o.time_slot LIKE '%" + searchPattern
-              + "%')";
+      query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?) ";
     }
-    return getOffersWithQuery(query);
+    if (idMember != 0) {
+      query += "AND ob.id_offeror = ?";
+    }
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      int argCounter = 1;
+      if (searchPattern != null && !searchPattern.isEmpty()) {
+        for (argCounter = 1; argCounter <= 2; argCounter++) {
+          preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
+        }
+      }
+      if (idMember != 0) {
+        preparedStatement.setInt(argCounter, idMember);
+      }
+      return getOffersWithPreparedStatement(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
   }
 
   /**
@@ -88,9 +108,8 @@ public class OfferDAOImpl implements OfferDAO {
       }
       return offerDTOList.get(0);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -121,11 +140,13 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.setDate(resultSet.getDate(2).toLocalDate());
       offerDTO.setTimeSlot(resultSet.getString(3));
       offerDTO.getObject().setIdObject(resultSet.getInt(4));
+
+      preparedStatement.close();
+      resultSet.close();
       return offerDTO;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
 
   /**
@@ -136,30 +157,51 @@ public class OfferDAOImpl implements OfferDAO {
    */
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
-    String query = "UPDATE donnamis.offers SET time_slot = ? "
-        + "WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
+    String query = "UPDATE donnamis.offers SET time_slot = ? ";
+    ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
 
-    try {
-      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+    ObjectDTO objectDTO = null;
+    if (offerDTO.getObject() != null) {
+      offerDTO.getObject().setIdObject(realObject.getIdObject());
+      objectDTO = objectDAO.updateOne(offerDTO.getObject());
+    }
+
+    if (offerDTO.getTimeSlot() != null && !offerDTO.getTimeSlot().isEmpty()) {
+      query += " WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
+    } else {
+      if (objectDTO != null) {
+        offerDTO.setObject(objectDTO);
+        return offerDTO;
+      }
+      throw new BadRequestException("Vous ne modifiez rien");
+    }
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getIdOffer());
       preparedStatement.executeQuery();
-
       ResultSet resultSet = preparedStatement.getResultSet();
+
       if (!resultSet.next()) {
         return null;
       }
 
-      offerDTO.setIdOffer(resultSet.getInt(1));
-      offerDTO.setDate(resultSet.getDate(2).toLocalDate());
-      offerDTO.setTimeSlot(resultSet.getString(3));
-      offerDTO.getObject().setIdObject(resultSet.getInt(4));
-      return offerDTO;
+      OfferDTO offerDTOUpdated = offerFactory.getOfferDTO();
+      offerDTOUpdated.setIdOffer(resultSet.getInt(1));
+      offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
+      offerDTOUpdated.setTimeSlot(resultSet.getString(3));
+      if (objectDTO != null) {
+        offerDTOUpdated.setObject(objectDTO);
+        offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));
+      }
+
+      return offerDTOUpdated;
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
   }
+
 
   /**
    * Get a list of offers according to the query.
@@ -171,13 +213,27 @@ public class OfferDAOImpl implements OfferDAO {
    */
   private List<OfferDTO> getOffersWithQuery(String query) {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      return getOffersWithResultSet(resultSet);
+      return getOffersWithPreparedStatement(preparedStatement);
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
-    return null;
+  }
+
+  /**
+   * Get a list of offers with a prepared statement.
+   *
+   * @param preparedStatement a prepared statement that match with the pattern : SELECT of.id_offer,
+   *                          of.date, of.time_slot, of.id_object, id_type, description, status,
+   *                          image, id_offeror FROM donnamis.offers of, donnamis.objects ob
+   * @return a list of OfferDTO
+   */
+  private List<OfferDTO> getOffersWithPreparedStatement(PreparedStatement preparedStatement) {
+    try {
+      preparedStatement.executeQuery();
+      return getOffersWithResultSet(preparedStatement.getResultSet());
+    } catch (SQLException e) {
+      throw new FatalException();
+    }
   }
 
   /**
@@ -218,9 +274,8 @@ public class OfferDAOImpl implements OfferDAO {
         listOfferDTO.add(offerDTO);
       }
       return listOfferDTO;
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
+    } catch (SQLException e) {
+      throw new FatalException(e);
     }
-    return null;
   }
 }

@@ -6,14 +6,6 @@ import java.util.List;
 public interface OfferUCC {
 
   /**
-   * Get all the offers that matche with a search pattern.
-   *
-   * @param searchPattern the search pattern to find offers according to their type, description
-   * @return a list of all offerDTO that match with the search pattern
-   */
-  List<OfferDTO> getAllPosts(String searchPattern);
-
-  /**
    * Get the last six offers posted.
    *
    * @return a list of six offerDTO
@@ -43,4 +35,13 @@ public interface OfferUCC {
    * @return an offerDTO with the id and the new time slot
    */
   OfferDTO updateOffer(OfferDTO offerDTO);
+
+  /**
+   * Get all offers.
+   *
+   * @param search   the search pattern (empty -> all) according to their type, description
+   * @param idMember the member id if you want only your offers (0 -> all)
+   * @return list of offers
+   */
+  List<OfferDTO> getOffers(String search, int idMember);
 }

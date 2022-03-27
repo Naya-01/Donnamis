@@ -63,7 +63,7 @@ client.global.set("access", response.body.access_token);
 %}
 
 ### Get user by his token
-POST {{baseUri}}/member/getMemberByToken
+GET {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
 
 
@@ -72,10 +72,10 @@ POST {{baseUri}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "hehe2",
-  "lastname": "Stefan",
-  "firstname": "Mirco",
-  "password": "Stef123",
+  "username": "tcou",
+  "lastname": "rayan",
+  "firstname": "abar",
+  "password": "rayan123",
   "phone": "0498989898",
   "address": {
     "buildingNumber": "14",
@@ -90,10 +90,3 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
-### Get subcription request by status
-GET {{baseUri}}/auth/subscriptions/pending
-Authorization: {{access}}
-
-### Get a member by his id
-GET {{baseUri}}/auth/id/2
-Authorization: {{access}}

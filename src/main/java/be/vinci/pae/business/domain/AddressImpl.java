@@ -1,15 +1,25 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
+import be.vinci.pae.utils.Views;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressImpl implements AddressDTO {
-
+  @JsonView(Views.Public.class)
   private int idMember;
+  @JsonView(Views.Public.class)
   private String unitNumber;
+  @JsonView(Views.Public.class)
   private String buildingNumber;
+  @JsonView(Views.Public.class)
   private String street;
+  @JsonView(Views.Public.class)
   private String postcode;
+  @JsonView(Views.Public.class)
   private String commune;
+  @JsonView(Views.Public.class)
   private String country;
 
 

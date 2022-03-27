@@ -21,7 +21,7 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ###
-GET {{baseUri}}/offers/all?search-pattern=t
+GET {{baseUri}}/offers?search-pattern=sam&self=true
 Authorization: {{refresh}}
 
 ###
@@ -77,5 +77,46 @@ Content-Type: application/json
     "type": {
       "idType": 4
     }
+  }
+}
+
+### get all offer
+GET {{baseUri}}/offers?search-pattern=samEdi&self=true
+Authorization: {{refresh}}
+
+###
+PUT {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 1,
+  "timeSlot": "tous les mois de janvier",
+  "object": {
+    "type": {
+      "typeName": "Croissant"
+    },
+    "description": "C'est un croissant rien de plus",
+    "status": "available",
+    "image": null,
+    "idOfferor": 2
+  }
+}
+
+###
+PUT {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 1,
+  "timeSlot": "en fevrier",
+  "object": {
+    "type": {
+      "typeName": "Canette"
+    },
+    "description": "C'est une canette rien de plus",
+    "status": "available",
+    "image": null
   }
 }
