@@ -34,10 +34,10 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
               <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
             
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-given" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-given">En cours</label>
+              <label class="btn btn-outline-dark" for="btn-status-given">Donné</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
-              <label class="btn btn-outline-danger" for="btn-status-assigned">Donné</label>
+              <label class="btn btn-outline-danger" for="btn-status-assigned">En cours</label>
             </div>`;
     }
     if (hasType) {
