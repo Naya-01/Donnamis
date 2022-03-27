@@ -134,7 +134,7 @@ class OfferLibrary {
         },
       };
       let query = "/api/offers?search-pattern=" + searchPattern + "&type="
-          + type;
+          + type+"&status"+objStatus;
       if (self) {
         query += "&self=true";
       }
