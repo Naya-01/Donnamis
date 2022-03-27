@@ -71,7 +71,6 @@ const MyObjectPage = async () => {
   let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
-  // test if there is an image
   //TODO : show the image
   /*
   if(!image.endsWith("\\null")){
