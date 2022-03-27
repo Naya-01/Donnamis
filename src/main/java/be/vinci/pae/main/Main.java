@@ -49,7 +49,7 @@ public class Main {
     Log.config();
 
     //Création des dossiers possiblement manquants
-    String[] paths = {"img//", "img//profils//", "img//offers//"};
+    String[] paths = {"img//", "img//profils//", "img//objects//"};
     for (String p : paths) {
       String directoryName = Config.getProperty("ImagePath") + p;
       File directory = new File(directoryName);

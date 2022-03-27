@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import java.io.File;
 import java.util.List;
 
+
 public class MemberUCCImpl implements MemberUCC {
 
   @Inject
@@ -51,11 +52,11 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getStatus().equals("pending")) {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return memberDTO;
 
   }
@@ -85,11 +86,11 @@ public class MemberUCCImpl implements MemberUCC {
 
       }
       memberDTO = memberDAO.updateProfilPicture(path, id);
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return memberDTO;
   }
 
@@ -108,11 +109,11 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return memberDTO;
   }
 
@@ -159,11 +160,11 @@ public class MemberUCCImpl implements MemberUCC {
       //add the address
       AddressDTO addressDTO = addressDAO.createOne(addressOfMember);
       memberFromDao.setAddress(addressDTO);
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return memberFromDao;
   }
 
@@ -184,11 +185,11 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTOList == null || memberDTOList.isEmpty()) {
         throw new NotFoundException("Aucun membre");
       }
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return memberDTOList;
   }
 
@@ -207,11 +208,12 @@ public class MemberUCCImpl implements MemberUCC {
       if (modifierMemberDTO == null) {
         throw new ForbiddenException("Problem with updating member");
       }
+
+      dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    dalService.commitTransaction();
     return modifierMemberDTO;
   }
 }

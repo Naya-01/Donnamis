@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OfferImpl implements OfferDTO {
+
   @JsonView(Views.Public.class)
   private int idOffer;
   @JsonView(Views.Public.class)

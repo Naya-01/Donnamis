@@ -1,5 +1,5 @@
 import {getSessionObject} from "../../utils/session";
-import {Redirect} from "../Router/Router";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
@@ -13,7 +13,7 @@ const MyObjectsPage = async () => {
     return;
   }
 
-  await searchBar("Mes objets", false, true, "Recherche un objet", true);
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true);
   const searchBarDiv = document.getElementById("searchBar");
   await objectCards(searchBarDiv.value);
   searchBarDiv.addEventListener('keyup', async (e) => {
@@ -52,7 +52,8 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(profileImageDiv);
 
     const informationMemberDiv = document.createElement("div");
-    informationMemberDiv.className = "col-7 mt-3";
+    informationMemberDiv.className = "col-7 mt-3 clickable";
+    informationMemberDiv.id="object-info";
 
     const memberBaseInformationSpan = document.createElement("span");
     memberBaseInformationSpan.className = "fs-4";
@@ -76,6 +77,13 @@ const objectCards = async (searchPattern) => {
     buttonInput.className = "d-grid gap-2 d-md-block";
     buttonInput.id = buttonCardId;
 
+    const cancelButton = document.createElement("button");
+    cancelButton.innerText="Annuler";
+    cancelButton.type="button";
+    cancelButton.className="btn btn-danger";
+    buttonInput.appendChild(cancelButton);
+
+
     buttonsCard.appendChild(buttonInput);
     divCard.appendChild(buttonsCard);
 
@@ -84,6 +92,15 @@ const objectCards = async (searchPattern) => {
     divCard.appendChild(cardForm);
 
     memberCards.appendChild(divCard);
+    const card = document.getElementById("object-info")
+    card.addEventListener("click", async () => {
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
+          object.idOffer);
+    });
+    const addButton = document.getElementById("add-new-object-button");
+    addButton.addEventListener('click', () => {
+      Redirect("/addNewObjectPage")
+    });
   }
 }
 
