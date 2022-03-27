@@ -17,9 +17,11 @@ import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.utils.Config;
 import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -49,6 +51,8 @@ class MemberUCCImplTest {
   private MemberDTO memberPending2;
   private MemberDTO memberValid1;
 
+  private String pathImage;
+
 
   private MemberDTO getMemberNewMember() {
     // member to register
@@ -75,6 +79,8 @@ class MemberUCCImplTest {
 
   @BeforeEach
   void initAll() {
+    Config.load("test.properties");
+    this.pathImage = Config.getProperty("ImagePath");
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
@@ -238,7 +244,7 @@ class MemberUCCImplTest {
 
   //  ----------------------------  UPDATE PROFIL PICTURE UCC  -------------------------------  //
 
-  //FINIR L UCC UPDATE PROFIL PICTURE
+
   @DisplayName("Test updateProfilPicture with a non existent id for member")
   @Test
   public void testUpdateProfilPictureForNonExistentMember() {
@@ -246,14 +252,65 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.updateProfilPicture("C:/img", idMember)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember)),
         () -> Mockito.verify(mockMemberDAO).getOne(idMember)
+    );
+  }
+
+  @DisplayName("Test updateProfilPicture with success not already having a profil picture")
+  @Test
+  public void testUpdateProfilPictureSuccessNotHavingAProfilPicture() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+    memberDTO.setImage(pathImage);
+
+    MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
+    memberDTOWithNewProfilPic.setMemberId(2);
+    memberDTOWithNewProfilPic.setImage(pathImage + "test");
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getMemberId())).thenReturn(memberDTO);
+
+    Mockito.when(mockMemberDAO.updateProfilPicture(pathImage + "test", memberDTO.getMemberId()))
+        .thenReturn(memberDTOWithNewProfilPic);
+
+    assertAll(
+        () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
+        () -> assertNotEquals(memberDTO.getImage(), memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test updateProfilPicture with success already having a profil picture")
+  @Test
+  public void testUpdateProfilPictureSuccessAlreadyHavingAProfilPicture() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
+    memberDTOWithNewProfilPic.setMemberId(2);
+    memberDTOWithNewProfilPic.setImage(pathImage + "test");
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getMemberId())).thenReturn(memberDTO);
+
+    Mockito.when(mockMemberDAO.updateProfilPicture(pathImage + "test", memberDTO.getMemberId()))
+        .thenReturn(memberDTOWithNewProfilPic);
+
+    assertAll(
+        () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
+        () -> assertNotEquals(memberDTO.getImage(), memberUCC
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 
   //  -----------------------------  REGISTER UCC  ----------------------------------------  //
 
-  @DisplayName("Test inscription tout va bien")
+  @DisplayName("Test register success")
   @Test
   public void testRegisterSuccess() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -284,7 +341,7 @@ class MemberUCCImplTest {
   }
 
 
-  @DisplayName("Test inscription avec membre déjà existant")
+  @DisplayName("Test register with a member already existent")
   @Test
   public void testRegisterConflict() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -301,7 +358,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec champs pouvant êtres vides (tel (member) et boite (address))")
+  @DisplayName("Test register with fields allowed to be empty (phone and unit number)")
   @Test
   public void testRegisterEmptyFields() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -337,7 +394,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test inscription avec champs pouvant êtres null (tel (member) et boite (address))")
+  @DisplayName("Test register with fields allowed to be null (phone and unit number)")
   @Test
   public void testRegisterNullFields() {
     MemberDTO newMember = this.getMemberNewMember();
@@ -373,10 +430,43 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test register add a member failed")
+  @Test
+  public void testRegisterWithNullReceivedFromDAOWhenCreateAMember() {
+    MemberDTO newMember = this.getMemberNewMember();
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> memberUCC.register(newMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test register add an address failed")
+  @Test
+  public void testRegisterWithNullReceivedFromDAOWhenCreateAnAddress() {
+    MemberDTO newMember = this.getMemberNewMember();
+
+    MemberDTO memberFromCreateOneDao = this.getMemberNewMember();
+    memberFromCreateOneDao.setMemberId(6);
+
+    Mockito.when(mockMemberDAO.getOne(newMember.getUsername())).thenReturn(null);
+    Mockito.when(mockMemberDAO.createOneMember(newMember)).thenReturn(memberFromCreateOneDao);
+    Mockito.when(mockAddressDAO.createOne(newMember.getAddress())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> memberUCC.register(newMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //  -----------------------------  SEARCH MEMBERS UCC  -----------------------------------  //
 
 
-  @DisplayName("Test recherche de membre avec status et recherche vide")
+  @DisplayName("Test searchMembers with status and search empty")
   @Test
   public void testSearchMembersEmptySearchAndEmptyStatus() {
     List<MemberDTO> allMemberDTOList = List.of(memberPending1, memberPending2, memberValid1);
@@ -390,7 +480,7 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec aucun membre retourné par le DAO")
+  @DisplayName("Test searchMembers with none member received from DAO")
   @Test
   public void testSearchMembersEmptyReturnListFromDAO() {
     List<MemberDTO> allDeniedMemberDTOList = List.of();
@@ -405,9 +495,9 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec status waiting")
+  @DisplayName("Test searchMembers with waiting status")
   @Test
-  public void testSearchWaitingStatus() {
+  public void testSearchMembersWaitingStatus() {
     List<MemberDTO> allWaitingMemberDTOList = List.of(memberPending1, memberPending2);
 
     Mockito.when(mockMemberDAO.getAll("", "waiting"))
@@ -422,9 +512,9 @@ class MemberUCCImplTest {
 
   }
 
-  @DisplayName("Test recherche avec aucun status mais une recherche en param")
+  @DisplayName("Test searchMembers with non status but a search param")
   @Test
-  public void testSearchWithSearchParamAndNoStatus() {
+  public void testSearchMembersWithSearchParamAndNoStatus() {
     List<MemberDTO> allMemberDTOListMatchingSearch = List.of(memberPending1, memberPending2);
 
     Mockito.when(mockMemberDAO.getAll("ma", ""))
@@ -437,9 +527,9 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test recherche avec un valid status et une recherche en param")
+  @DisplayName("Test searchMembers with a valid status and a search param")
   @Test
-  public void testSearchWithSearchParamAndValidStatus() {
+  public void testSearchMembersWithSearchParamAndValidStatus() {
     List<MemberDTO> allValidMemberDTOMatchingSearch = List.of(memberValid1);
 
     Mockito.when(mockMemberDAO.getAll("mi", "valid"))
@@ -452,7 +542,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test recherche avec une liste de membres ayant la valeur null retourné par le DAO")
+  @DisplayName("Test searchMembers with a null list received from DAO")
   @Test
   public void testSearchMembersNullListReturnedFromDAO() {
 
@@ -469,7 +559,7 @@ class MemberUCCImplTest {
   //  -----------------------------  UPDATE MEMBER UCC  -----------------------------------  //
 
 
-  @DisplayName("Test update member avec un membre ayant ses attributs par défaut")
+  @DisplayName("Test updateMember with a member having his fields by default")
   @Test
   public void testUpdateMemberWithEmptyFieldsMember() {
     MemberDTO nonExistentMember = memberFactory.getMemberDTO();
@@ -482,7 +572,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test update member avec un membre qui n'est pas dans la DB")
+  @DisplayName("Test updateMember with a non existent member")
   @Test
   public void testUpdateMemberNonExistentInDB() {
     MemberDTO nonExistentMemberInDB = getMemberNewMember();
@@ -495,7 +585,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test update member succès")
+  @DisplayName("Test updateMember success")
   @Test
   public void testUpdateMemberSuccess() {
     MemberDTO existentMemberInDB = getMemberNewMember();
@@ -518,7 +608,7 @@ class MemberUCCImplTest {
 
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
-  @DisplayName("Test get member succès")
+  @DisplayName("Test getMember success")
   @Test
   public void testGetMemberSuccess() {
     MemberDTO existentMemberInDB = getMemberNewMember();
@@ -531,7 +621,7 @@ class MemberUCCImplTest {
     );
   }
 
-  @DisplayName("Test get member with non existent member id")
+  @DisplayName("Test getMember with non existent member id")
   @Test
   public void testGetMemberNonExistentMemberId() {
     Mockito.when(mockMemberDAO.getOne(0)).thenReturn(null);
