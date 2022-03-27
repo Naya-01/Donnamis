@@ -4,6 +4,15 @@ import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
+
+const dictionnary = new Map([
+  ['interested', 'Disponible'],
+  ['available', 'Disponible'],
+  ['assigned', 'En cours de donnation'],
+  ['given', 'Donné'],
+  ['cancelled', 'Annulé']
+]);
+
 /**
  * Render the page to see an object
  */
@@ -96,7 +105,7 @@ const objectCards = async (searchPattern, type, status) => {
 
     const memberAddressInformationSpan = document.createElement("span")
     memberAddressInformationSpan.className = "text-secondary fs-5";
-    memberAddressInformationSpan.innerText = object.object.status;
+    memberAddressInformationSpan.innerText = dictionnary.get(object.object.status);
 
     informationMemberDiv.appendChild(memberBaseInformationSpan);
     informationMemberDiv.appendChild(document.createElement("br"));
