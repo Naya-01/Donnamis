@@ -36,10 +36,11 @@ public class OfferDAOImpl implements OfferDAO {
    *
    * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @param idMember      the member id if you want only your offers (0 -> all)
+   * @param type          the type of object that we want
    * @return list of offers
    */
   @Override
-  public List<OfferDTO> getAll(String searchPattern, int idMember) {
+  public List<OfferDTO> getAll(String searchPattern, int idMember, String type) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
@@ -48,6 +49,9 @@ public class OfferDAOImpl implements OfferDAO {
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
       query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?) ";
+    }
+    if (type != null && !type.isEmpty()) {
+      query += "AND ty.type_name = ?";
     }
     if (idMember != 0) {
       query += "AND ob.id_offeror = ?";
@@ -59,6 +63,10 @@ public class OfferDAOImpl implements OfferDAO {
         for (argCounter = 1; argCounter <= 2; argCounter++) {
           preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
         }
+      }
+      if (type != null && !type.isEmpty()) {
+        preparedStatement.setString(argCounter, type);
+        argCounter++;
       }
       if (idMember != 0) {
         preparedStatement.setInt(argCounter, idMember);

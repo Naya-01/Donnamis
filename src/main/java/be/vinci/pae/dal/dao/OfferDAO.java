@@ -10,9 +10,10 @@ public interface OfferDAO {
    *
    * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @param idMember      the member id if you want only your offers (0 -> all)
+   * @param type          the type of object that we want
    * @return list of offers
    */
-  List<OfferDTO> getAll(String searchPattern, int idMember);
+  List<OfferDTO> getAll(String searchPattern, int idMember, String type);
 
   /**
    * Get the last six offers posted.

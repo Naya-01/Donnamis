@@ -23,8 +23,8 @@ Content-Type: application/json
 Authorization: {{refresh}}
 
 {
-  "idObject": 3,
-  "availabilityDate": "2022-10-13"
+  "idObject": 13,
+  "availabilityDate": "2017-01-13"
 }
 
 ### Get interest count
