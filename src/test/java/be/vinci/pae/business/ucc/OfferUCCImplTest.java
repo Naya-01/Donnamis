@@ -467,4 +467,30 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test update offer succès")
+  @Test
+  public void testUpdateOfferSuccess() {
+    OfferDTO mockOfferDTO = getNewOffer();
+    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(15);
+    Mockito.when(mockOfferDTO.getObject().getDescription()).thenReturn("Très bon jeu");
+    Mockito.when(mockOfferDTO.getDate()).thenReturn(LocalDate.now().minusMonths(2));
+
+    OfferDTO mockOfferDTOUpdated = getNewOffer();
+    Mockito.when(mockOfferDTOUpdated.getIdOffer()).thenReturn(15);
+    Mockito.when(mockOfferDTOUpdated.getObject().getDescription()).thenReturn("Très bon jeu");
+    Mockito.when(mockOfferDTOUpdated.getDate()).thenReturn(LocalDate.now());
+
+    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(mockOfferDTOUpdated);
+
+    OfferDTO offerDTO = offerUCC.updateOffer(mockOfferDTO);
+
+    assertAll(
+        () -> assertNotEquals(mockOfferDTO, offerDTO),
+        () -> assertNotEquals(mockOfferDTO.getDate(), offerDTO.getDate()),
+        () -> assertEquals(mockOfferDTO.getIdOffer(), offerDTO.getIdOffer()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }
