@@ -349,4 +349,30 @@ class OfferUCCImplTest {
             .rollBackTransaction()
     );
   }
+
+  @DisplayName("Test get offers avec toutes les offres retournées")
+  @Test
+  public void testGetOffersWithAllOffers() {
+    OfferDTO offerDTO1 = getNewOffer();
+    Mockito.when(offerDTO1.getIdOffer()).thenReturn(4);
+    Mockito.when(offerDTO1.getObject().getIdObject()).thenReturn(55);
+    OfferDTO offerDTO2 = getNewOffer();
+    Mockito.when(offerDTO1.getIdOffer()).thenReturn(5);
+    Mockito.when(offerDTO1.getObject().getIdObject()).thenReturn(56);
+    OfferDTO offerDTO3 = getNewOffer();
+    Mockito.when(offerDTO1.getIdOffer()).thenReturn(6);
+    Mockito.when(offerDTO1.getObject().getIdObject()).thenReturn(57);
+    Mockito.when(offerDTO1.getObject().getIdOfferor()).thenReturn(33);
+
+    List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2, offerDTO3);
+
+    Mockito.when(offerDAO.getAll("", 0)).thenReturn(offerDTOS);
+    assertAll(
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("", 0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
+    );
+  }
 }
