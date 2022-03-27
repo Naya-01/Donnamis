@@ -178,10 +178,10 @@ class OfferUCCImplTest {
     );
   }
 
-  /*
-  @DisplayName("Test ajouter une offre avec  type d'objet existant et ajout de l'offre impossible")
+
+  @DisplayName("Test ajouter une offre avec type d'objet existant et object de l'offre non ajouté")
   @Test
-  public void testAddOfferSuccessWithExistentTypeAnd() {
+  public void testAddOfferSuccessWithExistentTypeAndAddOneObjectReturnsNull() {
     OfferDTO offerDTOFromDAO = getNewOffer();
     Mockito.when(offerDTOFromDAO.getIdOffer()).thenReturn(5);
 
@@ -195,13 +195,14 @@ class OfferUCCImplTest {
         .thenReturn(typeDTOFromDaoGetOne);
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoGetOne);
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(null);
+    Mockito.when(offerDTO.getObject().getIdObject()).thenReturn(0);
+    Mockito.when(objectDAO.addOne(offerDTO.getObject())).thenReturn(null);
 
     assertAll(
         () -> assertThrows(FatalException.class, () -> offerUCC.addOffer(offerDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
-  }*/
+  }
 
 }
