@@ -130,7 +130,7 @@ const RegisterPage = async () => {
     let country = document.getElementById("country");
 
     const notNullFields = [username, lastname, firstname, password,
-      buildingNumber, street, postcode, commune, country];
+      street, postcode, commune, country];
 
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
@@ -190,8 +190,7 @@ const RegisterPage = async () => {
         title: 'Le numéro de téléphone est invalide'
       })
     } else if (
-        unitNumber.value.trim().length > 15
-        || (unitNumber.value.trim().length <= 0)) {
+        unitNumber.value.trim().length > 15) {
       unitNumber.classList.add("border-danger");
       toast.fire({
         icon: 'error',
