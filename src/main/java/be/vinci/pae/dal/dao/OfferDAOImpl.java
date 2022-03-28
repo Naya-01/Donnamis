@@ -215,7 +215,7 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTOUpdated.setObject(objectDTO);
         offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));
       }
-
+      resultSet.close();
       return offerDTOUpdated;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -293,6 +293,7 @@ public class OfferDAOImpl implements OfferDAO {
 
         listOfferDTO.add(offerDTO);
       }
+      resultSet.close();
       return listOfferDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

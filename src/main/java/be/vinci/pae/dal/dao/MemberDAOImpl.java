@@ -248,6 +248,7 @@ public class MemberDAOImpl implements MemberDAO {
 
         memberDTOList.add(memberDTO);
       }
+      resultSet.close();
       return memberDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -287,7 +288,9 @@ public class MemberDAOImpl implements MemberDAO {
       if (!resultSet.next()) {
         return null;
       }
-      return getMemberByResultSet(resultSet);
+      MemberDTO memberDTO = getMemberByResultSet(resultSet);
+      resultSet.close();
+      return memberDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }

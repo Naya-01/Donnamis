@@ -26,14 +26,13 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(String typeName) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_type, type_name, is_default FROM donnamis.types WHERE type_name = ?");
-    try {
+    String query = "SELECT id_type, type_name, is_default FROM donnamis.types WHERE type_name = ?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, typeName);
+      return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return getTypeDTO(preparedStatement);
   }
 
   /**
@@ -44,14 +43,13 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(int typeId) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_type, type_name, is_default FROM donnamis.types WHERE id_type = ?");
-    try {
+    String query = "SELECT id_type, type_name, is_default FROM donnamis.types WHERE id_type = ?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, typeId);
+      return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return getTypeDTO(preparedStatement);
   }
 
   /**
@@ -74,6 +72,7 @@ public class TypeDAOImpl implements TypeDAO {
         typeDTO.setIsDefault(resultSet.getBoolean(3));
         listTypeDTO.add(typeDTO);
       }
+      resultSet.close();
       return listTypeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -110,6 +109,7 @@ public class TypeDAOImpl implements TypeDAO {
       typeDTO.setTypeName(resultSet.getString(2));
       typeDTO.setIsDefault(resultSet.getBoolean(3));
 
+      resultSet.close();
       return typeDTO;
     } catch (SQLException e) {
       throw new FatalException(e);

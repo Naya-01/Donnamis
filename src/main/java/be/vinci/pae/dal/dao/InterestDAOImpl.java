@@ -29,17 +29,16 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "select i.id_object, i.id_member, i.availability_date, i.status\n"
-            + "from donnamis.interests i\n"
-            + "WHERE i.id_object=? AND i.id_member=?;");
-    try {
+    String query = "select i.id_object, i.id_member, i.availability_date, i.status "
+        + "from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setInt(2, idMember);
+      return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return getInterestDTO(preparedStatement);
   }
 
 
@@ -62,7 +61,6 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setIdMember(resultSet.getInt(2));
       interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
       interestDTO.setStatus(resultSet.getString(4));
-      preparedStatement.close();
       resultSet.close();
 
       return interestDTO;
@@ -80,16 +78,15 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO addOne(InterestDTO item) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "insert into donnamis.interests (id_object, id_member, availability_date, status) "
-            + "values (?,?,?,?);");
-    try {
+    String query = "insert into donnamis.interests (id_object, id_member, availability_date, status) "
+        + "values (?,?,?,?);";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, item.getIdObject());
       preparedStatement.setInt(2, item.getIdMember());
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
       preparedStatement.execute();
-      preparedStatement.close();
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -104,11 +101,11 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAll(int idObject) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_object, id_member, availability_date, status "
-            + "FROM donnamis.interests WHERE id_object = ? AND status != 'cancelled'");
+    String query = "SELECT id_object, id_member, availability_date, status "
+        + "FROM donnamis.interests WHERE id_object = ? AND status != 'cancelled'";
 
-    try {
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -123,7 +120,6 @@ public class InterestDAOImpl implements InterestDAO {
 
         interestDTOList.add(interestDTO);
       }
-      preparedStatement.close();
       resultSet.close();
       return interestDTOList;
     } catch (SQLException e) {

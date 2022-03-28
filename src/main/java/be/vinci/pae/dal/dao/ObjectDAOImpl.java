@@ -254,6 +254,7 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setStatus(resultSet.getString(3));
       objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
+      resultSet.close();
       return objectDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
