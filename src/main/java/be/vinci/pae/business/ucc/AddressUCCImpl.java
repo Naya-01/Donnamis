@@ -26,7 +26,6 @@ public class AddressUCCImpl implements AddressUCC {
       dalService.startTransaction();
       addressDTOReturned = addressDAO.updateOne(addressDTO);
       if (addressDTOReturned == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Adresse non mise à jour");
       }
       dalService.commitTransaction();

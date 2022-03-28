@@ -312,7 +312,11 @@ public class OfferDAOImpl implements OfferDAO {
 
         objectDTO.setDescription(resultSet.getString(6));
         objectDTO.setStatus(resultSet.getString(7));
-        objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(8));
+        if (resultSet.getString(8) == null) {
+          objectDTO.setImage(resultSet.getString(8));
+        } else {
+          objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(8));
+        }
         objectDTO.setIdOfferor(resultSet.getInt(9));
 
         offerDTO.setObject(objectDTO);

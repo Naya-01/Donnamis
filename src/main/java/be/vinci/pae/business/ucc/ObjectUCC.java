@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public interface ObjectUCC {
@@ -12,6 +13,14 @@ public interface ObjectUCC {
    * @return objectDTO having this id.
    */
   ObjectDTO getObject(int id);
+
+  /**
+   * Get the picture of an object.
+   *
+   * @param id of the oject
+   * @return picture as file
+   */
+  BufferedImage getPicture(int id);
 
   /**
    * Find all object of a member.

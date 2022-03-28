@@ -4,6 +4,7 @@ import noImage from "../../img/noImage.png";
 const cardList = async (offers) => {
   let isMemberConnected = getSessionObject("user");
   let nbOffers = 0;
+  let defaultImage = noImage;
 
   let page = "";
   for (let i = 0; i < Math.ceil(offers.length / 3); i++) {
@@ -13,7 +14,18 @@ const cardList = async (offers) => {
 
     let cnt = 1;
     while (cnt <= 3 && nbOffers < offers.length) {
-      console.log(offers[nbOffers])
+      if (offers[nbOffers].object.image) {
+        let image = "/api/object/getPicture/"
+            + offers[nbOffers].object.idObject;
+        console.log(offers[nbOffers]);
+        console.log(offers[nbOffers].object.idObject)
+        noImage = image;
+      } else {
+        console.log("PAS DIMAGE ZEBI")
+        noImage = defaultImage;
+        console.log("NO IMAGE TEMP : " + defaultImage)
+      }
+      console.log("DEBUGGER IMAGE : " + noImage);
       page += `
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 

@@ -1,5 +1,6 @@
 package be.vinci.pae.dal.services;
 
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.utils.Config;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,12 +34,13 @@ public class DALServiceImpl implements DALBackendService, DALService {
    */
   @Override
   public PreparedStatement getPreparedStatement(String query) {
-    PreparedStatement ps = null;
+    PreparedStatement ps;
     try {
       Connection conn = connection.get();
       ps = conn.prepareStatement(query);
     } catch (SQLException e) {
-      e.printStackTrace();
+      rollBackTransaction();
+      throw new FatalException(e);
     }
     return ps;
   }
@@ -50,7 +52,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.setAutoCommit(false);
       connection.set(conn);
     } catch (SQLException e) {
-      e.printStackTrace(); // impossible de joindre le serveur
+      throw new FatalException(e); // impossible de joindre le serveur
     }
   }
 
@@ -62,7 +64,8 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.close();
       connection.remove();
     } catch (SQLException e) {
-      e.printStackTrace();
+      rollBackTransaction();
+      throw new FatalException(e);
     }
   }
 
@@ -74,7 +77,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.close();
       connection.remove();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new FatalException(e);
     }
   }
 }
