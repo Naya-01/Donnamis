@@ -80,13 +80,13 @@ VALUES (4, '13', 'Haut-Vinâve', '4845', 'Jalhay', 'Belgique');
 
 
 
-INSERT INTO donnamis.objects (id_type, description, status, id_offeror)
-VALUES (3, 'Décorations de Noël de couleur rouge', 'available', 3);
+INSERT INTO donnamis.objects (id_type, description, status, id_offeror, image)
+VALUES (3, 'Décorations de Noël de couleur rouge', 'available', 3, 'img\objects\1.jpeg');
 INSERT INTO donnamis.offers (date, time_slot, id_object)
 VALUES ('2022-03-21', 'Mardi de 17h à 22h', 1);
 
-INSERT INTO donnamis.objects (id_type, description, status, id_offeror)
-VALUES (3, 'Cadre représentant un chien noir sur un fond noir.', 'available', 3);
+INSERT INTO donnamis.objects (id_type, description, status, id_offeror, image)
+VALUES (3, 'Cadre représentant un chien noir sur un fond noir.', 'available', 3, 'img\objects\2.jpeg');
 INSERT INTO donnamis.offers (date, time_slot, id_object)
 VALUES ('2022-03-25', 'Lundi de 18h à 22h', 2);
 
@@ -94,3 +94,11 @@ INSERT INTO donnamis.objects (id_type, description, status, id_offeror)
 VALUES (8, 'Ancien bureau d’écolier.', 'available', 4);
 INSERT INTO donnamis.offers (date, time_slot, id_object)
 VALUES ('2022-03-25', 'Tous les jours de 15h à 18h', 3);
+
+INSERT INTO donnamis.objects (id_type, description, status, id_offeror)
+VALUES (8, 'Objet recu par lehmann', 'given', 1);
+INSERT INTO donnamis.offers (date, time_slot, id_object)
+VALUES ('2022-03-25', 'Tous les jours de 15h à 18h', 4);
+
+INSERT INTO donnamis.interests (availability_date, status, id_member, id_object)
+VALUES (NOW(), 'received', 4, 4);

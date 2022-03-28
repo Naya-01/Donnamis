@@ -45,4 +45,12 @@ public interface OfferUCC {
    * @return list of offers
    */
   List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus);
+
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  List<OfferDTO> getGivenOffers(int idReceiver);
 }

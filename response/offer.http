@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "AlbertDeBucarest",
-  "password": "albertLePoulet",
+  "username": "bri",
+  "password": "Rad;293",
   "rememberMe": true
 }
 > {%
@@ -128,3 +128,7 @@ Content-Type: application/json
     "image": null
   }
 }
+
+### Search given member
+GET {{baseUri}}/offers/givenOffers/3
+Authorization: {{access}}

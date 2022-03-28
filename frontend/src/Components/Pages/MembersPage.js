@@ -2,7 +2,9 @@ import SearchBar from "../Module/SearchBar";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import ManagementList from "../Module/ManagementList";
 import profileImage from "../../img/profil.png"
-
+import itemImage from "../../img/item.jpg"
+import OfferLibrary from "../../Domain/OfferLibrary";
+import {RedirectWithParamsInUrl} from "../Router/Router";
 /**
  * Render the Members page
  */
@@ -25,8 +27,7 @@ const MembersPage = async () => {
   // Search members by click
   const search = document.getElementById("searchButton");
   search.addEventListener("click", async () => {
-    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-        searchBar.value, "valid");
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
     await baseMembersList(members);
   });
 
@@ -37,16 +38,83 @@ const baseMembersList = (members) => {
   const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
   for (const member of members) {
-
-    ManagementList(member.memberId, document.getElementById("page-body"), profileImage,
+    ManagementList(member.memberId, document.getElementById("page-body"),
+        profileImage,
         member.firstname + " " + member.lastname + " (" + member.username + ")",
         member.address.buildingNumber + " " + member.address.street + " " +
-        member.address.postcode + " " + member.address.commune + " " + member.address.country)
+        member.address.postcode + " " + member.address.commune + " "
+        + member.address.country)
 
     // Show different buttons card depending on status
-    if (member.status === "denied") {
-    } else {
+    const buttonDiv = document.getElementById("button-card-" + member.memberId);
+    if (member.role === "administrator") {
+      buttonDiv.innerHTML = `
+        <h5 id="oui" style="color: darkred;">Administrateur</h5>
+      `;
     }
+
+    buttonDiv.innerHTML += `
+        <button id="offered-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets offerts</button>
+        <button id="received-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets reçus</button>
+      `;
+
+    const offeredObjects = document.getElementById("offered-object-" + member.memberId);
+    let isOfferedObjectsOpen = false;
+    const receivedObjects = document.getElementById("received-object-" + member.memberId);
+    let isReceivedObjectsOpen = false;
+    const cardForm = document.getElementById("card-form-" + member.memberId);
+
+    offeredObjects.addEventListener('click', async () => {
+      cardForm.innerHTML = ``;
+      if (isOfferedObjectsOpen) {
+        offeredObjects.className = "btn btn-lg btn-primary mb-2";
+        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+      } else {
+        offeredObjects.className = "btn btn-lg btn-success mb-2";
+        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        const offers = await OfferLibrary.prototype.getOffers("", member.memberId.toLocaleString(), "", "")
+        if (offers) {
+          for (const offer of offers) {
+            ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "offered");
+            const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
+            subCardDiv.className += " clickable";
+            subCardDiv.addEventListener('click', () => {
+              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+            });
+          }
+        } else {
+          cardForm.innerHTML = "Aucun objet";
+        }
+      }
+      isOfferedObjectsOpen = !isOfferedObjectsOpen;
+      isReceivedObjectsOpen = false;
+    });
+
+    receivedObjects.addEventListener('click', async () => {
+      cardForm.innerHTML = ``;
+      if (isReceivedObjectsOpen) {
+        offeredObjects.className = "btn btn-lg btn-primary mb-2";
+        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+      } else {
+        offeredObjects.className = "btn btn-lg btn-primary mb-2";
+        receivedObjects.className = "btn btn-lg btn-success mb-2";
+        const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
+        if (offers) {
+          for (const offer of offers) {
+            ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "received");
+            const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-received");
+            subCardDiv.className += " clickable";
+            subCardDiv.addEventListener('click', () => {
+              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+            });
+          }
+        } else {
+          cardForm.innerHTML = "Aucun objet";
+        }
+      }
+      isReceivedObjectsOpen = !isReceivedObjectsOpen;
+      isOfferedObjectsOpen = false;
+    });
   }
 }
 

@@ -25,16 +25,14 @@ const RegistrationManagementPage = async () => {
   // Search members by click
   const search = document.getElementById("searchButton");
   search.addEventListener("click", async () => {
-    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-        searchBar.value, actualStatus);
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, actualStatus);
     await baseMembersList(members);
   });
 
   // Filter : all waiting members
   const allWaitingMember = document.getElementById("btn-radio-all");
   allWaitingMember.addEventListener('click', async () => {
-    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-        searchBar.value, "waiting");
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "waiting");
     actualStatus = 'waiting';
     await baseMembersList(members);
   });
@@ -42,8 +40,7 @@ const RegistrationManagementPage = async () => {
   // Filter : all pending members
   const pendingMember = document.getElementById("btn-radio-pending");
   pendingMember.addEventListener('click', async () => {
-    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-        searchBar.value, "pending");
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "pending");
     actualStatus = 'pending';
     await baseMembersList(members);
   });
@@ -234,10 +231,8 @@ const deniedMemberButtons = (idMember) => {
 };
 
 const removeAllListeners = (idMember) => {
-  const refusedButtonId = "refused-button-" + idMember;
-  const acceptedButtonId = "accepted-button-" + idMember;
-  const refusedButton = document.getElementById(refusedButtonId);
-  const acceptedButton = document.getElementById(acceptedButtonId);
+  const refusedButton = document.getElementById("refused-button-" + idMember);
+  const acceptedButton = document.getElementById("accepted-button-" + idMember);
 
   acceptedButton.replaceWith(acceptedButton.cloneNode(true));
   refusedButton.replaceWith(refusedButton.cloneNode(true));

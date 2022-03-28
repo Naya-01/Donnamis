@@ -1,9 +1,14 @@
 
-const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText) => {
+const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, overlayId = null) => {
   const buttonCardId = "button-card-" + uniqueId;
 
+  let divCardId = "member-card-" + uniqueId;
+  if (overlayId) {
+    divCardId = divCardId + "-" + overlayId;
+  }
+
   const divCard = document.createElement("div");
-  divCard.id = "member-card-" + uniqueId;
+  divCard.id = divCardId;
   divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
 
   const profileImageDiv = document.createElement("div");

@@ -36,7 +36,7 @@ public class OfferResource {
    * Get all offers.
    *
    * @param searchPattern the search pattern (empty -> all) according to their type, description
-   * @param selfStr       if you want your offers
+   * @param offeror       if you want your offers
    * @param request       information of the member
    * @return list of offers
    */
@@ -45,17 +45,22 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getOffers(
       @DefaultValue("") @QueryParam("search-pattern") String searchPattern,
-      @DefaultValue("") @QueryParam("self") String selfStr,
+      @DefaultValue("") @QueryParam("self") String offeror,
       @DefaultValue("") @QueryParam("type") String type,
       @DefaultValue("") @QueryParam("status") String objectStatus,
       @Context ContainerRequest request
   ) {
-    int idOffer = 0;
-    if (selfStr.equals("true")) {
-      MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-      idOffer = memberDTO.getMemberId();
+    int idOfferor = 0;
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    if (offeror.equals("true")) {
+      idOfferor = memberDTO.getMemberId();
+    } else if (memberDTO.getRole().equals("administrator")) {
+      try {
+        idOfferor = Integer.parseInt(offeror);
+      }
+      catch(Exception ignored) {}
     }
-    return offerUcc.getOffers(searchPattern, idOffer, type, objectStatus);
+    return offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
   }
 
   /**
@@ -128,6 +133,25 @@ public class OfferResource {
       throw new UnauthorizedException("Vous n'avez pas créé cet offre.");
     }
     return offerUcc.updateOffer(offerDTO);
+  }
+
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  @GET
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("/givenOffers/{id}")
+  public List<OfferDTO> getGivenOffers(@PathParam("id") int idReceiver, @Context ContainerRequest request) {
+    MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
+    if (!memberRequest.getRole().equals("administrator") && memberRequest.getMemberId() != idReceiver) {
+      throw new UnauthorizedException("Vous ne pouvez pas voir ces offres");
+    }
+    return offerUcc.getGivenOffers(idReceiver);
   }
 
   /**

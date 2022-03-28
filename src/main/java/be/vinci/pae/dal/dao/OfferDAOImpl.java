@@ -222,6 +222,32 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  @Override
+  public List<OfferDTO> getAllGivenOffers(int idReceiver) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
+        + "ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default, "
+        + "MAX(of.date) as \"date_premiere_offre\" "
+        + "FROM donnamis.objects ob, donnamis.types ty, donnamis.offers of, donnamis.interests it "
+        + "WHERE ob.id_object = of.id_object AND ob.id_type = ty.id_type "
+        + "AND it.id_object = ob.id_object AND it.status = 'received' AND it.id_member = ? "
+        + "AND ob.status = 'given' "
+        + "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, ob.description, "
+        + "ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
+        + "ORDER BY date_premiere_offre DESC";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idReceiver);
+      return getOffersWithPreparedStatement(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
 
   /**
    * Get a list of offers according to the query.

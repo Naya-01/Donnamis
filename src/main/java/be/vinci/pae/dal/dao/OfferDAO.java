@@ -45,4 +45,12 @@ public interface OfferDAO {
    * @return an offerDTO with the id and the new time slot or null
    */
   OfferDTO updateOne(OfferDTO offerDTO);
+
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  List<OfferDTO> getAllGivenOffers(int idReceiver);
 }
