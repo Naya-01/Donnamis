@@ -58,7 +58,9 @@ public class OfferResource {
       try {
         idOfferor = Integer.parseInt(offeror);
       }
-      catch(Exception ignored) {}
+      catch(Exception ignored) {
+        // ignore this exception
+      }
     }
     return offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
   }
@@ -144,11 +146,12 @@ public class OfferResource {
   @GET
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
   @Path("/givenOffers/{id}")
-  public List<OfferDTO> getGivenOffers(@PathParam("id") int idReceiver, @Context ContainerRequest request) {
+  public List<OfferDTO> getGivenOffers(@PathParam("id") int idReceiver,
+      @Context ContainerRequest request) {
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
-    if (!memberRequest.getRole().equals("administrator") && memberRequest.getMemberId() != idReceiver) {
+    if (!memberRequest.getRole().equals("administrator")
+        && memberRequest.getMemberId() != idReceiver) {
       throw new UnauthorizedException("Vous ne pouvez pas voir ces offres");
     }
     return offerUcc.getGivenOffers(idReceiver);
