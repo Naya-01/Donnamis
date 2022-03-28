@@ -52,12 +52,11 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO getOne(int id) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_object, description, status, image, id_offeror "
-            + "FROM donnamis.objects WHERE id_object = ?");
+    String query = "SELECT id_object, description, status, image, id_offeror "
+            + "FROM donnamis.objects WHERE id_object = ?";
 
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
-    try {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
       preparedStatement.setInt(1, id);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -67,7 +66,6 @@ public class ObjectDAOImpl implements ObjectDAO {
       setObject(objectDTO, resultSet);
 
       resultSet.close();
-      preparedStatement.close();
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -82,12 +80,11 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public List<ObjectDTO> getAllByStatus(String status) {
-    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_object, id_type, description, status, image, id_offeror "
-            + "FROM donnamis.objects WHERE status = ?");
+    String query = "SELECT id_object, id_type, description, status, image, id_offeror "
+        + "FROM donnamis.objects WHERE status = ?";
 
     List<ObjectDTO> objectDTOList = new ArrayList<>();
-    try {
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
       preparedStatement.setString(1, status);
       setListObject(preparedStatement, objectDTOList);
     } catch (SQLException e) {
@@ -197,8 +194,8 @@ public class ObjectDAOImpl implements ObjectDAO {
         preparedStatement.setString(cnt++, str);
       }
       preparedStatement.setInt(cnt, objectDTO.getIdObject());
-
       ObjectDTO objectDTOUpdated = getObject(preparedStatement);
+      preparedStatement.close();
       if (objectDTOUpdated != null) {
         objectDTOUpdated.setType(typeDTO);
       }
@@ -211,14 +208,12 @@ public class ObjectDAOImpl implements ObjectDAO {
   private void setListObject(PreparedStatement preparedStatement, List<ObjectDTO> objectDTOList) {
     try {
       preparedStatement.executeQuery();
-
       ResultSet resultSet = preparedStatement.getResultSet();
       while (resultSet.next()) {
         ObjectDTO objectDTO = objectFactory.getObjectDTO();
         setObject(objectDTO, resultSet);
         objectDTOList.add(objectDTO);
       }
-
       resultSet.close();
       preparedStatement.close();
     } catch (SQLException e) {
@@ -243,17 +238,16 @@ public class ObjectDAOImpl implements ObjectDAO {
     try {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-
       if (!resultSet.next()) {
         return null;
       }
-
       ObjectDTO objectDTO = objectFactory.getObjectDTO();
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
       objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
       objectDTO.setIdOfferor(resultSet.getInt(5));
+      resultSet.close();
       return objectDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
