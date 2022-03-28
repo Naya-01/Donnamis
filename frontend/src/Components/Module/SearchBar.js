@@ -48,8 +48,6 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
                <select id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <option class="dropdown-item" value="Tout" href="#"> Tout </option>`;
       const types = await TypeLibrary.prototype.getAllDefaultTypes();
-      // types.push("Tous");
-      console.log(types)
       for (const type of types.type) {
         searchBarHtml += `<option class="dropdown-item" value="${type.typeName}" href="#"> ${type.typeName} </option>`;
       }

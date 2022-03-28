@@ -4,15 +4,18 @@ import Logout from "../Logout/Logout";
 import AddNewObjectPage from "../Pages/AddNewObjectPage";
 import Navbar from "../Navbar/Navbar";
 import MyObjectPage from "../Pages/MyObjectPage";
+import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
+import AllObjectsPage from "../Pages/AllObjectsPage";
+import RegisterPage from "../Pages/RegisterPage";
+import MyObjectsPage from "../Pages/MyObjectsPage";
+import MembersPage from "../Pages/MembersPage";
+import AssignedObjectsPage from "../Pages/AssignedObjectsPage";
+
 import {
   getSessionObject,
   removeSessionObject,
   setSessionObject
 } from "../../utils/session";
-import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
-import AllObjectsPage from "../Pages/AllObjectsPage";
-import RegisterPage from "../Pages/RegisterPage";
-import MyObjectsPage from "../Pages/MyObjectsPage";
 
 // Configure your routes here
 const routes = {
@@ -24,7 +27,9 @@ const routes = {
   "/logout": Logout,
   "/register": RegisterPage,
   "/myObjectPage": MyObjectPage,
-  "/myObjectsPage": MyObjectsPage
+  "/myObjectsPage": MyObjectsPage,
+  "/members": MembersPage,
+  "/assignedObjects": AssignedObjectsPage
 };
 
 const refreshToken = async () => {

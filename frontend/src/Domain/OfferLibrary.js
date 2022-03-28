@@ -136,8 +136,28 @@ class OfferLibrary {
       let query = "/api/offers?search-pattern=" + searchPattern + "&type="
           + type+"&status="+objStatus;
       if (self) {
-        query += "&self=true";
+        query += "&self=" + self;
       }
+      let userData = await fetch(query, options);
+      if (!userData.ok) {
+        return false;
+      }
+      return await userData.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getGivenOffers(idReceiver) {
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").refreshToken
+        },
+      };
+      let query = "/api/offers/givenOffers/" + idReceiver;
       let userData = await fetch(query, options);
       if (!userData.ok) {
         return false;

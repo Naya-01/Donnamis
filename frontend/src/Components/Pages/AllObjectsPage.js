@@ -1,85 +1,86 @@
 import searchBar from "../Module/SearchBar";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import cardList from "../Module/CardList";
-import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
+import { RedirectWithParamsInUrl } from "../Router/Router";
 
 /**
  * Render the Objects page
  */
 
 const AllObjectsPage = async () => {
-  await searchBar("Tous les objets", true, false, true, "Recherche un objet",
+  await searchBar("Toutes les offres", true, false, true, "Recherche une offre",
       true, true);
 
-  const pageDiv = document.querySelector("#page");
   let status = "";
-  pageDiv.innerHTML += `<div id="offers-list"></div>`;
-  const offersList = document.getElementById("offers-list");
 
-  await displayOffers("", offersList,"", status);
+  const pageDiv = document.querySelector("#page");
+  pageDiv.innerHTML += `<div id="offers-list"></div>`;
+
+  const offersList = document.getElementById("offers-list");
   const searchBarInput = document.getElementById("searchBar");
   const searchButtonInput = document.getElementById("searchButton");
-  searchButtonInput.addEventListener('click', async () => {
-    console.log(typeObject.options[typeObject.selectedIndex].value);
-    let type = typeObject.options[typeObject.selectedIndex].value;
-    if(type==="Tout") type="";
-    await displayOffers(searchBarInput.value, offersList,type, status);
-  });
   const typeObject = document.getElementById("default-type-list");
+  const available = document.getElementById("btn-status-available");
+  const all = document.getElementById("btn-status-all");
+  const given = document.getElementById("btn-status-given");
+  const assigned = document.getElementById("btn-status-assigned");
+
+  const actualizeCards = async () => {
+    let type = typeObject.options[typeObject.selectedIndex].value;
+    if (type === "Tout") {
+      type = "";
+    }
+    const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value, false, type,status);
+    offersList.innerHTML = ``;
+    if (!offers) {
+      offersList.innerHTML = `<p>Aucun objet</p>`;
+    }
+    offersList.innerHTML = await cardList(offers);
+    for (const offer of offersList.querySelectorAll(".clickable")) {
+      offer.addEventListener("click", async (e) => {
+        e.preventDefault();
+        let offerId = parseInt(e.currentTarget.dataset.elementId);
+        RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offerId);
+      });
+    }
+  }
+
+  await actualizeCards();
+
+  searchButtonInput.addEventListener('click', async () => {
+    await actualizeCards();
+  });
 
   searchBarInput.addEventListener('keyup', async (e) => {
-    if (e.key === "Enter") {
-      console.log(typeObject.options[typeObject.selectedIndex].value);
-      let type = typeObject.options[typeObject.selectedIndex].value;
-      if(type==="Tout") type="";
-      await displayOffers(searchBarInput.value, offersList,type, status);
+    if (e.key === 'Enter') {
+      await actualizeCards();
     }
   });
-  const addButton = document.getElementById("add-new-object-button");
-  addButton.addEventListener('click', () => {
-    Redirect("/addNewObjectPage")
+
+  searchButtonInput.addEventListener('click', async () => {
+    await actualizeCards();
   });
 
-
-  let available = document.getElementById("btn-status-available");
-  available.addEventListener('click', (e) =>{
-    status="available";
+  available.addEventListener('click', async () =>{
+    status = "available";
+    await actualizeCards();
   });
 
-  let given = document.getElementById("btn-status-given");
-  given.addEventListener('click', (e) =>{
-    status="given";
+  given.addEventListener('click', async () =>{
+    status = "given";
+    await actualizeCards();
   });
 
-  let assigned = document.getElementById("btn-status-assigned");
-  assigned.addEventListener('click', (e) =>{
-    status="assigned";
+  assigned.addEventListener('click', async () =>{
+    status = "assigned";
+    await actualizeCards();
   });
 
-  let all = document.getElementById("btn-status-all");
-  all.addEventListener('click', (e) =>{
-    status="";
+  all.addEventListener('click', async () =>{
+    status = "";
+    await actualizeCards();
   });
 
 };
-
-// Display clients
-const displayOffers = async (searchPattern, pageDiv, type, status) => {
-  const offers = await OfferLibrary.prototype.getOffers(searchPattern, false, type,status);
-  pageDiv.innerHTML = ``;
-  if (!offers) {
-    pageDiv.innerHTML = `<p>Aucun objet</p>`;
-  }
-  pageDiv.innerHTML = await cardList(offers);
-  for (const offer of pageDiv.querySelectorAll(".clickable")) {
-    offer.addEventListener("click", async (e) => {
-      e.preventDefault();
-      let offerId = parseInt(e.currentTarget.dataset.elementId);
-      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" +
-          offerId);
-    });
-  }
-
-}
 
 export default AllObjectsPage;
