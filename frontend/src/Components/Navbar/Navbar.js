@@ -64,14 +64,14 @@ const Navbar = async () => {
                     <a class="nav-link fs-4" href="#" data-uri="/">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-4 " data-uri="/objects" href="#">Objets</a>
+                    <a class="nav-link fs-4 " data-uri="/objects" href="#">Offres</a>
                 </li>
 <!--                <li class="nav-item button-dot">-->
 <!--                    <a class="nav-link fs-4" href="#">Objets attribués</a>-->
 <!--                    <span class="dot">5</span>-->
 <!--                </li>-->
                 <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#" data-uri="/myObjectsPage">Mes objets</a>
+                    <a class="nav-link fs-4 " href="#" data-uri="/myObjectsPage">Mes offres</a>
                 </li>`
     if (user_role === "administrator") {
       navbar += `<li class="nav-item">
@@ -102,10 +102,6 @@ const Navbar = async () => {
                             <li><a
                                     class="dropdown-item dropdown-profil-element bg-navbar fs-4"
                                     href="#">Voir son profil</a>
-                            </li>
-                            <li><a
-                                    class="dropdown-item dropdown-profil-element bg-navbar fs-4"
-                                    href="#">Voir mes offres</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
