@@ -53,10 +53,10 @@ public class ObjectDAOImpl implements ObjectDAO {
   @Override
   public ObjectDTO getOne(int id) {
     String query = "SELECT id_object, description, status, image, id_offeror "
-            + "FROM donnamis.objects WHERE id_object = ?";
+        + "FROM donnamis.objects WHERE id_object = ?";
 
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -84,7 +84,7 @@ public class ObjectDAOImpl implements ObjectDAO {
         + "FROM donnamis.objects WHERE status = ?";
 
     List<ObjectDTO> objectDTOList = new ArrayList<>();
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, status);
       setListObject(preparedStatement, objectDTOList);
     } catch (SQLException e) {
@@ -227,7 +227,11 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
+      if (resultSet.getString(4) == null) {
+        objectDTO.setImage(resultSet.getString(4));
+      } else {
+        objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
+      }
       objectDTO.setIdOfferor(resultSet.getInt(5));
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -245,7 +249,11 @@ public class ObjectDAOImpl implements ObjectDAO {
       objectDTO.setIdObject(resultSet.getInt(1));
       objectDTO.setDescription(resultSet.getString(2));
       objectDTO.setStatus(resultSet.getString(3));
-      objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
+      if (resultSet.getString(4) == null) {
+        objectDTO.setImage(resultSet.getString(4));
+      } else {
+        objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
+      }
       objectDTO.setIdOfferor(resultSet.getInt(5));
       resultSet.close();
       return objectDTO;

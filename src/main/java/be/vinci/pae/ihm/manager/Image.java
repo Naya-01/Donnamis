@@ -14,5 +14,6 @@ public interface Image {
    * @param path     where to save the image
    * @return true if wrote successfully
    */
-  String writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path);
+  String writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path,
+      int filename);
 }

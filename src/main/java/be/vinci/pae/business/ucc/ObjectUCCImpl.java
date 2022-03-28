@@ -6,8 +6,11 @@ import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 public class ObjectUCCImpl implements ObjectUCC {
 
@@ -15,6 +18,37 @@ public class ObjectUCCImpl implements ObjectUCC {
   private ObjectDAO objectDAO;
   @Inject
   private DALService dalService;
+
+  /**
+   * Get the picture of an object.
+   *
+   * @param id of the oject
+   * @return picture as file
+   */
+  public BufferedImage getPicture(int id) {
+    ObjectDTO objectDTO;
+    BufferedImage picture = null;
+    try {
+      dalService.startTransaction();
+      objectDTO = objectDAO.getOne(id);
+
+      if (objectDTO == null) {
+        throw new NotFoundException("Objet non trouvé");
+      }
+      
+      try {
+        File file = new File(objectDTO.getImage());
+        picture = ImageIO.read(file);
+      } catch (IOException e) {
+        throw new NotFoundException("Image inexistante sur le disque");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return picture;
+  }
 
   /**
    * Find an object with his id.
@@ -28,7 +62,6 @@ public class ObjectUCCImpl implements ObjectUCC {
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
-
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
       }
@@ -110,7 +143,7 @@ public class ObjectUCCImpl implements ObjectUCC {
           f.delete();
         }
       }
-      
+
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");

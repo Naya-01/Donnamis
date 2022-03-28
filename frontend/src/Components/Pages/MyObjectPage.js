@@ -53,9 +53,14 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-  image = offer.object.image;
+  //TODO
   //Set all fields
   idObject = offer.object.idObject;
+  if (offer.object.image) {
+    image = "/api/object/getPicture/" + idObject;
+    imageOfObject = image;
+  }
+  
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
@@ -68,14 +73,10 @@ const MyObjectPage = async () => {
   let idMemberConnected = member.memberId;
 
   // GET all interests
-  let jsonInterests = await interestLibrary.getInterestedCount(offer.object.idObject);
+  let jsonInterests = await interestLibrary.getInterestedCount(
+      offer.object.idObject);
   isInterested = jsonInterests.isUserInterested;
   let nbMembersInterested = jsonInterests.count;
-  //TODO : show the image
-  /*
-  if(!image.endsWith("\\null")){
-    imageOfObject = image;
-  }*/
 
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
@@ -148,8 +149,9 @@ const MyObjectPage = async () => {
       </div>
     </div>
   </div>`;
+
   let button = document.getElementById("modifyObjectButton");
-  if(english_status === "given"){
+  if (english_status === "given") {
     button.disabled = true;
   }
   // if this is the object of the member connected
@@ -166,39 +168,40 @@ const MyObjectPage = async () => {
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
 
-      button.id = "interestedButton";
-      button.value = "Je suis interessé";
-      // date of disponibility
-      let labelDate = document.createElement("label");
-      labelDate.for = "input_date";
-      labelDate.innerHTML = "Date de disponibilité : ";
-      let input_date = document.createElement("input");
-      input_date.id = "input_date";
-      input_date.type = "date";
-      let date = new Date();//.toLocaleDateString().replaceAll("/","-");
-      let month = "";
-      if (date.getMonth() % 10 !== 0) {
-        month = "0"
-      }
-      month += (date.getMonth() + 1);
-      let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
-      input_date.value = dateActual;
-      input_date.min = dateActual;
-      document.getElementById("divDate").appendChild(labelDate);
-      document.getElementById("divDate").appendChild(input_date);
+    button.id = "interestedButton";
+    button.value = "Je suis interessé";
+    // date of disponibility
+    let labelDate = document.createElement("label");
+    labelDate.for = "input_date";
+    labelDate.innerHTML = "Date de disponibilité : ";
+    let input_date = document.createElement("input");
+    input_date.id = "input_date";
+    input_date.type = "date";
+    let date = new Date();//.toLocaleDateString().replaceAll("/","-");
+    let month = "";
+    if (date.getMonth() % 10 !== 0) {
+      month = "0"
+    }
+    month += (date.getMonth() + 1);
+    let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+    input_date.value = dateActual;
+    input_date.min = dateActual;
+    document.getElementById("divDate").appendChild(labelDate);
+    document.getElementById("divDate").appendChild(input_date);
 
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        input_date.disabled = true;
-        await interestLibrary.addOne(offer.object.idObject, input_date.value)
-        // the notification to show that the interest is send
-        let notif = notificationModule.getNotification();
-        notif.fire({
-          icon: 'success',
-          title: 'Votre intérêt a bien été pris en compte.'
-        })
-      });
-    if(isInterested || (english_status !== "interested" && english_status !== "available")) {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      input_date.disabled = true;
+      await interestLibrary.addOne(offer.object.idObject, input_date.value)
+      // the notification to show that the interest is send
+      let notif = notificationModule.getNotification();
+      notif.fire({
+        icon: 'success',
+        title: 'Votre intérêt a bien été pris en compte.'
+      })
+    });
+    if (isInterested || (english_status !== "interested" && english_status
+        !== "available")) {
       document.getElementById("divDate").remove();
       document.getElementById("interestedButton").remove();
 
@@ -373,7 +376,8 @@ async function updateObject(e) {
   }
 
   // Call the function to update the offer
-  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description, idType,
+  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description,
+      idType,
       english_status);
 
   // Attribute new values
@@ -387,12 +391,10 @@ async function updateObject(e) {
   // Put text back
   changeToText(e);
   //TODO : show the image
-  /*
-  if(objectWithImage !== undefined){
+  if (objectWithImage !== undefined) {
     // replace the src of the image
-    document.getElementById("image").src = objectWithImage.image;
-  }*/
-
+    document.getElementById("image").src = "/api/object/getPicture/" + idObject;
+  }
 
 }
 

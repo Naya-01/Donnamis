@@ -33,7 +33,7 @@ class ObjectLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/object/setPicture/'+idObject, options)
+      response = await fetch('api/object/setPicture/' + idObject, options)
     } catch (err) {
       console.log(err);
     }

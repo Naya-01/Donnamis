@@ -55,7 +55,8 @@ public class MemberResource {
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
 
-    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\");
+    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\",
+        memberDTO.getMemberId());
 
     if (internalPath == null) {
       throw new BadRequestException("Le type du fichier est incorrect."

@@ -12,7 +12,7 @@ client.global.set("token", response.body.access_token);
 %}
 
 ### GET an object
-GET {{baseUri}}/object/2
+GET {{baseUri}}/object/3
 Authorization: {{token}}
 
 

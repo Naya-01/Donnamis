@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 public class ImageImpl implements Image {
@@ -20,7 +19,8 @@ public class ImageImpl implements Image {
    * @return true if wrote successfully
    */
   @Override
-  public String writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path) {
+  public String writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path,
+      int filename) {
 
     String type = fileMime.getMediaType().getSubtype();
     String[] typesAllowed = {"png", "jpg", "jpeg"};
@@ -38,7 +38,7 @@ public class ImageImpl implements Image {
     String internalPath = null;
     try {
       internalPath =
-          "img\\" + path + UUID.randomUUID() + "." + fileMime.getMediaType().getSubtype();
+          "img\\" + path + filename + "." + fileMime.getMediaType().getSubtype();
       String finalPath = Config.getProperty("ImagePath") + internalPath;
       Files.copy(file, Paths.get(finalPath));
     } catch (IOException e) {
