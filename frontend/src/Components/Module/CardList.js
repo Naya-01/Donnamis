@@ -13,6 +13,7 @@ const cardList = async (offers) => {
 
     let cnt = 1;
     while (cnt <= 3 && nbOffers < offers.length) {
+      console.log(offers[nbOffers])
       page += `
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 

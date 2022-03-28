@@ -7,8 +7,6 @@ import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -30,8 +28,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/object")
 public class ObjectResource {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
-
   @Inject
   private ObjectUCC objectUCC;
 
@@ -48,11 +44,8 @@ public class ObjectResource {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public ObjectNode getObject(@PathParam("id") int id) {
-    ObjectDTO objectDTO = objectUCC.getObject(id);
-
-    return jsonMapper.createObjectNode()
-        .putPOJO("object", objectDTO);
+  public ObjectDTO getObject(@PathParam("id") int id) {
+    return objectUCC.getObject(id);
   }
 
   /**
@@ -99,11 +92,8 @@ public class ObjectResource {
   @Path("/member/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public ObjectNode getAllObjectMember(@PathParam("id") int idMember) {
-    List<ObjectDTO> objectDTOList = objectUCC.getAllObjectMember(idMember);
-
-    return jsonMapper.createObjectNode()
-        .putPOJO("objectList", objectDTOList);
+  public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
+    return objectUCC.getAllObjectMember(idMember);
   }
 
   /**

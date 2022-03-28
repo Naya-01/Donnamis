@@ -5,6 +5,7 @@ import profileImage from "../../img/profil.png"
 import itemImage from "../../img/item.jpg"
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
+
 /**
  * Render the Members page
  */
