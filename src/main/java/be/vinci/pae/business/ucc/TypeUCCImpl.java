@@ -27,7 +27,6 @@ public class TypeUCCImpl implements TypeUCC {
       dalService.startTransaction();
       typeDTO = typeDAO.getOne(id);
       if (typeDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Type not found");
       }
       dalService.commitTransaction();
@@ -51,7 +50,6 @@ public class TypeUCCImpl implements TypeUCC {
       dalService.startTransaction();
       typeDTO = typeDAO.getOne(typeName);
       if (typeDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Type not found");
       }
       dalService.commitTransaction();
@@ -74,7 +72,6 @@ public class TypeUCCImpl implements TypeUCC {
       dalService.startTransaction();
       typeDTO = typeDAO.getAllDefaultTypes();
       if (typeDTO.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("No default types found");
       }
       dalService.commitTransaction();

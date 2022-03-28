@@ -32,7 +32,6 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       interestDTO = interestDAO.getOne(idObject, idMember);
       if (interestDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Interest not found");
       }
       dalService.commitTransaction();
@@ -79,7 +78,6 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       ObjectDTO objectDTO = objectDAO.getOne(idObject);
       if (objectDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAll(idObject);

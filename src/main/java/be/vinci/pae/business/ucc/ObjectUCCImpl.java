@@ -30,7 +30,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       objectDTO = objectDAO.getOne(id);
 
       if (objectDTO == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Objet non trouvé");
       }
       dalService.commitTransaction();
@@ -55,7 +54,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       objectDTOList = objectDAO.getAllObjectOfMember(idMember);
 
       if (objectDTOList.isEmpty()) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Aucun objet pour ce membre");
       }
       dalService.commitTransaction();
@@ -78,7 +76,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       dalService.startTransaction();
       object = objectDAO.getOne(objectDTO.getIdObject());
       if (object == null) {
-        dalService.rollBackTransaction();
         throw new NotFoundException("Object not found");
       }
       object = objectDAO.updateOne(objectDTO);
