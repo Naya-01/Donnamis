@@ -76,6 +76,9 @@ const Navbar = async () => {
     if (user_role === "administrator") {
       navbar += `<li class="nav-item">
                     <a class="nav-link fs-4 " data-uri="/registrationManagement" href="#">Inscriptions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-4 " data-uri="/members" href="#">Membres</a>
                 </li>`;
     }
 

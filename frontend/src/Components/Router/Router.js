@@ -13,6 +13,7 @@ import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
 import AllObjectsPage from "../Pages/AllObjectsPage";
 import RegisterPage from "../Pages/RegisterPage";
 import MyObjectsPage from "../Pages/MyObjectsPage";
+import MembersPage from "../Pages/MembersPage";
 
 // Configure your routes here
 const routes = {
@@ -24,7 +25,8 @@ const routes = {
   "/logout": Logout,
   "/register": RegisterPage,
   "/myObjectPage": MyObjectPage,
-  "/myObjectsPage": MyObjectsPage
+  "/myObjectsPage": MyObjectsPage,
+  "/members": MembersPage
 };
 
 const refreshToken = async () => {
