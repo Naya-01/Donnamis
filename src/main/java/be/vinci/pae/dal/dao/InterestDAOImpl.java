@@ -78,8 +78,8 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO addOne(InterestDTO item) {
-    String query = "insert into donnamis.interests (id_object, id_member, availability_date, status) "
-        + "values (?,?,?,?);";
+    String query = "INSERT INTO donnamis.interests (id_object, id_member, availability_date, "
+        + "status) VALUES (?,?,?,?);";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, item.getIdObject());
