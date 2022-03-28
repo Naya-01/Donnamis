@@ -57,8 +57,7 @@ public class OfferResource {
     } else if (memberDTO.getRole().equals("administrator")) {
       try {
         idOfferor = Integer.parseInt(offeror);
-      }
-      catch(Exception ignored) {
+      } catch(Exception ignored) {
         // ignore this exception
       }
     }
