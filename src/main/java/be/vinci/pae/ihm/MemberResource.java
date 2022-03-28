@@ -3,6 +3,7 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -63,6 +65,20 @@ public class MemberResource {
           + "\nVeuillez soumettre une image");
     }
     return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
+  }
+
+  @GET
+  @Path("/getPicture/{id}")
+  @Produces({"image/png", "image/jpg", "image/jpeg"})
+  public Response getPicture(@PathParam("id") int id) {
+    System.out.println(id);
+    MemberDTO memberDTO = memberUCC.getMember(id);
+
+    if (memberDTO.getImage() == null) {
+      throw new NotFoundException("Cet objet ne possède pas d'image");
+    }
+
+    return Response.ok(memberUCC.getPicture(memberDTO.getMemberId())).build();
   }
 
   /**

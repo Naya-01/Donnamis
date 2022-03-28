@@ -99,7 +99,7 @@ public class ObjectResource {
     System.out.println(id);
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
-    if (objectDTO.getImage().endsWith("null")) {
+    if (objectDTO.getImage() == null) {
       throw new NotFoundException("Cet objet ne possède pas d'image");
     }
 

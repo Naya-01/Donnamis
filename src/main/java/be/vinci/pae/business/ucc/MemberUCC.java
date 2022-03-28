@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public interface MemberUCC {
@@ -38,6 +39,14 @@ public interface MemberUCC {
    * @return token for the user.
    */
   MemberDTO register(MemberDTO memberDTO);
+
+  /**
+   * Get the picture of an object.
+   *
+   * @param id of the oject
+   * @return picture as file
+   */
+  BufferedImage getPicture(int id);
 
   /**
    * Search a member with status and search on firstname, lastname and username.

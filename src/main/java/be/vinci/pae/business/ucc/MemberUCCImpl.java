@@ -13,8 +13,11 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 
 public class MemberUCCImpl implements MemberUCC {
@@ -198,6 +201,38 @@ public class MemberUCCImpl implements MemberUCC {
       throw e;
     }
     return memberDTOList;
+  }
+
+
+  /**
+   * Get the picture of an object.
+   *
+   * @param id of the oject
+   * @return picture as file
+   */
+  public BufferedImage getPicture(int id) {
+    MemberDTO memberDTO;
+    BufferedImage picture = null;
+    try {
+      dalService.startTransaction();
+      memberDTO = memberDAO.getOne(id);
+
+      if (memberDTO == null) {
+        throw new NotFoundException("Membre non trouvé");
+      }
+
+      try {
+        File file = new File(memberDTO.getImage());
+        picture = ImageIO.read(file);
+      } catch (IOException e) {
+        throw new NotFoundException("Image inexistante sur le disque");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return picture;
   }
 
   /**
