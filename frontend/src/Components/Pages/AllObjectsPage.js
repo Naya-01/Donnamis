@@ -30,6 +30,7 @@ const AllObjectsPage = async () => {
     if (type === "Tout") {
       type = "";
     }
+    console.log(status)
     const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value, false, type,status);
     offersList.innerHTML = ``;
     if (!offers) {

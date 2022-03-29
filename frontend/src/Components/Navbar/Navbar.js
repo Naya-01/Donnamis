@@ -87,23 +87,24 @@ const Navbar = async () => {
             <div class="d-flex">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item m-auto">
-                        <a class="nav-link fs-2 text-white fw-bold " href="#">${username}</a>
+                        <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
                     </li>
-                    <li class="nav-item dropdown px-5">
+                    <li class="nav-item dropdown">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                            href="#"
                            id="navbarDropdown" role="button">
                             <img alt="profil" src="${profilImage}">
                         </a>
-                        <ul aria-labelledby="navbarDropdown" class="bg-navbar dropdown-menu">
-                            <li><a
-                                    class="dropdown-item dropdown-profil-element bg-navbar fs-4"
-                                    href="#">Voir son profil</a>
+                        <ul aria-labelledby="navbarDropdown" class="bg-navbar dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#">
+                                Voir son profil
+                              </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item bg-navbar fs-4 text-danger fw-bolder" data-uri="/logout" href="#">Se
+                            <li><a class="dropdown-item bg-navbar fs-5 text-danger fw-bolder" data-uri="/logout" href="#">Se
                                 déconnecter</a>
                             </li>
                         </ul>
