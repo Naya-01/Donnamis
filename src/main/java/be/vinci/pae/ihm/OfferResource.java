@@ -99,7 +99,15 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    verifyType(offerDTO);
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() == 0
+        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()
+        || offerDTO.getObject().getType().getIdType() != 0
+        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()) {
+      throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
+    }
     if (offerDTO.getObject().getIdObject() == 0 && (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
@@ -152,22 +160,5 @@ public class OfferResource {
       throw new UnauthorizedException("Vous ne pouvez pas voir ces offres");
     }
     return offerUcc.getGivenOffers(idReceiver);
-  }
-
-  /**
-   * Verify the type and throw an error if it's not correct.
-   *
-   * @param offerDTO the offer that has an object that has a type.
-   */
-  private void verifyType(OfferDTO offerDTO) {
-    if (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getType().getIdType() == 0
-        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()
-        || offerDTO.getObject().getType().getIdType() != 0
-        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()) {
-      throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
-    }
   }
 }

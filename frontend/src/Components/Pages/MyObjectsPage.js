@@ -10,8 +10,8 @@ import button from "bootstrap/js/src/button";
 const dictionary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
-  ['assigned', 'En cours de donnation'],
-  ['given', 'Donné'],
+  ['assigned', 'Attribué à xxxxx'],
+  ['given', 'Donné à xxxx'],
   ['cancelled', 'Annulé']
 ]);
 
@@ -88,13 +88,17 @@ const objectCards = async (searchPattern, type, status) => {
   for (const object of objects) {
     managementList(object.idOffer, memberCards, itemImage,
         object.object.type.typeName + ": " + object.object.description,
-        dictionary.get(object.object.status))
+        dictionary.get(object.object.status));
 
-    if (object.object.status !== "cancelled") {
+    const card = document.getElementById("member-card-" + object.idOffer);
+    card.className += " clickable";
+
+    const buttonCard = document.getElementById("button-card-" + object.idOffer);
+    if (object.object.status !== "cancelled" && object.object.status !== "given") {
       const cancelButton = document.createElement("button");
       cancelButton.innerText = "Annuler";
       cancelButton.type = "button";
-      cancelButton.className = "btn btn-danger";
+      cancelButton.className = "btn btn-danger mt-3 mx-1";
       cancelButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.updateOffer(
             object.idOffer,
@@ -104,8 +108,59 @@ const objectCards = async (searchPattern, type, status) => {
             "cancelled");
         Redirect("/myObjectsPage")
       });
-      const buttonCard = document.getElementById("button-card-" + object.idOffer);
+
       buttonCard.appendChild(cancelButton);
+    }
+
+    if (object.object.status !== "given" && object.object.status !== "assigned") {
+      const viewAllInterestedMembers = document.createElement("button");
+      viewAllInterestedMembers.innerText = "Voir les interessés";
+      viewAllInterestedMembers.type = "button";
+      viewAllInterestedMembers.className = "btn btn-primary mt-3 mx-1";
+
+      const notificationInterested = document.createElement("span");
+      notificationInterested.className = "badge badge-light";
+      notificationInterested.innerText = "4";
+      viewAllInterestedMembers.appendChild(notificationInterested);
+
+      buttonCard.appendChild(viewAllInterestedMembers);
+    }
+
+
+
+
+
+
+
+
+    if (object.object.status === "cancelled") {
+      const reofferButton = document.createElement("button");
+      reofferButton.innerText = "Offrir à nouveau";
+      reofferButton.type = "button";
+      reofferButton.className = "btn btn-success mt-3 mx-1";
+
+      buttonCard.appendChild(reofferButton);
+    }
+
+    if (object.object.status === "assigned") {
+      const viewReceiverButton = document.createElement("button");
+      viewReceiverButton.innerText = "Voir le receveur";
+      viewReceiverButton.type = "button";
+      viewReceiverButton.className = "btn btn-primary mt-3 mx-1";
+
+      const nonRealisedOfferButton = document.createElement("button");
+      nonRealisedOfferButton.innerText = "Non réalisée";
+      nonRealisedOfferButton.type = "button";
+      nonRealisedOfferButton.className = "btn btn-danger mt-3 mx-1";
+
+      const offeredObjectButton = document.createElement("button");
+      offeredObjectButton.innerText = "Objet donné";
+      offeredObjectButton.type = "button";
+      offeredObjectButton.className = "btn btn-success mt-3 mx-1";
+
+      //buttonCard.appendChild(viewReceiverButton);
+      buttonCard.appendChild(nonRealisedOfferButton);
+      buttonCard.appendChild(offeredObjectButton);
     }
 
     const informationDiv = document.getElementById("information-object-" + object.idOffer);

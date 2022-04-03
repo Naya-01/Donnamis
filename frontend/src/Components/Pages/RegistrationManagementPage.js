@@ -86,8 +86,8 @@ const normalMemberButtons = (idMember) => {
   const refusedButtonId = "refused-button-" + idMember;
   const acceptedButtonId = "accepted-button-" + idMember;
   buttonDiv.innerHTML = `
-     <button id="${refusedButtonId}" class="btn btn-lg btn-danger" type="button">Refuser</button>
-     <button id="${acceptedButtonId}" class="btn btn-lg btn-success" type="button">Accepter</button>
+     <button id="${refusedButtonId}" class="btn btn-lg btn-danger mt-3" type="button">Refuser</button>
+     <button id="${acceptedButtonId}" class="btn btn-lg btn-success mt-3" type="button">Accepter</button>
   `;
 
   // Refuse member button
@@ -172,6 +172,7 @@ const refuseMember = (idMember) => {
   textArea.className = "form-control fs-5 mt-1";
   textArea.placeholder = "Indiquez la raison du refus";
   textArea.id = "raisonRefus";
+  textArea.rows = 100;
 
   const label = document.createElement("label");
   label.className = "fs-4 mb-1";
@@ -213,7 +214,7 @@ const deniedMemberButtons = (idMember) => {
   const revokeDecisionButtonId = "refused-button-" + idMember;
   const buttonDiv = document.getElementById("button-card-" + idMember);
   buttonDiv.innerHTML = `
-     <button id="${revokeDecisionButtonId}" class="btn btn-lg btn-success" type="button">Revenir sur la décision</button>
+     <button id="${revokeDecisionButtonId}" class="btn btn-lg btn-success mt-3" type="button">Revenir sur la décision</button>
   `;
 
   // Revoke decision button listener

@@ -6,7 +6,7 @@ const cardList = async (offers) => {
   let nbOffers = 0;
   let defaultImage = noImage;
 
-  let page = "";
+  let page = "<div class='mt-5'>";
   for (let i = 0; i < Math.ceil(offers.length / 3); i++) {
     page += `
       <div class="container-fluid align-content-center w-75 mt-3 mb-3">
@@ -17,15 +17,10 @@ const cardList = async (offers) => {
       if (offers[nbOffers].object.image) {
         let image = "/api/object/getPicture/"
             + offers[nbOffers].object.idObject;
-        console.log(offers[nbOffers]);
-        console.log(offers[nbOffers].object.idObject)
         noImage = image;
       } else {
-        console.log("PAS DIMAGE ZEBI")
         noImage = defaultImage;
-        console.log("NO IMAGE TEMP : " + defaultImage)
       }
-      console.log("DEBUGGER IMAGE : " + noImage);
       page += `
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 
@@ -45,7 +40,8 @@ const cardList = async (offers) => {
     }
     page += `
       </div>
-    </div>`;
+    </div>
+</div>`;
   }
   return page;
 }
