@@ -116,7 +116,36 @@ const baseMembersList = (members) => {
       isReceivedObjectsOpen = !isReceivedObjectsOpen;
       isOfferedObjectsOpen = false;
     });
+
+    const navButtonList = async (primaryButton, primaryBoolean, secondaryButton, secondaryBoolean, uniqueId) => {
+      cardForm.innerHTML = ``;
+      if (isReceivedObjectsOpen) {
+        primaryButton.className = "btn btn-lg btn-primary mb-2";
+        secondaryButton.className = "btn btn-lg btn-primary mb-2";
+      } else {
+        primaryButton.className = "btn btn-lg btn-primary mb-2";
+        secondaryButton.className = "btn btn-lg btn-success mb-2";
+        const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
+        if (offers) {
+          for (const offer of offers) {
+            ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, uniqueId);
+            const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-" + uniqueId);
+            subCardDiv.className += " clickable";
+            subCardDiv.addEventListener('click', () => {
+              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+            });
+          }
+        } else {
+          cardForm.innerHTML = "Aucun objet";
+        }
+      }
+      primaryBoolean = !primaryBoolean;
+      secondaryBoolean = false;
+    }
+
   }
 }
+
+
 
 export default MembersPage;

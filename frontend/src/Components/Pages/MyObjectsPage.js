@@ -5,7 +5,6 @@ import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
-import ManagementList from "../Module/ManagementList";
 
 
 const dictionary = new Map([
