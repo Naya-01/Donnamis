@@ -157,6 +157,15 @@ const objectCards = async (searchPattern, type, status) => {
       offeredObjectButton.innerText = "Objet donné";
       offeredObjectButton.type = "button";
       offeredObjectButton.className = "btn btn-success mt-3 mx-1";
+      offeredObjectButton.addEventListener("click",async  ()=>{
+        await OfferLibrary.prototype.updateOffer(
+            object.idOffer,
+            object.timeSlot,
+            object.object.description,
+            object.object.type.idType,
+            "given");
+        Redirect("/myObjectsPage");
+      });
 
       //buttonCard.appendChild(viewReceiverButton);
       buttonCard.appendChild(nonRealisedOfferButton);
