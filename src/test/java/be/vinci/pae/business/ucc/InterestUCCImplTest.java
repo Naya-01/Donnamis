@@ -151,6 +151,22 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test addOne with a non existent object")
+  @Test
+  public void testAddOneWithANonExistentObject() {
+    newInterestDTO.setIdObject(nonExistentId);
+    newInterestDTO.setIdMember(1);
+    newInterestDTO.setAvailabilityDate(LocalDate.now());
+    Mockito.when(mockObjectDAO.getOne(nonExistentId)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(newInterestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
   @DisplayName("test addOne with an interest that already exists")
   @Test
   public void testAddOneWithAnAlreadyExistentInterest() {
