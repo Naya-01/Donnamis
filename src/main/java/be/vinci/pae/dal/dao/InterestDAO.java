@@ -30,4 +30,13 @@ public interface InterestDAO {
    * @return a list of interest, by an id object
    */
   List<InterestDTO> getAll(int idObject);
+
+  /**
+   * Update the status of an interest.
+   *
+   * @param idObject the object that we want to edit.
+   * @param status   the new status for the object
+   * @return interest
+   */
+  InterestDTO updateStatus(int idObject, String status);
 }

@@ -104,7 +104,6 @@ public class InterestDAOImpl implements InterestDAO {
     String query = "SELECT id_object, id_member, availability_date, status "
         + "FROM donnamis.interests WHERE id_object = ? AND status != 'cancelled'";
 
-
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();
@@ -122,6 +121,46 @@ public class InterestDAOImpl implements InterestDAO {
       }
       resultSet.close();
       return interestDTOList;
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
+  /**
+   * Update the status of an interest.
+   *
+   * @param idObject the object that we want to edit.
+   * @param status the new status for the object
+   * @return interest
+   */
+  public InterestDTO updateStatus(int idObject, String status) {
+    String query = "UPDATE donnamis.interests SET status = ? "
+        + "WHERE id_object= ? AND status = ? RETURNING availability_date, status, id_member"
+        + ", id_object";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(2, idObject);
+
+      if (status.equals("received")) {
+        preparedStatement.setString(3, "assigned");
+      } else {
+        preparedStatement.setString(3, status);
+      }
+      preparedStatement.setString(1, status);
+
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+
+      if (!resultSet.next()) {
+        return null;
+      }
+
+      InterestDTO interestDTO = interestFactory.getInterestDTO();
+      interestDTO.setAvailabilityDate(resultSet.getDate(1).toLocalDate());
+      interestDTO.setStatus(resultSet.getString(2));
+      interestDTO.setIdMember(resultSet.getInt(3));
+      interestDTO.setIdObject(resultSet.getInt(4));
+
+      return interestDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
