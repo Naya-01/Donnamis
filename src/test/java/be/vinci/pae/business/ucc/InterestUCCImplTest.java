@@ -33,6 +33,7 @@ class InterestUCCImplTest {
   private InterestDTO newInterestDTO;
   private int nonExistentId = 1000;
   private ServiceLocator locator;
+  private ObjectFactory objectFactory;
 
   @BeforeEach
   void initAll() {
@@ -48,6 +49,7 @@ class InterestUCCImplTest {
     this.interestDTO.setAvailabilityDate(LocalDate.now());
     this.interestDTO.setStatus("published");
     this.newInterestDTO = interestFactory.getInterestDTO();
+    this.objectFactory = locator.getService(ObjectFactory.class);
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
@@ -135,6 +137,9 @@ class InterestUCCImplTest {
     newInterestDTO.setIdObject(10);
     newInterestDTO.setIdMember(1);
     newInterestDTO.setAvailabilityDate(LocalDate.now());
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(10);
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(newInterestDTO, interestUCC.addOne(newInterestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -180,8 +185,7 @@ class InterestUCCImplTest {
   public void testGetInterestedCountWithExistentObject() {
     List<InterestDTO> allInterests = new ArrayList<>();
     allInterests.add(newInterestDTO);
-    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
-    ObjectDTO object = objectFactory.getObjectDTO();
+    ObjectDTO object = this.objectFactory.getObjectDTO();
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
     Mockito.when(mockInterestDAO.getAll(1)).thenReturn(allInterests);
     assertAll(
