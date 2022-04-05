@@ -2,10 +2,13 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.utils.Status;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
@@ -21,6 +24,8 @@ public class OfferUCCImpl implements OfferUCC {
   private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the last six offers posted.
@@ -114,6 +119,14 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer == null) {
         throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
+
+      Status.loadMap();
+      String status = Status.getStatus(offerDTO.getObject().getStatus());
+      if (status == null) {
+        throw new BadRequestException("Status incorrect");
+      }
+      interestDAO.updateStatus(offerDTO.getObject().getIdObject(), status);
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();

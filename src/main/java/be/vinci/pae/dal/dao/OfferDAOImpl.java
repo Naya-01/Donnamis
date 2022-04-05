@@ -30,8 +30,6 @@ public class OfferDAOImpl implements OfferDAO {
   private TypeFactory typeFactory;
   @Inject
   private ObjectDAO objectDAO;
-  @Inject
-  private InterestDAO interestDAO;
 
   /**
    * Get all offers.
@@ -187,12 +185,6 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.getObject().setIdObject(realObject.getIdObject());
       objectDTO = objectDAO.updateOne(offerDTO.getObject());
     }
-
-    String status = offerDTO.getObject().getStatus();
-    if (status.equals("given")) {
-      interestDAO.updateStatus(offerDTO.getObject().getIdObject(), "received");
-    }
-    interestDAO.updateStatus(offerDTO.getObject().getIdObject(), status);
 
     if (offerDTO.getTimeSlot() != null && !offerDTO.getTimeSlot().isEmpty()) {
       query += " WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object";
