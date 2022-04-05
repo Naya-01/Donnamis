@@ -472,11 +472,13 @@ class OfferUCCImplTest {
     OfferDTO mockOfferDTO = getNewOffer();
     Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(15);
     Mockito.when(mockOfferDTO.getObject().getDescription()).thenReturn("Très bon jeu");
+    Mockito.when(mockOfferDTO.getObject().getStatus()).thenReturn("available");
     Mockito.when(mockOfferDTO.getDate()).thenReturn(LocalDate.now().minusMonths(2));
 
     OfferDTO mockOfferDTOUpdated = getNewOffer();
     Mockito.when(mockOfferDTOUpdated.getIdOffer()).thenReturn(15);
     Mockito.when(mockOfferDTOUpdated.getObject().getDescription()).thenReturn("Très bon jeu");
+    Mockito.when(mockOfferDTOUpdated.getObject().getStatus()).thenReturn("available");
     Mockito.when(mockOfferDTOUpdated.getDate()).thenReturn(LocalDate.now());
 
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(mockOfferDTOUpdated);
