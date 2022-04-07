@@ -1,5 +1,6 @@
 package be.vinci.pae.dal.dao;
 
+import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.factories.MemberFactory;
@@ -174,7 +175,8 @@ public class MemberDAOImpl implements MemberDAO {
     }
     if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
       query += "password = ?,";
-      memberDTODeque.addLast(memberDTO.getPassword());
+      Member member = (Member) memberDTO;
+      memberDTODeque.addLast(member.hashPassword(member.getPassword()));
     }
     if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
       query += "image = ?,";

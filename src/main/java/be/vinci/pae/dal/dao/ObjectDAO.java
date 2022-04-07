@@ -55,4 +55,8 @@ public interface ObjectDAO {
    * @return object updated
    */
   ObjectDTO updateOne(ObjectDTO objectDTO);
+
+
+  ObjectDTO getObject(int idObject, String description, String status, String image,
+      int idOffer);
 }

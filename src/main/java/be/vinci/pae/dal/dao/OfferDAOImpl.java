@@ -300,25 +300,14 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
 
-        ObjectDTO objectDTO = objectFactory.getObjectDTO();
-        objectDTO.setIdObject(resultSet.getInt(4));
-
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));
         typeDTO.setTypeName(resultSet.getString(10));
         typeDTO.setIsDefault(resultSet.getBoolean(11));
 
+        ObjectDTO objectDTO = objectDAO.getObject(resultSet.getInt(4), resultSet.getString(6),
+            resultSet.getString(7), resultSet.getString(8), resultSet.getInt(9));
         objectDTO.setType(typeDTO);
-
-        objectDTO.setDescription(resultSet.getString(6));
-        objectDTO.setStatus(resultSet.getString(7));
-        if (resultSet.getString(8) == null) {
-          objectDTO.setImage(resultSet.getString(8));
-        } else {
-          objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(8));
-        }
-        objectDTO.setIdOfferor(resultSet.getInt(9));
-
         offerDTO.setObject(objectDTO);
 
         listOfferDTO.add(offerDTO);
