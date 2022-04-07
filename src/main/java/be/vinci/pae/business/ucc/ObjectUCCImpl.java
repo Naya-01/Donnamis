@@ -175,7 +175,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       objectDTO.setStatus("cancelled");
       objectDTO = objectDAO.updateOne(objectDTO);
 
-      InterestDTO interestDTO = interestDAO.getGiveInterest(objectDTO.getIdObject());
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
 
       if (interestDTO != null) {
         interestDTO.setStatus("published");

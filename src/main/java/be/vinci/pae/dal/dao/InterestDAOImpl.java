@@ -52,7 +52,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @return the interest.
    */
   @Override
-  public InterestDTO getGiveInterest(int idObject) {
+  public InterestDTO getAssignedInterest(int idObject) {
     String query = "select i.id_object, i.id_member, i.availability_date, i.status "
         + "from donnamis.interests i WHERE i.id_object=? AND i.status=?";
 

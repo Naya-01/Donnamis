@@ -15,7 +15,13 @@ public interface InterestDAO {
    */
   InterestDTO getOne(int idObject, int idMember);
 
-  InterestDTO getGiveInterest(int idObject);
+  /**
+   * Get an assign interest.
+   *
+   * @param idObject the object id of the interest we want to retrieve.
+   * @return the interest.
+   */
+  InterestDTO getAssignedInterest(int idObject);
 
   /**
    * Add one interest in the DB.

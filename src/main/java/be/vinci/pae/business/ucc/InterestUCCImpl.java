@@ -143,7 +143,7 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
 
-      InterestDTO tmp = interestDAO.getGiveInterest(interestDTO.getObject().getIdObject());
+      InterestDTO tmp = interestDAO.getAssignedInterest(interestDTO.getObject().getIdObject());
       if (tmp == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
