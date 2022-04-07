@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MemberImpl implements Member {
 
   @JsonView(Views.Public.class)
-  private int memberId;
+  private Integer memberId;
   @JsonView(Views.Public.class)
   private String username;
   @JsonView(Views.Public.class)
@@ -33,7 +33,7 @@ public class MemberImpl implements Member {
   private String image;
 
   @Override
-  public int getMemberId() {
+  public Integer getMemberId() {
     return memberId;
   }
 

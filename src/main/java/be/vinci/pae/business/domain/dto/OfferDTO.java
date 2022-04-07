@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @JsonDeserialize(as = OfferImpl.class)
 public interface OfferDTO {
 
-  int getIdOffer();
+  Integer getIdOffer();
 
   void setIdOffer(int idOffer);
 

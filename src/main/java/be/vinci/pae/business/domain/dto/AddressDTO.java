@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = AddressImpl.class)
 public interface AddressDTO {
 
-  int getIdMember();
+  Integer getIdMember();
 
   void setIdMember(int idMember);
 

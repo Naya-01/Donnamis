@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class OfferImpl implements OfferDTO {
 
   @JsonView(Views.Public.class)
-  private int idOffer;
+  private Integer idOffer;
   @JsonView(Views.Public.class)
   private LocalDate date;
   @JsonView(Views.Public.class)
@@ -20,7 +20,7 @@ public class OfferImpl implements OfferDTO {
   private ObjectDTO object;
 
   @Override
-  public int getIdOffer() {
+  public Integer getIdOffer() {
     return idOffer;
   }
 

@@ -7,8 +7,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressImpl implements AddressDTO {
+
   @JsonView(Views.Public.class)
-  private int idMember;
+  private Integer idMember;
   @JsonView(Views.Public.class)
   private String unitNumber;
   @JsonView(Views.Public.class)
@@ -24,7 +25,7 @@ public class AddressImpl implements AddressDTO {
 
 
   @Override
-  public int getIdMember() {
+  public Integer getIdMember() {
     return this.idMember;
   }
 
@@ -92,5 +93,5 @@ public class AddressImpl implements AddressDTO {
   public void setCountry(String country) {
     this.country = country;
   }
-  
+
 }

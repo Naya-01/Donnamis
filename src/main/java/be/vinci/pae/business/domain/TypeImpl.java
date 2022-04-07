@@ -7,15 +7,16 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TypeImpl implements TypeDTO {
+
   @JsonView(Views.Public.class)
-  private int idType;
+  private Integer idType;
   @JsonView(Views.Public.class)
   private String typeName;
   @JsonView(Views.Public.class)
   private boolean isDefault;
 
   @Override
-  public int getIdType() {
+  public Integer getIdType() {
     return idType;
   }
 
