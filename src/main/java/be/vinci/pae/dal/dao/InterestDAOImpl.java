@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -18,6 +19,8 @@ public class InterestDAOImpl implements InterestDAO {
   private DALBackendService dalBackendService;
   @Inject
   private InterestFactory interestFactory;
+  @Inject
+  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -77,7 +80,8 @@ public class InterestDAOImpl implements InterestDAO {
       }
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
-      interestDTO.setIdObject(resultSet.getInt(1));
+      ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(1));
+      interestDTO.setObject(objectDTO);
       interestDTO.setIdMember(resultSet.getInt(2));
       interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
       interestDTO.setStatus(resultSet.getString(4));
@@ -102,7 +106,7 @@ public class InterestDAOImpl implements InterestDAO {
         + "status) VALUES (?,?,?,?);";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, item.getIdObject());
+      preparedStatement.setInt(1, item.getObject().getIdObject());
       preparedStatement.setInt(2, item.getIdMember());
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
@@ -132,7 +136,8 @@ public class InterestDAOImpl implements InterestDAO {
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        interestDTO.setIdObject(resultSet.getInt(1));
+        ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(1));
+        interestDTO.setObject(objectDTO);
         interestDTO.setIdMember(resultSet.getInt(2));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
@@ -159,7 +164,7 @@ public class InterestDAOImpl implements InterestDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setString(1, interestDTO.getStatus());
-      preparedStatement.setInt(2, interestDTO.getIdObject());
+      preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
 
       preparedStatement.executeQuery();
@@ -173,7 +178,8 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setAvailabilityDate(resultSet.getDate(1).toLocalDate());
       interestDTO.setStatus(resultSet.getString(2));
       interestDTO.setIdMember(resultSet.getInt(3));
-      interestDTO.setIdObject(resultSet.getInt(4));
+      ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(4));
+      interestDTO.setObject(objectDTO);
 
       return interestDTO;
     } catch (SQLException e) {

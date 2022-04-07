@@ -67,7 +67,7 @@ public class InterestResource {
     if (interest == null || interest.getAvailabilityDate() == null) {
       throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
     }
-    if (interest.getIdObject() < 1) {
+    if (interest.getObject().getIdObject() < 1) {
       throw new WebApplicationException("Non existent id object", Response.Status.BAD_REQUEST);
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");

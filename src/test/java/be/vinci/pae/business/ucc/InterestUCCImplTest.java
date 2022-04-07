@@ -29,6 +29,7 @@ class InterestUCCImplTest {
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
   private DALService mockDalService;
+  private ObjectDTO objectDTO;
   private InterestDTO interestDTO;
   private InterestDTO newInterestDTO;
   private int nonExistentId = 1000;
@@ -42,9 +43,13 @@ class InterestUCCImplTest {
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
+    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
+    this.objectDTO = objectFactory.getObjectDTO();
+    this.objectDTO.setIdObject(10);
+
     InterestFactory interestFactory = locator.getService(InterestFactory.class);
     this.interestDTO = interestFactory.getInterestDTO();
-    this.interestDTO.setIdObject(10);
+    this.interestDTO.setObject(objectDTO);
     this.interestDTO.setIdMember(1);
     this.interestDTO.setAvailabilityDate(LocalDate.now());
     this.interestDTO.setStatus("published");
@@ -134,7 +139,7 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with a good interest")
   @Test
   public void testAddOneWithAGoodInterest() {
-    newInterestDTO.setIdObject(10);
+    newInterestDTO.setObject(objectDTO);
     newInterestDTO.setIdMember(1);
     newInterestDTO.setAvailabilityDate(LocalDate.now());
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
@@ -154,7 +159,8 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with a non existent object")
   @Test
   public void testAddOneWithANonExistentObject() {
-    newInterestDTO.setIdObject(nonExistentId);
+    objectDTO.setIdObject(nonExistentId);
+    newInterestDTO.setObject(objectDTO);
     newInterestDTO.setIdMember(1);
     newInterestDTO.setAvailabilityDate(LocalDate.now());
     Mockito.when(mockObjectDAO.getOne(nonExistentId)).thenReturn(null);
@@ -170,7 +176,7 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with an interest that already exists")
   @Test
   public void testAddOneWithAnAlreadyExistentInterest() {
-    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(),
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
         interestDTO.getIdMember())).thenReturn(interestDTO);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
