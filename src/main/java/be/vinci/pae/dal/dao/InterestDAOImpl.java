@@ -26,17 +26,18 @@ public class InterestDAOImpl implements InterestDAO {
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param idObject : id object of the interest.
+   * @param idMember : id of interested member.
    * @return the interest.
    */
   @Override
-  public InterestDTO getOne(InterestDTO interestDTO) {
+  public InterestDTO getOne(int idObject, int idMember) {
     String query = "select i.id_object, i.id_member, i.availability_date, i.status "
         + "from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, interestDTO.getObject().getIdObject());
-      preparedStatement.setInt(2, interestDTO.getIdMember());
+      preparedStatement.setInt(1, idObject);
+      preparedStatement.setInt(2, idMember);
       return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);

@@ -11,11 +11,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -34,22 +36,24 @@ public class InterestResource {
   /**
    * Get an interest, by the id of the interested member and the id of the object.
    *
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param idObject : id object of the interest.
+   * @param idMember : id of interested member.
    * @return a json of the interest.
    */
   @GET
-  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public InterestDTO getOne(InterestDTO interestDTO) {
+  public InterestDTO getOne(@DefaultValue("-1") @QueryParam("idObject") int idObject,
+      @DefaultValue("-1") @QueryParam("idMember") int idMember) {
 
-    if (interestDTO.getIdMember() == null && interestDTO.getObject().getIdObject() == null) {
+    if (idObject < 1 || idMember < 1) {
       throw new WebApplicationException("L'identifiant de l'objet et/ou du membre est/sont "
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    return interestUCC.getInterest(interestDTO);
+    return interestUCC.getInterest(idObject, idMember);
   }
+
 
   /**
    * Add one interest.
@@ -115,7 +119,8 @@ public class InterestResource {
         && interestDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
-    interestDTO = interestUCC.getInterest(interestDTO);
+    interestDTO = interestUCC
+        .getInterest(interestDTO.getObject().getIdObject(), interestDTO.getIdMember());
     if (!ownerDTO.getMemberId().equals(interestDTO.getObject().getIdOfferor())) {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }

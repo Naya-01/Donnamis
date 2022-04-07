@@ -22,23 +22,24 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Find an interest, by the id of the interested member and the id of the object.
    *
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param idObject : id object of the interest.
+   * @param idMember : id of interested member.
    * @return interestDTO having the idObject and idMember.
    */
   @Override
-  public InterestDTO getInterest(InterestDTO interestDTO) {
+  public InterestDTO getInterest(int idObject, int idMember) {
     try {
       dalService.startTransaction();
-      interestDTO = interestDAO.getOne(interestDTO);
+      InterestDTO interestDTO = interestDAO.getOne(idObject, idMember);
       if (interestDTO == null) {
         throw new NotFoundException("Interest not found");
       }
       dalService.commitTransaction();
+      return interestDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return interestDTO;
   }
 
   /**
@@ -51,7 +52,7 @@ public class InterestUCCImpl implements InterestUCC {
   public InterestDTO addOne(InterestDTO item) {
     try {
       dalService.startTransaction();
-      if (interestDAO.getOne(item) != null) {
+      if (interestDAO.getOne(item.getObject().getIdObject(), item.getIdMember()) != null) {
         //change name exception
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
@@ -86,7 +87,8 @@ public class InterestUCCImpl implements InterestUCC {
       if (!interestDTO.getObject().getStatus().equals("interested")) {
         throw new ForbiddenException("L'objet n'est pas en mesure d'être assigné");
       }
-      interestDTO = interestDAO.getOne(interestDTO);
+      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
+          interestDTO.getIdMember());
       if (interestDTO == null) {
         throw new NotFoundException("Le membre ne présente pas d'intérêt");
       }
@@ -146,7 +148,8 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
       interestDTO.setIdMember(tmp.getIdMember());
-      interestDTO = interestDAO.getOne(interestDTO);
+      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
+          interestDTO.getIdMember());
 
       if (!interestDTO.getObject().getStatus().equals("assigned")) {
         throw new ForbiddenException("aucun objet n'est assigné pour le donner");

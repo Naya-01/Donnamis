@@ -8,10 +8,11 @@ public interface InterestUCC {
   /**
    * Find an interest, by the id of the interested member and the id of the object.
    *
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param idObject : id object of the interest.
+   * @param idMember : id of interested member.
    * @return interestDTO having the idObject and idMember.
    */
-  InterestDTO getInterest(InterestDTO interestDTO);
+  InterestDTO getInterest(int idObject, int idMember);
 
   /**
    * Add one interest.
