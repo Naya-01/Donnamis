@@ -40,6 +40,7 @@ class OfferUCCImplTest {
   private OfferDTO getNewOffer() {
     TypeDTO typeDTO = typeFactory.getTypeDTO();
     typeDTO.setTypeName("Jouets");
+    typeDTO.setId(1);
 
     ObjectDTO objectDTO = Mockito.mock(ObjectDTO.class);
     Mockito.when(objectDTO.getIdObject()).thenReturn(3);
