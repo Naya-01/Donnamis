@@ -11,7 +11,7 @@ class InterestLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/interest/count/"+idObject, options);
+      response = await fetch("api/interest/count/" + idObject, options);
     } catch (err) {
       console.log(err);
     }
@@ -21,13 +21,16 @@ class InterestLibrary {
     }
     return allInterests;
   }
-  async addOne(idObject, date){
+
+  async addOne(idObject, date) {
     let response;
     try {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "idObject": idObject,
+          "object": {
+            "idObject": idObject
+          },
           "availabilityDate": date
         }),
         headers: {
