@@ -17,6 +17,11 @@ client.global.set("refresh", response.body.refresh_token);
 GET {{baseUri}}/interest?idObject=4&idMember=4
 Authorization: {{refresh}}
 
+### Get all interests
+GET {{baseUri}}/interest/getAllInsterests/2
+Authorization: {{access}}
+
+
 ### Add One interest
 POST {{baseUri}}/interest
 Content-Type: application/json

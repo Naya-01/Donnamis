@@ -2,7 +2,9 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
+import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -32,6 +34,8 @@ public class InterestResource {
   private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestUCC interestUCC;
+  @Inject
+  private ObjectUCC objectUCC;
 
   /**
    * Get an interest, by the id of the interested member and the id of the object.
@@ -98,6 +102,29 @@ public class InterestResource {
         .put("count", interestDTOList.size())
         .put("isUserInterested", interestDTOList.stream()
             .anyMatch(i -> i.getIdMember() == authenticatedUser.getMemberId()));
+  }
+
+  /**
+   * Get all the interests of an object.
+   *
+   * @param idObject of the object.
+   * @param request  information of the owner.
+   * @return interestDTO List
+   */
+  @GET
+  @Path("/getAllInsterests/{idObject}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
+      @Context ContainerRequest request) {
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    ObjectDTO objectDTO = objectUCC.getObject(idObject);
+    if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
+    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+    return interestDTOList;
   }
 
   /**
