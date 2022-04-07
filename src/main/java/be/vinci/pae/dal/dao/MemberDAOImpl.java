@@ -258,7 +258,9 @@ public class MemberDAOImpl implements MemberDAO {
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
-    image = Config.getProperty("ImagePath") + image;
+    if (image != null) {
+      image = Config.getProperty("ImagePath") + image;
+    }
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(memberId);
     memberDTO.setUsername(username);

@@ -43,8 +43,8 @@ public class InterestResource {
   @Authorize
   public InterestDTO getOne(InterestDTO interestDTO) {
 
-    if (interestDTO.getIdMember() == null || (interestDTO.getObject() == null
-        && interestDTO.getObject().getIdObject() == null)) {
+    if (interestDTO == null && interestDTO.getIdMember() == null && interestDTO.getObject() == null
+        && interestDTO.getObject().getIdObject() == null) {
       throw new WebApplicationException("L'identifiant de l'objet et/ou du membre est/sont "
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
@@ -112,7 +112,8 @@ public class InterestResource {
   public InterestDTO assignObject(@Context ContainerRequest request, InterestDTO interestDTO) {
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    if (interestDTO.getObject() == null && interestDTO.getObject().getIdObject() == null) {
+    if (interestDTO == null && interestDTO.getObject() == null
+        && interestDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
     interestDTO = interestUCC.getInterest(interestDTO);
