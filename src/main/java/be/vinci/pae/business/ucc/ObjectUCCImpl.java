@@ -155,4 +155,27 @@ public class ObjectUCCImpl implements ObjectUCC {
     }
     return objectDTO;
   }
+
+
+  /**
+   * Cancel an Object.
+   *
+   * @param objectDTO object with his id & new status
+   * @return an object
+   */
+  @Override
+  public ObjectDTO cancelObject(ObjectDTO objectDTO){
+    try{
+      dalService.startTransaction();
+
+      objectDTO = objectDAO.updateOne(objectDTO);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return objectDTO;
+  }
+
 }

@@ -127,4 +127,25 @@ public class ObjectResource {
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     return objectUCC.updateOne(objectDTO);
   }
+
+
+  /**
+   * Cancel an Object, set the status to 'cancelled'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/cancel")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectDTO cancelObject(ObjectDTO objectDTO) {
+    System.out.println(objectDTO.getIdObject());
+    if(objectDTO.getIdObject()==null){
+      throw new BadRequestException("id de l'objet null");
+    }
+    objectDTO.setStatus("cancelled");
+    return objectUCC.cancelObject(objectDTO);
+  }
 }

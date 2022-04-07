@@ -3,8 +3,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "bazz",
-  "password": "Mdpuser.1",
+  "username": "bri",
+  "password": "Rad;293",
   "rememberMe": true
 }
 > {%
@@ -48,4 +48,14 @@ Authorization: {{token}}
   "description": "Cadre représentant un chien noir sur un fond noir.",
   "status": "available",
   "idOfferor": 3
+}
+
+
+### cancel object
+POST {{baseUri}}/object/cancel
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject":8
 }

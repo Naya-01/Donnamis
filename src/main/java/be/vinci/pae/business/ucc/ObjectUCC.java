@@ -40,4 +40,12 @@ public interface ObjectUCC {
    * @return Object modified.
    */
   ObjectDTO updateObjectPicture(String internalPath, int id);
+
+  /**
+   * Cancel an Object.
+   *
+   * @param objectDTO object with his id & new status
+   * @return an object
+   */
+  ObjectDTO cancelObject(ObjectDTO objectDTO);
 }

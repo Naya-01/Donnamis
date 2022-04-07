@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class ObjectImpl implements ObjectDTO {
 
   @JsonView(Views.Public.class)
-  private int idObject;
+  private Integer idObject;
   @JsonView(Views.Public.class)
   private TypeDTO type;
   @JsonView(Views.Public.class)
@@ -20,10 +20,10 @@ public class ObjectImpl implements ObjectDTO {
   @JsonView(Views.Public.class)
   private String image;
   @JsonView(Views.Public.class)
-  private int idOfferor;
+  private Integer idOfferor;
 
   @Override
-  public int getIdObject() {
+  public Integer getIdObject() {
     return idObject;
   }
 
@@ -73,7 +73,7 @@ public class ObjectImpl implements ObjectDTO {
   }
 
   @Override
-  public int getIdOfferor() {
+  public Integer getIdOfferor() {
     return idOfferor;
   }
 
