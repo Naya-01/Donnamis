@@ -67,6 +67,13 @@ public class MemberResource {
     return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId());
   }
 
+
+  /**
+   * Get picture of an object.
+   *
+   * @param id of the object.
+   * @return the picture.
+   */
   @GET
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
