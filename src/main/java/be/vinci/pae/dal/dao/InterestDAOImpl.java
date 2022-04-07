@@ -45,11 +45,11 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Get an assign interest.
    *
-   * @param idObject  the object id of the interest we want to retrieve.
+   * @param idObject the object id of the interest we want to retrieve.
    * @return the interest.
    */
   @Override
-  public InterestDTO getGiveInterest(int idObject){
+  public InterestDTO getGiveInterest(int idObject) {
     String query = "select i.id_object, i.id_member, i.availability_date, i.status "
         + "from donnamis.interests i WHERE i.id_object=? AND i.status=?";
 
@@ -154,17 +154,13 @@ public class InterestDAOImpl implements InterestDAO {
    */
   public InterestDTO updateStatus(InterestDTO interestDTO) {
     String query = "UPDATE donnamis.interests SET status = ? "
-        + "WHERE id_object= ? AND status = ? RETURNING availability_date, status, id_member"
+        + "WHERE id_object= ? AND id_member = ? RETURNING availability_date, status, id_member"
         + ", id_object";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(2, interestDTO.getIdObject());
 
-      if (interestDTO.getStatus().equals("received")) {
-        preparedStatement.setString(3, "assigned");
-      } else {
-        preparedStatement.setString(3, interestDTO.getStatus());
-      }
       preparedStatement.setString(1, interestDTO.getStatus());
+      preparedStatement.setInt(2, interestDTO.getIdObject());
+      preparedStatement.setInt(3, interestDTO.getIdMember());
 
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();

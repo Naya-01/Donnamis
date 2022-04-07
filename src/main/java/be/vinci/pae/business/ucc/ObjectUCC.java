@@ -7,6 +7,15 @@ import java.util.List;
 public interface ObjectUCC {
 
   /**
+   * Assign the object to a member.
+   *
+   * @param objectDTO to be assigned.
+   * @param idMember  to be assigned.
+   * @return objectDTO updated.
+   */
+  ObjectDTO assignObject(ObjectDTO objectDTO, int idMember);
+
+  /**
    * Find an object with his id.
    *
    * @param id : id of the object.

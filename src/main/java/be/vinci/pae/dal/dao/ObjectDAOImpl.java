@@ -161,10 +161,6 @@ public class ObjectDAOImpl implements ObjectDAO {
     Deque<String> objectDTODeque = new ArrayDeque<>();
     String query = "UPDATE donnamis.objects SET ";
     TypeDTO typeDTO = null;
-    if (objectDTO.getImage() != null && !objectDTO.getImage().isEmpty()) {
-      query += "image = ?,";
-      objectDTODeque.addLast(objectDTO.getImage());
-    }
     if (objectDTO.getDescription() != null && !objectDTO.getDescription().isEmpty()) {
       query += "description = ?,";
       objectDTODeque.addLast(objectDTO.getDescription());

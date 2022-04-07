@@ -11,6 +11,20 @@ Content-Type: application/json
 client.global.set("token", response.body.access_token);
 %}
 
+
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
 ### GET an object
 GET {{baseUri}}/object/3
 Authorization: {{token}}
@@ -57,7 +71,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "idObject":8
+  "idObject": 8
 }
 
 ### give object
@@ -66,5 +80,15 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "idObject":5
+  "idObject": 5
+}
+
+
+### Assign an object
+PUT {{baseUri}}//object/assignObject/5
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 2
 }

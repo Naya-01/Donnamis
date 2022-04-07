@@ -85,6 +85,12 @@ public class ObjectResource {
     return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject());
   }
 
+  /**
+   * Get the picture of an object.
+   *
+   * @param id of the object.
+   * @return the picture.
+   */
   @GET
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
@@ -168,6 +174,34 @@ public class ObjectResource {
 
     objectDTO.setStatus("given");
     return objectUCC.giveObject(objectDTO);
+  }
+
+  /**
+   * Assign an object to a member interested.
+   *
+   * @param idMember  of the member interested.
+   * @param request   data of the object's owner.
+   * @param objectDTO object to be assigned.
+   * @return object updated.
+   */
+  @PUT
+  @Path("/assignObject/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectDTO assignObject(@PathParam("id") int idMember,
+      @Context ContainerRequest request, ObjectDTO objectDTO) {
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (objectDTO.getIdObject() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans la ressource objet");
+    }
+    objectDTO = objectUCC.getObject(objectDTO.getIdObject());
+    if (ownerDTO.getMemberId() != objectDTO.getIdOfferor()) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
+    return objectUCC.assignObject(objectDTO, idMember);
   }
 
 }
