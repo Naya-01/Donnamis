@@ -141,18 +141,18 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
 
-       InterestDTO tmp = interestDAO.getGiveInterest(interestDTO.getObject().getIdObject());
-      if(tmp==null){
+      InterestDTO tmp = interestDAO.getGiveInterest(interestDTO.getObject().getIdObject());
+      if (tmp == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
       interestDTO.setIdMember(tmp.getIdMember());
-      interestDTO=interestDAO.getOne(interestDTO);
+      interestDTO = interestDAO.getOne(interestDTO);
 
-      if(!interestDTO.getObject().getStatus().equals("assigned")){
+      if (!interestDTO.getObject().getStatus().equals("assigned")) {
         throw new ForbiddenException("aucun objet n'est assigné pour le donner");
       }
 
-      if(!interestDTO.getStatus().equals("assigned")){
+      if (!interestDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException("l'intérêt n'est pas assigné");
       }
 
@@ -160,7 +160,7 @@ public class InterestUCCImpl implements InterestUCC {
       interestDTO.getObject().setStatus("given");
 
       objectDAO.updateOne(interestDTO.getObject());
-      interestDTO=interestDAO.updateStatus(interestDTO);
+      interestDTO = interestDAO.updateStatus(interestDTO);
 
       dalService.commitTransaction();
     } catch (Exception e) {
