@@ -5,7 +5,6 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
@@ -55,39 +54,6 @@ public class ObjectUCCImpl implements ObjectUCC {
     return picture;
   }
 
-  /**
-   * Assign the object to a member.
-   *
-   * @param objectDTO to be assigned.
-   * @param idMember  to be assigned.
-   * @return objectDTO updated.
-   */
-  @Override
-  public ObjectDTO assignObject(ObjectDTO objectDTO, int idMember) {
-    try {
-      dalService.startTransaction();
-      if (!objectDTO.getStatus().equals("interested")) {
-        throw new ForbiddenException("L'objet n'est pas en mesure d'être assigné");
-      }
-      InterestDTO interestDTO = interestDAO.getOne(objectDTO.getIdObject(), idMember);
-      if (interestDTO == null) {
-        throw new NotFoundException("Le membre ne présente pas d'intérêt");
-      }
-      // update object to assigned
-      objectDTO.setStatus("assigned");
-      objectDAO.updateOne(objectDTO);
-      // update interest to assigned
-      interestDTO.setStatus("assigned");
-      interestDAO.updateStatus(interestDTO);
-
-      dalService.commitTransaction();
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-
-    return objectDTO;
-  }
 
   /**
    * Find an object with his id.

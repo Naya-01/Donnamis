@@ -9,11 +9,10 @@ public interface InterestDAO {
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *
-   * @param idObject : the object id of the interest we want to retrieve.
-   * @param idMember :  the member id of the interest we want to retrieve.
+   * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return the interest.
    */
-  InterestDTO getOne(int idObject, int idMember);
+  InterestDTO getOne(InterestDTO interestDTO);
 
   InterestDTO getGiveInterest(int idObject);
 

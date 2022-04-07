@@ -84,11 +84,3 @@ Authorization: {{token}}
 }
 
 
-### Assign an object
-PUT {{baseUri}}//object/assignObject/5
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "idObject": 2
-}

@@ -31,6 +31,18 @@ Authorization: {{refresh}}
 GET {{baseUri}}/interest/count/2
 Authorization: {{refresh}}
 
+### Assign an object
+POST {{baseUri}}/interest/assignObject
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "idMember": 5,
+  "object": {
+    "idObject": 2
+  }
+}
+
 
 ### /interest/interestedCount/{idObject} → retourne le nombre d'intéressé + si l'user est lui même interessé
 ### /interest/getAllInterested/{idObject} → retourne tous les membres interressé (request ok si le membre a posté l'objet)

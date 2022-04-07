@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -21,16 +22,14 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Find an interest, by the id of the interested member and the id of the object.
    *
-   * @param idObject : id object of the interest.
-   * @param idMember : id of interested member.
+   * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return interestDTO having the idObject and idMember.
    */
   @Override
-  public InterestDTO getInterest(int idObject, int idMember) {
-    InterestDTO interestDTO;
+  public InterestDTO getInterest(InterestDTO interestDTO) {
     try {
       dalService.startTransaction();
-      interestDTO = interestDAO.getOne(idObject, idMember);
+      interestDTO = interestDAO.getOne(interestDTO);
       if (interestDTO == null) {
         throw new NotFoundException("Interest not found");
       }
@@ -52,7 +51,7 @@ public class InterestUCCImpl implements InterestUCC {
   public InterestDTO addOne(InterestDTO item) {
     try {
       dalService.startTransaction();
-      if (interestDAO.getOne(item.getObject().getIdObject(), item.getIdMember()) != null) {
+      if (interestDAO.getOne(item) != null) {
         //change name exception
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
@@ -72,6 +71,39 @@ public class InterestUCCImpl implements InterestUCC {
       throw e;
     }
     return item;
+  }
+
+  /**
+   * Assign the object to a member.
+   *
+   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @return objectDTO updated.
+   */
+  @Override
+  public InterestDTO assignObject(InterestDTO interestDTO) {
+    try {
+      dalService.startTransaction();
+      if (!interestDTO.getObject().getStatus().equals("interested")) {
+        throw new ForbiddenException("L'objet n'est pas en mesure d'être assigné");
+      }
+      interestDTO = interestDAO.getOne(interestDTO);
+      if (interestDTO == null) {
+        throw new NotFoundException("Le membre ne présente pas d'intérêt");
+      }
+      // update object to assigned
+      interestDTO.getObject().setStatus("assigned");
+      objectDAO.updateOne(interestDTO.getObject());
+      // update interest to assigned
+      interestDTO.setStatus("assigned");
+      interestDAO.updateStatus(interestDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return interestDTO;
   }
 
   /**
