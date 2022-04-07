@@ -71,7 +71,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "idObject": 8
+  "idObject": 2
 }
 
 ### give object

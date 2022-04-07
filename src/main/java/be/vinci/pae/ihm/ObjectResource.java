@@ -146,12 +146,19 @@ public class ObjectResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public ObjectDTO cancelObject(ObjectDTO objectDTO) {
-    System.out.println(objectDTO.getIdObject());
+  public ObjectDTO cancelObject(@Context ContainerRequest request, ObjectDTO objectDTO) {
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     if (objectDTO.getIdObject() == null) {
-      throw new BadRequestException("id de l'objet null");
+      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource ");
     }
-    objectDTO.setStatus("cancelled");
+
+    objectDTO = objectUCC.getObject(objectDTO.getIdObject());
+
+    if (!ownerDTO.getMemberId().equals(objectDTO.getIdOfferor())) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
     return objectUCC.cancelObject(objectDTO);
   }
 
@@ -167,7 +174,7 @@ public class ObjectResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectDTO giveObject(ObjectDTO objectDTO) {
-    System.out.println(objectDTO.getIdObject());
+
     if (objectDTO.getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }

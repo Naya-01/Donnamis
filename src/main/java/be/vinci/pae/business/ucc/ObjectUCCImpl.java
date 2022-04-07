@@ -172,7 +172,16 @@ public class ObjectUCCImpl implements ObjectUCC {
   public ObjectDTO cancelObject(ObjectDTO objectDTO) {
     try {
       dalService.startTransaction();
+      objectDTO.setStatus("cancelled");
       objectDTO = objectDAO.updateOne(objectDTO);
+
+      InterestDTO interestDTO = interestDAO.getGiveInterest(objectDTO.getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("published");
+        interestDAO.updateStatus(interestDTO);
+      }
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
