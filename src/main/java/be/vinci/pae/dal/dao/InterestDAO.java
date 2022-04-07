@@ -15,6 +15,8 @@ public interface InterestDAO {
    */
   InterestDTO getOne(int idObject, int idMember);
 
+  InterestDTO getGiveInterest(int idObject);
+
   /**
    * Add one interest in the DB.
    *

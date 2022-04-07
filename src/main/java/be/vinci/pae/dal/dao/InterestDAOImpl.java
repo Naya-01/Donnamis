@@ -43,6 +43,26 @@ public class InterestDAOImpl implements InterestDAO {
 
 
   /**
+   * Get an assign interest.
+   *
+   * @param idObject  the object id of the interest we want to retrieve.
+   * @return the interest.
+   */
+  @Override
+  public InterestDTO getGiveInterest(int idObject){
+    String query = "select i.id_object, i.id_member, i.availability_date, i.status "
+        + "from donnamis.interests i WHERE i.id_object=? AND i.status=?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idObject);
+      preparedStatement.setString(2, "assigned");
+      return getInterestDTO(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
+  /**
    * Make an interestDTO with the result set.
    *
    * @param preparedStatement : a prepared statement to execute the query.

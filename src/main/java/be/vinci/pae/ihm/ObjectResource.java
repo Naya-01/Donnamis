@@ -148,4 +148,26 @@ public class ObjectResource {
     objectDTO.setStatus("cancelled");
     return objectUCC.cancelObject(objectDTO);
   }
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/give")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectDTO giveObject(ObjectDTO objectDTO) {
+    System.out.println(objectDTO.getIdObject());
+    if (objectDTO.getIdObject() == null) {
+      throw new BadRequestException("id de l'objet null");
+    }
+
+    objectDTO.setStatus("given");
+    return objectUCC.giveObject(objectDTO);
+  }
+
 }

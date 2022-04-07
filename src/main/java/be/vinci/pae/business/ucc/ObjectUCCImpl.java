@@ -1,6 +1,8 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -18,6 +20,8 @@ public class ObjectUCCImpl implements ObjectUCC {
   private ObjectDAO objectDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the picture of an object.
@@ -168,6 +172,32 @@ public class ObjectUCCImpl implements ObjectUCC {
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.updateOne(objectDTO);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return objectDTO;
+  }
+
+  /**
+   * Give an Object.
+   *
+   * @param objectDTO object with his id & new status to 'given'
+   * @return an object
+   */
+  @Override
+  public ObjectDTO giveObject(ObjectDTO objectDTO) {
+    try {
+      dalService.startTransaction();
+      objectDTO = objectDAO.updateOne(objectDTO);
+      InterestDTO interestDTO = interestDAO.getGiveInterest(objectDTO.getIdObject());
+      if(interestDTO==null){
+        throw new NotFoundException("aucun objet n'a été assigner");
+      }
+      interestDTO.setStatus("received");
+      interestDAO.updateStatus(interestDTO);
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
