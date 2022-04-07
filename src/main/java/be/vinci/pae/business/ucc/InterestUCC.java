@@ -37,4 +37,11 @@ public interface InterestUCC {
    */
   List<InterestDTO> getInterestedCount(int idObject);
 
+  /**
+   * Give an Object.
+   *
+   * @param interestDTO : the interest information (id of the object)
+   * @return an object
+   */
+  InterestDTO giveObject(InterestDTO interestDTO);
 }

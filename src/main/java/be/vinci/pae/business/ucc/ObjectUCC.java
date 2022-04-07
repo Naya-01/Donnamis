@@ -50,11 +50,4 @@ public interface ObjectUCC {
    */
   ObjectDTO cancelObject(ObjectDTO objectDTO);
 
-  /**
-   * Give an Object.
-   *
-   * @param objectDTO object with his id & new status to 'given'
-   * @return an object
-   */
-  ObjectDTO giveObject(ObjectDTO objectDTO);
 }

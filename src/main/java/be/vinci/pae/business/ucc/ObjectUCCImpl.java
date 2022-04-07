@@ -191,30 +191,5 @@ public class ObjectUCCImpl implements ObjectUCC {
     return objectDTO;
   }
 
-  /**
-   * Give an Object.
-   *
-   * @param objectDTO object with his id & new status to 'given'
-   * @return an object
-   */
-  @Override
-  public ObjectDTO giveObject(ObjectDTO objectDTO) {
-    try {
-      dalService.startTransaction();
-      objectDTO = objectDAO.updateOne(objectDTO);
-      InterestDTO interestDTO = interestDAO.getGiveInterest(objectDTO.getIdObject());
-      if (interestDTO == null) {
-        throw new NotFoundException("aucun objet n'a été assigner");
-      }
-      interestDTO.setStatus("received");
-      interestDAO.updateStatus(interestDTO);
-      dalService.commitTransaction();
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-
-    return objectDTO;
-  }
 
 }
