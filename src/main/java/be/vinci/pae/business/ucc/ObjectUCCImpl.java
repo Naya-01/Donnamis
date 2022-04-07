@@ -35,7 +35,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
       }
-      
+
       try {
         File file = new File(objectDTO.getImage());
         picture = ImageIO.read(file);
@@ -160,14 +160,13 @@ public class ObjectUCCImpl implements ObjectUCC {
   /**
    * Cancel an Object.
    *
-   * @param objectDTO object with his id & new status
+   * @param objectDTO object with his id & new status to 'cancelled'
    * @return an object
    */
   @Override
-  public ObjectDTO cancelObject(ObjectDTO objectDTO){
-    try{
+  public ObjectDTO cancelObject(ObjectDTO objectDTO) {
+    try {
       dalService.startTransaction();
-
       objectDTO = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();
     } catch (Exception e) {

@@ -44,7 +44,7 @@ public interface ObjectUCC {
   /**
    * Cancel an Object.
    *
-   * @param objectDTO object with his id & new status
+   * @param objectDTO object with his id & new status to 'cancelled'
    * @return an object
    */
   ObjectDTO cancelObject(ObjectDTO objectDTO);

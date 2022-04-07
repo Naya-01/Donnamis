@@ -129,23 +129,22 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Update the status of an interest.
    *
-   * @param idObject the object that we want to edit.
-   * @param status the new status for the object
+   * @param interestDTO the object that we want to edit the status.
    * @return interest
    */
-  public InterestDTO updateStatus(int idObject, String status) {
+  public InterestDTO updateStatus(InterestDTO interestDTO) {
     String query = "UPDATE donnamis.interests SET status = ? "
         + "WHERE id_object= ? AND status = ? RETURNING availability_date, status, id_member"
         + ", id_object";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(2, idObject);
+      preparedStatement.setInt(2, interestDTO.getIdObject());
 
-      if (status.equals("received")) {
+      if (interestDTO.getStatus().equals("received")) {
         preparedStatement.setString(3, "assigned");
       } else {
-        preparedStatement.setString(3, status);
+        preparedStatement.setString(3, interestDTO.getStatus());
       }
-      preparedStatement.setString(1, status);
+      preparedStatement.setString(1, interestDTO.getStatus());
 
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -154,7 +153,7 @@ public class InterestDAOImpl implements InterestDAO {
         return null;
       }
 
-      InterestDTO interestDTO = interestFactory.getInterestDTO();
+      interestDTO = interestFactory.getInterestDTO();
       interestDTO.setAvailabilityDate(resultSet.getDate(1).toLocalDate());
       interestDTO.setStatus(resultSet.getString(2));
       interestDTO.setIdMember(resultSet.getInt(3));

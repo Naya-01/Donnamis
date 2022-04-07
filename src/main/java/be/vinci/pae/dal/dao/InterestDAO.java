@@ -34,9 +34,8 @@ public interface InterestDAO {
   /**
    * Update the status of an interest.
    *
-   * @param idObject the object that we want to edit.
-   * @param status   the new status for the object
+   * @param interestDTO the object that we want to edit the status.
    * @return interest
    */
-  InterestDTO updateStatus(int idObject, String status);
+  InterestDTO updateStatus(InterestDTO interestDTO);
 }

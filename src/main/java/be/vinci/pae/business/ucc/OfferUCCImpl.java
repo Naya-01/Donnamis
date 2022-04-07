@@ -2,7 +2,6 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
-import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -22,8 +21,6 @@ public class OfferUCCImpl implements OfferUCC {
   private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
-  @Inject
-  private InterestDAO interestDAO;
 
   /**
    * Get the last six offers posted.

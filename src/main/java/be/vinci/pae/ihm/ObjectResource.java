@@ -142,7 +142,7 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO cancelObject(ObjectDTO objectDTO) {
     System.out.println(objectDTO.getIdObject());
-    if(objectDTO.getIdObject()==null){
+    if (objectDTO.getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }
     objectDTO.setStatus("cancelled");
