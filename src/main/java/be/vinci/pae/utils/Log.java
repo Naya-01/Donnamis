@@ -23,8 +23,6 @@ public class Log {
       SimpleFormatter formatter = new SimpleFormatter();
       fileHandler.setFormatter(formatter);
       logger.info("Init Logger");
-      System.out.println(Logger.getLogger("Log"));
-      System.out.println(logger);
     } catch (IOException e) {
       e.printStackTrace();
     }

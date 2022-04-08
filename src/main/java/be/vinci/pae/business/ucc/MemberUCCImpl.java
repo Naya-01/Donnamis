@@ -243,19 +243,17 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO updateMember(MemberDTO memberDTO) {
-    MemberDTO modifierMemberDTO;
     try {
       dalService.startTransaction();
-      modifierMemberDTO = memberDAO.updateOne(memberDTO);
+      MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
       if (modifierMemberDTO == null) {
         throw new ForbiddenException("Problem with updating member");
       }
-
       dalService.commitTransaction();
+      return modifierMemberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return modifierMemberDTO;
   }
 }

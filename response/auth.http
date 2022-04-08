@@ -81,8 +81,7 @@ Content-Type: application/json
     "buildingNumber": "14",
     "street": "Rue du cheval",
     "postcode": "1140",
-    "commune": "Evere",
-    "country": "Belgique"
+    "commune": "Evere"
   }
 }
 > {%

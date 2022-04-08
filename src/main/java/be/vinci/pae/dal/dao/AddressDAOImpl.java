@@ -49,16 +49,12 @@ public class AddressDAOImpl implements AddressDAO {
       query += "commune = ?,";
       addressDTODeque.addLast(addressDTO.getCommune());
     }
-    if (addressDTO.getCountry() != null && !addressDTO.getCountry().isEmpty()) {
-      query += "country = ?,";
-      addressDTODeque.addLast(addressDTO.getCountry());
-    }
     query = query.substring(0, query.length() - 1);
     if (query.endsWith("SET")) {
       return null;
     }
     query += " WHERE id_member = ? RETURNING id_member, unit_number, building_number, street, "
-        + "postcode, commune, country";
+        + "postcode, commune";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
@@ -83,8 +79,8 @@ public class AddressDAOImpl implements AddressDAO {
   @Override
   public AddressDTO createOne(AddressDTO addressDTO) {
     String query = "INSERT INTO donnamis.addresses (id_member, unit_number, building_number, "
-        + "street, postcode, commune, country) values (?,?,?,?,?,?,?) RETURNING id_member, "
-        + "unit_number, building_number, street, postcode, commune, country";
+        + "street, postcode, commune) values (?,?,?,?,?,?) RETURNING id_member, "
+        + "unit_number, building_number, street, postcode, commune";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, addressDTO.getIdMember());
@@ -93,7 +89,6 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.setString(4, addressDTO.getStreet());
       preparedStatement.setString(5, addressDTO.getPostcode());
       preparedStatement.setString(6, addressDTO.getCommune());
-      preparedStatement.setString(7, addressDTO.getCountry());
 
       return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
@@ -110,12 +105,11 @@ public class AddressDAOImpl implements AddressDAO {
    * @param street         the street
    * @param postcode       the postcode
    * @param commune        the commune
-   * @param country        the country
    * @return the addressDTO created
    */
   @Override
   public AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
-      String street, String postcode, String commune, String country) {
+      String street, String postcode, String commune) {
 
     AddressDTO addressDTO = addressFactory.getAddressDTO();
     addressDTO.setIdMember(idMember);
@@ -124,7 +118,6 @@ public class AddressDAOImpl implements AddressDAO {
     addressDTO.setUnitNumber(unitNumber);
     addressDTO.setBuildingNumber(buildingNumber);
     addressDTO.setCommune(commune);
-    addressDTO.setCountry(country);
     return addressDTO;
   }
 
@@ -132,7 +125,7 @@ public class AddressDAOImpl implements AddressDAO {
    * Get an addressDTO with a resultSet.
    *
    * @param preparedStatement a prepared statement that contain id_member, unit_number,
-   *                          building_number, street, postcode, commune, country in this order
+   *                          building_number, street, postcode, commune in this order
    * @return the matching addressDTO
    */
   private AddressDTO getAddressByPreparedStatement(PreparedStatement preparedStatement) {
@@ -144,8 +137,7 @@ public class AddressDAOImpl implements AddressDAO {
       }
       return getAddress(resultSet.getInt(1), resultSet.getString(2),
           resultSet.getString(3), resultSet.getString(4),
-          resultSet.getString(5), resultSet.getString(6),
-          resultSet.getString(7));
+          resultSet.getString(5), resultSet.getString(6));
     } catch (SQLException e) {
       throw new FatalException(e);
     }

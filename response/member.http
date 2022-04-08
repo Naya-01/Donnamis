@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "GaspardDePorto",
-  "password": "gaspardLeLeopard",
+  "username": "bazz",
+  "password": "Mdpuser.1",
   "rememberMe": true
 }
 > {%
@@ -58,12 +58,8 @@ Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "memberId": 2,
-  "username": "AlbertDeBucarest",
-  "lastname": "Dubous",
-  "firstname": "Albert",
-  "status": "valid",
-  "role": "member"
+  "memberId": 3,
+  "password":"Mdpuser.1"
 }
 
 ### Upload picture

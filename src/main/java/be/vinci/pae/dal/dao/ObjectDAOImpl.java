@@ -245,21 +245,37 @@ public class ObjectDAOImpl implements ObjectDAO {
       if (!resultSet.next()) {
         return null;
       }
-      ObjectDTO objectDTO = objectFactory.getObjectDTO();
-      objectDTO.setIdObject(resultSet.getInt(1));
-      objectDTO.setDescription(resultSet.getString(2));
-      objectDTO.setStatus(resultSet.getString(3));
-      if (resultSet.getString(4) == null) {
-        objectDTO.setImage(resultSet.getString(4));
-      } else {
-        objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
-      }
-      objectDTO.setIdOfferor(resultSet.getInt(5));
-      resultSet.close();
-      return objectDTO;
+      return getObject(resultSet.getInt(1), resultSet.getString(2),
+          resultSet.getString(3), resultSet.getString(4), resultSet.getInt(5));
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+  }
+
+  /**
+   * Get an objectDTO with some attributes.
+   *
+   * @param idObject the id of the object
+   * @param description the description of the object
+   * @param status the status of the object
+   * @param image the image of the object
+   * @param idOffer the id of the offeror
+   * @return an objectDTO filled of attributes
+   */
+  @Override
+  public ObjectDTO getObject(int idObject, String description, String status, String image,
+      int idOffer) {
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(idObject);
+    objectDTO.setDescription(description);
+    objectDTO.setStatus(status);
+    if (image == null) {
+      objectDTO.setImage(image);
+    } else {
+      objectDTO.setImage(Config.getProperty("ImagePath") + image);
+    }
+    objectDTO.setIdOfferor(idOffer);
+    return objectDTO;
   }
 
 }

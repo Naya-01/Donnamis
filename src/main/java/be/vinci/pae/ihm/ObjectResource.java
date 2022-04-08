@@ -85,6 +85,12 @@ public class ObjectResource {
     return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject());
   }
 
+  /**
+   * Get the image of an object.
+   *
+   * @param id the id of the object
+   * @return an image
+   */
   @GET
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
