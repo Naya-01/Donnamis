@@ -7,13 +7,13 @@ import ObjectLibrary from "../../Domain/ObjectLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
 
-
 const dictionary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
   ['assigned', 'Attribué à xxxxx'],
   ['given', 'Donné à xxxx'],
-  ['cancelled', 'Annulé']
+  ['cancelled', 'Annulé'],
+  ['not_collected', 'Le receveur n\'est pas venu']
 ]);
 
 /**
@@ -25,7 +25,8 @@ const MyObjectsPage = async () => {
     return;
   }
 
-  await searchBar("Mes objets", true, false, true, "Recherche un objet", true, true);
+  await searchBar("Mes objets", true, false, true, "Recherche un objet", true,
+      true);
 
   let status = "";
   const searchBarDiv = document.getElementById("searchBar");
@@ -52,25 +53,25 @@ const MyObjectsPage = async () => {
   });
 
   let available = document.getElementById("btn-status-available");
-  available.addEventListener('click', async () =>{
+  available.addEventListener('click', async () => {
     status = "available";
     await actualizeCards();
   });
 
   let given = document.getElementById("btn-status-given");
-  given.addEventListener('click', async () =>{
+  given.addEventListener('click', async () => {
     status = "given";
     await actualizeCards();
   });
 
   let assigned = document.getElementById("btn-status-assigned");
-  assigned.addEventListener('click', async () =>{
+  assigned.addEventListener('click', async () => {
     status = "assigned";
     await actualizeCards();
   });
 
   let all = document.getElementById("btn-status-all");
-  all.addEventListener('click', async () =>{
+  all.addEventListener('click', async () => {
     status = "";
     await actualizeCards();
   });
@@ -81,10 +82,10 @@ const MyObjectsPage = async () => {
   });
 }
 
-
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true, type, status);
+  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,
+      type, status);
   memberCards.innerHTML = ``;
   for (const object of objects) {
     managementList(object.idOffer, memberCards, itemImage,
@@ -95,7 +96,8 @@ const objectCards = async (searchPattern, type, status) => {
     card.className += " clickable";
 
     const buttonCard = document.getElementById("button-card-" + object.idOffer);
-    if (object.object.status !== "cancelled" && object.object.status !== "given") {
+    if (object.object.status !== "cancelled" && object.object.status
+        !== "given") {
       const cancelButton = document.createElement("button");
       cancelButton.innerText = "Annuler";
       cancelButton.type = "button";
@@ -110,7 +112,8 @@ const objectCards = async (searchPattern, type, status) => {
       buttonCard.appendChild(cancelButton);
     }
 
-    if (object.object.status !== "given" && object.object.status !== "assigned") {
+    if (object.object.status !== "given" && object.object.status
+        !== "assigned") {
       const viewAllInterestedMembers = document.createElement("button");
       viewAllInterestedMembers.innerText = "Voir les interessés";
       viewAllInterestedMembers.type = "button";
@@ -124,14 +127,8 @@ const objectCards = async (searchPattern, type, status) => {
       buttonCard.appendChild(viewAllInterestedMembers);
     }
 
-
-
-
-
-
-
-
-    if (object.object.status === "cancelled") {
+    if (object.object.status === "cancelled" || object.object.status
+        === "not_collected") {
       const reofferButton = document.createElement("button");
       reofferButton.innerText = "Offrir à nouveau";
       reofferButton.type = "button";
@@ -150,15 +147,21 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.innerText = "Non réalisée";
       nonRealisedOfferButton.type = "button";
       nonRealisedOfferButton.className = "btn btn-danger mt-3 mx-1";
+      nonRealisedOfferButton.addEventListener("click", async () =>{
+        await ObjectLibrary.prototype.notCollectedObject(
+            object.object.idObject,
+        );
+        Redirect("/myObjectsPage");
+      });
 
       const offeredObjectButton = document.createElement("button");
       offeredObjectButton.innerText = "Objet donné";
       offeredObjectButton.type = "button";
       offeredObjectButton.className = "btn btn-success mt-3 mx-1";
-      offeredObjectButton.addEventListener("click",async  ()=>{
+      offeredObjectButton.addEventListener("click", async () => {
         await ObjectLibrary.prototype.giveObject(
             object.object.idObject,
-            );
+        );
         Redirect("/myObjectsPage");
       });
 
@@ -167,7 +170,8 @@ const objectCards = async (searchPattern, type, status) => {
       buttonCard.appendChild(offeredObjectButton);
     }
 
-    const informationDiv = document.getElementById("information-object-" + object.idOffer);
+    const informationDiv = document.getElementById(
+        "information-object-" + object.idOffer);
     informationDiv.addEventListener('click', () => {
       RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + object.idOffer);
     });
