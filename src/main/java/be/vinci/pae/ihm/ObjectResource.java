@@ -86,10 +86,10 @@ public class ObjectResource {
   }
 
   /**
-   * Get the picture of an object.
+   * Get the image of an object.
    *
-   * @param id of the object.
-   * @return the picture.
+   * @param id the id of the object
+   * @return an image
    */
   @GET
   @Path("/getPicture/{id}")

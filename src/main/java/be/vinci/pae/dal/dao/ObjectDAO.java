@@ -55,4 +55,18 @@ public interface ObjectDAO {
    * @return object updated
    */
   ObjectDTO updateOne(ObjectDTO objectDTO);
+
+
+  /**
+   * Get an objectDTO with some attributes.
+   *
+   * @param idObject the id of the object
+   * @param description the description of the object
+   * @param status the status of the object
+   * @param image the image of the object
+   * @param idOffer the id of the offeror
+   * @return an objectDTO filled of attributes
+   */
+  ObjectDTO getObject(int idObject, String description, String status, String image,
+      int idOffer);
 }

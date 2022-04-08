@@ -53,30 +53,30 @@ VALUES ('caro', 'Line', 'Caroline', 'denied', 'member',
         '$2a$10$bBuNIaHXv2Rznvgr89gTOui9z1hTCWhNEWSLUNzEkCU9tR7KIPPKG');
 
 INSERT INTO donnamis.addresses
-    (id_member, building_number, unit_number, street, postcode, commune, country)
-VALUES (1, '11', 'B1', 'Rue de l''Eglise', '4987', 'Stoumont', 'Belgique');
+    (id_member, building_number, unit_number, street, postcode, commune)
+VALUES (1, '11', 'B1', 'Rue de l''Eglise', '4987', 'Stoumont');
 
 INSERT INTO donnamis.members (username, lastname, firstname, status, role, password)
 VALUES ('achil', 'Ile', 'Achille', 'pending', 'member',
         '$2a$10$bBuNIaHXv2Rznvgr89gTOui9z1hTCWhNEWSLUNzEkCU9tR7KIPPKG');
 
-INSERT INTO donnamis.addresses (id_member, building_number, street, postcode, commune, country)
-VALUES (2, '7', 'Rue de Renkin', '4800', 'Verviers', 'Belgique');
+INSERT INTO donnamis.addresses (id_member, building_number, street, postcode, commune)
+VALUES (2, '7', 'Rue de Renkin', '4800', 'Verviers');
 
 INSERT INTO donnamis.members (username, lastname, firstname, status, role, password)
 VALUES ('bazz', 'Ile', 'Basile', 'valid', 'member',
         '$2a$10$bBuNIaHXv2Rznvgr89gTOui9z1hTCWhNEWSLUNzEkCU9tR7KIPPKG');
 
 INSERT INTO donnamis.addresses
-    (id_member, building_number, unit_number, street, postcode, commune,country)
-VALUES (3, '6', 'A103', 'Rue Haute Folie', '4800', 'Verviers', 'Belgique');
+    (id_member, building_number, unit_number, street, postcode, commune)
+VALUES (3, '6', 'A103', 'Rue Haute Folie', '4800', 'Verviers');
 
 INSERT INTO donnamis.members (username, lastname, firstname, status, role, password)
 VALUES ('bri', 'Lehmann', 'Brigitte', 'valid', 'administrator',
         '$2a$10$UJg.Xn2dVv78cuNN0/e/1.my5aCISCt1W1hN.JaLSmDqcqhE4vpGK');
 
-INSERT INTO donnamis.addresses (id_member, building_number, street, postcode, commune, country)
-VALUES (4, '13', 'Haut-Vinâve', '4845', 'Jalhay', 'Belgique');
+INSERT INTO donnamis.addresses (id_member, building_number, street, postcode, commune)
+VALUES (4, '13', 'Haut-Vinâve', '4845', 'Jalhay');
 
 
 

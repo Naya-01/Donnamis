@@ -30,7 +30,4 @@ public interface AddressDTO {
 
   void setCommune(String commune);
 
-  String getCountry();
-
-  void setCountry(String country);
 }

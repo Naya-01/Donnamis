@@ -3,13 +3,11 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
-import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
-import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,8 +22,6 @@ public class OfferDAOImpl implements OfferDAO {
 
   @Inject
   private OfferFactory offerFactory;
-  @Inject
-  private ObjectFactory objectFactory;
   @Inject
   private TypeFactory typeFactory;
   @Inject
@@ -300,25 +296,14 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
 
-        ObjectDTO objectDTO = objectFactory.getObjectDTO();
-        objectDTO.setIdObject(resultSet.getInt(4));
-
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));
         typeDTO.setTypeName(resultSet.getString(10));
         typeDTO.setIsDefault(resultSet.getBoolean(11));
 
+        ObjectDTO objectDTO = objectDAO.getObject(resultSet.getInt(4), resultSet.getString(6),
+            resultSet.getString(7), resultSet.getString(8), resultSet.getInt(9));
         objectDTO.setType(typeDTO);
-
-        objectDTO.setDescription(resultSet.getString(6));
-        objectDTO.setStatus(resultSet.getString(7));
-        if (resultSet.getString(8) == null) {
-          objectDTO.setImage(resultSet.getString(8));
-        } else {
-          objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(8));
-        }
-        objectDTO.setIdOfferor(resultSet.getInt(9));
-
         offerDTO.setObject(objectDTO);
 
         listOfferDTO.add(offerDTO);

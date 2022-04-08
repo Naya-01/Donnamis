@@ -13,7 +13,8 @@ CREATE TABLE donnamis.members
     phone_number   VARCHAR(50)  NULL,
     password       CHAR(60)     NOT NULL,
     refusal_reason VARCHAR(50)  NULL,
-    image          VARCHAR(100) NULL
+    image          VARCHAR(100) NULL,
+    version        INTEGER      NULL
 );
 
 CREATE TABLE donnamis.addresses
@@ -24,7 +25,7 @@ CREATE TABLE donnamis.addresses
     street          VARCHAR(50) NOT NULL,
     postcode        VARCHAR(15) NOT NULL,
     commune         VARCHAR(50) NOT NULL,
-    country         VARCHAR(50) NOT NULL,
+    version         INTEGER     NULL,
     PRIMARY KEY (id_member)
 );
 
@@ -42,7 +43,8 @@ CREATE TABLE donnamis.objects
     description VARCHAR(100)                                    NOT NULL,
     status      VARCHAR(10)                                     NOT NULL,
     image       VARCHAR(100)                                    NULL,
-    id_offeror  INTEGER REFERENCES donnamis.members (id_member) NOT NULL
+    id_offeror  INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
+    version     INTEGER                                         NULL
 );
 
 CREATE TABLE donnamis.ratings
@@ -60,6 +62,7 @@ CREATE TABLE donnamis.interests
     status            VARCHAR(15)                                     NOT NULL,
     id_member         INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object         INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
+    version           INTEGER                                         NULL,
     PRIMARY KEY (id_object, id_member)
 );
 
@@ -68,5 +71,6 @@ CREATE TABLE donnamis.offers
     id_offer  SERIAL PRIMARY KEY,
     date      TIMESTAMP                                       NOT NULL,
     time_slot VARCHAR(200)                                    NOT NULL,
-    id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL
+    id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
+    version   INTEGER                                         NULL
 );

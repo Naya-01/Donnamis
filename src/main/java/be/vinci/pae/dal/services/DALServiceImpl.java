@@ -38,16 +38,18 @@ public class DALServiceImpl implements DALBackendService, DALService {
     try {
       Connection conn = connection.get();
       ps = conn.prepareStatement(query);
+      return ps;
     } catch (SQLException e) {
-      rollBackTransaction();
       throw new FatalException(e);
     }
-    return ps;
   }
 
   @Override
   public void startTransaction() {
     try {
+      if (connection.get() != null) {
+        throw new FatalException("Connection deja ouverte");
+      }
       Connection conn = dataSource.getConnection();
       conn.setAutoCommit(false);
       connection.set(conn);
@@ -62,10 +64,10 @@ public class DALServiceImpl implements DALBackendService, DALService {
     try {
       conn.commit();
       conn.close();
-      connection.remove();
     } catch (SQLException e) {
-      rollBackTransaction();
       throw new FatalException(e);
+    } finally {
+      connection.remove();
     }
   }
 
@@ -78,6 +80,8 @@ public class DALServiceImpl implements DALBackendService, DALService {
       connection.remove();
     } catch (SQLException e) {
       throw new FatalException(e);
+    } finally {
+      connection.remove();
     }
   }
 }

@@ -84,14 +84,4 @@ public class AddressImpl implements AddressDTO {
     this.commune = commune;
   }
 
-  @Override
-  public String getCountry() {
-    return this.country;
-  }
-
-  @Override
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
 }

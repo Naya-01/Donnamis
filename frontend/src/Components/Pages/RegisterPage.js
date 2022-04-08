@@ -66,25 +66,19 @@ const htmlPage = `
                     <input id="unit_number" class="form-control" 
                       placeholder="boîte" type="text">
                 </div>
-                <div class="col form-group">
-                    <label>Code postal</label>
-                    <input id="postcode" class="form-control" placeholder="CP" 
-                      type="text">
-                </div>
               </div>
               <div class="row mt-3">
-                <div class="col form-group mt-3">
+                <div class="col form-group">
                     <label>Commune</label>
                     <input id="commune" class="form-control" 
                       placeholder="commune" type="text">
                   </div>
-                  <div class="col form-group mt-3">
-                    <label>Pays</label>
-                    <input id="country" class="form-control" placeholder="pays"
+                  <div class="col form-group">
+                    <label>Code postal</label>
+                    <input id="postcode" class="form-control" placeholder="CP" 
                       type="text">
                   </div>
               </div>
-              
               <div class="form-group mt-3">
                 <label>Mot de passe</label>
                 <input id="password" class="form-control" 
@@ -127,10 +121,9 @@ const RegisterPage = async () => {
     let unitNumber = document.getElementById("unit_number");
     let postcode = document.getElementById("postcode");
     let commune = document.getElementById("commune");
-    let country = document.getElementById("country");
 
     const notNullFields = [username, lastname, firstname, password,
-      street, postcode, commune, country];
+      street, postcode, commune];
 
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
@@ -224,17 +217,10 @@ const RegisterPage = async () => {
         icon: 'error',
         title: 'Le nom de commune est trop grand ou est invalide'
       })
-    } else if (country.value.trim().length > 50 ||
-        !regOnlyLettersAndDash.test(country.value.trim())) {
-      country.classList.add("border-danger");
-      toast.fire({
-        icon: 'error',
-        title: 'Le nom de pays est trop grand ou est invalide'
-      })
     } else {
       let address = new Address(unitNumber.value.trim(),
           buildingNumber.value.trim(), street.value.trim(),
-          postcode.value.trim(), commune.value.trim(), country.value.trim());
+          postcode.value.trim(), commune.value.trim());
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address);

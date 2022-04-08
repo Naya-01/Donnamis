@@ -65,7 +65,7 @@ const baseMembersList = async (members) => {
     managementList(member.memberId, memberCards, profilImage,
         member.firstname + " " + member.lastname + " (" + member.username + ")",
         member.address.buildingNumber + " " + member.address.street + " " +
-        member.address.postcode + " " + member.address.commune + " " + member.address.country);
+        member.address.postcode + " " + member.address.commune);
 
     // Show different buttons card depending on status
     if (member.status === "denied") {
