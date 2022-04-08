@@ -144,39 +144,39 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO updateOne(MemberDTO memberDTO) {
     Deque<String> memberDTODeque = new ArrayDeque<>();
     String query = "UPDATE donnamis.members SET ";
-    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isEmpty()) {
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
       query += "username = ?,";
       memberDTODeque.addLast(memberDTO.getUsername());
     }
-    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isEmpty()) {
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isBlank()) {
       query += "lastname = ?,";
       memberDTODeque.addLast(memberDTO.getLastname());
     }
-    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isEmpty()) {
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isBlank()) {
       query += "firstname = ?,";
       memberDTODeque.addLast(memberDTO.getFirstname());
     }
-    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isEmpty()) {
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isBlank()) {
       query += "status = ?,";
       memberDTODeque.addLast(memberDTO.getStatus());
     }
-    if (memberDTO.getRole() != null && !memberDTO.getRole().isEmpty()) {
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isBlank()) {
       query += "role = ?,";
       memberDTODeque.addLast(memberDTO.getRole());
     }
-    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isEmpty()) {
+    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isBlank()) {
       query += "phone_number = ?,";
       memberDTODeque.addLast(memberDTO.getPhone());
     }
-    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isEmpty()) {
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
       query += "refusal_reason = ?,";
       memberDTODeque.addLast(memberDTO.getReasonRefusal());
     }
-    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isBlank()) {
       query += "password = ?,";
       memberDTODeque.addLast(memberDTO.getPassword());
     }
-    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
+    if (memberDTO.getImage() != null && !memberDTO.getImage().isBlank()) {
       query += "image = ?,";
       memberDTODeque.addLast(memberDTO.getImage());
     }
