@@ -20,8 +20,6 @@ public class AddressImpl implements AddressDTO {
   private String postcode;
   @JsonView(Views.Public.class)
   private String commune;
-  @JsonView(Views.Public.class)
-  private String country;
 
 
   @Override
