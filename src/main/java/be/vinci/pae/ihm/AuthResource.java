@@ -126,7 +126,6 @@ public class AuthResource {
         || member.getAddress().getStreet() == null || member.getAddress().getStreet().isBlank()
         || member.getAddress().getPostcode() == null || member.getAddress().getPostcode().isBlank()
         || member.getAddress().getCommune() == null || member.getAddress().getCommune().isBlank()
-        || member.getAddress().getCountry() == null || member.getAddress().getCountry().isBlank()
     ) {
       throw new BadRequestException("Veuillez remplir tous les champs obligatoires");
     }
@@ -191,13 +190,6 @@ public class AuthResource {
       Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getCommune());
       if (!matcher.find()) {
         throw new BadRequestException("Le nom de commune est trop grand ou est invalide");
-      }
-    }
-
-    if (addressOfMember.getCountry().length() > 50) {
-      Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getCountry());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le nom de pays est trop grand ou est invalide");
       }
     }
 

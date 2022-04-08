@@ -63,7 +63,6 @@ class MemberUCCImplTest {
     newAddress.setStreet("Rue de l'aérosol");
     newAddress.setPostcode("1234");
     newAddress.setCommune("Wolluwe");
-    newAddress.setCountry("Belgique");
 
     MemberDTO newMember = memberFactory.getMemberDTO();
     newMember.setMemberId(0);

@@ -47,7 +47,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
   @Override
   public void startTransaction() {
     try {
-      if (connection.get()!=null){
+      if (connection.get() != null) {
         throw new FatalException("Connection deja ouverte");
       }
       Connection conn = dataSource.getConnection();
@@ -66,7 +66,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.close();
     } catch (SQLException e) {
       throw new FatalException(e);
-    }finally {
+    } finally {
       connection.remove();
     }
   }
@@ -80,7 +80,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
       connection.remove();
     } catch (SQLException e) {
       throw new FatalException(e);
-    }finally {
+    } finally {
       connection.remove();
     }
   }
