@@ -149,40 +149,40 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO updateOne(MemberDTO memberDTO) {
     Deque<String> memberDTODeque = new ArrayDeque<>();
     String query = "UPDATE donnamis.members SET ";
-    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isEmpty()) {
       query += "username = ?,";
       memberDTODeque.addLast(memberDTO.getUsername());
     }
-    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isBlank()) {
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isEmpty()) {
       query += "lastname = ?,";
       memberDTODeque.addLast(memberDTO.getLastname());
     }
-    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isBlank()) {
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isEmpty()) {
       query += "firstname = ?,";
       memberDTODeque.addLast(memberDTO.getFirstname());
     }
-    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isBlank()) {
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isEmpty()) {
       query += "status = ?,";
       memberDTODeque.addLast(memberDTO.getStatus());
     }
-    if (memberDTO.getRole() != null && !memberDTO.getRole().isBlank()) {
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isEmpty()) {
       query += "role = ?,";
       memberDTODeque.addLast(memberDTO.getRole());
     }
-    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isBlank()) {
+    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isEmpty()) {
       query += "phone_number = ?,";
       memberDTODeque.addLast(memberDTO.getPhone());
     }
-    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isEmpty()) {
       query += "refusal_reason = ?,";
       memberDTODeque.addLast(memberDTO.getReasonRefusal());
     }
-    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isBlank()) {
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
       query += "password = ?,";
       Member member = (Member) memberDTO;
       memberDTODeque.addLast(member.hashPassword(member.getPassword()));
     }
-    if (memberDTO.getImage() != null && !memberDTO.getImage().isBlank()) {
+    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
       query += "image = ?,";
       memberDTODeque.addLast(memberDTO.getImage());
     }
@@ -263,9 +263,7 @@ public class MemberDAOImpl implements MemberDAO {
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
-    if (image != null) {
-      image = Config.getProperty("ImagePath") + image;
-    }
+    image = Config.getProperty("ImagePath") + image;
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(memberId);
     memberDTO.setUsername(username);

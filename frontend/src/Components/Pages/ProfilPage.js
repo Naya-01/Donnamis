@@ -2,6 +2,10 @@ import noImage from "../../img/noImage.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 
 const pageDiv = document.querySelector("#page");
+const translationRoles = new Map([
+  ['member', 'Membre'],
+  ['administrator', 'Administrateur']
+]);
 
 const memberLibrary = new MemberLibrary();
 let member = null;
@@ -12,7 +16,7 @@ const modifyProfilRender = () => {
     <div class="container mt-5">
       <div class="text-center">
         <img src="${image}" class="rounded-circle" width="15%">
-        <p>role</p>
+        <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
           <form class="row g-3">
@@ -36,23 +40,28 @@ const modifyProfilRender = () => {
             <div class="col-3">
                <strong><label for="phone_number" class="form-label">Numéro de téléphone</label></strong>
                <input id="phone_number" class="form-control" 
-                    placeholder="numéro de téléphone" type="text">
+                    placeholder="numéro de téléphone" type="text" value="${member.phone
+  === undefined ? ""
+      : member.phone}">
             </div>
             
             <!-- SECOND LINE-->
             <div class="col-6">
               <strong><label for="street" class="form-label">Rue</label></strong>
-              <input type="text" class="form-control" id="street" placeholder="rue">
+              <input type="text" class="form-control" id="street" placeholder="rue" value="${member.address.street}">
             </div>
             
             <div class="col-3">
               <strong><label for="building_number" class="form-label">Numéro</label></strong>
-              <input type="text" class="form-control" id="building_number" placeholder="numéro">
+              <input type="text" class="form-control" id="building_number" placeholder="numéro" value="${member.address.buildingNumber}">
             </div>
             
             <div class="col-3">
               <strong><label for="unit_number" class="form-label">Boîte</label></strong>
-              <input type="text" class="form-control" id="unit_number" placeholder="boîte">
+              <input type="text" class="form-control" id="unit_number" placeholder="boîte" value="${member.address.unitNumber
+  === undefined
+      ? ""
+      : member.address.unitNumber}">
             </div>
             
             
@@ -61,12 +70,12 @@ const modifyProfilRender = () => {
             
             <div class="col-3">
               <strong><label for="postcode" class="form-label">Code postal</label></strong>
-              <input type="text" class="form-control" id="postcode" placeholder="code postal">
+              <input type="text" class="form-control" id="postcode" placeholder="code postal" value="${member.address.postcode}">
             </div>
             
             <div class="col-6">
               <strong><label for="commune" class="form-label">Commune</label></strong>
-              <input type="text" class="form-control" id="commune" placeholder="commune">
+              <input type="text" class="form-control" id="commune" placeholder="commune" value="${member.address.commune}">
             </div>
             
             <div class="col-1"></div>
@@ -114,7 +123,7 @@ const profilRender = () => {
     <div class="container mt-5">
       <div class="text-center">
         <img src="${image}" class="rounded-circle" width="15%">
-        <p>Membre</p>
+        <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
           <form class="row g-3">
@@ -138,7 +147,8 @@ const profilRender = () => {
             
             <div class="col-2">
                <strong><label for="phone_number" class="form-label">Numéro de téléphone</label></strong>
-               <p id="phone_number">/</p>
+               <p id="phone_number">${member.phone === undefined ? "/"
+      : member.phone}</p>
             </div>
             
             <div class="col-2"></div>
@@ -147,17 +157,19 @@ const profilRender = () => {
             <div class="col-3"></div>
             <div class="col-2">
               <strong><label for="street" class="form-label">Rue</label></strong>
-              <p id="street">Rue de l'Eglise</p>
+              <p id="street">${member.address.street}</p>
             </div>
             
             <div class="col-2">
               <strong><label for="building_number" class="form-label">Numéro</label></strong>
-              <p id="building_number">11</p>
+              <p id="building_number">${member.address.buildingNumber}</p>
             </div>
             
             <div class="col-2">
               <strong><label for="unit_number" class="form-label">Boîte</label></strong>
-              <p id="unit_number">B1</p>
+              <p id="unit_number">${member.address.unitNumber === undefined
+      ? "/"
+      : member.address.unitNumber}</p>
             </div>
             <div class="col-3"></div>
             
@@ -166,12 +178,12 @@ const profilRender = () => {
             
             <div class="col-2">
               <strong><label for="postcode" class="form-label">Code postal</label></strong>
-              <p id="postcode">4987</p>
+              <p id="postcode">${member.address.postcode}</p>
             </div>
             
             <div class="col-2">
               <strong><label for="commune" class="form-label">Commune</label></strong>
-              <p id="commune">Stoumont</p>
+              <p id="commune">${member.address.commune}</p>
             </div>
             
             <div class="col-4"></div>
