@@ -59,7 +59,11 @@ Authorization: {{access}}
 
 {
   "memberId": 3,
-  "password":"Mdpuser.1"
+  "password":"Mdpuser.1",
+  "address": {
+    "idMember": 3,
+     "unitNumber": "B2"
+  }
 }
 
 ### Upload picture
