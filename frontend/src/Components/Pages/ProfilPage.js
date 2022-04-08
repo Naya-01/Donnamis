@@ -1,5 +1,7 @@
 import noImage from "../../img/noImage.png";
 
+const pageDiv = document.querySelector("#page");
+
 const modifyProfilRender = () => {
   let image = noImage;
   let page = `
@@ -91,7 +93,15 @@ const modifyProfilRender = () => {
       </div>
     </div>`;
 
-  return page;
+  pageDiv.innerHTML = page;
+
+  const cancelButton = document.querySelector("#submit_cancel_modify");
+
+  cancelButton.addEventListener("click", e => {
+    e.preventDefault();
+
+    profilRender();
+  })
 }
 
 const profilRender = () => {
@@ -164,20 +174,27 @@ const profilRender = () => {
             
             <!-- LAST LINE-->
             <div class="col-12">
-              <button type="submit" class="btn btn-primary" id="submit_valid_modify">Modifier</button>
+              <button type="submit" class="btn btn-primary" id="submit_modify">Modifier</button>
             </div>
           </form>
         </div> 
       </div>
     </div>`;
 
-  return page;
+  pageDiv.innerHTML = page;
+
+  const modifyButton = document.querySelector("#submit_modify");
+
+  modifyButton.addEventListener("click", e => {
+    e.preventDefault();
+
+    modifyProfilRender();
+  })
+
 }
 
 const ProfilPage = () => {
-
-  const pageDiv = document.querySelector("#page");
-  pageDiv.innerHTML = profilRender();
+  profilRender()
 
 }
 
