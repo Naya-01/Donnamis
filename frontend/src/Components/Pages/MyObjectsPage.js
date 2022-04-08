@@ -156,12 +156,9 @@ const objectCards = async (searchPattern, type, status) => {
       offeredObjectButton.type = "button";
       offeredObjectButton.className = "btn btn-success mt-3 mx-1";
       offeredObjectButton.addEventListener("click",async  ()=>{
-        await OfferLibrary.prototype.updateOffer(
-            object.idOffer,
-            object.timeSlot,
-            object.object.description,
-            object.object.type.idType,
-            "given");
+        await ObjectLibrary.prototype.giveObject(
+            object.object.idObject,
+            );
         Redirect("/myObjectsPage");
       });
 

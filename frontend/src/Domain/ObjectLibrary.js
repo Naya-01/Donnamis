@@ -62,6 +62,27 @@ class ObjectLibrary {
     }
 
   }
+
+  async giveObject(idObject){
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "object":{
+            "idObject": idObject,
+          },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/interest/give/', options)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
 }
 
 export default ObjectLibrary;
