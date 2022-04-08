@@ -1,7 +1,7 @@
 import searchBar from "../Module/SearchBar";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import cardList from "../Module/CardList";
-import { RedirectWithParamsInUrl } from "../Router/Router";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 
 /**
  * Render the Objects page
@@ -30,7 +30,8 @@ const AllObjectsPage = async () => {
     if (type === "Tout") {
       type = "";
     }
-    const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value, false, type,status);
+    const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value,
+        false, type, status);
     offersList.innerHTML = ``;
     if (!offers) {
       offersList.innerHTML = `<p>Aucun objet</p>`;
@@ -61,26 +62,30 @@ const AllObjectsPage = async () => {
     await actualizeCards();
   });
 
-  available.addEventListener('click', async () =>{
+  available.addEventListener('click', async () => {
     status = "available";
     await actualizeCards();
   });
 
-  given.addEventListener('click', async () =>{
+  given.addEventListener('click', async () => {
     status = "given";
     await actualizeCards();
   });
 
-  assigned.addEventListener('click', async () =>{
+  assigned.addEventListener('click', async () => {
     status = "assigned";
     await actualizeCards();
   });
 
-  all.addEventListener('click', async () =>{
+  all.addEventListener('click', async () => {
     status = "";
     await actualizeCards();
   });
 
+  const addButton = document.getElementById("add-new-object-button");
+  addButton.addEventListener('click', () => {
+    Redirect("/addNewObjectPage")
+  });
 };
 
 export default AllObjectsPage;

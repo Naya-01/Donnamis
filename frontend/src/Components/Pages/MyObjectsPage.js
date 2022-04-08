@@ -87,6 +87,10 @@ const objectCards = async (searchPattern, type, status) => {
   const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,
       type, status);
   memberCards.innerHTML = ``;
+  console.log("test: " + objects);
+  if (!objects) { // objects is empty
+    return;
+  }
   for (const object of objects) {
     managementList(object.idOffer, memberCards, itemImage,
         object.object.type.typeName + ": " + object.object.description,
@@ -147,7 +151,7 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.innerText = "Non réalisée";
       nonRealisedOfferButton.type = "button";
       nonRealisedOfferButton.className = "btn btn-danger mt-3 mx-1";
-      nonRealisedOfferButton.addEventListener("click", async () =>{
+      nonRealisedOfferButton.addEventListener("click", async () => {
         await ObjectLibrary.prototype.notCollectedObject(
             object.object.idObject,
         );
@@ -176,10 +180,6 @@ const objectCards = async (searchPattern, type, status) => {
       RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + object.idOffer);
     });
 
-    const addButton = document.getElementById("add-new-object-button");
-    addButton.addEventListener('click', () => {
-      Redirect("/addNewObjectPage")
-    });
   }
 }
 
