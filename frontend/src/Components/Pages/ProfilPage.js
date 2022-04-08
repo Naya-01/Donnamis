@@ -1,6 +1,10 @@
 import noImage from "../../img/noImage.png";
+import MemberLibrary from "../../Domain/MemberLibrary";
 
 const pageDiv = document.querySelector("#page");
+
+const memberLibrary = new MemberLibrary();
+let member = null;
 
 const modifyProfilRender = () => {
   let image = noImage;
@@ -16,17 +20,17 @@ const modifyProfilRender = () => {
             <!-- FIRST LINE-->
             <div class="col-3">
               <strong><label for="firstname" class="form-label">Prénom</label></strong>
-              <input type="text" class="form-control" id="firstname" placeholder="prénom">
+              <input type="text" class="form-control" id="firstname" placeholder="prénom" value="${member.firstname}">
             </div>
             
             <div class="col-3">
               <strong><label for="lastname" class="form-label">Nom</label></strong>
-              <input type="text" class="form-control" id="lastname" placeholder="nom">
+              <input type="text" class="form-control" id="lastname" placeholder="nom" value="${member.lastname}">
             </div>
             
             <div class="col-3">
               <strong><label for="username" class="form-label">Pseudonyme</label></strong>
-              <input type="text" class="form-control" id="username" placeholder="pseudonyme">
+              <input type="text" class="form-control" id="username" placeholder="pseudonyme" value="${member.username}">
             </div>
             
             <div class="col-3">
@@ -119,17 +123,17 @@ const profilRender = () => {
             <div class="col-2"></div>
             <div class="col-2">
               <strong><label for="firstname" class="form-label">Prénom</label></strong>
-              <p id="firstname">Caroline</p>
+              <p id="firstname">${member.firstname}</p>
             </div>
             
             <div class="col-2">
               <strong><label for="lastname" class="form-label">Nom</label></strong>
-              <p id="lastname">Line</p>
+              <p id="lastname">${member.lastname}</p>
             </div>
             
             <div class="col-2">
               <strong><label for="username" class="form-label">Pseudonyme</label></strong>
-              <p id="username">Caro</p>
+              <p id="username">${member.username}</p>
             </div>
             
             <div class="col-2">
@@ -193,8 +197,10 @@ const profilRender = () => {
 
 }
 
-const ProfilPage = () => {
-  profilRender()
+const ProfilPage = async () => {
+  member = await memberLibrary.getUserByHisToken();
+  console.log(member);
+  profilRender();
 
 }
 
