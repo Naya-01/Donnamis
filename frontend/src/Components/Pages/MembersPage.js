@@ -6,6 +6,7 @@ import itemImage from "../../img/item.jpg"
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
 import Notification from "../Module/Notification";
+import autocomplete from 'autocompleter';
 
 /**
  * Render the Members page
@@ -19,6 +20,27 @@ const MembersPage = async () => {
 
   // Search members by enter
   const searchBar = document.getElementById("searchBar");
+  autocomplete({
+    minLength: 1,
+    input: searchBar,
+    fetch: async function (text, update) {
+      members = await MemberLibrary.prototype.getMemberBySearchAndStatus(text.toLowerCase(), "valid");
+      const tab = [];
+      if (members) {
+        for (const member of members) {
+          tab.push({
+            label: member.username,
+
+          });
+        }
+      }
+      update(tab);
+    },
+    onSelect: function(item) {
+      searchBar.value = item.label;
+    }
+  });
+
   searchBar.addEventListener("keypress", async (e) => {
     if (e.key === "Enter") {
       members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
