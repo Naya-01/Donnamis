@@ -25,7 +25,6 @@ CREATE TABLE donnamis.addresses
     street          VARCHAR(50) NOT NULL,
     postcode        VARCHAR(15) NOT NULL,
     commune         VARCHAR(50) NOT NULL,
-    country         VARCHAR(50) NOT NULL,
     version         INTEGER     NULL,
     PRIMARY KEY (id_member)
 );

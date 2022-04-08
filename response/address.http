@@ -24,6 +24,5 @@ Content-Type: application/json
   "buildingNumber": "96",
   "street": "chaussée de Waterloo",
   "postcode": "1410",
-  "commune": "Waterloo",
-  "country": "Belgique"
+  "commune": "Waterloo"
 }

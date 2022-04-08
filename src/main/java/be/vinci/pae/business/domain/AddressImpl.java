@@ -19,8 +19,6 @@ public class AddressImpl implements AddressDTO {
   private String postcode;
   @JsonView(Views.Public.class)
   private String commune;
-  @JsonView(Views.Public.class)
-  private String country;
 
 
   @Override
@@ -81,16 +79,6 @@ public class AddressImpl implements AddressDTO {
   @Override
   public void setCommune(String commune) {
     this.commune = commune;
-  }
-
-  @Override
-  public String getCountry() {
-    return this.country;
-  }
-
-  @Override
-  public void setCountry(String country) {
-    this.country = country;
   }
   
 }

@@ -29,9 +29,8 @@ public interface AddressDAO {
    * @param street         the street
    * @param postcode       the postcode
    * @param commune        the commune
-   * @param country        the country
    * @return the addressDTO created
    */
   AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
-      String street, String postcode, String commune, String country);
+      String street, String postcode, String commune);
 }

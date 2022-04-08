@@ -106,7 +106,7 @@ public class MemberDAOImpl implements MemberDAO {
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
             + "m.phone_number, m.password, m.refusal_reason, m.image, a.id_member, a.unit_number, "
-            + "a.building_number, a.street, a.postcode, a.commune, a.country "
+            + "a.building_number, a.street, a.postcode, a.commune "
             + "FROM donnamis.members m, donnamis.addresses a "
             + "WHERE a.id_member = m.id_member ";
 
@@ -230,8 +230,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @param preparedStatement : a prepared statement to execute the query with these attributes :
    *                          m.id_member, m.username, m.lastname, m.firstname, m.status, m.role,
    *                          m.phone_number, m.password, m.refusal_reason, m.image, a.id_member,
-   *                          a.unit_number, a.building_number, a.street, a.postcode, a.commune,
-   *                          a.country
+   *                          a.unit_number, a.building_number, a.street, a.postcode, a.commune
    * @return a list of member.
    */
   private List<MemberDTO> getMemberListByPreparedStatement(PreparedStatement preparedStatement) {
@@ -245,7 +244,7 @@ public class MemberDAOImpl implements MemberDAO {
         AddressDTO addressDTO = addressDAO.getAddress(resultSet.getInt(11),
             resultSet.getString(12), resultSet.getString(13),
             resultSet.getString(14), resultSet.getString(15),
-            resultSet.getString(16), resultSet.getString(17));
+            resultSet.getString(16));
         memberDTO.setAddress(addressDTO);
 
         memberDTOList.add(memberDTO);

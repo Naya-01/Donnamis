@@ -32,7 +32,6 @@ class AddressUCCImplTest {
     AddressFactory addressFactory = locator.getService(AddressFactory.class);
     this.addressDTO = addressFactory.getAddressDTO();
     this.addressDTO.setIdMember(1);
-    this.addressDTO.setCountry("France");
   }
 
   @DisplayName("test updateOne with an existent address")
