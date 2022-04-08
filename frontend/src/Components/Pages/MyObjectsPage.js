@@ -3,6 +3,7 @@ import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
+import ObjectLibrary from "../../Domain/ObjectLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
 
@@ -100,12 +101,9 @@ const objectCards = async (searchPattern, type, status) => {
       cancelButton.type = "button";
       cancelButton.className = "btn btn-danger mt-3 mx-1";
       cancelButton.addEventListener("click", async () => {
-        await OfferLibrary.prototype.updateOffer(
-            object.idOffer,
-            object.timeSlot,
-            object.object.description,
-            object.object.type.idType,
-            "cancelled");
+        await ObjectLibrary.prototype.cancelObject(
+            object.object.idObject
+        );
         Redirect("/myObjectsPage")
       });
 

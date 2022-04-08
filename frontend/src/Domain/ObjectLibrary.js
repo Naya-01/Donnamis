@@ -43,6 +43,26 @@ class ObjectLibrary {
     }
     return newInterest;
   }
+
+  async cancelObject(idObject){
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "object": {
+            "idObject": idObject,
+          }
+        }),
+        headers: {
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/object/cancel/' + options)
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
 }
 
 export default ObjectLibrary;
