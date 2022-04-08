@@ -178,10 +178,6 @@ public class MemberDAOImpl implements MemberDAO {
       Member member = (Member) memberDTO;
       memberDTODeque.addLast(member.hashPassword(member.getPassword()));
     }
-    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
-      query += "image = ?,";
-      memberDTODeque.addLast(memberDTO.getImage());
-    }
 
     query = query.substring(0, query.length() - 1);
     if (query.endsWith("SET")) {
