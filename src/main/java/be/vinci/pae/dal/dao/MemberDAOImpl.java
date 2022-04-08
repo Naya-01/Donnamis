@@ -56,7 +56,11 @@ public class MemberDAOImpl implements MemberDAO {
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
-      return getMemberByPreparedStatement(preparedStatement);
+      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
+      if (memberDTO != null) {
+        memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
+      }
+      return memberDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -259,7 +263,9 @@ public class MemberDAOImpl implements MemberDAO {
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
-    image = Config.getProperty("ImagePath") + image;
+    if (image != null) {
+      image = Config.getProperty("ImagePath") + image;
+    }
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(memberId);
     memberDTO.setUsername(username);

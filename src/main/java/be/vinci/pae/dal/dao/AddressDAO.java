@@ -33,4 +33,13 @@ public interface AddressDAO {
    */
   AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
       String street, String postcode, String commune);
+
+  /**
+   * An address of a member by his member id.
+   *
+   * @param idMember the id of the member address
+   * @return an AddressDTO
+   */
+  AddressDTO getAddressByMemberId(int idMember);
+
 }

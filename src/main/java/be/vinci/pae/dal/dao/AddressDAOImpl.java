@@ -122,6 +122,25 @@ public class AddressDAOImpl implements AddressDAO {
   }
 
   /**
+   * An address of a member by his member id.
+   *
+   * @param idMember the id of the member address
+   * @return an AddressDTO
+   */
+  @Override
+  public AddressDTO getAddressByMemberId(int idMember) {
+    String query = "SELECT id_member, unit_number, building_number, street, postcode, commune "
+        + "FROM donnamis.addresses WHERE id_member = ?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idMember);
+      return getAddressByPreparedStatement(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
+  /**
    * Get an addressDTO with a resultSet.
    *
    * @param preparedStatement a prepared statement that contain id_member, unit_number,
