@@ -50,4 +50,11 @@ public interface ObjectUCC {
    */
   ObjectDTO cancelObject(ObjectDTO objectDTO);
 
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  ObjectDTO notCollectedObject(ObjectDTO objectDTO);
 }

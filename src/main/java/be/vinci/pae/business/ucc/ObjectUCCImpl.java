@@ -192,4 +192,35 @@ public class ObjectUCCImpl implements ObjectUCC {
   }
 
 
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  @Override
+  public ObjectDTO notCollectedObject(ObjectDTO objectDTO) {
+    try {
+      dalService.startTransaction();
+
+      objectDTO.setStatus("not_collected");
+      objectDTO = objectDAO.updateOne(objectDTO);
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("not_collected");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return objectDTO;
+  }
+
+
 }

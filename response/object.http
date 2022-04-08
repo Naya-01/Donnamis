@@ -83,4 +83,13 @@ Authorization: {{token}}
   "idObject": 5
 }
 
+### mark object to not collected
+POST {{baseUri}}/object/notCollected
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 5
+}
+
 

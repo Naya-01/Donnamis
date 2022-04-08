@@ -4,6 +4,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -156,12 +157,38 @@ public class ObjectResource {
     objectDTO = objectUCC.getObject(objectDTO.getIdObject());
 
     if (!ownerDTO.getMemberId().equals(objectDTO.getIdOfferor())) {
-      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+      throw new ForbiddenException("Cet objet ne vous appartient pas");
     }
 
     return objectUCC.cancelObject(objectDTO);
   }
 
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/notCollected")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public ObjectDTO notCollectedObject(@Context ContainerRequest request, ObjectDTO objectDTO) {
 
+    if (objectDTO.getIdObject() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource ");
+    }
+
+    objectDTO = objectUCC.getObject(objectDTO.getIdObject());
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (!ownerDTO.getMemberId().equals(objectDTO.getIdOfferor())) {
+      throw new ForbiddenException("Cet objet ne vous appartient pas");
+    }
+
+    return objectUCC.notCollectedObject(objectDTO);
+
+  }
 
 }
