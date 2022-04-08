@@ -203,8 +203,8 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
 
       MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
-      if (modifiedMember != null && memberDTO.getAddress() != null
-          && memberDTO.getAddress().getIdMember() == memberDTO.getMemberId()) {
+      if (modifiedMember != null && memberDTO.getAddress() != null) {
+        memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         modifiedMember.setAddress(addressDAO.updateOne(memberDTO.getAddress()));
       }
 
