@@ -2,6 +2,7 @@ import noImage from "../../img/noImage.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import Address from "../../Domain/Address";
 import Member from "../../Domain/Member";
+import Notification from "../Module/Notification";
 import Navbar from "../Navbar/Navbar";
 
 const pageDiv = document.querySelector("#page");
@@ -11,6 +12,7 @@ const translationRoles = new Map([
 ]);
 
 const memberLibrary = new MemberLibrary();
+const toast = new Notification().getNotification("top-end");
 let member = null;
 
 const modifyProfilRender = async () => {
@@ -89,12 +91,12 @@ const modifyProfilRender = async () => {
             
             <div class="col-5">
               <strong><label for="password" class="form-label">Nouveau mot de passe</label></strong>
-              <input type="text" class="form-control" id="password" placeholder="Nouveau mot de passe">
+              <input type="password" class="form-control" id="password" placeholder="Nouveau mot de passe">
             </div>
             
             <div class="col-5">
               <strong><label for="confirm_password" class="form-label">Confirmer mot de passe</label></strong>
-              <input type="text" class="form-control" id="confirm_password" placeholder="confirmer nouveau mot de passe">
+              <input type="password" class="form-control" id="confirm_password" placeholder="confirmer nouveau mot de passe">
             </div>
             
             <div class="col-1"></div>
@@ -147,6 +149,14 @@ const modifyProfilRender = async () => {
       }
     }
 
+    if (password.length !== 0 && confirmPassword !== password) {
+      toast.fire({
+        icon: 'error',
+        title: 'Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques'
+      })
+      return;
+    }
+
     let newAddress = new Address(fields[6], fields[5], fields[4], fields[7],
         fields[8]);
 
@@ -154,8 +164,9 @@ const modifyProfilRender = async () => {
         fields[3], newAddress, member.memberId);
 
     let memberUpdated = await memberLibrary.updateMember(newMember);
-    if (fields[1] !== member.username)
+    if (fields[1] !== member.username) {
       await Navbar();
+    }
     if (memberUpdated != null) {
       member = memberUpdated;
     }
