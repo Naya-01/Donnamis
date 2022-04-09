@@ -1,9 +1,10 @@
 "use strict";
 
 class Member {
-  // constructor for register
-  constructor(username, lastname, firstname, password, phone, address) {
-    this.memberId = null;
+
+  constructor(username, lastname, firstname, password, phone, address,
+      memberId = null) {
+    this.memberId = memberId;
     this.username = username;
     this.lastname = lastname;
     this.firstname = firstname;
@@ -15,6 +16,7 @@ class Member {
     this.address = address;
     this.image = null;
   }
+
 }
 
 // default export

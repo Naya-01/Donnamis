@@ -1,5 +1,8 @@
 import noImage from "../../img/noImage.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
+import Address from "../../Domain/Address";
+import Member from "../../Domain/Member";
+import Navbar from "../Navbar/Navbar";
 
 const pageDiv = document.querySelector("#page");
 const translationRoles = new Map([
@@ -10,7 +13,7 @@ const translationRoles = new Map([
 const memberLibrary = new MemberLibrary();
 let member = null;
 
-const modifyProfilRender = () => {
+const modifyProfilRender = async () => {
   let image = noImage;
   let page = `
     <div class="container mt-5">
@@ -109,15 +112,59 @@ const modifyProfilRender = () => {
   pageDiv.innerHTML = page;
 
   const cancelButton = document.querySelector("#submit_cancel_modify");
+  const validModifyButton = document.querySelector("#submit_valid_modify");
 
   cancelButton.addEventListener("click", e => {
     e.preventDefault();
-
     profilRender();
   })
+
+  validModifyButton.addEventListener("click", async e => {
+    e.preventDefault();
+    const username = document.getElementById("username").value.split(' ').join(
+        '');
+    const lastname = document.getElementById("lastname").value.trim();
+    const firstname = document.getElementById("firstname").value.trim();
+    const phoneNumber = document.getElementById("phone_number").value.trim();
+
+    const street = document.getElementById("street").value.trim();
+    const buildingNumber = document.getElementById(
+        "building_number").value.trim();
+    const unitNumber = document.getElementById("unit_number").value.trim();
+    const postcode = document.getElementById("postcode").value.trim();
+    const commune = document.getElementById("commune").value.trim();
+
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById(
+        "confirm_password").value.trim();
+
+    let fields = [username, lastname, firstname, phoneNumber, street,
+      buildingNumber, unitNumber, postcode, commune, confirmPassword];
+
+    for (let i = 0; i < fields.length; i++) {
+      if (fields[i].length === 0) {
+        fields[i] = null;
+      }
+    }
+
+    let newAddress = new Address(fields[6], fields[5], fields[4], fields[7],
+        fields[8]);
+
+    let newMember = new Member(fields[0], fields[1], fields[2], fields[9],
+        fields[3], newAddress, member.memberId);
+
+    let memberUpdated = await memberLibrary.updateMember(newMember);
+    if (fields[1] !== member.username)
+      await Navbar();
+    if (memberUpdated != null) {
+      member = memberUpdated;
+    }
+    await profilRender();
+
+  });
 }
 
-const profilRender = () => {
+const profilRender = async () => {
   let image = noImage;
   let page = `
     <div class="container mt-5">
@@ -201,18 +248,17 @@ const profilRender = () => {
 
   const modifyButton = document.querySelector("#submit_modify");
 
-  modifyButton.addEventListener("click", e => {
+  modifyButton.addEventListener("click", async e => {
     e.preventDefault();
 
-    modifyProfilRender();
+    await modifyProfilRender();
   })
 
 }
 
 const ProfilPage = async () => {
   member = await memberLibrary.getUserByHisToken();
-  console.log(member);
-  profilRender();
+  await profilRender();
 
 }
 
