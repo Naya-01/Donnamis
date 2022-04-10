@@ -123,33 +123,60 @@ const modifyProfilRender = async () => {
 
   validModifyButton.addEventListener("click", async e => {
     e.preventDefault();
-    const username = document.getElementById("username").value.split(' ').join(
-        '');
-    const lastname = document.getElementById("lastname").value.trim();
-    const firstname = document.getElementById("firstname").value.trim();
-    const phoneNumber = document.getElementById("phone_number").value.trim();
+    const username = document.getElementById("username");
+    const lastname = document.getElementById("lastname");
+    const firstname = document.getElementById("firstname");
+    const phoneNumber = document.getElementById("phone_number");
 
-    const street = document.getElementById("street").value.trim();
+    const street = document.getElementById("street");
     const buildingNumber = document.getElementById(
-        "building_number").value.trim();
-    const unitNumber = document.getElementById("unit_number").value.trim();
-    const postcode = document.getElementById("postcode").value.trim();
-    const commune = document.getElementById("commune").value.trim();
+        "building_number");
+    const unitNumber = document.getElementById("unit_number");
+    const postcode = document.getElementById("postcode");
+    const commune = document.getElementById("commune");
 
-    const password = document.getElementById("password").value.trim();
+    const password = document.getElementById("password");
     const confirmPassword = document.getElementById(
-        "confirm_password").value.trim();
+        "confirm_password");
 
-    let fields = [username, lastname, firstname, phoneNumber, street,
-      buildingNumber, unitNumber, postcode, commune, confirmPassword];
+    let nullFields = [phoneNumber.value.trim(), unitNumber.value.trim()];
+    let notNullFields = [username, lastname, firstname, street, buildingNumber,
+      postcode, commune];
 
-    for (let i = 0; i < fields.length; i++) {
-      if (fields[i].length === 0) {
-        fields[i] = null;
+    notNullFields.forEach(function (item) {
+      if (item.classList.contains("border-danger")) {
+        item.classList.remove("border-danger");
+      }
+    });
+
+    let allNotNullFieldsFilled = true;
+
+    //check if all not null fields are filled
+    notNullFields.forEach(function (item) {
+      if (item.value.trim().length === 0) {
+        item.classList.add("border-danger");
+        if (allNotNullFieldsFilled) {
+          allNotNullFieldsFilled = false;
+        }
+      }
+    });
+
+    if (!allNotNullFieldsFilled) {
+      toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir tout les champs obligatoires !'
+      })
+      return;
+    }
+
+    for (let i = 0; i < nullFields.length; i++) {
+      if (nullFields[i].length === 0) {
+        nullFields[i] = null;
       }
     }
 
-    if (password.length !== 0 && confirmPassword !== password) {
+    if (password.value.trim().length !== 0 && confirmPassword.value.trim()
+        !== password.value.trim()) {
       toast.fire({
         icon: 'error',
         title: 'Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques'
@@ -157,14 +184,17 @@ const modifyProfilRender = async () => {
       return;
     }
 
-    let newAddress = new Address(fields[6], fields[5], fields[4], fields[7],
-        fields[8]);
+    let newAddress = new Address(nullFields[1] === null ? null : nullFields[1],
+        buildingNumber.value.trim(), street.value.trim(),
+        postcode.value.trim(), commune.value.trim());
 
-    let newMember = new Member(fields[0], fields[1], fields[2], fields[9],
-        fields[3], newAddress, member.memberId);
+    let newMember = new Member(username.value.split(' ').join(''),
+        lastname.value.trim(), firstname.value.trim(), password.value.trim(),
+        nullFields[0] === null ? null : nullFields[0], newAddress,
+        member.memberId);
 
     let memberUpdated = await memberLibrary.updateMember(newMember);
-    if (fields[1] !== member.username) {
+    if (username.value.trim() !== member.username) {
       await Navbar();
     }
     if (memberUpdated != null) {
