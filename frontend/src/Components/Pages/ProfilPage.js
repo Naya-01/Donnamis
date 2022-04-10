@@ -4,6 +4,8 @@ import Address from "../../Domain/Address";
 import Member from "../../Domain/Member";
 import Notification from "../Module/Notification";
 import Navbar from "../Navbar/Navbar";
+import {getSessionObject} from "../../utils/session";
+import {Redirect} from "../Router/Router";
 
 const pageDiv = document.querySelector("#page");
 const translationRoles = new Map([
@@ -99,7 +101,7 @@ const modifyProfilRender = async () => {
             
             <div class="col-5">
               <strong><label for="password" class="form-label">Nouveau mot de passe</label></strong>
-              <input type="password" class="form-control" id="password" placeholder="Nouveau mot de passe">
+              <input type="password" class="form-control" id="password" placeholder="nouveau mot de passe">
             </div>
             
             <div class="col-5">
@@ -408,6 +410,10 @@ const profilRender = async () => {
 }
 
 const ProfilPage = async () => {
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
   member = await memberLibrary.getUserByHisToken();
   await profilRender();
 
