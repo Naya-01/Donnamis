@@ -13,6 +13,14 @@ const translationRoles = new Map([
 
 const memberLibrary = new MemberLibrary();
 const toast = new Notification().getNotification("top-end");
+
+const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
+const regNumberPhone =
+    new RegExp('^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$');
+//starting with numbers
+const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
+const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
+
 let member = null;
 
 const modifyProfilRender = async () => {
@@ -169,19 +177,121 @@ const modifyProfilRender = async () => {
       return;
     }
 
-    for (let i = 0; i < nullFields.length; i++) {
-      if (nullFields[i].length === 0) {
-        nullFields[i] = null;
-      }
+    if (phoneNumber.classList.contains("border-danger")) {
+      phoneNumber.classList.remove("border-danger");
+    }
+    if (unitNumber.classList.contains("border-danger")) {
+      unitNumber.classList.remove("border-danger");
+    }
+    if (password.classList.contains("border-danger")) {
+      password.classList.remove("border-danger");
+    }
+    if (confirmPassword.classList.contains("border-danger")) {
+      confirmPassword.classList.remove("border-danger");
+    }
+
+    if (username.value.trim().length > 50) {
+      username.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le pseudonyme est trop grand'
+      })
+      return;
+    }
+    if (lastname.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(lastname.value.trim())) {
+      lastname.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le nom est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (firstname.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(firstname.value.trim())) {
+      firstname.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le prénom est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (phoneNumber.value.trim().length !== 0
+        && !regNumberPhone.test(phoneNumber.value.trim())) {
+      phoneNumber.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le numéro de téléphone est invalide'
+      })
+      return;
+    }
+
+    if (unitNumber.value.trim().length > 15) {
+      unitNumber.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le numéro de boite est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (buildingNumber.value.trim().length > 8 ||
+        !regOnlyLettersAndNumbers.test(buildingNumber.value.trim())) {
+      buildingNumber.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le numéro de maison est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (street.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(street.value.trim())) {
+      street.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le nom de rue est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (postcode.value.trim().length > 15 ||
+        !regOnlyNumbersAndDash.test(postcode.value.trim())) {
+      postcode.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le numéro de code postal est trop grand ou est invalide'
+      })
+      return;
+    }
+
+    if (commune.value.trim().length > 50 ||
+        !regOnlyLettersAndDash.test(commune.value.trim())) {
+      commune.classList.add("border-danger");
+      toast.fire({
+        icon: 'error',
+        title: 'Le nom de commune est trop grand ou est invalide'
+      })
+      return;
     }
 
     if (password.value.trim().length !== 0 && confirmPassword.value.trim()
         !== password.value.trim()) {
+      password.classList.add("border-danger");
+      confirmPassword.classList.add("border-danger");
       toast.fire({
         icon: 'error',
         title: 'Le nouveau mot de passe et le mot de passe de confirmation ne sont pas identiques'
       })
       return;
+    }
+
+    for (let i = 0; i < nullFields.length; i++) {
+      if (nullFields[i].length === 0) {
+        nullFields[i] = null;
+      }
     }
 
     let newAddress = new Address(nullFields[1] === null ? null : nullFields[1],

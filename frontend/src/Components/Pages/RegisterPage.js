@@ -12,9 +12,6 @@ const regNumberPhone =
     new RegExp('^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$');
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
-//starting with numbers
-const regOnlyLettersAndNumbersOrNothing =
-    new RegExp('^([0-9]+[a-zA-Z]?)*$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 const toast = new Notification().getNotification("bottom");
 
