@@ -24,13 +24,13 @@ const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 
 let member = null;
+let image;
 
 const modifyProfilRender = async () => {
-  let image = noImage;
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle" width="15%">
+        <img src="${image}" class="rounded-circle" width="15%" alt="profil image">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -318,11 +318,10 @@ const modifyProfilRender = async () => {
 }
 
 const profilRender = async () => {
-  let image = noImage;
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle" width="15%">
+        <img src="${image}" class="rounded-circle" width="15%" alt="profil image">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -415,6 +414,14 @@ const ProfilPage = async () => {
     return;
   }
   member = await memberLibrary.getUserByHisToken();
+  console.log(member);
+  if (!member.image.endsWith("\\null")) {
+    console.log("il y a une image");
+    image = "/api/member/getPicture/" + member.memberId;
+    console.log(image);
+  } else {
+    image = noImage;
+  }
   await profilRender();
 
 }
