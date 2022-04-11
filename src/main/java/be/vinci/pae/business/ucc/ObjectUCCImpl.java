@@ -4,7 +4,6 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -35,7 +34,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
       }
-      
+
       try {
         File file = new File(objectDTO.getImage());
         picture = ImageIO.read(file);
@@ -135,13 +134,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
-      }
-      if (objectDTO.getImage() != null) {
-        File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
-
-        if (f.exists()) {
-          f.delete();
-        }
       }
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
