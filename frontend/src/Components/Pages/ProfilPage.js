@@ -440,12 +440,6 @@ const profilRender = async () => {
     await modifyProfilRender();
   })
 
-  modifyButton.addEventListener("click", async e => {
-    e.preventDefault();
-
-    await modifyProfilRender();
-  })
-
 }
 
 const ProfilPage = async () => {
