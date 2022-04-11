@@ -35,7 +35,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
       }
-      
+
       try {
         File file = new File(objectDTO.getImage());
         picture = ImageIO.read(file);
@@ -136,12 +136,10 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
-      if (objectDTO.getImage() != null) {
-        File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
 
-        if (f.exists()) {
-          f.delete();
-        }
+      File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
+      if (f.exists()) {
+        f.delete();
       }
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);

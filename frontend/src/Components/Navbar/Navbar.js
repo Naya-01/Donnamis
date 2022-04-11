@@ -97,7 +97,7 @@ const Navbar = async () => {
                         </a>
                         <ul aria-labelledby="navbarDropdown" class="bg-navbar dropdown-menu dropdown-menu-end">
                             <li>
-                              <a class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#">
+                              <a class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" data-uri="/profil">
                                 Voir son profil
                               </a>
                             </li>

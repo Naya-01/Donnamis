@@ -1,6 +1,7 @@
 package be.vinci.pae.ihm.manager;
 
 import be.vinci.pae.utils.Config;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -40,6 +41,11 @@ public class ImageImpl implements Image {
       internalPath =
           "img\\" + path + filename + "." + fileMime.getMediaType().getSubtype();
       String finalPath = Config.getProperty("ImagePath") + internalPath;
+      File f = new File(finalPath);
+      if (f.exists()) {
+        f.delete();
+      }
+
       Files.copy(file, Paths.get(finalPath));
     } catch (IOException e) {
       e.printStackTrace();

@@ -8,8 +8,7 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.LinkedList;
 
 public class AddressDAOImpl implements AddressDAO {
 
@@ -26,28 +25,27 @@ public class AddressDAOImpl implements AddressDAO {
    */
   @Override
   public AddressDTO updateOne(AddressDTO addressDTO) {
-    Deque<String> addressDTODeque = new ArrayDeque<>();
+    LinkedList<String> addressDTOList = new LinkedList<>();
     String query = "UPDATE donnamis.addresses SET ";
 
-    if (addressDTO.getUnitNumber() != null && !addressDTO.getUnitNumber().isEmpty()) {
-      query += "unit_number = ?,";
-      addressDTODeque.addLast(addressDTO.getUnitNumber());
-    }
-    if (addressDTO.getBuildingNumber() != null && !addressDTO.getBuildingNumber().isEmpty()) {
+    query += "unit_number = ?,";
+    addressDTOList.addLast(addressDTO.getUnitNumber());
+
+    if (addressDTO.getBuildingNumber() != null && !addressDTO.getBuildingNumber().isBlank()) {
       query += "building_number = ?,";
-      addressDTODeque.addLast(addressDTO.getBuildingNumber());
+      addressDTOList.addLast(addressDTO.getBuildingNumber());
     }
-    if (addressDTO.getStreet() != null && !addressDTO.getStreet().isEmpty()) {
+    if (addressDTO.getStreet() != null && !addressDTO.getStreet().isBlank()) {
       query += "street = ?,";
-      addressDTODeque.addLast(addressDTO.getStreet());
+      addressDTOList.addLast(addressDTO.getStreet());
     }
-    if (addressDTO.getPostcode() != null && !addressDTO.getPostcode().isEmpty()) {
+    if (addressDTO.getPostcode() != null && !addressDTO.getPostcode().isBlank()) {
       query += "postcode = ?,";
-      addressDTODeque.addLast(addressDTO.getPostcode());
+      addressDTOList.addLast(addressDTO.getPostcode());
     }
-    if (addressDTO.getCommune() != null && !addressDTO.getCommune().isEmpty()) {
+    if (addressDTO.getCommune() != null && !addressDTO.getCommune().isBlank()) {
       query += "commune = ?,";
-      addressDTODeque.addLast(addressDTO.getCommune());
+      addressDTOList.addLast(addressDTO.getCommune());
     }
     query = query.substring(0, query.length() - 1);
     if (query.endsWith("SET")) {
@@ -59,7 +57,7 @@ public class AddressDAOImpl implements AddressDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       int cnt = 1;
-      for (String str : addressDTODeque) {
+      for (String str : addressDTOList) {
         preparedStatement.setString(cnt++, str);
       }
       preparedStatement.setInt(cnt, addressDTO.getIdMember());
@@ -119,6 +117,25 @@ public class AddressDAOImpl implements AddressDAO {
     addressDTO.setBuildingNumber(buildingNumber);
     addressDTO.setCommune(commune);
     return addressDTO;
+  }
+
+  /**
+   * An address of a member by his member id.
+   *
+   * @param idMember the id of the member address
+   * @return an AddressDTO
+   */
+  @Override
+  public AddressDTO getAddressByMemberId(int idMember) {
+    String query = "SELECT id_member, unit_number, building_number, street, postcode, commune "
+        + "FROM donnamis.addresses WHERE id_member = ?";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idMember);
+      return getAddressByPreparedStatement(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
   }
 
   /**

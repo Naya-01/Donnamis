@@ -10,6 +10,7 @@ import RegisterPage from "../Pages/RegisterPage";
 import MyObjectsPage from "../Pages/MyObjectsPage";
 import MembersPage from "../Pages/MembersPage";
 import AssignedObjectsPage from "../Pages/AssignedObjectsPage";
+import ProfilPage from "../Pages/ProfilPage";
 
 import {
   getSessionObject,
@@ -29,7 +30,8 @@ const routes = {
   "/myObjectPage": MyObjectPage,
   "/myObjectsPage": MyObjectsPage,
   "/members": MembersPage,
-  "/assignedObjects": AssignedObjectsPage
+  "/assignedObjects": AssignedObjectsPage,
+  "/profil": ProfilPage
 };
 
 const refreshToken = async () => {

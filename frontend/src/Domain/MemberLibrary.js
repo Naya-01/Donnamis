@@ -125,6 +125,49 @@ class MemberLibrary {
     }
     return null;
   }
+
+  async updateMember(member) {
+    let response;
+    try {
+      let options = {
+        method: "PUT",
+        body: JSON.stringify(member),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/member/update", options);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+    if (response.status === 200) {
+      return await response.json();
+    }
+    return null;
+  }
+
+  async setImage(formData) {
+    let response = null;
+    try {
+      let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch('api/member/setPicture/', options)
+    } catch (err) {
+      console.log(err);
+    }
+    let newMember;
+    if (response.status === 200) {
+      newMember = await response.json();
+    }
+    return newMember;
+  }
 }
 
 export default MemberLibrary;
