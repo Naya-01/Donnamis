@@ -328,10 +328,11 @@ const modifyProfilRender = async () => {
         nullFields[0] === null ? null : nullFields[0], newAddress,
         member.memberId);
 
+    let memberWithImage;
     if (fileInput.files[0] !== undefined) {
       let formData = new FormData();
       formData.append('file', fileInput.files[0]);
-      image = provImage;
+      memberWithImage = await memberLibrary.setImage(formData);
     }
 
     let memberUpdated = await memberLibrary.updateMember(newMember);
@@ -340,6 +341,10 @@ const modifyProfilRender = async () => {
     }
     if (memberUpdated != null) {
       member = memberUpdated;
+    }
+
+    if (memberWithImage !== undefined) {
+      image = provImage;
     }
     await profilRender();
 

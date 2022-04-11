@@ -147,6 +147,27 @@ class MemberLibrary {
     }
     return null;
   }
+
+  async setImage(formData) {
+    let response = null;
+    try {
+      let options = {
+        method: 'POST',
+        body: formData,
+        headers: {
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch('api/member/setPicture/', options)
+    } catch (err) {
+      console.log(err);
+    }
+    let newMember;
+    if (response.status === 200) {
+      newMember = await response.json();
+    }
+    return newMember;
+  }
 }
 
 export default MemberLibrary;
