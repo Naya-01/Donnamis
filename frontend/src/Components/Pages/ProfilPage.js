@@ -25,12 +25,14 @@ const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 
 let member = null;
 let image;
+let provImage = null;
 
 const modifyProfilRender = async () => {
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle" width="15%" alt="profil image">
+        <img src="${image}" class="rounded-circle clickable" width="15%" alt="profil image" id="image">
+        <input type="file" id="upload" style="display:none" name="upload">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -125,6 +127,26 @@ const modifyProfilRender = async () => {
 
   const cancelButton = document.querySelector("#submit_cancel_modify");
   const validModifyButton = document.querySelector("#submit_valid_modify");
+  const imageField = document.getElementById("image");
+  let fileInput = document.querySelector('input[name=upload]');
+
+  imageField.onclick = function () {
+    fileInput.click();
+  }
+
+  fileInput.onchange = function () {
+
+    let reader = new FileReader();
+
+    reader.onloadend = function () {
+      imageField.src = reader.result;
+      provImage = reader.result;
+    }
+
+    if (fileInput.files[0]) {
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+  }
 
   cancelButton.addEventListener("click", e => {
     e.preventDefault();
@@ -133,6 +155,7 @@ const modifyProfilRender = async () => {
 
   validModifyButton.addEventListener("click", async e => {
     e.preventDefault();
+
     const username = document.getElementById("username");
     const lastname = document.getElementById("lastname");
     const firstname = document.getElementById("firstname");
@@ -305,6 +328,12 @@ const modifyProfilRender = async () => {
         nullFields[0] === null ? null : nullFields[0], newAddress,
         member.memberId);
 
+    if (fileInput.files[0] !== undefined) {
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      image = provImage;
+    }
+
     let memberUpdated = await memberLibrary.updateMember(newMember);
     if (username.value.trim() !== member.username) {
       await Navbar();
@@ -406,6 +435,12 @@ const profilRender = async () => {
     await modifyProfilRender();
   })
 
+  modifyButton.addEventListener("click", async e => {
+    e.preventDefault();
+
+    await modifyProfilRender();
+  })
+
 }
 
 const ProfilPage = async () => {
@@ -414,14 +449,12 @@ const ProfilPage = async () => {
     return;
   }
   member = await memberLibrary.getUserByHisToken();
-  console.log(member);
   if (!member.image.endsWith("\\null")) {
-    console.log("il y a une image");
     image = "/api/member/getPicture/" + member.memberId;
-    console.log(image);
   } else {
     image = noImage;
   }
+  provImage = image;
   await profilRender();
 
 }
