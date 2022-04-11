@@ -11,6 +11,7 @@ import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -79,6 +80,11 @@ public class MemberUCCImpl implements MemberUCC {
       memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
+      }
+
+      File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
+      if (f.exists()) {
+        f.delete();
       }
 
       memberDTO = memberDAO.updateProfilPicture(path, id);
