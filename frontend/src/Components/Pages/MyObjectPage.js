@@ -1,6 +1,6 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
-import imageOfObject from "../../img/noImage.png";
+import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
@@ -21,6 +21,7 @@ const dictionnary = new Map([
 ]);
 let idOffer;
 let idObject;
+let imageOfObject;
 let english_status;
 let idType;
 let description;
@@ -53,14 +54,15 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-  //TODO
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
     image = "/api/object/getPicture/" + idObject;
     imageOfObject = image;
   }
-  
+  else{
+    imageOfObject = noImage;
+  }
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
@@ -136,7 +138,6 @@ const MyObjectPage = async () => {
                 <!-- The modify button -->
                 <div id="divB" class="col text-center">
                   <span id="divDate"></span>
-                  <!--<input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">-->
                 </div>
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
