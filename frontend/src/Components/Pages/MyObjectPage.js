@@ -136,8 +136,7 @@ const MyObjectPage = async () => {
                 <!-- The modify button -->
                 <div id="divB" class="col text-center">
                   <span id="divDate"></span>
-                  <input type="button"  class="btn btn-primary" 
-                    id="modifyObjectButton" value="Modifier">
+                  <!--<input type="button"  class="btn btn-primary" id="modifyObjectButton" value="Modifier">-->
                 </div>
               </div>
               <div id="nbMembersInterested" class="text-center p-2">
@@ -150,14 +149,22 @@ const MyObjectPage = async () => {
     </div>
   </div>`;
 
-  let button = document.getElementById("modifyObjectButton");
-  if (english_status === "given") {
-    button.disabled = true;
-  }
+
   // if this is the object of the member connected
   if (idMemberConnected === offer.object.idOfferor) {
     document.getElementById("titleObject").textContent = "Votre objet";
-    button.addEventListener("click", changeToForm);
+    //add the modifier bouton
+    let divB = document.getElementById("divB");
+    let new_button = document.createElement("input");
+    new_button.type = "button";
+    new_button.className = "btn btn-primary";
+    new_button.value = "Modifier";
+    new_button.id = "modifyObjectButton";
+    new_button.addEventListener("click", changeToForm);
+    if (english_status === "given") {
+      new_button.disabled = true;
+    }
+    divB.appendChild(new_button);
   }
   // if this is not the object of the member connected
   else {
@@ -167,9 +174,6 @@ const MyObjectPage = async () => {
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-
-    button.id = "interestedButton";
-    button.value = "Je suis interessé";
     // date of disponibility
     let labelDate = document.createElement("label");
     labelDate.for = "input_date";
@@ -189,8 +193,13 @@ const MyObjectPage = async () => {
     document.getElementById("divDate").appendChild(labelDate);
     document.getElementById("divDate").appendChild(input_date);
 
-    button.addEventListener("click", async () => {
-      button.disabled = true;
+    let new_button = document.createElement("input");
+    new_button.id = "interestedButton";
+    new_button.value = "Je suis interessé";
+    new_button.type = "button";
+    new_button.className = "btn btn-primary";
+    new_button.addEventListener("click", async () => {
+      new_button.disabled = true;
       input_date.disabled = true;
       await interestLibrary.addOne(offer.object.idObject, input_date.value)
       // the notification to show that the interest is send
@@ -200,11 +209,11 @@ const MyObjectPage = async () => {
         title: 'Votre intérêt a bien été pris en compte.'
       })
     });
+    document.getElementById("divB").appendChild(new_button);
     if (isInterested || (english_status !== "interested" && english_status
         !== "available")) {
       document.getElementById("divDate").remove();
       document.getElementById("interestedButton").remove();
-
     }
 
   }
