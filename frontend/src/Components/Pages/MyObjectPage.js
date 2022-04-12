@@ -54,7 +54,6 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-  console.log(offer.date);
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
@@ -204,11 +203,19 @@ const MyObjectPage = async () => {
     new_button.type = "button";
     new_button.className = "btn btn-primary";
     new_button.addEventListener("click", async () => {
+      let notif = notificationModule.getNotification();
+      //if there is no date specified
+      if(input_date.value.length === 0){
+        notif.fire({
+          icon: 'error',
+          title: 'Aucune date renseignée'
+        })
+        return;
+      }
       new_button.disabled = true;
       input_date.disabled = true;
       await interestLibrary.addOne(offer.object.idObject, input_date.value)
       // the notification to show that the interest is send
-      let notif = notificationModule.getNotification();
       notif.fire({
         icon: 'success',
         title: 'Votre intérêt a bien été pris en compte.'
@@ -281,6 +288,7 @@ async function changeToForm(e) {
   label_image.setAttribute("for", "file_input");
   let image = document.createElement("img");
   image.alt = "no image";
+  image.className = "clickable";
   image.style.width = "75%";
   image.setAttribute("src", imageOfObject);
   label_image.appendChild(image);
