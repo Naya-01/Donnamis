@@ -54,6 +54,7 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
+  console.log(offer.date);
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
@@ -106,6 +107,9 @@ const MyObjectPage = async () => {
                       <p id="description_object">${description}</p>
                     </div>
                 </div>
+              </div>
+              <div class="row p-2">
+                <p class="text-muted">Date de publication : ${offer.date[2]}/${offer.date[1]}/${offer.date[0]}</p>
               </div>
               <div class="row p-2">
                 <!-- the time slot-->
