@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class MemberDAOImpl implements MemberDAO {
   @Inject
   private AddressDAO addressDAO;
 
+  @Inject
+  private AbstractDAO abstractDAO;
+
   /**
    * Get a member we want to retrieve by his username.
    *
@@ -32,12 +36,14 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO getOne(String username) {
-    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason, image FROM donnamis.members WHERE username = ?";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, username);
-      return getMemberByPreparedStatement(preparedStatement);
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("username", username);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(map, MemberDTO.class)) {
+      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
+      if (memberDTO != null) {
+        memberDTO.setAddress(addressDAO.getAddressByMemberId(memberDTO.getMemberId()));
+      }
+      return memberDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -49,12 +55,10 @@ public class MemberDAOImpl implements MemberDAO {
    * @param id : the id of the member we want to retrieve
    * @return the member
    */
-  public MemberDTO getOne(int id) {
-    String query = "SELECT id_member, username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason, image FROM donnamis.members WHERE id_member = ?";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, id);
+  public MemberDTO getOne(Integer id) {
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("id_member", id);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(map, MemberDTO.class)) {
       MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       if (memberDTO != null) {
         memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
@@ -264,7 +268,9 @@ public class MemberDAOImpl implements MemberDAO {
   private MemberDTO getMember(int memberId, String username, String lastName, String firstname,
       String status, String role, String phone, String password, String reasonRefusal,
       String image) {
-    image = Config.getProperty("ImagePath") + image;
+    if (image != null) {
+      image = Config.getProperty("ImagePath") + image;
+    }
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(memberId);
     memberDTO.setUsername(username);

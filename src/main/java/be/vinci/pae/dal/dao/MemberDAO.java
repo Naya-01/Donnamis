@@ -19,7 +19,7 @@ public interface MemberDAO {
    * @param id : the id of the member we want to retrieve
    * @return the member
    */
-  MemberDTO getOne(int id);
+  MemberDTO getOne(Integer id);
 
   /**
    * Add a member in the DB and make a memberDTO.
