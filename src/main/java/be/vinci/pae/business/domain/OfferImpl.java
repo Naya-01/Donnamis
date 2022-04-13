@@ -15,6 +15,8 @@ public class OfferImpl implements OfferDTO {
   @JsonView(Views.Public.class)
   private LocalDate date;
   @JsonView(Views.Public.class)
+  private LocalDate oldDate;
+  @JsonView(Views.Public.class)
   private String timeSlot;
   @JsonView(Views.Public.class)
   private String status;
@@ -39,6 +41,16 @@ public class OfferImpl implements OfferDTO {
   @Override
   public void setDate(LocalDate date) {
     this.date = date;
+  }
+
+  @Override
+  public LocalDate getOldDate() {
+    return oldDate;
+  }
+
+  @Override
+  public void setOldDate(LocalDate oldDate) {
+    this.oldDate = oldDate;
   }
 
   @Override
