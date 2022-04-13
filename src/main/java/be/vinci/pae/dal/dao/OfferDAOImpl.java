@@ -38,10 +38,13 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAll(String searchPattern, int idMember, String type,
       String objectStatus) {
-    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
-        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
-        + "ty.is_default FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
-        + "WHERE ob.id_object = of.id_object AND ty.id_type = ob.id_type ";
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,\n"
+        + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name,\n"
+        + "       ty.is_default, of.status "
+        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty\n"
+        + "WHERE ob.id_object = of.id_object AND ty.id_type = ob.id_type AND of.date = "
+        + "(SELECT max(of2.date) FROM donnamis.offers of2 WHERE of2.id_object = of.id_object\n"
+        + "      ORDER BY of.date DESC) ";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
@@ -56,9 +59,9 @@ public class OfferDAOImpl implements OfferDAO {
     }
     if (objectStatus != null && !objectStatus.isEmpty()) {
       if (objectStatus.equals("available")) {
-        query += "AND (LOWER(ob.status) LIKE 'available' OR LOWER(ob.status) LIKE 'interested') ";
+        query += "AND (LOWER(of.status) LIKE 'available' OR LOWER(of.status) LIKE 'interested') ";
       } else {
-        query += "AND LOWER(ob.status) LIKE ?";
+        query += "AND LOWER(of.status) LIKE ?";
       }
     }
 
@@ -295,6 +298,7 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTO.setIdOffer(resultSet.getInt(1));
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
+        offerDTO.setStatus(resultSet.getString(12));
 
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));

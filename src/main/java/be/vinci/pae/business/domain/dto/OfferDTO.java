@@ -22,4 +22,8 @@ public interface OfferDTO {
   ObjectDTO getObject();
 
   void setObject(ObjectDTO object);
+
+  String getStatus();
+
+  void setStatus(String status);
 }

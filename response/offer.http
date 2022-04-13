@@ -30,7 +30,7 @@ GET {{baseUri}}/offers?self=false&type=Décoration
 Authorization: {{refresh}}
 
 ### GET object by status
-GET {{baseUri}}/offers?status=available
+GET {{baseUri}}/offers?status=assigned
 Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts

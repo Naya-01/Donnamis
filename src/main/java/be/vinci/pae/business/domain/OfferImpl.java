@@ -17,6 +17,8 @@ public class OfferImpl implements OfferDTO {
   @JsonView(Views.Public.class)
   private String timeSlot;
   @JsonView(Views.Public.class)
+  private String status;
+  @JsonView(Views.Public.class)
   private ObjectDTO object;
 
   @Override
@@ -57,6 +59,16 @@ public class OfferImpl implements OfferDTO {
   @Override
   public void setObject(ObjectDTO object) {
     this.object = object;
+  }
+
+  @Override
+  public String getStatus() {
+    return status;
+  }
+
+  @Override
+  public void setStatus(String status) {
+    this.status=status;
   }
 
 }
