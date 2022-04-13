@@ -1,7 +1,6 @@
 package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.exceptions.BadRequestException;

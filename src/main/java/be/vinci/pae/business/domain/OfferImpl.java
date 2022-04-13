@@ -80,7 +80,7 @@ public class OfferImpl implements OfferDTO {
 
   @Override
   public void setStatus(String status) {
-    this.status=status;
+    this.status = status;
   }
 
 }
