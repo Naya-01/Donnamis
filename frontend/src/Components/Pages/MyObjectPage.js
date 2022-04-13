@@ -11,7 +11,7 @@ const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
 const objectLibrary = new ObjectLibrary();
 const interestLibrary = new InterestLibrary();
-const notificationModule = new Notification();
+const bottomNotification = new Notification().getNotification();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
@@ -39,9 +39,12 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
+
   //GET the id of the offer by the url
   let url_string = window.location;
   let url = new URL(url_string);
+
+  //Check the id of the offer in the url
   idOffer = url.searchParams.get("idOffer");
   if (!idOffer || idOffer <= 0) {
     Redirect("/");
@@ -54,6 +57,7 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
+
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
@@ -106,6 +110,7 @@ const MyObjectPage = async () => {
                     </div>
                 </div>
               </div>
+              <!-- the date -->
               <div class="row p-2">
                 <p class="text-muted">Date de publication : ${offer.date[2]}/${offer.date[1]}/${offer.date[0]}</p>
               </div>
@@ -202,10 +207,9 @@ const MyObjectPage = async () => {
     new_button.type = "button";
     new_button.className = "btn btn-primary";
     new_button.addEventListener("click", async () => {
-      let notif = notificationModule.getNotification();
       //if there is no date specified
       if(input_date.value.length === 0){
-        notif.fire({
+        bottomNotification.fire({
           icon: 'error',
           title: 'Aucune date renseignée'
         })
@@ -215,7 +219,7 @@ const MyObjectPage = async () => {
       input_date.disabled = true;
       await interestLibrary.addOne(offer.object.idObject, input_date.value)
       // the notification to show that the interest is send
-      notif.fire({
+      bottomNotification.fire({
         icon: 'success',
         title: 'Votre intérêt a bien été pris en compte.'
       })
@@ -226,9 +230,7 @@ const MyObjectPage = async () => {
       document.getElementById("divDate").remove();
       document.getElementById("interestedButton").remove();
     }
-
   }
-
 }
 
 /**
@@ -278,24 +280,29 @@ async function changeToText(e) {
  * @param {Event} e : evenement
  */
 async function changeToForm(e) {
-  // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
   span_image.id = "span_image";
   span_image.className = "img_file_input";
   let label_image = document.createElement("label");
   label_image.setAttribute("for", "file_input");
+
+  // the image
   let image = document.createElement("img");
   image.alt = "no image";
   image.className = "clickable";
   image.style.width = "75%";
   image.setAttribute("src", imageOfObject);
   label_image.appendChild(image);
+
+  // the input to set an image
   let input_file = document.createElement("input");
   input_file.id = "file_input";
   input_file.type = "file";
   input_file.name = "file";
   input_file.accept = "image/*";
+
+  // if the image is changed by the user
   input_file.onchange = () => {
     const [file] = input_file.files
     if (file) {
@@ -308,7 +315,7 @@ async function changeToForm(e) {
   span_image.appendChild(input_file);
   old.parentNode.replaceChild(span_image, old);
 
-  // Make a textarea for description
+  // textarea for description
   old = document.getElementById("description_object");
   let desc_textarea = document.createElement("textarea");
   desc_textarea.className = "form-control";
@@ -317,7 +324,7 @@ async function changeToForm(e) {
   desc_textarea.value = description;
   old.parentNode.replaceChild(desc_textarea, old);
 
-  // Make a textarea for description for the time slot
+  // textarea for description for the time slot
   old = document.getElementById("time_slot");
   let time_slot_textarea = document.createElement("textarea");
   time_slot_textarea.className = "form-control";
@@ -342,6 +349,7 @@ async function changeToForm(e) {
   divCol1.appendChild(new_button);
   divButtons.appendChild(divCol1);
 
+  // Add "Annuler" button
   let divCol2 = document.createElement("div");
   divCol2.className = "col-2";
   let cancelButton = document.createElement("input");
@@ -368,34 +376,38 @@ async function updateObject(e) {
   let new_time_slotDOM = document.getElementById("time_slot")
   let new_time_slot = new_time_slotDOM.value.trim();
 
-  // Test description, time slot and show to the user the errors if they exist
+  // check the description
   let emptyParameters = 0;
   if (new_description.length === 0) {
     descriptionDOM.classList.add("border-danger");
     emptyParameters++;
-  } else {
+  }
+  else {
     if (descriptionDOM.classList.contains("border-danger")) {
       descriptionDOM.classList.remove("border-danger");
     }
   }
+
+  // check the time slot
   if (new_time_slot.length === 0) {
     document.getElementById("time_slot").classList.add("border-danger");
     emptyParameters++;
-  } else {
+  }
+  else {
     if (new_time_slotDOM.classList.contains("border-danger")) {
       new_time_slotDOM.classList.remove("border-danger");
     }
-
   }
+
   // Check if there is an empty parameter
   if (emptyParameters > 0) {
-    let notif = notificationModule.getNotification();
-    notif.fire({
+    bottomNotification.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'
     })
     return;
   }
+
   // Update the image
   let fileInput = document.querySelector('input[name=file]');
   let objectWithImage;
@@ -404,8 +416,7 @@ async function updateObject(e) {
     formData.append('file', fileInput.files[0]);
     objectWithImage = await objectLibrary.setImage(formData, idObject);
     if(objectWithImage === undefined){
-      let notif = notificationModule.getNotification();
-      notif.fire({
+      bottomNotification.fire({
         icon: 'error',
         title: "L'image entrée n'est pas du bon format."
       })
@@ -421,14 +432,15 @@ async function updateObject(e) {
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-  let notif = notificationModule.getNotification();
-  notif.fire({
+  bottomNotification.fire({
     icon: 'success',
     title: 'Votre objet a bien été mis à jour.'
   })
-  if (objectWithImage !== undefined) {
-    // replace the src of the image
-    imageOfObject = localLinkImage; //todo change
+
+  if (objectWithImage !== undefined) { // if there is an image
+    if(localLinkImage !== undefined) {
+      imageOfObject = localLinkImage;
+    }
   }
   // Put text back
   changeToText(e);
