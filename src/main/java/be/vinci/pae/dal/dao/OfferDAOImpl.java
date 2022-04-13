@@ -181,7 +181,7 @@ public class OfferDAOImpl implements OfferDAO {
    */
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
-    String query = "UPDATE donnamis.offers SET time_slot = ? AND status = ?";
+    String query = "UPDATE donnamis.offers SET time_slot = ?, status = ?";
     ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
 
     ObjectDTO objectDTO = null;

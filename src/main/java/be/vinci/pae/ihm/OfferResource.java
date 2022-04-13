@@ -1,9 +1,11 @@
 package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import jakarta.inject.Inject;
@@ -160,5 +162,34 @@ public class OfferResource {
       throw new UnauthorizedException("Vous ne pouvez pas voir ces offres");
     }
     return offerUcc.getGivenOffers(idReceiver);
+  }
+
+
+  /**
+   * Cancel an Offer, set the status to 'cancelled'.
+   *
+   * @param offerDTO offer object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/cancelOffer")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO cancelOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+
+    if (offerDTO.getIdOffer() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
+    }
+
+    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
+
+    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      throw new ForbiddenException("Cet objet ne vous appartient pas");
+    }
+
+    return offerUcc.cancelObject(offerDTO);
   }
 }

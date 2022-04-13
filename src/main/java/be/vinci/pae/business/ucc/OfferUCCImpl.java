@@ -1,7 +1,9 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -21,6 +23,8 @@ public class OfferUCCImpl implements OfferUCC {
   private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the last six offers posted.
@@ -190,6 +194,41 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.rollBackTransaction();
       throw e;
     }
+    return offerDTO;
+  }
+
+
+  /**
+   * Cancel an Object.
+   *
+   * @param offerDTO object with his id & new status to 'cancelled'
+   * @return an object
+   */
+  @Override
+  public OfferDTO cancelObject(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+      offerDTO.setStatus("cancelled");
+      offerDTO.getObject().setStatus("cancelled");
+
+      offerDTO = offerDAO.updateOne(offerDTO);
+      System.out.println("ehsufgjhgfdqFjk");
+      System.out.println(offerDTO);
+      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      InterestDTO interestDTO = interestDAO
+          .getAssignedInterest(offerDTO.getObject().getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("published");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
     return offerDTO;
   }
 }
