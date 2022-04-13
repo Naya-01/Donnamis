@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,16 +114,35 @@ public class OfferDAOImpl implements OfferDAO {
    * Get the offer with a specific id.
    *
    * @param idOffer the id of the offer
+   * @param hasOlderOffer true if current offer has an older one and false if not
    * @return an offer that match with the idOffer or null
    */
   @Override
-  public OfferDTO getOne(int idOffer) {
+  public OfferDTO getOne(int idOffer, boolean hasOlderOffer) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
-        + "ty.is_default, of.status FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty"
-        + " WHERE of.id_object = ob.id_object AND of.id_offer = ? AND ty.id_type = ob.id_type";
+        + "ty.is_default, of.status ";
+    if(hasOlderOffer){
+      query += ", of2.date ";
+    }
+    query += "FROM donnamis.offers of, donnamis.objects ob, "
+        + "donnamis.types ty ";
+    if(hasOlderOffer){
+      query += ", donnamis.offers of2 ";
+    }
+    query += "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type AND  of.id_offer = ? "
+        + "AND ty.id_type = ob.id_type ";
+    if(hasOlderOffer){
+      query += "AND of2.id_offer != of.id_offer AND of2.id_object = ob.id_object "
+          + "  AND of2.id_offer IN (SELECT id_offer FROM donnamis.offers WHERE id_offer != ? "
+          + "ORDER BY date LIMIT 2) " ;
+    }
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idOffer);
+      if(hasOlderOffer){
+        preparedStatement.setInt(2, idOffer);
+      }
+
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
 
@@ -134,6 +154,26 @@ public class OfferDAOImpl implements OfferDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+  }
+
+  @Override
+  public boolean hasOlderOffer(int idOffer) {
+    String query = "SELECT count(of.id_offer) "
+        + "FROM donnamis.offers of, donnamis.offers of2 "
+        + "WHERE of.id_offer != of2.id_offer AND of.id_object = of2.id_object "
+        + "AND of.date > of2.date AND of.id_offer = ?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
+      preparedStatement.setInt(1, idOffer);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if(!resultSet.next()) return false;
+      int count = resultSet.getInt(1);
+      resultSet.close();
+      if(count > 0) return true;
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    return false;
   }
 
   /**
@@ -180,10 +220,9 @@ public class OfferDAOImpl implements OfferDAO {
    * @return an offerDTO with the id and the new time slot or null
    */
   @Override
-  public OfferDTO updateOne(OfferDTO offerDTO) {
+  public OfferDTO updateOne(OfferDTO offerDTO, boolean hasOlderOffer) {
     String query = "UPDATE donnamis.offers SET time_slot = ?, status = ?";
-    ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
-
+    ObjectDTO realObject = getOne(offerDTO.getIdOffer(),hasOlderOffer).getObject();
     ObjectDTO objectDTO = null;
     if (offerDTO.getObject() != null) {
       offerDTO.getObject().setIdObject(realObject.getIdObject());
@@ -306,7 +345,7 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
         offerDTO.setStatus(resultSet.getString(12));
-
+        if(resultSet.getMetaData().getColumnCount() >= 13) offerDTO.setOldDate(resultSet.getDate(13).toLocalDate());
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));
         typeDTO.setTypeName(resultSet.getString(10));

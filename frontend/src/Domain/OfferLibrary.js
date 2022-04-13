@@ -72,7 +72,7 @@ class OfferLibrary {
    * @param status the status of the object
    * @returns {Promise<*>} the offer in json
    */
-  async updateOffer(id, timeSlot, description, idType, status) {
+  async updateOffer(id, timeSlot, description, idType, statusOffer, statusObject) {
     let response;
     console.log(id)
     try {
@@ -81,9 +81,10 @@ class OfferLibrary {
         body: JSON.stringify({
           "idOffer": id,
           "timeSlot": timeSlot,
+          "status": statusOffer,
           "object": {
             "description": description,
-            "status": status,
+            "status": statusObject,
           }
         }),
         headers: {

@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "bazz",
-  "password": "Mdpuser.1",
+  "username": "bri",
+  "password": "Rad;293",
   "rememberMe": true
 }
 > {%
@@ -67,26 +67,8 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/7
+GET {{baseUri}}/offers/getById/11
 Authorization: {{refresh}}
-
-### Update time slot of a offer
-POST {{baseUri}}/offers/update
-Authorization: {{refresh}}
-Content-Type: application/json
-
-{
-  "idOffer": 1,
-  "timeSlot": "Je suis disponible le mardi soir",
-  "object": {
-    "description": "Une fusée tintin",
-    "image": null,
-    "status": "interested",
-    "type": {
-      "idType": 4
-    }
-  }
-}
 
 ### get all offer
 GET {{baseUri}}/offers?search-pattern=samEdi&self=true
@@ -98,8 +80,9 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 5,
+  "idOffer": 7,
   "timeSlot": "uoi",
+  "status": "available",
   "object": {
     "type": {
       "typeName": "Vélo, trottinette"
