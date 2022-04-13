@@ -28,7 +28,7 @@ let description;
 let time_slot;
 let form = false;
 let isInterested;
-let image;
+let localLinkImage;
 
 /**
  * Render the page to see an object
@@ -57,8 +57,7 @@ const MyObjectPage = async () => {
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
-    image = "/api/object/getPicture/" + idObject;
-    imageOfObject = image;
+    imageOfObject = "/api/object/getPicture/" + idObject;
   }
   else{
     imageOfObject = noImage;
@@ -185,7 +184,7 @@ const MyObjectPage = async () => {
     let input_date = document.createElement("input");
     input_date.id = "input_date";
     input_date.type = "date";
-    let date = new Date();//.toLocaleDateString().replaceAll("/","-");
+    let date = new Date();
     let month = "";
     if (date.getMonth() % 10 !== 0) {
       month = "0"
@@ -296,6 +295,15 @@ async function changeToForm(e) {
   input_file.id = "file_input";
   input_file.type = "file";
   input_file.name = "file";
+  input_file.accept = "image/*";
+  input_file.onchange = () => {
+    const [file] = input_file.files
+    if (file) {
+      let link = URL.createObjectURL(file);
+      image.src = link;
+      localLinkImage = link;
+    }
+  }
   span_image.appendChild(label_image);
   span_image.appendChild(input_file);
   old.parentNode.replaceChild(span_image, old);
@@ -394,7 +402,15 @@ async function updateObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, idObject); //TODO : add when we have images
+    objectWithImage = await objectLibrary.setImage(formData, idObject);
+    if(objectWithImage === undefined){
+      let notif = notificationModule.getNotification();
+      notif.fire({
+        icon: 'error',
+        title: "L'image entrée n'est pas du bon format."
+      })
+      return;
+    }
   }
 
   // Call the function to update the offer
@@ -410,13 +426,13 @@ async function updateObject(e) {
     icon: 'success',
     title: 'Votre objet a bien été mis à jour.'
   })
-  // Put text back
-  changeToText(e);
-  //TODO : show the image
   if (objectWithImage !== undefined) {
     // replace the src of the image
-    document.getElementById("image").src = "/api/object/getPicture/" + idObject;
+    imageOfObject = localLinkImage; //todo change
   }
+  // Put text back
+  changeToText(e);
+
 
 }
 
