@@ -29,6 +29,7 @@ let time_slot;
 let form = false;
 let isInterested;
 let localLinkImage;
+let statusObject;
 
 /**
  * Render the page to see an object
@@ -57,7 +58,7 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-
+  //TODO
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
@@ -66,11 +67,14 @@ const MyObjectPage = async () => {
   else{
     imageOfObject = noImage;
   }
+
+
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
+  statusObject = offer.status;
   // translate the status to french
-  english_status = offer.object.status;
+  english_status = offer.status;
   let french_status = dictionnary.get(english_status);
 
   // Get the id of the member connected
@@ -280,6 +284,7 @@ async function changeToText(e) {
  * @param {Event} e : evenement
  */
 async function changeToForm(e) {
+  // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
   span_image.id = "span_image";
@@ -427,7 +432,7 @@ async function updateObject(e) {
   // Call the function to update the offer
   await offerLibrary.updateOffer(idOffer, new_time_slot, new_description,
       idType,
-      english_status);
+      english_status, statusObject);
 
   // Attribute new values
   description = new_description

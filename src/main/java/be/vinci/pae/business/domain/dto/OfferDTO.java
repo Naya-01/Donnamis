@@ -15,6 +15,10 @@ public interface OfferDTO {
 
   void setDate(LocalDate date);
 
+  LocalDate getOldDate();
+
+  void setOldDate(LocalDate oldDate);
+
   String getTimeSlot();
 
   void setTimeSlot(String timeSlot);

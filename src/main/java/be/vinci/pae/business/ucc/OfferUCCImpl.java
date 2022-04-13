@@ -1,7 +1,9 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -21,6 +23,8 @@ public class OfferUCCImpl implements OfferUCC {
   private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the last six offers posted.
@@ -56,7 +60,7 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offerDTO;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getOne(idOffer);
+      offerDTO = offerDAO.getOne(idOffer, offerDAO.hasOlderOffer(idOffer));
       if (offerDTO == null) {
         throw new NotFoundException("Aucune offres");
       }
@@ -110,7 +114,7 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offer;
     try {
       dalService.startTransaction();
-      offer = offerDAO.updateOne(offerDTO);
+      offer = offerDAO.updateOne(offerDTO, offerDAO.hasOlderOffer(offerDTO.getIdOffer()));
       if (offer == null) {
         throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
@@ -190,6 +194,39 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.rollBackTransaction();
       throw e;
     }
+    return offerDTO;
+  }
+
+
+  /**
+   * Cancel an Object.
+   *
+   * @param offerDTO object with his id & new status to 'cancelled'
+   * @return an object
+   */
+  @Override
+  public OfferDTO cancelObject(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+      offerDTO.setStatus("cancelled");
+      offerDTO.getObject().setStatus("cancelled");
+
+      offerDTO = offerDAO.updateOne(offerDTO, offerDAO.hasOlderOffer(offerDTO.getIdOffer()));
+      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      InterestDTO interestDTO = interestDAO
+          .getAssignedInterest(offerDTO.getObject().getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("published");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
     return offerDTO;
   }
 }

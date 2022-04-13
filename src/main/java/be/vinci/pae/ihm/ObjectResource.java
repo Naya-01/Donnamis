@@ -137,33 +137,6 @@ public class ObjectResource {
 
 
   /**
-   * Cancel an Object, set the status to 'cancelled'.
-   *
-   * @param objectDTO object with his id
-   * @return an object
-   */
-  @POST
-  @Path("/cancel")
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Authorize
-  public ObjectDTO cancelObject(@Context ContainerRequest request, ObjectDTO objectDTO) {
-
-    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    if (objectDTO.getIdObject() == null) {
-      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource ");
-    }
-
-    objectDTO = objectUCC.getObject(objectDTO.getIdObject());
-
-    if (!ownerDTO.getMemberId().equals(objectDTO.getIdOfferor())) {
-      throw new ForbiddenException("Cet objet ne vous appartient pas");
-    }
-
-    return objectUCC.cancelObject(objectDTO);
-  }
-
-  /**
    * Mark an object to 'not collected'.
    *
    * @param objectDTO object with his id

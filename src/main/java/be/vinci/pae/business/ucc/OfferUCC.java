@@ -53,4 +53,6 @@ public interface OfferUCC {
    * @return a list of offerDTO
    */
   List<OfferDTO> getGivenOffers(int idReceiver);
+
+  OfferDTO cancelObject(OfferDTO offerDTO);
 }

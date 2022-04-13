@@ -159,37 +159,6 @@ public class ObjectUCCImpl implements ObjectUCC {
     return objectDTO;
   }
 
-
-  /**
-   * Cancel an Object.
-   *
-   * @param objectDTO object with his id & new status to 'cancelled'
-   * @return an object
-   */
-  @Override
-  public ObjectDTO cancelObject(ObjectDTO objectDTO) {
-    try {
-      dalService.startTransaction();
-      objectDTO.setStatus("cancelled");
-      objectDTO = objectDAO.updateOne(objectDTO);
-
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
-
-      if (interestDTO != null) {
-        interestDTO.setStatus("published");
-        interestDAO.updateStatus(interestDTO);
-      }
-
-      dalService.commitTransaction();
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-
-    return objectDTO;
-  }
-
-
   /**
    * Mark an object to 'not collected'.
    *

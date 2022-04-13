@@ -43,14 +43,6 @@ public interface ObjectUCC {
   ObjectDTO updateObjectPicture(String internalPath, int id);
 
   /**
-   * Cancel an Object.
-   *
-   * @param objectDTO object with his id & new status to 'cancelled'
-   * @return an object
-   */
-  ObjectDTO cancelObject(ObjectDTO objectDTO);
-
-  /**
    * Mark an object to 'not collected'.
    *
    * @param objectDTO object with his id
