@@ -130,5 +130,5 @@ Content-Type: application/json
 }
 
 ### Search given member
-GET {{baseUri}}/offers/givenOffers/3
+GET {{baseUri}}/offers/givenOffers/2
 Authorization: {{access}}

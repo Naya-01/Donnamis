@@ -231,11 +231,11 @@ public class OfferDAOImpl implements OfferDAO {
   public List<OfferDTO> getAllGivenOffers(int idReceiver) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
         + "ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default, "
-        + "MAX(of.date) as \"date_premiere_offre\" "
+        + "of.status, MAX(of.date) as \"date_premiere_offre\" "
         + "FROM donnamis.objects ob, donnamis.types ty, donnamis.offers of, donnamis.interests it "
         + "WHERE ob.id_object = of.id_object AND ob.id_type = ty.id_type "
         + "AND it.id_object = ob.id_object AND it.status = 'received' AND it.id_member = ? "
-        + "AND ob.status = 'given' "
+        + "AND of.status = 'given' "
         + "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, ob.description, "
         + "ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
         + "ORDER BY date_premiere_offre DESC";
