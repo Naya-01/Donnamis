@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ObjectUCC {
 
+
   /**
    * Find an object with his id.
    *
@@ -40,4 +41,20 @@ public interface ObjectUCC {
    * @return Object modified.
    */
   ObjectDTO updateObjectPicture(String internalPath, int id);
+
+  /**
+   * Cancel an Object.
+   *
+   * @param objectDTO object with his id & new status to 'cancelled'
+   * @return an object
+   */
+  ObjectDTO cancelObject(ObjectDTO objectDTO);
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  ObjectDTO notCollectedObject(ObjectDTO objectDTO);
 }

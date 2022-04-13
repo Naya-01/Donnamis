@@ -2,7 +2,11 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
+import be.vinci.pae.business.ucc.ObjectUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +34,8 @@ public class InterestResource {
   private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestUCC interestUCC;
+  @Inject
+  private ObjectUCC objectUCC;
 
   /**
    * Get an interest, by the id of the interested member and the id of the object.
@@ -52,6 +58,7 @@ public class InterestResource {
     return interestUCC.getInterest(idObject, idMember);
   }
 
+
   /**
    * Add one interest.
    *
@@ -67,7 +74,7 @@ public class InterestResource {
     if (interest == null || interest.getAvailabilityDate() == null) {
       throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
     }
-    if (interest.getIdObject() < 1) {
+    if (interest.getObject().getIdObject() < 1) {
       throw new WebApplicationException("Non existent id object", Response.Status.BAD_REQUEST);
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
@@ -96,4 +103,77 @@ public class InterestResource {
         .put("isUserInterested", interestDTOList.stream()
             .anyMatch(i -> i.getIdMember() == authenticatedUser.getMemberId()));
   }
+
+  /**
+   * Get all the interests of an object.
+   *
+   * @param idObject of the object.
+   * @param request  information of the owner.
+   * @return interestDTO List
+   */
+  @GET
+  @Path("/getAllInsterests/{idObject}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
+      @Context ContainerRequest request) {
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    ObjectDTO objectDTO = objectUCC.getObject(idObject);
+    if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
+    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+    return interestDTOList;
+  }
+
+  /**
+   * Assign an object to a member interested.
+   *
+   * @param request     data of the object's owner.
+   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @return object updated.
+   */
+  @POST
+  @Path("/assignObject")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public InterestDTO assignObject(@Context ContainerRequest request, InterestDTO interestDTO) {
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (interestDTO.getIdMember() == null
+        && interestDTO.getObject().getIdObject() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
+    }
+    interestDTO = interestUCC
+        .getInterest(interestDTO.getObject().getIdObject(), interestDTO.getIdMember());
+    if (!ownerDTO.getMemberId().equals(interestDTO.getObject().getIdOfferor())) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
+    return interestUCC.assignObject(interestDTO);
+  }
+
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param interestDTO the interest information
+   * @return an object
+   */
+  @POST
+  @Path("/give")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public InterestDTO giveObject(InterestDTO interestDTO) {
+
+    if (interestDTO.getObject().getIdObject() == null) {
+      throw new BadRequestException("id de l'objet null");
+    }
+
+    return interestUCC.giveObject(interestDTO);
+  }
+
 }

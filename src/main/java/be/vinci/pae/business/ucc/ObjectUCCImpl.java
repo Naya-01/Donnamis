@@ -1,6 +1,8 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -18,6 +20,8 @@ public class ObjectUCCImpl implements ObjectUCC {
   private ObjectDAO objectDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the picture of an object.
@@ -49,6 +53,7 @@ public class ObjectUCCImpl implements ObjectUCC {
     }
     return picture;
   }
+
 
   /**
    * Find an object with his id.
@@ -153,4 +158,67 @@ public class ObjectUCCImpl implements ObjectUCC {
     }
     return objectDTO;
   }
+
+
+  /**
+   * Cancel an Object.
+   *
+   * @param objectDTO object with his id & new status to 'cancelled'
+   * @return an object
+   */
+  @Override
+  public ObjectDTO cancelObject(ObjectDTO objectDTO) {
+    try {
+      dalService.startTransaction();
+      objectDTO.setStatus("cancelled");
+      objectDTO = objectDAO.updateOne(objectDTO);
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("published");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return objectDTO;
+  }
+
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  @Override
+  public ObjectDTO notCollectedObject(ObjectDTO objectDTO) {
+    try {
+      dalService.startTransaction();
+
+      objectDTO.setStatus("not_collected");
+      objectDTO = objectDAO.updateOne(objectDTO);
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("not_collected");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return objectDTO;
+  }
+
+
 }

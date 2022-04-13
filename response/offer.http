@@ -30,7 +30,7 @@ GET {{baseUri}}/offers?self=false&type=Décoration
 Authorization: {{refresh}}
 
 ### GET object by status
-GET {{baseUri}}/offers?status=available
+GET {{baseUri}}/offers?status=assigned
 Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
@@ -67,7 +67,7 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/1
+GET {{baseUri}}/offers/getById/7
 Authorization: {{refresh}}
 
 ### Update time slot of a offer
@@ -98,16 +98,16 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 1,
-  "timeSlot": "tous les mois de janvier",
+  "idOffer": 5,
+  "timeSlot": "uoi",
   "object": {
     "type": {
-      "typeName": "Croissant"
+      "typeName": "Vélo, trottinette"
     },
-    "description": "C'est un croissant rien de plus",
-    "status": "available",
+    "description": "je suis une offre",
+    "status": "inconnu",
     "image": null,
-    "idOfferor": 2
+    "idOfferor": 4
   }
 }
 
@@ -130,5 +130,5 @@ Content-Type: application/json
 }
 
 ### Search given member
-GET {{baseUri}}/offers/givenOffers/3
+GET {{baseUri}}/offers/givenOffers/2
 Authorization: {{access}}

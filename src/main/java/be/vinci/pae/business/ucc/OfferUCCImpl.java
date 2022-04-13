@@ -83,7 +83,7 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       setCorrectType(offerDTO);
 
-      if (offerDTO.getObject().getIdObject() == 0
+      if (offerDTO.getObject().getIdObject() == null
           && objectDAO.addOne(offerDTO.getObject()) == null) {
         throw new FatalException("Problème lors de la création d'un objet");
       }
@@ -114,6 +114,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer == null) {
         throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();

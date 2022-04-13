@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class AddressUCCImplTest {
+
   private AddressUCC addressUCC;
   private AddressDAO mockAddressDAO;
   private AddressDTO addressDTO;
@@ -54,7 +55,7 @@ class AddressUCCImplTest {
   public void testUpdateOneWithNonExistentAddress() {
     Mockito.when(mockAddressDAO.updateOne(addressDTO)).thenReturn(null);
     assertAll(
-        () -> assertThrows(NotFoundException.class,() -> addressUCC.updateOne(addressDTO)),
+        () -> assertThrows(NotFoundException.class, () -> addressUCC.updateOne(addressDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockAddressDAO, Mockito.atLeast(1))
@@ -63,7 +64,6 @@ class AddressUCCImplTest {
             .rollBackTransaction()
     );
   }
-
 
 
 }

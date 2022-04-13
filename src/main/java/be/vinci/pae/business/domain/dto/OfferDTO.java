@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @JsonDeserialize(as = OfferImpl.class)
 public interface OfferDTO {
 
-  int getIdOffer();
+  Integer getIdOffer();
 
   void setIdOffer(int idOffer);
 
@@ -22,4 +22,8 @@ public interface OfferDTO {
   ObjectDTO getObject();
 
   void setObject(ObjectDTO object);
+
+  String getStatus();
+
+  void setStatus(String status);
 }

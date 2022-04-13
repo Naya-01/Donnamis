@@ -9,8 +9,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RatingImpl implements RatingDTO {
+
   @JsonView(Views.Public.class)
-  private int rating;
+  private Integer rating;
   @JsonView(Views.Public.class)
   private String comment;
   @JsonView(Views.Public.class)
@@ -19,7 +20,7 @@ public class RatingImpl implements RatingDTO {
   private ObjectDTO objectDTO;
 
   @Override
-  public int getRating() {
+  public Integer getRating() {
     return rating;
   }
 

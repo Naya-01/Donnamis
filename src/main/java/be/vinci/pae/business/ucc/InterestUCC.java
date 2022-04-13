@@ -17,10 +17,18 @@ public interface InterestUCC {
   /**
    * Add one interest.
    *
-   * @param item : interestDTO object.
+   * @param item : the interest informations (id of the object and id of the member).
    * @return item.
    */
   InterestDTO addOne(InterestDTO item);
+
+  /**
+   * Assign the object to a member.
+   *
+   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @return objectDTO updated.
+   */
+  InterestDTO assignObject(InterestDTO interestDTO);
 
   /**
    * Get a list of interest, by an id object.
@@ -30,4 +38,11 @@ public interface InterestUCC {
    */
   List<InterestDTO> getInterestedCount(int idObject);
 
+  /**
+   * Give an Object.
+   *
+   * @param interestDTO : the interest information (id of the object)
+   * @return an object
+   */
+  InterestDTO giveObject(InterestDTO interestDTO);
 }

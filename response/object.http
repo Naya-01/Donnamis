@@ -3,6 +3,20 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
+
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
   "username": "bazz",
   "password": "Mdpuser.1",
   "rememberMe": true
@@ -49,3 +63,33 @@ Authorization: {{token}}
   "status": "available",
   "idOfferor": 3
 }
+
+
+### cancel object
+POST {{baseUri}}/object/cancel
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 2
+}
+
+### give object
+POST {{baseUri}}/object/give
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 5
+}
+
+### mark object to not collected
+POST {{baseUri}}/object/notCollected
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 5
+}
+
+
