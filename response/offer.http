@@ -67,7 +67,7 @@ Content-Type: application/json
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/1
+GET {{baseUri}}/offers/getById/7
 Authorization: {{refresh}}
 
 ### Update time slot of a offer
