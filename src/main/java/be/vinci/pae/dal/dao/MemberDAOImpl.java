@@ -157,71 +157,11 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public <T> MemberDTO updateOne(MemberDTO memberDTO) {
-    /*LinkedList<String> memberDTOList = new LinkedList<>();
-    String query = "UPDATE donnamis.members SET ";
-    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
-      query += "username = ?,";
-      memberDTOList.addLast(memberDTO.getUsername());
-    }
-    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isBlank()) {
-      query += "lastname = ?,";
-      memberDTOList.addLast(memberDTO.getLastname());
-    }
-    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isBlank()) {
-      query += "firstname = ?,";
-      memberDTOList.addLast(memberDTO.getFirstname());
-    }
-    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isBlank()) {
-      query += "status = ?,";
-      memberDTOList.addLast(memberDTO.getStatus());
-    }
-    if (memberDTO.getRole() != null && !memberDTO.getRole().isBlank()) {
-      query += "role = ?,";
-      memberDTOList.addLast(memberDTO.getRole());
-    }
-
-    query += "phone_number = ?,";
-    memberDTOList.addLast(memberDTO.getPhone());
-
-    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
-      query += "refusal_reason = ?,";
-      memberDTOList.addLast(memberDTO.getReasonRefusal());
-    }
-    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isBlank()) {
-      query += "password = ?,";
-      Member member = (Member) memberDTO;
-      memberDTOList.addLast(member.hashPassword(member.getPassword()));
-    }
-    if (memberDTO.getImage() != null && !memberDTO.getImage().isBlank()) {
-      query += "image = ?,";
-      memberDTOList.addLast(memberDTO.getImage());
-    }
-
-    query = query.substring(0, query.length() - 1);
-    if (query.endsWith("SET")) {
-      return null;
-    }
-    query += " WHERE id_member = ? RETURNING id_member,username, lastname, firstname, status, "
-        + "role, phone_number, password, refusal_reason, image";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-
-      int cnt = 1;
-      for (String str : memberDTOList) {
-        preparedStatement.setString(cnt++, str);
-      }
-      preparedStatement.setInt(cnt, memberDTO.getMemberId());
-
-      MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
-
-      return modifiedMember;
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }*/
 
     Map<String, Object> toUpdate = new HashMap<>();
     List<Class<T>> types = new ArrayList<>();
     types.add((Class<T>) MemberDTO.class);
+
     List<Object> conditionValues = new ArrayList<>();
     conditionValues.add(memberDTO.getMemberId());
 
