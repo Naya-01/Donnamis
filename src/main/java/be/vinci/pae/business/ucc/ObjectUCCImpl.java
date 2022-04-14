@@ -1,7 +1,6 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -19,8 +18,6 @@ public class ObjectUCCImpl implements ObjectUCC {
   private ObjectDAO objectDAO;
   @Inject
   private DALService dalService;
-  @Inject
-  private InterestDAO interestDAO;
 
   /**
    * Get the picture of an object.
