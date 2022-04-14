@@ -110,7 +110,7 @@ public class AbstractDAOImpl implements AbstractDAO {
       }
       query += ") VALUES (";
       i = 0;
-      for (String column : toUpdateOrToInsert.keySet()) {
+      while (i < toUpdateOrToInsert.size()) {
         query += "?";
         i++;
         if (i < toUpdateOrToInsert.size()) {
