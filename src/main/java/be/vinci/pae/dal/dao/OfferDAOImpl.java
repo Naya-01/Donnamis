@@ -122,7 +122,8 @@ public class OfferDAOImpl implements OfferDAO {
         + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "    ty.is_default, of.status "
         + "FROM donnamis.types ty , donnamis.objects ob, donnamis.offers of "
-        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  AND of.id_object = (SELECT id_object FROM donnamis.offers "
+        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
+        + "AND of.id_object = (SELECT id_object FROM donnamis.offers "
         + "    WHERE id_offer = ? AND date >= of.date) ORDER BY of.date DESC LIMIT 2";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idOffer);
@@ -130,7 +131,9 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
 
       List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
-      if (offerDTOList.isEmpty()) return null;
+      if(offerDTOList.isEmpty()){
+        return null;
+      }
       if(offerDTOList.size() == 2) {
         LocalDate oldDate = offerDTOList.get(1).getDate();
         offerDTOList.get(0).setOldDate(oldDate);
