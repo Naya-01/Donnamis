@@ -13,8 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class MemberDAOImpl implements MemberDAO {
 
@@ -35,10 +35,13 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member
    */
   @Override
-  public MemberDTO getOne(String username) {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("username", username);
-    try (PreparedStatement preparedStatement = abstractDAO.getOne(map, MemberDTO.class)) {
+  public <T> MemberDTO getOne(String username) {
+    String condition = "username = ?";
+    List<Object> values = new ArrayList<>();
+    values.add(username);
+    ArrayList<Class<T>> types = new ArrayList<>();
+    types.add((Class<T>) MemberDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       if (memberDTO != null) {
         memberDTO.setAddress(addressDAO.getAddressByMemberId(memberDTO.getMemberId()));
@@ -55,10 +58,14 @@ public class MemberDAOImpl implements MemberDAO {
    * @param id : the id of the member we want to retrieve
    * @return the member
    */
-  public MemberDTO getOne(Integer id) {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("id_member", id);
-    try (PreparedStatement preparedStatement = abstractDAO.getOne(map, MemberDTO.class)) {
+  public <T> MemberDTO getOne(Integer id) {
+    String condition = "id_member = ?";
+    List<Object> values = new ArrayList<>();
+    values.add(id);
+    ArrayList<Class<T>> types = new ArrayList<>();
+    types.add((Class<T>) MemberDTO.class);
+
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       if (memberDTO != null) {
         memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
@@ -109,33 +116,33 @@ public class MemberDAOImpl implements MemberDAO {
    * @return a list of MemberDTO
    */
   @Override
-  public List<MemberDTO> getAll(String search, String status) {
-    String query =
-        "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
-            + "m.phone_number, m.password, m.refusal_reason, m.image, a.id_member, a.unit_number, "
-            + "a.building_number, a.street, a.postcode, a.commune "
-            + "FROM donnamis.members m, donnamis.addresses a "
-            + "WHERE a.id_member = m.id_member ";
+  public <T> List<MemberDTO> getAll(String search, String status) {
+    List<Class<T>> types = new ArrayList<>();
+    types.add((Class<T>) MemberDTO.class);
+    types.add((Class<T>) AddressDTO.class);
+
+    List<Object> values = new ArrayList<>();
+
+    String condition = "addresses.id_member = members.id_member ";
 
     if (status != null && status.equals("waiting")) {
-      query += "AND m.status != 'valid' ";
+      condition += "AND members.status != 'valid' ";
     } else if (status != null && status.equals("pending")) {
-      query += "AND m.status = 'pending' ";
+      condition += "AND members.status = 'pending' ";
     } else if (status != null && status.equals("denied")) {
-      query += "AND m.status = 'denied' ";
+      condition += "AND members.status = 'denied' ";
     } else if (status != null && status.equals("valid")) {
-      query += "AND m.status = 'valid' ";
+      condition += "AND members.status = 'valid' ";
     }
     if (search != null && !search.isEmpty()) {
-      query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? "
-          + "OR lower(m.username) LIKE ?)";
-    }
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      if (search != null && !search.isEmpty()) {
-        for (int i = 1; i <= 3; i++) {
-          preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
-        }
+      condition += "AND (lower(members.firstname) LIKE ? OR lower(members.lastname) LIKE ? "
+          + "OR lower(members.username) LIKE ?)";
+      for (int i = 1; i <= 3; i++) {
+        values.add("%" + search.toLowerCase() + "%");
       }
+    }
+
+    try (PreparedStatement preparedStatement = abstractDAO.getAll(condition, values, types)) {
       return getMemberListByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -149,8 +156,8 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the modified member
    */
   @Override
-  public MemberDTO updateOne(MemberDTO memberDTO) {
-    LinkedList<String> memberDTOList = new LinkedList<>();
+  public <T> MemberDTO updateOne(MemberDTO memberDTO) {
+    /*LinkedList<String> memberDTOList = new LinkedList<>();
     String query = "UPDATE donnamis.members SET ";
     if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
       query += "username = ?,";
@@ -210,7 +217,53 @@ public class MemberDAOImpl implements MemberDAO {
       return modifiedMember;
     } catch (SQLException e) {
       throw new FatalException(e);
+    }*/
+
+    String condition = "";
+    Map<String, Object> toUpdate = new HashMap<>();
+    List<Object> conditionValues = new ArrayList<>();
+    List<Class<T>> types = new ArrayList<>();
+    types.add((Class<T>) MemberDTO.class);
+
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
+      toUpdate.put("username", memberDTO.getUsername());
     }
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isBlank()) {
+      toUpdate.put("lastname", memberDTO.getLastname());
+    }
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isBlank()) {
+      toUpdate.put("firstname", memberDTO.getFirstname());
+    }
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isBlank()) {
+      toUpdate.put("status", memberDTO.getStatus());
+    }
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isBlank()) {
+      toUpdate.put("role", memberDTO.getRole());
+    }
+
+    toUpdate.put("phone_number", memberDTO.getPhone());
+
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
+      toUpdate.put("refusal_reason", memberDTO.getReasonRefusal());
+    }
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isBlank()) {
+      Member member = (Member) memberDTO;
+      toUpdate.put("password", member.hashPassword(member.getPassword()));
+    }
+
+    condition += "id_member = ? RETURNING id_member,username, lastname, firstname, status, "
+        + "role, phone_number, password, refusal_reason, image";
+
+    conditionValues.add(memberDTO.getMemberId());
+
+    try (PreparedStatement preparedStatement = abstractDAO.updateOne(toUpdate, condition,
+        conditionValues, types)) {
+      MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
+      return modifiedMember;
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+
   }
 
   /**

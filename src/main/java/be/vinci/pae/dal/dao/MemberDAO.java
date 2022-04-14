@@ -8,45 +8,50 @@ public interface MemberDAO {
   /**
    * Get a member we want to retrieve by his username.
    *
+   * @param <T>      class type
    * @param username : the username of the member we want to retrieve
    * @return the member
    */
-  MemberDTO getOne(String username);
+  <T> MemberDTO getOne(String username);
 
   /**
    * Get a member we want to retrieve by his id.
    *
-   * @param id : the id of the member we want to retrieve
+   * @param <T> class type
+   * @param id  : the id of the member we want to retrieve
    * @return the member
    */
-  MemberDTO getOne(Integer id);
+  <T> MemberDTO getOne(Integer id);
 
   /**
-   * Add a member in the DB and make a memberDTO.
+   * Add a member in the DB and make a memberDTO. *
    *
+   * @param <T>    class type
    * @param member : member we want to add in the DB
    * @return the member added.
    */
-  MemberDTO createOneMember(MemberDTO member);
+  <T> MemberDTO createOneMember(MemberDTO member);
 
   /**
    * Search a member with status and search on firstname, lastname and username.
    *
+   * @param <T>    class type
    * @param search the search pattern (if empty -> all)
    * @param status the status : waiting -> pending and denied members, pending -> pending members,
    *               denied -> denied members, valid -> valid members, empty ("") -> all members,
    *               other than these -> all members
    * @return a list of MemberDTO
    */
-  List<MemberDTO> getAll(String search, String status);
+  <T> List<MemberDTO> getAll(String search, String status);
 
   /**
    * Update any attribute of a member.
    *
+   * @param <T>       class type
    * @param memberDTO a memberDTO
    * @return the modified member
    */
-  MemberDTO updateOne(MemberDTO memberDTO);
+  <T> MemberDTO updateOne(MemberDTO memberDTO);
 
   /**
    * Update the profil picture of the member.
