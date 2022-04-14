@@ -10,7 +10,7 @@ public interface AddressDAO {
    * @param addressDTO the address that need to be updated
    * @return the addressDTO modified
    */
-  AddressDTO updateOne(AddressDTO addressDTO);
+  <T> AddressDTO updateOne(AddressDTO addressDTO);
 
   /**
    * Add an address.
@@ -18,7 +18,7 @@ public interface AddressDAO {
    * @param addressDTO : address to add in the DB.
    * @return addressDTO added.
    */
-  AddressDTO createOne(AddressDTO addressDTO);
+  <T> AddressDTO createOne(AddressDTO addressDTO);
 
   /**
    * Create an AddressDTO instance.
@@ -31,7 +31,7 @@ public interface AddressDAO {
    * @param commune        the commune
    * @return the addressDTO created
    */
-  AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
+  AddressDTO createAdressDTO(int idMember, String unitNumber, String buildingNumber,
       String street, String postcode, String commune);
 
   /**
@@ -40,6 +40,6 @@ public interface AddressDAO {
    * @param idMember the id of the member address
    * @return an AddressDTO
    */
-  AddressDTO getAddressByMemberId(int idMember);
+  <T> AddressDTO getAddressByMemberId(int idMember);
 
 }

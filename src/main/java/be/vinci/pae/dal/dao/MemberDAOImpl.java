@@ -237,7 +237,7 @@ public class MemberDAOImpl implements MemberDAO {
       while (resultSet.next()) {
         MemberDTO memberDTO = getMemberByResultSet(resultSet);
 
-        AddressDTO addressDTO = addressDAO.getAddress(resultSet.getInt(11),
+        AddressDTO addressDTO = addressDAO.createAdressDTO(resultSet.getInt(11),
             resultSet.getString(12), resultSet.getString(13),
             resultSet.getString(14), resultSet.getString(15),
             resultSet.getString(16));
