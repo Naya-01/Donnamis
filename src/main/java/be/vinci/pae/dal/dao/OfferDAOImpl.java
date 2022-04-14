@@ -155,6 +155,38 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject the id of the object
+   * @return an offer
+   */
+  @Override
+  public OfferDTO getLastObjectOffer(int idObject) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
+        + "     ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "     ty.is_default, of.status "
+        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE ob.id_object = of.id_object  "
+        + "  AND ty.id_type = ob.id_type  "
+        + "  AND of.id_object= ? "
+        + "  AND of.date = "
+        + "(SELECT max(of2.date) FROM donnamis.offers of2\n"
+        + "WHERE of2.id_object = of.id_object\n"
+        + "ORDER BY of.date DESC) ;";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idObject);
+
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+
+      List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
+      return offerDTOList.get(0);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
   @Override
   public boolean hasOlderOffer(int idOffer) {
     String query = "SELECT count(of.id_offer) "

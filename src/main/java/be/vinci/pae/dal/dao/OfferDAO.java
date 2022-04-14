@@ -25,11 +25,20 @@ public interface OfferDAO {
   /**
    * Get the offer with a specific id.
    *
-   * @param idOffer the id of the offer
+   * @param idOffer       the id of the offer
    * @param hasOlderOffer true if current offer has an older one and false if not
    * @return an offer that match with the idOffer or null
    */
   OfferDTO getOne(int idOffer, boolean hasOlderOffer);
+
+
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject the id of the object
+   * @return an offer
+   */
+  OfferDTO getLastObjectOffer(int idObject);
 
 
   boolean hasOlderOffer(int idOffer);
