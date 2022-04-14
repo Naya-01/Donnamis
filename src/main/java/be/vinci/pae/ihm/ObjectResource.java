@@ -18,11 +18,9 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.io.InputStream;
 import java.util.List;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -139,6 +137,7 @@ public class ObjectResource {
 
   /**
    * Make an Object with his offer.
+   *
    * @param offerDTO object that contain objectDTO & offerDTO information
    * @return offer
    */

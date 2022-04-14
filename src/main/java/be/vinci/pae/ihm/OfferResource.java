@@ -98,8 +98,8 @@ public class OfferResource {
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO addOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
-    if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot()==null
-    || offerDTO.getTimeSlot().isBlank()) {
+    if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot() == null
+        || offerDTO.getTimeSlot().isBlank()) {
       throw new BadRequestException("Information manquante !");
     }
 
