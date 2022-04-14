@@ -1,6 +1,5 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -158,36 +157,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       dalService.rollBackTransaction();
       throw e;
     }
-    return objectDTO;
-  }
-
-  /**
-   * Mark an object to 'not collected'.
-   *
-   * @param objectDTO object with his id
-   * @return an object
-   */
-  @Override
-  public ObjectDTO notCollectedObject(ObjectDTO objectDTO) {
-    try {
-      dalService.startTransaction();
-
-      objectDTO.setStatus("not_collected");
-      objectDTO = objectDAO.updateOne(objectDTO);
-
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
-
-      if (interestDTO != null) {
-        interestDTO.setStatus("not_collected");
-        interestDAO.updateStatus(interestDTO);
-      }
-
-      dalService.commitTransaction();
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-
     return objectDTO;
   }
 

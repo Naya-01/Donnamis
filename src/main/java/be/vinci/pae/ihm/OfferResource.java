@@ -191,4 +191,34 @@ public class OfferResource {
 
     return offerUcc.cancelObject(offerDTO);
   }
+
+
+  /**
+   * Mark an offer to 'not collected'.
+   *
+   * @param offerDTO object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/notCollected")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO notCollectedObject(@Context ContainerRequest request, OfferDTO offerDTO) {
+
+    if (offerDTO.getIdOffer() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
+    }
+
+    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      throw new ForbiddenException("Cet objet ne vous appartient pas");
+    }
+
+    return offerUcc.notCollectedObject(offerDTO);
+
+  }
+
 }

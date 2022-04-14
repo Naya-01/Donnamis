@@ -9,6 +9,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -220,6 +221,42 @@ public class OfferUCCImpl implements OfferUCC {
         interestDTO.setStatus("published");
         interestDAO.updateStatus(interestDTO);
       }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return offerDTO;
+  }
+
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param offerDTO object with his id & new status to 'not collected'
+   * @return an object
+   */
+  @Override
+  public OfferDTO notCollectedObject(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+
+      if (interestDTO == null) {
+        throw new ForbiddenException("Aucune n'offre n'a d'offre attribué");
+      }
+
+      interestDTO.setStatus("not_collected");
+      interestDAO.updateStatus(interestDTO);
+
+      offerDTO.setStatus("not_collected");
+      offerDTO.getObject().setStatus("not_collected");
+
+      offerDTO = offerDAO.updateOne(offerDTO, offerDAO.hasOlderOffer(offerDTO.getIdOffer()));
+      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
 
       dalService.commitTransaction();
     } catch (Exception e) {

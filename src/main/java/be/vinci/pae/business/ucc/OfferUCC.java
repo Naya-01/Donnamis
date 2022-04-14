@@ -54,5 +54,21 @@ public interface OfferUCC {
    */
   List<OfferDTO> getGivenOffers(int idReceiver);
 
+
+  /**
+   * Cancel an Object.
+   *
+   * @param offerDTO object with his id & new status to 'cancelled'
+   * @return an object
+   */
   OfferDTO cancelObject(OfferDTO offerDTO);
+
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param offerDTO object with his id & new status to 'not collected'
+   * @return an object
+   */
+  OfferDTO notCollectedObject(OfferDTO offerDTO);
 }
