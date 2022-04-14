@@ -37,14 +37,15 @@ public class AbstractDAOImpl implements AbstractDAO {
           i++;
         }
       }
-
-      for (Object object : values) {
-        int indice = object.toString().indexOf('.');
-        if (indice != -1) {
-          continue;
+      if (values != null) {
+        for (Object object : values) {
+          int indice = object.toString().indexOf('.');
+          if (indice != -1) {
+            continue;
+          }
+          preparedStatement.setObject(i + 1, object);
+          i++;
         }
-        preparedStatement.setObject(i + 1, object);
-        i++;
       }
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -64,7 +65,7 @@ public class AbstractDAOImpl implements AbstractDAO {
     return tables;
   }
 
-  private <T> String getQuery(String method, String tables, String condition,
+  private String getQuery(String method, String tables, String condition,
       Map<String, Object> toUpdateOrToInsert) {
     String query = method;
     if (tables.isEmpty() || tables.isBlank()) {
@@ -72,12 +73,17 @@ public class AbstractDAOImpl implements AbstractDAO {
     }
 
     if (method.equals("SELECT")) {
+      if (condition == null) {
+        throw new FatalException("Veuillez envoyer une condition non nulle");
+      }
       query += " * FROM " + tables + " WHERE " + condition;
     } else if (method.equals("UPDATE")) {
       if (toUpdateOrToInsert == null || toUpdateOrToInsert.isEmpty()) {
         throw new FatalException("Veuillez spécifier des champs à modifier");
       }
-
+      if (condition == null) {
+        throw new FatalException("Veuillez envoyer une condition non nulle");
+      }
       String settersValues = "";
       int i = 0;
       for (String val : toUpdateOrToInsert.keySet()) {
@@ -88,6 +94,31 @@ public class AbstractDAOImpl implements AbstractDAO {
         }
       }
       query += " " + tables + " SET " + settersValues + " WHERE " + condition;
+    } else if (method.equals("INSERT INTO")) {
+      if (toUpdateOrToInsert == null || toUpdateOrToInsert.isEmpty()) {
+        throw new FatalException("Veuillez spécifier des champs à modifier");
+      }
+
+      query += " " + tables + " (";
+      int i = 0;
+      for (String column : toUpdateOrToInsert.keySet()) {
+        query += column;
+        i++;
+        if (i < toUpdateOrToInsert.size()) {
+          query += ",";
+        }
+      }
+      query += ") VALUES (";
+      i = 0;
+      for (String column : toUpdateOrToInsert.keySet()) {
+        query += "?";
+        i++;
+        if (i < toUpdateOrToInsert.size()) {
+          query += ",";
+        }
+      }
+      query += ") RETURNING *";
+
     }
     return query;
   }
@@ -146,24 +177,26 @@ public class AbstractDAOImpl implements AbstractDAO {
       List<Object> conditionValues, List<Class<T>> types) {
 
     String query = getQuery("UPDATE", getTablesName(types), condition, toUpdate);
-    System.out.println(query);
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
     setPreparedStatement(toUpdate, conditionValues, preparedStatement);
-    System.out.println(preparedStatement);
     return preparedStatement;
   }
-
 
   /**
    * Insert the object in database.
    *
-   * @param objectDTO         with informations
-   * @param type              of class
-   * @param optionalCondition to complete the condition
+   * @param toInsert values to insert
+   * @param types    of tables
    * @return the object from Database
    */
   @Override
-  public <T> PreparedStatement insertOne(T objectDTO, Class<T> type, String optionalCondition) {
-    return null;
+  public <T> PreparedStatement insertOne(Map<String, Object> toInsert, List<Class<T>> types) {
+
+    String query = getQuery("INSERT INTO", getTablesName(types), null, toInsert);
+    PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+    setPreparedStatement(toInsert, null, preparedStatement);
+    return preparedStatement;
   }
+
+
 }

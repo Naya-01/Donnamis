@@ -83,23 +83,19 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member added.
    */
   @Override
-  public MemberDTO createOneMember(MemberDTO member) {
-    String query = "INSERT INTO donnamis.members (username, lastname, firstname, status, role, "
-        + "phone_number, password, refusal_reason,image) values (?,?,?,?,?,?,?,?,?) "
-        + "RETURNING id_member, username, lastname, firstname, status, role, phone_number, "
-        + "password, refusal_reason, image";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, member.getUsername());
-      preparedStatement.setString(2, member.getLastname());
-      preparedStatement.setString(3, member.getFirstname());
-      preparedStatement.setString(4, member.getStatus());
-      preparedStatement.setString(5, member.getRole());
-      preparedStatement.setString(6, member.getPhone());
-      preparedStatement.setString(7, member.getPassword());
-      preparedStatement.setString(8, member.getReasonRefusal());
-      preparedStatement.setString(9, member.getImage());
-
+  public <T> MemberDTO createOneMember(MemberDTO member) {
+    Map<String, Object> setters = new HashMap<>();
+    setters.put("username", member.getUsername());
+    setters.put("lastname", member.getLastname());
+    setters.put("firstname", member.getFirstname());
+    setters.put("status", member.getStatus());
+    setters.put("role", member.getRole());
+    setters.put("phone_number", member.getPhone());
+    setters.put("password", member.getPassword());
+    setters.put("refusal_reason", member.getReasonRefusal());
+    List<Class<T>> types = new ArrayList<>();
+    types.add((Class<T>) MemberDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
       return getMemberByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
