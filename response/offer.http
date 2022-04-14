@@ -35,7 +35,7 @@ Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 
-###
+### make a offer
 POST {{baseUri}}/offers/
 Authorization: {{refresh}}
 Content-Type: application/json
@@ -47,9 +47,9 @@ Content-Type: application/json
   }
 }
 
-###
+### make a offer
 POST {{baseUri}}/offers/
-Authorization: {{refresh}}
+Authorization: {{access}}
 Content-Type: application/json
 
 {
@@ -61,8 +61,7 @@ Content-Type: application/json
     },
     "description": "C'est un croissant rien de plus",
     "status": "available",
-    "image": null,
-    "idOfferor": 2
+    "image": null
   }
 }
 

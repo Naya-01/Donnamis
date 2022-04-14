@@ -104,7 +104,6 @@ public class OfferResource {
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    offerDTO.setIdOffer(ownerDTO.getMemberId());
     offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
 
     return offerUcc.addOffer(offerDTO);
