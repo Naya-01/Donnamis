@@ -210,7 +210,7 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      if(offerDTO.getStatus().equals("given") ||offerDTO.getStatus().equals("cancelled")){
+      if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
         throw new ForbiddenException("Impossible d'annuler l'offre");
       }
 
@@ -247,6 +247,10 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO notCollectedObject(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
+
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException("Impossible de marquer en non collecté");
+      }
 
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
 
