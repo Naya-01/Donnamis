@@ -14,7 +14,7 @@ client.global.set("refresh", response.body.refresh_token);
 
 
 ### Get One interest
-GET {{baseUri}}/interest?idObject=2&idMember=1
+GET {{baseUri}}/interest?idObject=4&idMember=4
 Authorization: {{refresh}}
 
 ### Add One interest
