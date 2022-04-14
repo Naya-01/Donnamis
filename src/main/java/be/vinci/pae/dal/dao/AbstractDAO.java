@@ -46,7 +46,7 @@ public interface AbstractDAO {
    *
    * @param objectDTO         with informations
    * @param type              of class
-   * @param optionalCondition
+   * @param optionalCondition to complete the condition
    * @return the object from Database
    */
   <T> PreparedStatement insertOne(T objectDTO, Class<T> type, String optionalCondition);

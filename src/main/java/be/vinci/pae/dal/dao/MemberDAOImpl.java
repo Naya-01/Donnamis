@@ -219,11 +219,14 @@ public class MemberDAOImpl implements MemberDAO {
       throw new FatalException(e);
     }*/
 
-    String condition = "";
     Map<String, Object> toUpdate = new HashMap<>();
-    List<Object> conditionValues = new ArrayList<>();
     List<Class<T>> types = new ArrayList<>();
     types.add((Class<T>) MemberDTO.class);
+    List<Object> conditionValues = new ArrayList<>();
+    conditionValues.add(memberDTO.getMemberId());
+
+    String condition = "id_member = ? RETURNING id_member,username, lastname, firstname, status, "
+        + "role, phone_number, password, refusal_reason, image";
 
     if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
       toUpdate.put("username", memberDTO.getUsername());
@@ -250,11 +253,6 @@ public class MemberDAOImpl implements MemberDAO {
       Member member = (Member) memberDTO;
       toUpdate.put("password", member.hashPassword(member.getPassword()));
     }
-
-    condition += "id_member = ? RETURNING id_member,username, lastname, firstname, status, "
-        + "role, phone_number, password, refusal_reason, image";
-
-    conditionValues.add(memberDTO.getMemberId());
 
     try (PreparedStatement preparedStatement = abstractDAO.updateOne(toUpdate, condition,
         conditionValues, types)) {

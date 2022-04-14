@@ -33,7 +33,7 @@ public class AbstractDAOImpl implements AbstractDAO {
       int i = 0;
       if (toUpdateOrToInsert != null) {
         for (Object object : toUpdateOrToInsert.values()) {
-          preparedStatement.setObject((i + 1), object);
+          preparedStatement.setObject(i + 1, object);
           i++;
         }
       }
@@ -43,7 +43,7 @@ public class AbstractDAOImpl implements AbstractDAO {
         if (indice != -1) {
           continue;
         }
-        preparedStatement.setObject((i + 1), object);
+        preparedStatement.setObject(i + 1, object);
         i++;
       }
     } catch (SQLException e) {
@@ -159,7 +159,7 @@ public class AbstractDAOImpl implements AbstractDAO {
    *
    * @param objectDTO         with informations
    * @param type              of class
-   * @param optionalCondition
+   * @param optionalCondition to complete the condition
    * @return the object from Database
    */
   @Override
