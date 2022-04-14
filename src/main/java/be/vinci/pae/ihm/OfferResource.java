@@ -18,11 +18,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
@@ -100,20 +97,10 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    if (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getType().getIdType() == null
-        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()
-        || offerDTO.getObject().getType().getIdType() != null
-        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()) {
-      throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
-    }
-    if (offerDTO.getObject().getIdObject() == null && (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
-        .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
-        .isEmpty() || offerDTO.getObject().getIdOfferor() == null)) {
-      throw new WebApplicationException("Bad json object sent", Response.Status.BAD_REQUEST);
+
+    if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot()==null
+    || offerDTO.getTimeSlot().isBlank()) {
+      throw new BadRequestException("Information manquante !");
     }
     return offerUcc.addOffer(offerDTO);
   }

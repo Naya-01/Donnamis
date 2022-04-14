@@ -2,11 +2,9 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
-import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -20,8 +18,6 @@ public class OfferUCCImpl implements OfferUCC {
   private OfferDAO offerDAO;
   @Inject
   private ObjectDAO objectDAO;
-  @Inject
-  private TypeDAO typeDAO;
   @Inject
   private DALService dalService;
   @Inject
@@ -83,25 +79,34 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    OfferDTO offer;
     try {
       dalService.startTransaction();
-      setCorrectType(offerDTO);
 
-      if (offerDTO.getObject().getIdObject() == null
-          && objectDAO.addOne(offerDTO.getObject()) == null) {
-        throw new FatalException("Problème lors de la création d'un objet");
+      OfferDTO offer = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if(!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")){
+        throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
+            + "en créer de nouveau");
       }
-      offer = offerDAO.addOne(offerDTO);
-      if (offer == null) {
-        throw new FatalException("Problème lors de la création d'une offre");
+
+      offerDTO = offerDAO.addOne(offerDTO);
+
+      List<InterestDTO> interestDTOList =interestDAO.getAll(offerDTO.getObject().getIdObject());
+
+      if(interestDTOList.size()<1){
+        offerDTO.getObject().setStatus("available");
+      }else{
+        offerDTO.getObject().setStatus("interested");
       }
+
+      objectDAO.updateOne(offerDTO.getObject());
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offer;
+    return offerDTO;
   }
 
   /**
@@ -128,27 +133,6 @@ public class OfferUCCImpl implements OfferUCC {
     return offer;
   }
 
-  /**
-   * Verify the type and set it.
-   *
-   * @param offerDTO the offer that has an object that has a type.
-   */
-  private void setCorrectType(OfferDTO offerDTO) {
-    TypeDTO typeDTO;
-    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isBlank()) {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
-      if (typeDTO == null) {
-        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-        if (typeDTO == null) {
-          throw new FatalException("Problème lors de la création du type");
-        }
-      }
-    } else {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
-    }
-    offerDTO.getObject().setType(typeDTO);
-  }
 
   /**
    * Get all offers.
