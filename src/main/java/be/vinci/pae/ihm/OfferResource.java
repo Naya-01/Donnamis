@@ -96,12 +96,17 @@ public class OfferResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OfferDTO addOffer(OfferDTO offerDTO) {
+  public OfferDTO addOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
     if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot()==null
     || offerDTO.getTimeSlot().isBlank()) {
       throw new BadRequestException("Information manquante !");
     }
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    offerDTO.setIdOffer(ownerDTO.getMemberId());
+    offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
+
     return offerUcc.addOffer(offerDTO);
   }
 
