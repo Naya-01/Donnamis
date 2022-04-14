@@ -99,7 +99,7 @@ class OfferUCCImplTest {
     Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
     Mockito.when(offerDTO.getIdOffer()).thenReturn(1);
 
-    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer(),false)).thenReturn(offerDTO);
     assertAll(
         () -> assertEquals(offerDTO, offerUCC.getOfferById(1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
@@ -114,7 +114,7 @@ class OfferUCCImplTest {
     Mockito.when(offerDTO.getDate()).thenReturn(LocalDate.now());
     Mockito.when(offerDTO.getIdOffer()).thenReturn(0);
 
-    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(null);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer(),false)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.getOfferById(0)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
@@ -445,7 +445,7 @@ class OfferUCCImplTest {
   @Test
   public void testUpdateOfferWithEmptyFields() {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
+    Mockito.when(offerDAO.updateOne(mockOfferDTO,false)).thenReturn(null);
     assertAll(
         () -> assertThrows(FatalException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
@@ -459,7 +459,7 @@ class OfferUCCImplTest {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
     Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(0);
 
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
+    Mockito.when(offerDAO.updateOne(mockOfferDTO,false)).thenReturn(null);
     assertAll(
         () -> assertThrows(FatalException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
@@ -482,7 +482,7 @@ class OfferUCCImplTest {
     Mockito.when(mockOfferDTOUpdated.getObject().getStatus()).thenReturn("available");
     Mockito.when(mockOfferDTOUpdated.getDate()).thenReturn(LocalDate.now());
 
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(mockOfferDTOUpdated);
+    Mockito.when(offerDAO.updateOne(mockOfferDTO, false)).thenReturn(mockOfferDTOUpdated);
 
     OfferDTO offerDTO = offerUCC.updateOffer(mockOfferDTO);
 

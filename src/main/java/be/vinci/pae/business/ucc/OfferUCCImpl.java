@@ -60,7 +60,7 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offerDTO;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getOne(idOffer);
+      offerDTO = offerDAO.getOne(idOffer, offerDAO.hasOlderOffer(idOffer));
       if (offerDTO == null) {
         throw new NotFoundException("Aucune offres");
       }
@@ -114,7 +114,7 @@ public class OfferUCCImpl implements OfferUCC {
     OfferDTO offer;
     try {
       dalService.startTransaction();
-      offer = offerDAO.updateOne(offerDTO);
+      offer = offerDAO.updateOne(offerDTO, offerDAO.hasOlderOffer(offerDTO.getIdOffer()));
       if (offer == null) {
         throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
@@ -211,9 +211,7 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO.setStatus("cancelled");
       offerDTO.getObject().setStatus("cancelled");
 
-      offerDTO = offerDAO.updateOne(offerDTO);
-      System.out.println("ehsufgjhgfdqFjk");
-      System.out.println(offerDTO);
+      offerDTO = offerDAO.updateOne(offerDTO, offerDAO.hasOlderOffer(offerDTO.getIdOffer()));
       offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
       InterestDTO interestDTO = interestDAO
           .getAssignedInterest(offerDTO.getObject().getIdObject());
