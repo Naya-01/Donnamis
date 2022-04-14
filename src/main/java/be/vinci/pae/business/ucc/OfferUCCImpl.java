@@ -209,6 +209,11 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO cancelObject(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
+
+      if(offerDTO.getStatus().equals("given") ||offerDTO.getStatus().equals("cancelled")){
+        throw new ForbiddenException("Impossible d'annuler l'offre");
+      }
+
       offerDTO.setStatus("cancelled");
       offerDTO.getObject().setStatus("cancelled");
 
