@@ -84,18 +84,18 @@ public class OfferUCCImpl implements OfferUCC {
 
       OfferDTO offer = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
-      if(!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")){
+      if (!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")) {
         throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
             + "en créer de nouveau");
       }
 
       offerDTO = offerDAO.addOne(offerDTO);
 
-      List<InterestDTO> interestDTOList =interestDAO.getAll(offerDTO.getObject().getIdObject());
+      List<InterestDTO> interestDTOList = interestDAO.getAll(offerDTO.getObject().getIdObject());
 
-      if(interestDTOList.size()<1){
+      if (interestDTOList.size() < 1) {
         offerDTO.getObject().setStatus("available");
-      }else{
+      } else {
         offerDTO.getObject().setStatus("interested");
       }
 
@@ -239,7 +239,7 @@ public class OfferUCCImpl implements OfferUCC {
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
 
       if (interestDTO == null) {
-        throw new ForbiddenException("Aucune n'offre n'a d'offre attribué");
+        throw new ForbiddenException("Aucune offre n'a d'offre attribué");
       }
 
       interestDTO.setStatus("not_collected");

@@ -123,8 +123,10 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO addOne(ObjectDTO objectDTO) {
-    String query = "insert into donnamis.objects (id_type, description, status, image, id_offeror) "
-        + "values (?,?,'available',?,?) RETURNING id_object, description, status, image, id_offeror";
+    String query = "insert into donnamis.objects "
+        + "(id_type, description, status, image, id_offeror) "
+        + "values (?,?,'available',?,?) "
+        + "RETURNING id_object, description, status, image, id_offeror";
 
     try {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
