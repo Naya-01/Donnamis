@@ -42,4 +42,11 @@ public interface ObjectUCC {
    */
   ObjectDTO updateObjectPicture(String internalPath, int id);
 
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param objectDTO object with his id
+   * @return an object
+   */
+  ObjectDTO notCollectedObject(ObjectDTO objectDTO);
 }
