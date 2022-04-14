@@ -14,8 +14,8 @@ public interface AbstractDAO {
    * @param types     of tables
    * @return the object from Database
    */
-  <T> PreparedStatement getOne(String condition, List<Object> values,
-      List<Class<T>> types);
+  PreparedStatement getOne(String condition, List<Object> values,
+      List<Class> types);
 
   /**
    * Get all the objects from database.
@@ -25,8 +25,8 @@ public interface AbstractDAO {
    * @param types     of tables
    * @return the list of object from Database
    */
-  <T> PreparedStatement getAll(String condition, List<Object> values,
-      List<Class<T>> types);
+  PreparedStatement getAll(String condition, List<Object> values,
+      List<Class> types);
 
   /**
    * Update the object in database.
@@ -37,9 +37,9 @@ public interface AbstractDAO {
    * @param types           of tables
    * @return the list of object from Database
    */
-  <T> PreparedStatement updateOne(Map<String, Object> toUpdate, String condition,
+  PreparedStatement updateOne(Map<String, Object> toUpdate, String condition,
       List<Object> conditionValues,
-      List<Class<T>> types);
+      List<Class> types);
 
   /**
    * Insert the object in database.
@@ -48,5 +48,5 @@ public interface AbstractDAO {
    * @param types    of tables
    * @return the object from Database
    */
-  <T> PreparedStatement insertOne(Map<String, Object> toInsert, List<Class<T>> types);
+  PreparedStatement insertOne(Map<String, Object> toInsert, List<Class> types);
 }

@@ -28,13 +28,13 @@ public class InterestDAOImpl implements InterestDAO {
    * @return the interest.
    */
   @Override
-  public <T> InterestDTO getOne(int idObject, int idMember) {
+  public InterestDTO getOne(int idObject, int idMember) {
     String condition = "id_object = ? AND id_member = ?";
     List<Object> values = new ArrayList<>();
     values.add(idObject);
     values.add(idMember);
-    ArrayList<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) InterestDTO.class);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(InterestDTO.class);
 
     try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getInterestDTO(preparedStatement);
@@ -79,14 +79,14 @@ public class InterestDAOImpl implements InterestDAO {
    * @return item.
    */
   @Override
-  public <T> InterestDTO addOne(InterestDTO item) {
+  public InterestDTO addOne(InterestDTO item) {
     Map<String, Object> setters = new HashMap<>();
     setters.put("id_object", item.getIdObject());
     setters.put("id_member", item.getIdMember());
     setters.put("availability_date", item.getAvailabilityDate());
     setters.put("status", item.getStatus());
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) InterestDTO.class);
+    List<Class> types = new ArrayList<>();
+    types.add(InterestDTO.class);
 
     try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
       preparedStatement.execute();
@@ -103,10 +103,10 @@ public class InterestDAOImpl implements InterestDAO {
    * @return a list of interest, by an id object
    */
   @Override
-  public <T> List<InterestDTO> getAll(int idObject) {
+  public List<InterestDTO> getAll(int idObject) {
 
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) InterestDTO.class);
+    List<Class> types = new ArrayList<>();
+    types.add(InterestDTO.class);
     List<Object> values = new ArrayList<>();
     values.add(idObject);
     values.add("cancelled");

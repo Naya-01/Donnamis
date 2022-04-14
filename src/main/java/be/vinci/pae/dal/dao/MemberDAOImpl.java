@@ -35,12 +35,12 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member
    */
   @Override
-  public <T> MemberDTO getOne(String username) {
+  public MemberDTO getOne(String username) {
     String condition = "username = ?";
     List<Object> values = new ArrayList<>();
     values.add(username);
-    ArrayList<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) MemberDTO.class);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(MemberDTO.class);
     try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       if (memberDTO != null) {
@@ -58,12 +58,12 @@ public class MemberDAOImpl implements MemberDAO {
    * @param id : the id of the member we want to retrieve
    * @return the member
    */
-  public <T> MemberDTO getOne(Integer id) {
+  public MemberDTO getOne(Integer id) {
     String condition = "id_member = ?";
     List<Object> values = new ArrayList<>();
     values.add(id);
-    ArrayList<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) MemberDTO.class);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(MemberDTO.class);
 
     try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
@@ -83,7 +83,7 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the member added.
    */
   @Override
-  public <T> MemberDTO createOneMember(MemberDTO member) {
+  public MemberDTO createOneMember(MemberDTO member) {
     Map<String, Object> setters = new HashMap<>();
     setters.put("username", member.getUsername());
     setters.put("lastname", member.getLastname());
@@ -93,8 +93,8 @@ public class MemberDAOImpl implements MemberDAO {
     setters.put("phone_number", member.getPhone());
     setters.put("password", member.getPassword());
     setters.put("refusal_reason", member.getReasonRefusal());
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) MemberDTO.class);
+    List<Class> types = new ArrayList<>();
+    types.add(MemberDTO.class);
     try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
       return getMemberByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
@@ -112,10 +112,10 @@ public class MemberDAOImpl implements MemberDAO {
    * @return a list of MemberDTO
    */
   @Override
-  public <T> List<MemberDTO> getAll(String search, String status) {
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) MemberDTO.class);
-    types.add((Class<T>) AddressDTO.class);
+  public List<MemberDTO> getAll(String search, String status) {
+    List<Class> types = new ArrayList<>();
+    types.add(MemberDTO.class);
+    types.add(AddressDTO.class);
 
     List<Object> values = new ArrayList<>();
 
@@ -152,11 +152,11 @@ public class MemberDAOImpl implements MemberDAO {
    * @return the modified member
    */
   @Override
-  public <T> MemberDTO updateOne(MemberDTO memberDTO) {
+  public MemberDTO updateOne(MemberDTO memberDTO) {
 
     Map<String, Object> toUpdate = new HashMap<>();
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) MemberDTO.class);
+    List<Class> types = new ArrayList<>();
+    types.add(MemberDTO.class);
 
     List<Object> conditionValues = new ArrayList<>();
     conditionValues.add(memberDTO.getMemberId());
@@ -192,8 +192,7 @@ public class MemberDAOImpl implements MemberDAO {
 
     try (PreparedStatement preparedStatement = abstractDAO.updateOne(toUpdate, condition,
         conditionValues, types)) {
-      MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
-      return modifiedMember;
+      return getMemberByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }

@@ -52,10 +52,10 @@ public class AbstractDAOImpl implements AbstractDAO {
     }
   }
 
-  private <T> String getTablesName(List<Class<T>> types) {
+  private String getTablesName(List<Class> types) {
     String tables = "";
     int i = 0;
-    for (Class<T> type : types) {
+    for (Class type : types) {
       tables += tableNames.get(type.getSimpleName());
       i++;
       if (i < types.size()) {
@@ -132,8 +132,8 @@ public class AbstractDAOImpl implements AbstractDAO {
    * @return the object from Database
    */
   @Override
-  public <T> PreparedStatement getOne(String condition, List<Object> values,
-      List<Class<T>> types) {
+  public PreparedStatement getOne(String condition, List<Object> values,
+      List<Class> types) {
     if (condition.isEmpty() || condition.isBlank()) {
       throw new FatalException("données de filtre manquantes");
     }
@@ -153,8 +153,7 @@ public class AbstractDAOImpl implements AbstractDAO {
    * @return the list of object from Database
    */
   @Override
-  public <T> PreparedStatement getAll(String condition, List<Object> values,
-      List<Class<T>> types) {
+  public PreparedStatement getAll(String condition, List<Object> values, List<Class> types) {
 
     String query = getQuery("SELECT", getTablesName(types), condition, null);
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
@@ -173,8 +172,8 @@ public class AbstractDAOImpl implements AbstractDAO {
    * @return the list of object from Database
    */
   @Override
-  public <T> PreparedStatement updateOne(Map<String, Object> toUpdate, String condition,
-      List<Object> conditionValues, List<Class<T>> types) {
+  public PreparedStatement updateOne(Map<String, Object> toUpdate, String condition,
+      List<Object> conditionValues, List<Class> types) {
 
     String query = getQuery("UPDATE", getTablesName(types), condition, toUpdate);
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
@@ -190,7 +189,7 @@ public class AbstractDAOImpl implements AbstractDAO {
    * @return the object from Database
    */
   @Override
-  public <T> PreparedStatement insertOne(Map<String, Object> toInsert, List<Class<T>> types) {
+  public PreparedStatement insertOne(Map<String, Object> toInsert, List<Class> types) {
 
     String query = getQuery("INSERT INTO", getTablesName(types), null, toInsert);
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);

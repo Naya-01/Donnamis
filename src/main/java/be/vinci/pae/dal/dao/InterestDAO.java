@@ -13,7 +13,7 @@ public interface InterestDAO {
    * @param idMember :  the member id of the interest we want to retrieve.
    * @return the interest.
    */
-  <T> InterestDTO getOne(int idObject, int idMember);
+  InterestDTO getOne(int idObject, int idMember);
 
   /**
    * Add one interest in the DB.
@@ -21,7 +21,7 @@ public interface InterestDAO {
    * @param item : interestDTO object.
    * @return item.
    */
-  <T> InterestDTO addOne(InterestDTO item);
+  InterestDTO addOne(InterestDTO item);
 
   /**
    * Get a list of interest in an id object.
@@ -29,5 +29,5 @@ public interface InterestDAO {
    * @param idObject the object we want to retrieve the interests
    * @return a list of interest, by an id object
    */
-  <T> List<InterestDTO> getAll(int idObject);
+  List<InterestDTO> getAll(int idObject);
 }

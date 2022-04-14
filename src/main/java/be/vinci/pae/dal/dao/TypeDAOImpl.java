@@ -2,21 +2,22 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.TypeFactory;
-import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TypeDAOImpl implements TypeDAO {
 
   @Inject
-  private DALBackendService dalBackendService;
-  @Inject
   private TypeFactory typeFactory;
+  @Inject
+  private AbstractDAO abstractDAO;
 
   /**
    * Get a type we want to retrieve by his type name.
@@ -26,9 +27,12 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(String typeName) {
-    String query = "SELECT id_type, type_name, is_default FROM donnamis.types WHERE type_name = ?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, typeName);
+    String condition = "type_name = ?";
+    List<Object> values = new ArrayList<>();
+    values.add(typeName);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(TypeDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -43,9 +47,12 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO getOne(int typeId) {
-    String query = "SELECT id_type, type_name, is_default FROM donnamis.types WHERE id_type = ?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, typeId);
+    String condition = "id_type = ?";
+    List<Object> values = new ArrayList<>();
+    values.add(typeId);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(TypeDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -59,9 +66,12 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public List<TypeDTO> getAllDefaultTypes() {
-    String query = "SELECT id_type, type_name, is_default FROM donnamis.types "
-        + "WHERE is_default = true";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+    List<Class> types = new ArrayList<>();
+    types.add(TypeDTO.class);
+    List<Object> values = new ArrayList<>();
+    String condition = "is_default = true";
+
+    try (PreparedStatement preparedStatement = abstractDAO.getAll(condition, values, types)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       List<TypeDTO> listTypeDTO = new ArrayList<>();
@@ -87,10 +97,13 @@ public class TypeDAOImpl implements TypeDAO {
    */
   @Override
   public TypeDTO addOne(String typeName) {
-    String query = "INSERT INTO donnamis.types (type_name, is_default) VALUES (?, false) "
-        + "RETURNING id_type, type_name, is_default";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, typeName);
+    Map<String, Object> setters = new HashMap<>();
+    setters.put("type_name", typeName);
+    setters.put("is_default", false);
+    List<Class> types = new ArrayList<>();
+    types.add(TypeDTO.class);
+
+    try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
       return getTypeDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);

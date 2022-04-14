@@ -26,9 +26,9 @@ public class AddressDAOImpl implements AddressDAO {
    * @return the addressDTO modified
    */
   @Override
-  public <T> AddressDTO updateOne(AddressDTO addressDTO) {
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) AddressDTO.class);
+  public AddressDTO updateOne(AddressDTO addressDTO) {
+    List<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
 
     List<Object> conditionValues = new ArrayList<>();
     conditionValues.add(addressDTO.getIdMember());
@@ -68,7 +68,7 @@ public class AddressDAOImpl implements AddressDAO {
    * @return addressDTO added.
    */
   @Override
-  public <T> AddressDTO createOne(AddressDTO addressDTO) {
+  public AddressDTO createOne(AddressDTO addressDTO) {
     Map<String, Object> setters = new HashMap<>();
     setters.put("id_member", addressDTO.getIdMember());
     setters.put("unit_number", addressDTO.getUnitNumber());
@@ -77,8 +77,8 @@ public class AddressDAOImpl implements AddressDAO {
     setters.put("postcode", addressDTO.getPostcode());
     setters.put("commune", addressDTO.getCommune());
 
-    List<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) AddressDTO.class);
+    List<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
 
     try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
 
@@ -120,12 +120,12 @@ public class AddressDAOImpl implements AddressDAO {
    * @return an AddressDTO
    */
   @Override
-  public <T> AddressDTO getAddressByMemberId(int idMember) {
+  public AddressDTO getAddressByMemberId(int idMember) {
     String condition = "id_member = ?";
     List<Object> values = new ArrayList<>();
     values.add(idMember);
-    ArrayList<Class<T>> types = new ArrayList<>();
-    types.add((Class<T>) AddressDTO.class);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
     try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
