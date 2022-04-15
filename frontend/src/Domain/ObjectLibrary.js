@@ -44,64 +44,6 @@ class ObjectLibrary {
     return newInterest;
   }
 
-  async cancelObject(idObject) {
-    try {
-      let options = {
-        method: 'POST',
-        body: JSON.stringify({
-          "idObject": idObject,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      await fetch('api/object/cancel/', options)
-    } catch (err) {
-      console.log(err);
-    }
-
-  }
-
-  async giveObject(idObject) {
-    try {
-      let options = {
-        method: 'POST',
-        body: JSON.stringify({
-          "object": {
-            "idObject": idObject,
-          },
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      await fetch('api/interest/give/', options)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async notCollectedObject(idObject) {
-    try {
-      let options = {
-        method: 'POST',
-        body: JSON.stringify({
-          "idObject": idObject,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      await fetch('api/object/notCollected/', options)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-
   async addObject(timeSlot, description, typeName) {
     let response;
     try {

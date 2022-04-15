@@ -107,8 +107,8 @@ const objectCards = async (searchPattern, type, status) => {
       cancelButton.type = "button";
       cancelButton.className = "btn btn-danger mt-3 mx-1";
       cancelButton.addEventListener("click", async () => {
-        await ObjectLibrary.prototype.cancelObject(
-            object.object.idObject
+        await OfferLibrary.prototype.cancelObject(
+            object.idOffer
         );
         Redirect("/myObjectsPage")
       });
@@ -152,8 +152,8 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.type = "button";
       nonRealisedOfferButton.className = "btn btn-danger mt-3 mx-1";
       nonRealisedOfferButton.addEventListener("click", async () => {
-        await ObjectLibrary.prototype.notCollectedObject(
-            object.object.idObject,
+        await OfferLibrary.prototype.notCollectedObject(
+            object.idOffer,
         );
         Redirect("/myObjectsPage");
       });

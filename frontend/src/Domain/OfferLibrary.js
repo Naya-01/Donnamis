@@ -168,6 +168,65 @@ class OfferLibrary {
       console.log(err);
     }
   }
+
+  async giveObject(idOffer) { // to change in the backend
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "object": {
+            "idOffer": idOffer,
+          },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/interest/give/', options)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async cancelObject(idOffer) {
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "idOffer": idOffer,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/offers/cancelOffer/', options)
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+
+  async notCollectedObject(idOffer) {
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "idOffer": idOffer,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/offers/notCollected/', options)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+
 }
 
 export default OfferLibrary;
