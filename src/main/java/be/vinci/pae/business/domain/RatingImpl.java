@@ -1,7 +1,5 @@
 package be.vinci.pae.business.domain;
 
-import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,7 +43,7 @@ public class RatingImpl implements RatingDTO {
   }
 
   @Override
-  public void setIdMember(Integer idMember){
+  public void setIdMember(Integer idMember) {
     this.idMember = idMember;
   }
 

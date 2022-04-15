@@ -1,8 +1,6 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
-import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.RatingDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;

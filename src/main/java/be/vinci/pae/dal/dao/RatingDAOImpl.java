@@ -1,6 +1,5 @@
 package be.vinci.pae.dal.dao;
 
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.dal.services.DALBackendService;
