@@ -3,8 +3,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "tcou",
-  "password": "rayan123",
+  "username": "bazz",
+  "password": "Mdpuser.1",
   "rememberMe": true
 }
 > {%
@@ -15,3 +15,15 @@ client.global.set("refresh", response.body.refresh_token);
 ###
 GET {{baseUri}}/ratings/4
 Authorization: {{refresh}}
+
+
+###
+POST {{baseUri}}/ratings/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "rating": 2,
+  "comment": "bon objet",
+  "idObject": 4
+}

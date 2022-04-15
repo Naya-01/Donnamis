@@ -12,4 +12,12 @@ public interface RatingUCC {
    */
   RatingDTO getOne(int id);
 
+  /**
+   * Add a rating.
+   *
+   * @param ratingDTO : the rating to add.
+   * @return ratingDTO that has been added.
+   */
+  RatingDTO addRating(RatingDTO ratingDTO);
+
 }

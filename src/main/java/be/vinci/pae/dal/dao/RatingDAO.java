@@ -10,4 +10,12 @@ public interface RatingDAO {
    * @return the rating
    */
   RatingDTO getOne(int id);
+
+  /**
+   * Add a rating.
+   *
+   * @param ratingDTO : the rating to add.
+   * @return ratingDTO that has been added.
+   */
+  RatingDTO addOne(RatingDTO ratingDTO);
 }

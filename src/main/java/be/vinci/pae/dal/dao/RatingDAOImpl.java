@@ -34,14 +34,54 @@ public class RatingDAOImpl implements RatingDAO {
       if (!resultSet.next()) {
         return null;
       }
+      this.setRating(ratingDTO, resultSet);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    return ratingDTO;
+  }
+
+  /**
+   * Add a rating.
+   *
+   * @param ratingDTO : the rating to add.
+   * @return ratingDTO that has been added.
+   */
+  @Override
+  public RatingDTO addOne(RatingDTO ratingDTO){
+    String query = "insert into donnamis.ratings "
+        + "(id_object, id_member, comment, rating) "
+        + "values (?,?,?,?) "
+        + "RETURNING id_object, id_member, comment, rating";
+    try {
+      PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
+      preparedStatement.setInt(1, ratingDTO.getIdObject());
+      preparedStatement.setInt(2, ratingDTO.getIdMember());
+      preparedStatement.setString(3, ratingDTO.getComment());
+      preparedStatement.setInt(4, ratingDTO.getRating());
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+      this.setRating(ratingDTO, resultSet);
+      preparedStatement.close();
+
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    return ratingDTO;
+  }
+
+  private void setRating(RatingDTO ratingDTO, ResultSet resultSet) {
+    try{
       ratingDTO.setIdObject(resultSet.getInt(1));
       ratingDTO.setIdMember(resultSet.getInt(2));
       ratingDTO.setComment(resultSet.getString(3));
       ratingDTO.setRating(resultSet.getInt(4));
       resultSet.close();
-    } catch (SQLException e) {
+    }catch (SQLException e) {
       throw new FatalException(e);
     }
-    return ratingDTO;
   }
 }
