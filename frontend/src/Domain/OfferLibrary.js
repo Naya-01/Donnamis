@@ -28,7 +28,7 @@ class OfferLibrary {
     return current_offer;
   }
 
-  async addOffer(timeSlot, description, typeName, idOfferor) {
+  async addOffer(timeSlot,idObject) {
     let response;
     try {
       let options = {
@@ -36,14 +36,7 @@ class OfferLibrary {
         body: JSON.stringify({
           "timeSlot": timeSlot,
           "object": {
-            "type": {
-              "idType": 0,
-              "typeName": typeName,
-            },
-            "description": description,
-            "status": "available",
-            "image": null, //TODO : change the image
-            "idOfferor": idOfferor
+            "idObject": idObject
           }
         }),
         headers: {
@@ -183,7 +176,7 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      await fetch('api/interest/give/', options)
+      await fetch('api/offers/give', options)
     } catch (err) {
       console.log(err);
     }

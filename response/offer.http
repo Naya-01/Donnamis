@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "bazz",
-  "password": "Mdpuser.1",
+  "username": "tcou",
+  "password": "rayan123",
   "rememberMe": true
 }
 > {%
@@ -55,13 +55,7 @@ Content-Type: application/json
 {
   "timeSlot": "tous les mois de janvier",
   "object": {
-    "type": {
-      "idType": 0,
-      "typeName": "Croissant"
-    },
-    "description": "C'est un croissant rien de plus",
-    "status": "available",
-    "image": null
+    "idObject": 15
   }
 }
 

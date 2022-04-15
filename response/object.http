@@ -76,15 +76,6 @@ Authorization: {{token}}
   "idObject": 2
 }
 
-### give object
-POST {{baseUri}}/object/give
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "idObject": 5
-}
-
 ### mark object to not collected
 POST {{baseUri}}/object/notCollected
 Content-Type: application/json
