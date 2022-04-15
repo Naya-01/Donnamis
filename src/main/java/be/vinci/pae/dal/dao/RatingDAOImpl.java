@@ -48,7 +48,7 @@ public class RatingDAOImpl implements RatingDAO {
    * @return ratingDTO that has been added.
    */
   @Override
-  public RatingDTO addOne(RatingDTO ratingDTO){
+  public RatingDTO addOne(RatingDTO ratingDTO) {
     String query = "insert into donnamis.ratings "
         + "(id_object, id_member, comment, rating) "
         + "values (?,?,?,?) "
@@ -74,13 +74,13 @@ public class RatingDAOImpl implements RatingDAO {
   }
 
   private void setRating(RatingDTO ratingDTO, ResultSet resultSet) {
-    try{
+    try {
       ratingDTO.setIdObject(resultSet.getInt(1));
       ratingDTO.setIdMember(resultSet.getInt(2));
       ratingDTO.setComment(resultSet.getString(3));
       ratingDTO.setRating(resultSet.getInt(4));
       resultSet.close();
-    }catch (SQLException e) {
+    } catch (SQLException e) {
       throw new FatalException(e);
     }
   }
