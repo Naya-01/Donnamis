@@ -169,13 +169,13 @@ class OfferLibrary {
     }
   }
 
-  async giveObject(idOffer) { // to change in the backend
+  async giveObject(idObject) {
     try {
       let options = {
         method: 'POST',
         body: JSON.stringify({
           "object": {
-            "idOffer": idOffer,
+            "idObject": idObject
           },
         }),
         headers: {
