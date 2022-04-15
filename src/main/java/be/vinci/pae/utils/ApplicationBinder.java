@@ -10,6 +10,8 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.ObjectFactoryImpl;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.OfferFactoryImpl;
+import be.vinci.pae.business.factories.RatingFactory;
+import be.vinci.pae.business.factories.RatingFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
 import be.vinci.pae.business.ucc.AddressUCC;
@@ -22,6 +24,8 @@ import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.business.ucc.ObjectUCCImpl;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.business.ucc.OfferUCCImpl;
+import be.vinci.pae.business.ucc.RatingUCC;
+import be.vinci.pae.business.ucc.RatingUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
@@ -34,6 +38,8 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.ObjectDAOImpl;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.OfferDAOImpl;
+import be.vinci.pae.dal.dao.RatingDAO;
+import be.vinci.pae.dal.dao.RatingDAOImpl;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALBackendService;
@@ -73,6 +79,10 @@ public class ApplicationBinder extends AbstractBinder {
     bind(ObjectFactoryImpl.class).to(ObjectFactory.class).in(Singleton.class);
     bind(ObjectDAOImpl.class).to(ObjectDAO.class).in(Singleton.class);
     bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
+
+    bind(RatingFactoryImpl.class).to(RatingFactory.class).in(Singleton.class);
+    bind(RatingDAOImpl.class).to(RatingDAO.class).in(Singleton.class);
+    bind(RatingUCCImpl.class).to(RatingUCC.class).in(Singleton.class);
 
     bind(TokenImpl.class).to(Token.class).in(Singleton.class);
     bind(ImageImpl.class).to(Image.class).in(Singleton.class);

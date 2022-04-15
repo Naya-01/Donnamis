@@ -1,0 +1,17 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "tcou",
+  "password": "rayan123",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+###
+GET {{baseUri}}/ratings/4
+Authorization: {{refresh}}
