@@ -40,6 +40,7 @@ public class RatingUCCImpl implements RatingUCC {
     }
     return ratingDTO;
   }
+
   /**
    * Add a rating.
    *
@@ -47,15 +48,16 @@ public class RatingUCCImpl implements RatingUCC {
    * @return ratingDTO that has been added.
    */
   @Override
-  public RatingDTO addRating(RatingDTO ratingDTO){
+  public RatingDTO addRating(RatingDTO ratingDTO) {
     RatingDTO rating;
     try {
       dalService.startTransaction();
-      if(ratingDAO.getOne(ratingDTO.getIdObject()) != null){ // if there is already a rating
+      if (ratingDAO.getOne(ratingDTO.getIdObject()) != null) { // if there is already a rating
         throw new ForbiddenException("Une note existe déjà pour cet objet");
       }
-      InterestDTO interestDTO = interestDAO.getOne(ratingDTO.getIdObject(), ratingDTO.getIdMember());
-      if(interestDTO == null || !interestDTO.getStatus().equals("given")){
+      InterestDTO interestDTO =
+          interestDAO.getOne(ratingDTO.getIdObject(), ratingDTO.getIdMember());
+      if (interestDTO == null || !interestDTO.getStatus().equals("given")) {
         throw new ForbiddenException("Cet objet n'a pas été attribué à ce membre");
       }
       rating = ratingDAO.addOne(ratingDTO);
