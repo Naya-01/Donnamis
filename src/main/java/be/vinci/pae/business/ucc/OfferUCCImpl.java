@@ -90,16 +90,18 @@ public class OfferUCCImpl implements OfferUCC {
             + "en créer de nouveau");
       }
 
-      offerDTO = offerDAO.addOne(offerDTO);
 
       List<InterestDTO> interestDTOList = interestDAO.getAll(offerDTO.getObject().getIdObject());
 
       if (interestDTOList.size() < 1) {
-        offerDTO.getObject().setStatus("available");
+        offerDTO.getObject().setStatus("available"); // object
+        offerDTO.setStatus("available"); // offer
       } else {
-        offerDTO.getObject().setStatus("interested");
+        offerDTO.getObject().setStatus("interested"); // object
+        offerDTO.setStatus("interested"); // offer
       }
 
+      offerDTO = offerDAO.addOne(offerDTO);
       objectDAO.updateOne(offerDTO.getObject());
 
       dalService.commitTransaction();

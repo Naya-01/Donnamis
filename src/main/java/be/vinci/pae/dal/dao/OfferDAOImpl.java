@@ -185,14 +185,18 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO addOne(OfferDTO offerDTO) {
     String query = "INSERT INTO donnamis.offers (date, time_slot, id_object, status) "
-        + "VALUES (NOW(), ?, ?, 'available') "
+        + "VALUES (NOW(), ?, ?, ?) "
         + "RETURNING id_offer, date, time_slot, id_object, status";
 
     try {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
-
+      if(offerDTO.getStatus().equals("interested")){
+        preparedStatement.setString(3, offerDTO.getStatus());
+      }else{
+        preparedStatement.setString(3, "available");
+      }
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
