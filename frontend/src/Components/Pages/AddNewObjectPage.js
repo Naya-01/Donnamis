@@ -118,7 +118,7 @@ async function addObject(e) {
   //TODO : get the image if it exists
 
   // Call the backend to add the offer
-  let newOffer = await offerLibrary.addOffer(timeSlot, description, typeName, idOfferor);
+  let newOffer = await objectLibrary.addObject(timeSlot, description, typeName);
   let idObject = newOffer.object.idObject;
   let fileInput = document.getElementById("file_input");
   if (fileInput.files[0] !== undefined) { // if there is an image

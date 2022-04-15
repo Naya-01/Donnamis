@@ -84,31 +84,30 @@ const MyObjectsPage = async () => {
 
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
-  const objects = await OfferLibrary.prototype.getOffers(searchPattern, true,
+  const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,
       type, status);
   memberCards.innerHTML = ``;
-  console.log("test: " + objects);
-  if (!objects) { // objects is empty
+  if (!offers) { // objects is empty
     return;
   }
-  for (const object of objects) {
-    managementList(object.idOffer, memberCards, itemImage,
-        object.object.type.typeName + ": " + object.object.description,
-        dictionary.get(object.object.status));
+  for (const offer of offers) {
+    managementList(offer.idOffer, memberCards, itemImage,
+        offer.object.type.typeName + ": " + offer.object.description,
+        dictionary.get(offer.object.status));
 
-    const card = document.getElementById("member-card-" + object.idOffer);
+    const card = document.getElementById("member-card-" + offer.idOffer);
     card.className += " clickable";
 
-    const buttonCard = document.getElementById("button-card-" + object.idOffer);
-    if (object.object.status !== "cancelled" && object.object.status
+    const buttonCard = document.getElementById("button-card-" + offer.idOffer);
+    if (offer.object.status !== "cancelled" && offer.object.status
         !== "given") {
       const cancelButton = document.createElement("button");
       cancelButton.innerText = "Annuler";
       cancelButton.type = "button";
       cancelButton.className = "btn btn-danger mt-3 mx-1";
       cancelButton.addEventListener("click", async () => {
-        await ObjectLibrary.prototype.cancelObject(
-            object.object.idObject
+        await OfferLibrary.prototype.cancelObject(
+            offer.idOffer
         );
         Redirect("/myObjectsPage")
       });
@@ -116,7 +115,7 @@ const objectCards = async (searchPattern, type, status) => {
       buttonCard.appendChild(cancelButton);
     }
 
-    if (object.object.status !== "given" && object.object.status
+    if (offer.object.status !== "given" && offer.object.status
         !== "assigned") {
       const viewAllInterestedMembers = document.createElement("button");
       viewAllInterestedMembers.innerText = "Voir les interessés";
@@ -131,17 +130,25 @@ const objectCards = async (searchPattern, type, status) => {
       buttonCard.appendChild(viewAllInterestedMembers);
     }
 
-    if (object.object.status === "cancelled" || object.object.status
+    console.log("tefefe ", offer);
+    if (offer.object.status === "cancelled" || offer.object.status
         === "not_collected") {
       const reofferButton = document.createElement("button");
       reofferButton.innerText = "Offrir à nouveau";
       reofferButton.type = "button";
       reofferButton.className = "btn btn-success mt-3 mx-1";
+      reofferButton.addEventListener("click", async () =>{
+        await OfferLibrary.prototype.addOffer(
+            offer.timeSlot,
+            offer.object.idObject
+        );
+        Redirect("/myObjectsPage");
+      });
 
       buttonCard.appendChild(reofferButton);
     }
 
-    if (object.object.status === "assigned") {
+    if (offer.object.status === "assigned") {
       const viewReceiverButton = document.createElement("button");
       viewReceiverButton.innerText = "Voir le receveur";
       viewReceiverButton.type = "button";
@@ -152,8 +159,8 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.type = "button";
       nonRealisedOfferButton.className = "btn btn-danger mt-3 mx-1";
       nonRealisedOfferButton.addEventListener("click", async () => {
-        await ObjectLibrary.prototype.notCollectedObject(
-            object.object.idObject,
+        await OfferLibrary.prototype.notCollectedObject(
+            offer.idOffer,
         );
         Redirect("/myObjectsPage");
       });
@@ -163,8 +170,8 @@ const objectCards = async (searchPattern, type, status) => {
       offeredObjectButton.type = "button";
       offeredObjectButton.className = "btn btn-success mt-3 mx-1";
       offeredObjectButton.addEventListener("click", async () => {
-        await ObjectLibrary.prototype.giveObject(
-            object.object.idObject,
+        await OfferLibrary.prototype.giveObject(
+            offer.object.idObject,
         );
         Redirect("/myObjectsPage");
       });
@@ -175,9 +182,9 @@ const objectCards = async (searchPattern, type, status) => {
     }
 
     const informationDiv = document.getElementById(
-        "information-object-" + object.idOffer);
+        "information-object-" + offer.idOffer);
     informationDiv.addEventListener('click', () => {
-      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + object.idOffer);
+      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
     });
 
   }

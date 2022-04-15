@@ -114,41 +114,29 @@ public class OfferDAOImpl implements OfferDAO {
    * Get the offer with a specific id.
    *
    * @param idOffer the id of the offer
-   * @param hasOlderOffer true if current offer has an older one and false if not
    * @return an offer that match with the idOffer or null
    */
   @Override
-  public OfferDTO getOne(int idOffer, boolean hasOlderOffer) {
+  public OfferDTO getOne(int idOffer) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
-        + "ty.is_default, of.status ";
-    if(hasOlderOffer){
-      query += ", of2.date ";
-    }
-    query += "FROM donnamis.offers of, donnamis.objects ob, "
-        + "donnamis.types ty ";
-    if(hasOlderOffer){
-      query += ", donnamis.offers of2 ";
-    }
-    query += "WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type AND  of.id_offer = ? "
-        + "AND ty.id_type = ob.id_type ";
-    if(hasOlderOffer){
-      query += "AND of2.id_offer != of.id_offer AND of2.id_object = ob.id_object "
-          + "  AND of2.id_offer IN (SELECT id_offer FROM donnamis.offers WHERE id_offer != ? "
-          + "ORDER BY date LIMIT 2) " ;
-    }
+        + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "    ty.is_default, of.status "
+        + "FROM donnamis.types ty , donnamis.objects ob, donnamis.offers of "
+        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
+        + "AND of.id_object = (SELECT id_object FROM donnamis.offers "
+        + "    WHERE id_offer = ? AND date >= of.date) ORDER BY of.date DESC LIMIT 2";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idOffer);
-      if(hasOlderOffer){
-        preparedStatement.setInt(2, idOffer);
-      }
-
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
 
       List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
-      if (offerDTOList == null || offerDTOList.size() != 1) {
+      if (offerDTOList.isEmpty()) {
         return null;
+      }
+      if (offerDTOList.size() == 2) {
+        LocalDate oldDate = offerDTOList.get(1).getDate();
+        offerDTOList.get(0).setOldDate(oldDate);
       }
       return offerDTOList.get(0);
     } catch (SQLException e) {
@@ -156,24 +144,36 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject the id of the object
+   * @return an offer
+   */
   @Override
-  public boolean hasOlderOffer(int idOffer) {
-    String query = "SELECT count(of.id_offer) "
-        + "FROM donnamis.offers of, donnamis.offers of2 "
-        + "WHERE of.id_offer != of2.id_offer AND of.id_object = of2.id_object "
-        + "AND of.date > of2.date AND of.id_offer = ?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)){
-      preparedStatement.setInt(1, idOffer);
+  public OfferDTO getLastObjectOffer(int idObject) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,"
+        + "     ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "     ty.is_default, of.status "
+        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty "
+        + "WHERE ob.id_object = of.id_object  "
+        + "  AND ty.id_type = ob.id_type  "
+        + "  AND of.id_object= ? "
+        + "  AND of.date = "
+        + "(SELECT max(of2.date) FROM donnamis.offers of2\n"
+        + "WHERE of2.id_object = of.id_object\n"
+        + "ORDER BY of.date DESC) ;";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idObject);
+
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-      if(!resultSet.next()) return false;
-      int count = resultSet.getInt(1);
-      resultSet.close();
-      if(count > 0) return true;
+
+      List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
+      return offerDTOList.get(0);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return false;
   }
 
   /**
@@ -185,14 +185,18 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO addOne(OfferDTO offerDTO) {
     String query = "INSERT INTO donnamis.offers (date, time_slot, id_object, status) "
-        + "VALUES (NOW(), ?, ?, 'available') "
+        + "VALUES (NOW(), ?, ?, ?) "
         + "RETURNING id_offer, date, time_slot, id_object, status";
 
     try {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
-
+      if (offerDTO.getStatus().equals("interested")) {
+        preparedStatement.setString(3, offerDTO.getStatus());
+      } else {
+        preparedStatement.setString(3, "available");
+      }
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -220,9 +224,9 @@ public class OfferDAOImpl implements OfferDAO {
    * @return an offerDTO with the id and the new time slot or null
    */
   @Override
-  public OfferDTO updateOne(OfferDTO offerDTO, boolean hasOlderOffer) {
+  public OfferDTO updateOne(OfferDTO offerDTO) {
     String query = "UPDATE donnamis.offers SET time_slot = ?, status = ?";
-    ObjectDTO realObject = getOne(offerDTO.getIdOffer(),hasOlderOffer).getObject();
+    ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
     ObjectDTO objectDTO = null;
     if (offerDTO.getObject() != null) {
       offerDTO.getObject().setIdObject(realObject.getIdObject());
@@ -242,7 +246,7 @@ public class OfferDAOImpl implements OfferDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setString(1, offerDTO.getTimeSlot());
-      preparedStatement.setString(2,offerDTO.getStatus());
+      preparedStatement.setString(2, offerDTO.getStatus());
       preparedStatement.setInt(3, offerDTO.getIdOffer());
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
@@ -255,7 +259,7 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTOUpdated.setIdOffer(resultSet.getInt(1));
       offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
       offerDTOUpdated.setTimeSlot(resultSet.getString(3));
-      offerDTOUpdated.setStatus(resultSet.getString(4));
+      offerDTOUpdated.setStatus(resultSet.getString(5));
       if (objectDTO != null) {
         offerDTOUpdated.setObject(objectDTO);
         offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));
@@ -345,7 +349,6 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
         offerDTO.setStatus(resultSet.getString(12));
-        if(resultSet.getMetaData().getColumnCount() >= 13) offerDTO.setOldDate(resultSet.getDate(13).toLocalDate());
         TypeDTO typeDTO = typeFactory.getTypeDTO();
         typeDTO.setId(resultSet.getInt(5));
         typeDTO.setTypeName(resultSet.getString(10));

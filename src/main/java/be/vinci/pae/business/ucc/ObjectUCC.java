@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -42,11 +43,5 @@ public interface ObjectUCC {
    */
   ObjectDTO updateObjectPicture(String internalPath, int id);
 
-  /**
-   * Mark an object to 'not collected'.
-   *
-   * @param objectDTO object with his id
-   * @return an object
-   */
-  ObjectDTO notCollectedObject(ObjectDTO objectDTO);
+  OfferDTO addObject(OfferDTO offerDTO);
 }

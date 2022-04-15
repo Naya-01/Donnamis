@@ -21,9 +21,9 @@ public interface OfferUCC {
   OfferDTO getOfferById(int idOffer);
 
   /**
-   * Add an offer in the db with out without an object.
+   * Add an offer for an object.
    *
-   * @param offerDTO an offer we want to add in the db
+   * @param offerDTO an offer we want to add
    * @return the offerDTO added
    */
   OfferDTO addOffer(OfferDTO offerDTO);
@@ -54,5 +54,29 @@ public interface OfferUCC {
    */
   List<OfferDTO> getGivenOffers(int idReceiver);
 
-  OfferDTO cancelObject(OfferDTO offerDTO);
+
+  /**
+   * Cancel an Object.
+   *
+   * @param offerDTO object with his id & set the status to 'cancelled'
+   * @return an object
+   */
+  OfferDTO cancelOffer(OfferDTO offerDTO);
+
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param offerDTO object with his id & set the status to 'not collected'
+   * @return an object
+   */
+  OfferDTO notCollectedOffer(OfferDTO offerDTO);
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param offerDTO : object with his id'
+   * @return an object
+   */
+  OfferDTO giveOffer(OfferDTO offerDTO);
 }

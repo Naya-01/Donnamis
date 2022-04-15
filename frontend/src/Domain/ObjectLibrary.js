@@ -44,61 +44,37 @@ class ObjectLibrary {
     return newInterest;
   }
 
-  async cancelObject(idObject) {
+  async addObject(timeSlot, description, typeName) {
+    let response;
     try {
       let options = {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({
-          "idObject": idObject,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      await fetch('api/object/cancel/', options)
-    } catch (err) {
-      console.log(err);
-    }
-
-  }
-
-  async giveObject(idObject) {
-    try {
-      let options = {
-        method: 'POST',
-        body: JSON.stringify({
+          "timeSlot": timeSlot,
           "object": {
-            "idObject": idObject,
-          },
+            "type": {
+              "idType": 0,
+              "typeName": typeName,
+            },
+            "description": description,
+            "image": null, //TODO : change the image
+          }
         }),
         headers: {
           "Content-Type": "application/json",
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      await fetch('api/interest/give/', options)
+      response = await fetch("api/object", options);
     } catch (err) {
       console.log(err);
     }
-  }
+    let current_offer;
+    if (response.status === 200) {
+      current_offer = await response.json();
+    }
 
-  async notCollectedObject(idObject) {
-    try {
-      let options = {
-        method: 'POST',
-        body: JSON.stringify({
-          "idObject": idObject,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      await fetch('api/object/notCollected/', options)
-    } catch (err) {
-      console.log(err);
-    }
+    return current_offer;
   }
 
 }

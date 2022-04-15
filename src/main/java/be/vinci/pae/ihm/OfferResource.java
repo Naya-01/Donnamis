@@ -18,11 +18,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import java.util.List;
 import org.glassfish.jersey.server.ContainerRequest;
 
@@ -99,22 +96,16 @@ public class OfferResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public OfferDTO addOffer(OfferDTO offerDTO) {
-    if (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getType().getIdType() == null
-        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()
-        || offerDTO.getObject().getType().getIdType() != null
-        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject()
-        .getType().getTypeName().isEmpty()) {
-      throw new WebApplicationException("Type need more informations", Status.BAD_REQUEST);
+  public OfferDTO addOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
+
+    if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot() == null
+        || offerDTO.getTimeSlot().isBlank()) {
+      throw new BadRequestException("Information manquante !");
     }
-    if (offerDTO.getObject().getIdObject() == null && (offerDTO.getObject().getType() == null
-        || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
-        .isEmpty() || offerDTO.getObject().getStatus() == null || offerDTO.getObject().getStatus()
-        .isEmpty() || offerDTO.getObject().getIdOfferor() == null)) {
-      throw new WebApplicationException("Bad json object sent", Response.Status.BAD_REQUEST);
-    }
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
+
     return offerUcc.addOffer(offerDTO);
   }
 
@@ -189,6 +180,57 @@ public class OfferResource {
       throw new ForbiddenException("Cet objet ne vous appartient pas");
     }
 
-    return offerUcc.cancelObject(offerDTO);
+    return offerUcc.cancelOffer(offerDTO);
   }
+
+
+  /**
+   * Mark an offer to 'not collected'.
+   *
+   * @param offerDTO object with his id
+   * @return an object
+   */
+  @POST
+  @Path("/notCollected")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO notCollectedOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
+
+    if (offerDTO.getIdOffer() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
+    }
+
+    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      throw new ForbiddenException("Cet objet ne vous appartient pas");
+    }
+
+    return offerUcc.notCollectedOffer(offerDTO);
+
+  }
+
+
+  /**
+   * Give an Object.
+   *
+   * @param offerDTO contain object id
+   * @return an object
+   */
+  @POST
+  @Path("/give")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO giveOffer(OfferDTO offerDTO) {
+
+    if (offerDTO.getObject().getIdObject() == null) {
+      throw new BadRequestException("id de l'objet null");
+    }
+
+    return offerUcc.giveOffer(offerDTO);
+  }
+
 }

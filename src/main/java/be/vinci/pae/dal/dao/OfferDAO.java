@@ -25,14 +25,19 @@ public interface OfferDAO {
   /**
    * Get the offer with a specific id.
    *
-   * @param idOffer the id of the offer
-   * @param hasOlderOffer true if current offer has an older one and false if not
+   * @param idOffer       the id of the offer
    * @return an offer that match with the idOffer or null
    */
-  OfferDTO getOne(int idOffer, boolean hasOlderOffer);
+  OfferDTO getOne(int idOffer);
 
 
-  boolean hasOlderOffer(int idOffer);
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject the id of the object
+   * @return an offer
+   */
+  OfferDTO getLastObjectOffer(int idObject);
 
   /**
    * Add an offer in the db.
@@ -48,7 +53,7 @@ public interface OfferDAO {
    * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
    * @return an offerDTO with the id and the new time slot or null
    */
-  OfferDTO updateOne(OfferDTO offerDTO, boolean hasOlderOffer);
+  OfferDTO updateOne(OfferDTO offerDTO);
 
   /**
    * Get all offers received by a member.

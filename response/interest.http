@@ -48,17 +48,6 @@ Authorization: {{access}}
   }
 }
 
-### give an object
-POST {{baseUri}}/interest/give
-Content-Type: application/json
-Authorization: {{access}}
-
-{
-  "object": {
-    "idObject": 2,
-    "description": "hihihi"
-  }
-}
 
 
 ### /interest/interestedCount/{idObject} → retourne le nombre d'intéressé + si l'user est lui même interessé

@@ -26,27 +26,29 @@ client.global.set("token", response.body.access_token);
 %}
 
 ### GET an object
-GET {{baseUri}}/object/3
+GET {{baseUri}}/object/30
 Authorization: {{token}}
 
 
 ### GET an object
-GET {{baseUri}}/object/member/1
+GET {{baseUri}}/object/member/10
 Authorization: {{token}}
 
-### Make an object
+### Make an object with his offer
 POST {{baseUri}}/object
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "type": {
-    "idType": 4
-  },
-  "description": "test",
-  "status": "available",
-  "image": null,
-  "idOfferor": 1
+  "timeSlot": "time slot test",
+  "object": {
+    "type": {
+      "idType": 0,
+      "typeName": "Croissant"
+    },
+    "description": "C'est une voiture de fortnite",
+    "image": null
+  }
 }
 
 ### update an object
@@ -72,15 +74,6 @@ Authorization: {{token}}
 
 {
   "idObject": 2
-}
-
-### give object
-POST {{baseUri}}/object/give
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "idObject": 5
 }
 
 ### mark object to not collected

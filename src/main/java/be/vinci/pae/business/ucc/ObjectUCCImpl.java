@@ -1,9 +1,11 @@
 package be.vinci.pae.business.ucc;
 
-import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.dal.dao.InterestDAO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
@@ -21,7 +23,9 @@ public class ObjectUCCImpl implements ObjectUCC {
   @Inject
   private DALService dalService;
   @Inject
-  private InterestDAO interestDAO;
+  private TypeDAO typeDAO;
+  @Inject
+  private OfferDAO offerDAO;
 
   /**
    * Get the picture of an object.
@@ -159,34 +163,43 @@ public class ObjectUCCImpl implements ObjectUCC {
     return objectDTO;
   }
 
-  /**
-   * Mark an object to 'not collected'.
-   *
-   * @param objectDTO object with his id
-   * @return an object
-   */
   @Override
-  public ObjectDTO notCollectedObject(ObjectDTO objectDTO) {
+  public OfferDTO addObject(OfferDTO offerDTO) {
+    OfferDTO offer;
     try {
       dalService.startTransaction();
-
-      objectDTO.setStatus("not_collected");
-      objectDTO = objectDAO.updateOne(objectDTO);
-
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(objectDTO.getIdObject());
-
-      if (interestDTO != null) {
-        interestDTO.setStatus("not_collected");
-        interestDAO.updateStatus(interestDTO);
-      }
+      setCorrectType(offerDTO.getObject());
+      ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
+      offerDTO.setObject(objectDTO);
+      offer = offerDAO.addOne(offerDTO);
 
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
+    return offer;
+  }
 
-    return objectDTO;
+
+  /**
+   * Verify the type and set it.
+   *
+   * @param objectDTO the offer that has an object that has a type.
+   */
+  private void setCorrectType(ObjectDTO objectDTO) {
+    TypeDTO typeDTO;
+    if (objectDTO.getType().getTypeName() != null && !objectDTO.getType()
+        .getTypeName().isBlank()) {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getTypeName());
+
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(objectDTO.getType().getTypeName());
+      }
+    } else {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getIdType());
+    }
+    objectDTO.setType(typeDTO);
   }
 
 
