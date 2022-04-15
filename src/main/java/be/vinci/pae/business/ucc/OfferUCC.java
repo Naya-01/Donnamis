@@ -61,7 +61,7 @@ public interface OfferUCC {
    * @param offerDTO object with his id & new status to 'cancelled'
    * @return an object
    */
-  OfferDTO cancelObject(OfferDTO offerDTO);
+  OfferDTO cancelOffer(OfferDTO offerDTO);
 
 
   /**
@@ -70,5 +70,5 @@ public interface OfferUCC {
    * @param offerDTO object with his id & new status to 'not collected'
    * @return an object
    */
-  OfferDTO notCollectedObject(OfferDTO offerDTO);
+  OfferDTO notCollectedOffer(OfferDTO offerDTO);
 }

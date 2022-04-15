@@ -180,7 +180,7 @@ public class OfferResource {
       throw new ForbiddenException("Cet objet ne vous appartient pas");
     }
 
-    return offerUcc.cancelObject(offerDTO);
+    return offerUcc.cancelOffer(offerDTO);
   }
 
 
@@ -195,7 +195,7 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public OfferDTO notCollectedObject(@Context ContainerRequest request, OfferDTO offerDTO) {
+  public OfferDTO notCollectedOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
     if (offerDTO.getIdOffer() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
@@ -208,7 +208,7 @@ public class OfferResource {
       throw new ForbiddenException("Cet objet ne vous appartient pas");
     }
 
-    return offerUcc.notCollectedObject(offerDTO);
+    return offerUcc.notCollectedOffer(offerDTO);
 
   }
 

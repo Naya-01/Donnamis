@@ -190,7 +190,7 @@ public class OfferUCCImpl implements OfferUCC {
    * @return an object
    */
   @Override
-  public OfferDTO cancelObject(OfferDTO offerDTO) {
+  public OfferDTO cancelOffer(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
 
@@ -228,7 +228,7 @@ public class OfferUCCImpl implements OfferUCC {
    * @return an object
    */
   @Override
-  public OfferDTO notCollectedObject(OfferDTO offerDTO) {
+  public OfferDTO notCollectedOffer(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
 
