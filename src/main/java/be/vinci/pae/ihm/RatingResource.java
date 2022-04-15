@@ -49,8 +49,8 @@ public class RatingResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public RatingDTO addRating(@Context ContainerRequest request, RatingDTO ratingDTO) {
-    if(ratingDTO == null || ratingDTO.getIdObject() == null || ratingDTO.getRating() == null
-        || ratingDTO.getComment() == null || ratingDTO.getComment().isBlank()){
+    if (ratingDTO == null || ratingDTO.getIdObject() == null || ratingDTO.getRating() == null
+        || ratingDTO.getComment() == null || ratingDTO.getComment().isBlank()) {
       throw new BadRequestException("Rating need more informations");
     }
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
