@@ -57,7 +57,7 @@ public class RatingUCCImpl implements RatingUCC {
       }
       InterestDTO interestDTO =
           interestDAO.getOne(ratingDTO.getIdObject(), ratingDTO.getIdMember());
-      if (interestDTO == null || !interestDTO.getStatus().equals("given")) {
+      if (interestDTO == null || !interestDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException("Cet objet n'a pas été attribué à ce membre");
       }
       rating = ratingDAO.addOne(ratingDTO);

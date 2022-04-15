@@ -6,12 +6,14 @@ import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
+import RatingLibrary from "../../Domain/RatingLibrary";
 
 const Swal = require('sweetalert2');
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
 const objectLibrary = new ObjectLibrary();
 const interestLibrary = new InterestLibrary();
+const ratingLibrary = new RatingLibrary();
 const bottomNotification = new Notification().getNotification();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
@@ -68,8 +70,6 @@ const MyObjectPage = async () => {
   else{
     imageOfObject = noImage;
   }
-
-
   idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
@@ -172,8 +172,8 @@ const MyObjectPage = async () => {
                 </div>
               </div>
               <div class="row p-2">
-                <!-- The rating button -->
-                <div id="ratingButton" class="text-center p-2"></div>
+                <!-- The rating button or rating shown -->
+                <div id="ratingDiv" class="text-center p-2"></div>
               </div>
           </p>
         </div>
@@ -249,11 +249,12 @@ const MyObjectPage = async () => {
     });
     document.getElementById("divB").appendChild(new_button);
     if(english_status === "given"){ //TODO : check member who vote && not already voted
+      //TODO : getOne rating
       let rating_button = document.createElement("input");
       rating_button.value = "Donner une note";
       rating_button.type = "button";
       rating_button.className = "btn btn-primary";
-      document.getElementById("ratingButton").appendChild(rating_button);
+      document.getElementById("ratingDiv").appendChild(rating_button);
       rating_button.addEventListener("click", ratingPopUp);
     }
     if (isInterested || (english_status !== "interested" && english_status
@@ -268,7 +269,7 @@ const MyObjectPage = async () => {
  * Change elements of the html to have a text.
  * @param {Event} e : evenement
  */
-async function changeToText(e) {
+function changeToText(e) {
   // Make a simple image
   let old = document.getElementById("span_image");
   let image = document.createElement("img");
@@ -310,7 +311,7 @@ async function changeToText(e) {
  * Change elements of the html to have a form.
  * @param {Event} e : evenement
  */
-async function changeToForm(e) {
+function changeToForm(e) {
   // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
@@ -490,12 +491,32 @@ async function ratingPopUp(e){
     backdrop: `rgba(80,80,80,0.7)`,
     allowOutsideClick: true,
     allowEscapeKey: true,
-    confirmButtonText: 'Retour à la page d\'accueil',
-    preConfirm: () => {
-      //TODO : add note
+    confirmButtonText: 'Publier la note',
+    preConfirm: async () => {
       let text_rating = document.getElementById("rating_text").value;
-      console.log(note);
-      console.log(text_rating);
+      if(text_rating.trim().length === 0){
+        note = 1;
+        bottomNotification.fire({
+          icon: 'error',
+          title: 'Vous devez commentez votre note.'
+        })
+        return;
+      }
+      let rating = await ratingLibrary.addRating(note, text_rating, idObject);
+
+      if(rating === undefined){
+        bottomNotification.fire({
+          icon: 'error',
+          title: 'Un problème est survenu lors de la création de la note.'
+        })
+      }
+      else{
+        bottomNotification.fire({
+          icon: 'success',
+          title: 'Votre note a bien été prise en compte.'
+        })
+      }
+
     }
   })
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
