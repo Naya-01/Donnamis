@@ -42,3 +42,12 @@
 .clickable:hover {
   cursor: pointer;
 }
+
+[id^='star']{
+  font-size: 2em;
+  color:gray;
+}
+
+#star1{
+  color:yellow !important;
+}

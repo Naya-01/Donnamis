@@ -7,6 +7,7 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
 
+const Swal = require('sweetalert2');
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
 const objectLibrary = new ObjectLibrary();
@@ -30,6 +31,7 @@ let form = false;
 let isInterested;
 let localLinkImage;
 let statusObject;
+let note = 1;
 
 /**
  * Render the page to see an object
@@ -58,7 +60,6 @@ const MyObjectPage = async () => {
     Redirect("/");
     return;
   }
-  //TODO
   //Set all fields
   idObject = offer.object.idObject;
   if (offer.object.image) {
@@ -73,6 +74,14 @@ const MyObjectPage = async () => {
   description = offer.object.description;
   time_slot = offer.timeSlot;
   statusObject = offer.status;
+  let oldDate;
+  if(offer.oldDate === undefined){
+    oldDate = "/"
+  }
+  else {
+    oldDate = offer.oldDate[2] + "/" + offer.oldDate[1]
+        + "/" + offer.oldDate[0];
+  }
   // translate the status to french
   english_status = offer.status;
   let french_status = dictionnary.get(english_status);
@@ -115,8 +124,12 @@ const MyObjectPage = async () => {
                 </div>
               </div>
               <!-- the date -->
-              <div class="row p-2">
+              <div class="row px-2">
                 <p class="text-muted">Date de publication : ${offer.date[2]}/${offer.date[1]}/${offer.date[0]}</p>
+              </div>
+              <!-- the old date -->
+              <div class="row px-2">
+                <p class="text-muted">Date de la précédente offre : ${oldDate}</p>
               </div>
               <div class="row p-2">
                 <!-- the time slot-->
@@ -151,16 +164,22 @@ const MyObjectPage = async () => {
                   <span id="divDate"></span>
                 </div>
               </div>
-              <div id="nbMembersInterested" class="text-center p-2">
-                <p>${nbMembersInterested} personne(s) intéressée(s) par 
-                  cet objet</p>
+              <div class="row p-2">
+                <!-- number of interested people -->
+                <div id="nbMembersInterested" class="text-center p-2">
+                  <p>${nbMembersInterested} personne(s) intéressée(s) par 
+                    cet objet</p>
+                </div>
+              </div>
+              <div class="row p-2">
+                <!-- The rating button -->
+                <div id="ratingButton" class="text-center p-2"></div>
               </div>
           </p>
         </div>
       </div>
     </div>
   </div>`;
-
 
   // if this is the object of the member connected
   if (idMemberConnected === offer.object.idOfferor) {
@@ -229,6 +248,14 @@ const MyObjectPage = async () => {
       })
     });
     document.getElementById("divB").appendChild(new_button);
+    if(english_status === "given"){ //TODO : check member who vote && not already voted
+      let rating_button = document.createElement("input");
+      rating_button.value = "Donner une note";
+      rating_button.type = "button";
+      rating_button.className = "btn btn-primary";
+      document.getElementById("ratingButton").appendChild(rating_button);
+      rating_button.addEventListener("click", ratingPopUp);
+    }
     if (isInterested || (english_status !== "interested" && english_status
         !== "available")) {
       document.getElementById("divDate").remove();
@@ -451,6 +478,61 @@ async function updateObject(e) {
   changeToText(e);
 
 
+}
+
+async function ratingPopUp(e){
+  Swal.fire({
+    title: 'Donnez une note à cet objet :',
+    html: createRatingHTMLCode(),
+    width: 1000,
+    padding: '2em',
+    scrollbarPadding: false,
+    backdrop: `rgba(80,80,80,0.7)`,
+    allowOutsideClick: true,
+    allowEscapeKey: true,
+    confirmButtonText: 'Retour à la page d\'accueil',
+    preConfirm: () => {
+      //TODO : add note
+      let text_rating = document.getElementById("rating_text").value;
+      console.log(note);
+      console.log(text_rating);
+    }
+  })
+  let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
+  for(let i = 0; i < allStars.length; i++){
+    allStars[i].addEventListener("click", changeColorStars);
+  }
+
+
+}
+
+function changeColorStars(e){
+  let note_clicked = e.target.id.substring(4);
+  let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
+  for(let i = 0; i < allStars.length; i++){
+    allStars[i].style = "color:gray";
+  }
+  for(let i = 0; i < note_clicked; i++){
+    allStars[i].style = "color:yellow";
+  }
+  note = note_clicked;
+  console.log(note_clicked)
+}
+
+function createRatingHTMLCode(){
+  let htmlCode = ``;
+  // Add 5 stars for the rating
+  for(let i = 1; i <= 5; i++){
+    let oneStar = document.createElement("i");
+    oneStar.className = "bi bi-star-fill clickable";
+    oneStar.id = "star" + i;
+    htmlCode += oneStar.outerHTML;
+  }
+  htmlCode += `<div class=row">
+                <textarea class="form-control" id="rating_text" 
+                placeholder="Commentez votre note" rows="2"></textarea>
+               </div>`
+  return htmlCode;
 }
 
 export default MyObjectPage;
