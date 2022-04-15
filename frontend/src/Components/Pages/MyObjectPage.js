@@ -205,62 +205,72 @@ const MyObjectPage = async () => {
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-    // date of disponibility
-    let labelDate = document.createElement("label");
-    labelDate.for = "input_date";
-    labelDate.innerHTML = "Date de disponibilité : ";
-    let input_date = document.createElement("input");
-    input_date.id = "input_date";
-    input_date.type = "date";
-    let date = new Date();
-    let month = "";
-    if (date.getMonth() % 10 !== 0) {
-      month = "0"
-    }
-    month += (date.getMonth() + 1);
-    let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
-    input_date.value = dateActual;
-    input_date.min = dateActual;
-    document.getElementById("divDate").appendChild(labelDate);
-    document.getElementById("divDate").appendChild(input_date);
-
-    let new_button = document.createElement("input");
-    new_button.id = "interestedButton";
-    new_button.value = "Je suis interessé";
-    new_button.type = "button";
-    new_button.className = "btn btn-primary";
-    new_button.addEventListener("click", async () => {
-      //if there is no date specified
-      if(input_date.value.length === 0){
-        bottomNotification.fire({
-          icon: 'error',
-          title: 'Aucune date renseignée'
-        })
-        return;
+    if (!isInterested && (english_status === "interested" || english_status
+        === "available")) {
+      // date of disponibility
+      let labelDate = document.createElement("label");
+      labelDate.for = "input_date";
+      labelDate.innerHTML = "Date de disponibilité : ";
+      let input_date = document.createElement("input");
+      input_date.id = "input_date";
+      input_date.type = "date";
+      let date = new Date();
+      let month = "";
+      if (date.getMonth() % 10 !== 0) {
+        month = "0"
       }
-      new_button.disabled = true;
-      input_date.disabled = true;
-      await interestLibrary.addOne(offer.object.idObject, input_date.value)
-      // the notification to show that the interest is send
-      bottomNotification.fire({
-        icon: 'success',
-        title: 'Votre intérêt a bien été pris en compte.'
-      })
-    });
-    document.getElementById("divB").appendChild(new_button);
-    if(english_status === "given"){ //TODO : check member who vote && not already voted
-      //TODO : getOne rating
-      let rating_button = document.createElement("input");
-      rating_button.value = "Donner une note";
-      rating_button.type = "button";
-      rating_button.className = "btn btn-primary";
-      document.getElementById("ratingDiv").appendChild(rating_button);
-      rating_button.addEventListener("click", ratingPopUp);
+      month += (date.getMonth() + 1);
+      let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+      input_date.value = dateActual;
+      input_date.min = dateActual;
+      document.getElementById("divDate").appendChild(labelDate);
+      document.getElementById("divDate").appendChild(input_date);
+
+      // button im interested
+      let new_button = document.createElement("input");
+      new_button.id = "interestedButton";
+      new_button.value = "Je suis interessé";
+      new_button.type = "button";
+      new_button.className = "btn btn-primary";
+      new_button.addEventListener("click", async () => {
+        //if there is no date specified
+        if(input_date.value.length === 0){
+          bottomNotification.fire({
+            icon: 'error',
+            title: 'Aucune date renseignée'
+          })
+          return;
+        }
+        new_button.disabled = true;
+        input_date.disabled = true;
+        await interestLibrary.addOne(offer.object.idObject, input_date.value)
+        // the notification to show that the interest is send
+        bottomNotification.fire({
+          icon: 'success',
+          title: 'Votre intérêt a bien été pris en compte.'
+        })
+      });
+      document.getElementById("divB").appendChild(new_button);
     }
-    if (isInterested || (english_status !== "interested" && english_status
-        !== "available")) {
-      document.getElementById("divDate").remove();
-      document.getElementById("interestedButton").remove();
+    else if(english_status === "given"){ //TODO : make minus request to the db here
+      let current_rating = await ratingLibrary.getOne(idObject);
+      if(current_rating === undefined){ // if there is no rating yet
+        let current_interest = await interestLibrary.getOneInterest(idObject, idMemberConnected);
+        if(current_interest !== undefined && current_interest.status === "received"){ // if the member connected has received the object
+          let rating_button = document.createElement("input");
+          rating_button.id = "buttonGivenRating";
+          rating_button.value = "Donner une note";
+          rating_button.type = "button";
+          rating_button.className = "btn btn-primary";
+          document.getElementById("ratingDiv").appendChild(rating_button);
+          rating_button.addEventListener("click", ratingPopUp);
+        }
+      }
+      else{
+        //TODO : display the rating or a msg if there isnt yet
+
+      }
+
     }
   }
 }
@@ -515,6 +525,7 @@ async function ratingPopUp(e){
           icon: 'success',
           title: 'Votre note a bien été prise en compte.'
         })
+        document.getElementById("buttonGivenRating").remove(); // remove the button
       }
 
     }

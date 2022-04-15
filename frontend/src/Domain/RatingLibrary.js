@@ -27,6 +27,27 @@ class RatingLibrary {
 
     return current_rating;
   }
+
+  async getOne(idObject) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/ratings/" + idObject, options);
+    } catch (err) {
+      console.log(err);
+    }
+    let current_rating;
+    if (response.status === 200) {
+      current_rating = await response.json();
+    }
+    return current_rating;
+  }
 }
 
 export default RatingLibrary;
