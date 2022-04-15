@@ -189,7 +189,7 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Cancel an Object.
    *
-   * @param offerDTO object with his id & new status to 'cancelled'
+   * @param offerDTO object with his id & set the status to 'cancelled'
    * @return an object
    */
   @Override
@@ -227,7 +227,7 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Mark an object to 'not collected'.
    *
-   * @param offerDTO object with his id & new status to 'not collected'
+   * @param offerDTO object with his id & set the status to 'not collected'
    * @return an object
    */
   @Override

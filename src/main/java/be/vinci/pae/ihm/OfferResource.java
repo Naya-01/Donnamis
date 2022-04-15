@@ -216,7 +216,7 @@ public class OfferResource {
   /**
    * Give an Object.
    *
-   * @param offerDTO the interest information
+   * @param offerDTO contain object id
    * @return an object
    */
   @POST
