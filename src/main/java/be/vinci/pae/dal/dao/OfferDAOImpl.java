@@ -192,9 +192,9 @@ public class OfferDAOImpl implements OfferDAO {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
-      if(offerDTO.getStatus().equals("interested")){
+      if (offerDTO.getStatus().equals("interested")) {
         preparedStatement.setString(3, offerDTO.getStatus());
-      }else{
+      } else {
         preparedStatement.setString(3, "available");
       }
       preparedStatement.executeQuery();
