@@ -113,7 +113,7 @@ public class OfferDAOImpl implements OfferDAO {
   /**
    * Get the offer with a specific id.
    *
-   * @param idOffer       the id of the offer
+   * @param idOffer the id of the offer
    * @return an offer that match with the idOffer or null
    */
   @Override
@@ -131,10 +131,10 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
 
       List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
-      if(offerDTOList.isEmpty()){
+      if (offerDTOList.isEmpty()) {
         return null;
       }
-      if(offerDTOList.size() == 2) {
+      if (offerDTOList.size() == 2) {
         LocalDate oldDate = offerDTOList.get(1).getDate();
         offerDTOList.get(0).setOldDate(oldDate);
       }
@@ -255,7 +255,7 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTOUpdated.setIdOffer(resultSet.getInt(1));
       offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
       offerDTOUpdated.setTimeSlot(resultSet.getString(3));
-      offerDTOUpdated.setStatus(resultSet.getString(4));
+      offerDTOUpdated.setStatus(resultSet.getString(5));
       if (objectDTO != null) {
         offerDTOUpdated.setObject(objectDTO);
         offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));

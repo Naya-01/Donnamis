@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
@@ -259,4 +260,51 @@ public class OfferUCCImpl implements OfferUCC {
 
     return offerDTO;
   }
+
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param offerDTO : object with his id'
+   * @return an object
+   */
+  @Override
+  public OfferDTO giveOffer(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      if (interestDTO == null) {
+        throw new NotFoundException("aucun membre n'a été assigner");
+      }
+
+      if (!interestDTO.getObject().getStatus().equals("assigned")) {
+        throw new ForbiddenException("aucun objet n'est assigné pour le donner");
+      }
+
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException("aucune offre n'est assigné pour le donner");
+      }
+
+      interestDTO.setStatus("received");
+      offerDTO.getObject().setStatus("given");
+      offerDTO.setStatus("given");
+
+      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
+      interestDAO.updateStatus(interestDTO);
+      offerDTO = offerDAO.updateOne(offerDTO);
+
+      offerDTO.setObject(objectDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return offerDTO;
+  }
+
 }

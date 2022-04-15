@@ -212,4 +212,25 @@ public class OfferResource {
 
   }
 
+
+  /**
+   * Give an Object.
+   *
+   * @param offerDTO the interest information
+   * @return an object
+   */
+  @POST
+  @Path("/give")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO giveOffer(OfferDTO offerDTO) {
+
+    if (offerDTO.getObject().getIdObject() == null) {
+      throw new BadRequestException("id de l'objet null");
+    }
+
+    return offerUcc.giveOffer(offerDTO);
+  }
+
 }

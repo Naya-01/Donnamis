@@ -132,3 +132,14 @@ Content-Type: application/json
 {
   "idOffer": 9
 }
+
+### give an object
+POST {{baseUri}}/offers/give
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "object": {
+    "idObject": 15
+  }
+}

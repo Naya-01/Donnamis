@@ -156,24 +156,4 @@ public class InterestResource {
   }
 
 
-  /**
-   * Give an Object, set the status to 'given'.
-   *
-   * @param interestDTO the interest information
-   * @return an object
-   */
-  @POST
-  @Path("/give")
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Authorize
-  public InterestDTO giveObject(InterestDTO interestDTO) {
-
-    if (interestDTO.getObject().getIdObject() == null) {
-      throw new BadRequestException("id de l'objet null");
-    }
-
-    return interestUCC.giveObject(interestDTO);
-  }
-
 }

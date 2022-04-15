@@ -71,4 +71,12 @@ public interface OfferUCC {
    * @return an object
    */
   OfferDTO notCollectedOffer(OfferDTO offerDTO);
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param offerDTO : object with his id'
+   * @return an object
+   */
+  OfferDTO giveOffer(OfferDTO offerDTO);
 }
