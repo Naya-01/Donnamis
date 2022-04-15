@@ -121,7 +121,7 @@ Authorization: {{access}}
 Content-Type: application/json
 
 {
-  "idOffer": 9
+  "idOffer": 17
 }
 
 ### Mark offer to not collected

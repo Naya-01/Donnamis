@@ -101,6 +101,40 @@ class ObjectLibrary {
     }
   }
 
+
+  async addObject(timeSlot, description, typeName) {
+    let response;
+    try {
+      let options = {
+        method: "POST",
+        body: JSON.stringify({
+          "timeSlot": timeSlot,
+          "object": {
+            "type": {
+              "idType": 0,
+              "typeName": typeName,
+            },
+            "description": description,
+            "image": null, //TODO : change the image
+          }
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/object", options);
+    } catch (err) {
+      console.log(err);
+    }
+    let current_offer;
+    if (response.status === 200) {
+      current_offer = await response.json();
+    }
+
+    return current_offer;
+  }
+
 }
 
 export default ObjectLibrary;
