@@ -171,6 +171,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       setCorrectType(offerDTO.getObject());
       ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
       offerDTO.setObject(objectDTO);
+      offerDTO.setStatus("available");
       offer = offerDAO.addOne(offerDTO);
 
       dalService.commitTransaction();
