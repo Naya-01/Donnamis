@@ -2,8 +2,10 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -14,6 +16,8 @@ public class InterestUCCImpl implements InterestUCC {
 
   @Inject
   private InterestDAO interestDAO;
+  @Inject
+  private OfferDAO offerDAO;
   @Inject
   private DALService dalService;
   @Inject
@@ -64,6 +68,9 @@ public class InterestUCCImpl implements InterestUCC {
         }
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
+        OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
+        offerDTO.setStatus("interested");
+        offerDAO.updateOne(offerDTO);
       }
       interestDAO.addOne(item);
       dalService.commitTransaction();
