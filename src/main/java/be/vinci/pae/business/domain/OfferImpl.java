@@ -11,16 +11,20 @@ import java.time.LocalDate;
 public class OfferImpl implements OfferDTO {
 
   @JsonView(Views.Public.class)
-  private int idOffer;
+  private Integer idOffer;
   @JsonView(Views.Public.class)
   private LocalDate date;
   @JsonView(Views.Public.class)
+  private LocalDate oldDate;
+  @JsonView(Views.Public.class)
   private String timeSlot;
+  @JsonView(Views.Public.class)
+  private String status;
   @JsonView(Views.Public.class)
   private ObjectDTO object;
 
   @Override
-  public int getIdOffer() {
+  public Integer getIdOffer() {
     return idOffer;
   }
 
@@ -37,6 +41,16 @@ public class OfferImpl implements OfferDTO {
   @Override
   public void setDate(LocalDate date) {
     this.date = date;
+  }
+
+  @Override
+  public LocalDate getOldDate() {
+    return oldDate;
+  }
+
+  @Override
+  public void setOldDate(LocalDate oldDate) {
+    this.oldDate = oldDate;
   }
 
   @Override
@@ -57,6 +71,16 @@ public class OfferImpl implements OfferDTO {
   @Override
   public void setObject(ObjectDTO object) {
     this.object = object;
+  }
+
+  @Override
+  public String getStatus() {
+    return status;
+  }
+
+  @Override
+  public void setStatus(String status) {
+    this.status = status;
   }
 
 }

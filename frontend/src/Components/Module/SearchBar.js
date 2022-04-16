@@ -25,8 +25,8 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
               <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
             </div>`;
     }
-    if(hasStatus){
-      searchBarHtml +=`<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+    if (hasStatus) {
+      searchBarHtml += `<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
               <input type="radio" class="btn-check" checked name="btnradio" id="btn-status-all" autocomplete="off">
               <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
               

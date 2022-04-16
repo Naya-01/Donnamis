@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = RatingImpl.class)
 public interface RatingDTO {
 
-  int getRating();
+  Integer getRating();
 
   void setRating(int rating);
 
@@ -14,11 +14,11 @@ public interface RatingDTO {
 
   void setComment(String comment);
 
-  MemberDTO getMemberDTO();
+  Integer getIdMember();
 
-  void setMemberDTO(MemberDTO memberDTO);
+  void setIdMember(Integer memberId);
 
-  ObjectDTO getObjectDTO();
+  Integer getIdObject();
 
-  void setObjectDTO(ObjectDTO objectDTO);
+  void setIdObject(Integer objectId);
 }

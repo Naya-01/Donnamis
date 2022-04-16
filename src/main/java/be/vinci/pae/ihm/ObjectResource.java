@@ -2,6 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -133,4 +134,38 @@ public class ObjectResource {
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     return objectUCC.updateOne(objectDTO);
   }
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain objectDTO & offerDTO information
+   * @return offer
+   */
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO addObject(@Context ContainerRequest request, OfferDTO offerDTO) {
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() == null
+        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()
+        || offerDTO.getObject().getType().getIdType() != null
+        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      throw new BadRequestException("Type need more informations");
+    }
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
+        .isEmpty()) {
+      throw new BadRequestException("Bad json object sent");
+    }
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
+
+    return objectUCC.addObject(offerDTO);
+  }
+
+
 }

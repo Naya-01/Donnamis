@@ -14,8 +14,13 @@ client.global.set("refresh", response.body.refresh_token);
 
 
 ### Get One interest
-GET {{baseUri}}/interest?idObject=2&idMember=1
+GET {{baseUri}}/interest?idObject=4&idMember=4
 Authorization: {{refresh}}
+
+### Get all interests
+GET {{baseUri}}/interest/getAllInsterests/2
+Authorization: {{access}}
+
 
 ### Add One interest
 POST {{baseUri}}/interest
@@ -30,6 +35,19 @@ Authorization: {{refresh}}
 ### Get interest count
 GET {{baseUri}}/interest/count/2
 Authorization: {{refresh}}
+
+### Assign an object
+POST {{baseUri}}/interest/assignObject
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "idMember": 5,
+  "object": {
+    "idObject": 2
+  }
+}
+
 
 
 ### /interest/interestedCount/{idObject} → retourne le nombre d'intéressé + si l'user est lui même interessé

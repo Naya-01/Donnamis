@@ -28,7 +28,7 @@ class OfferLibrary {
     return current_offer;
   }
 
-  async addOffer(timeSlot, description, typeName, idOfferor) {
+  async addOffer(timeSlot,idObject) {
     let response;
     try {
       let options = {
@@ -36,14 +36,7 @@ class OfferLibrary {
         body: JSON.stringify({
           "timeSlot": timeSlot,
           "object": {
-            "type": {
-              "idType": 0,
-              "typeName": typeName,
-            },
-            "description": description,
-            "status": "available",
-            "image": null, //TODO : change the image
-            "idOfferor": idOfferor
+            "idObject": idObject
           }
         }),
         headers: {
@@ -72,18 +65,18 @@ class OfferLibrary {
    * @param status the status of the object
    * @returns {Promise<*>} the offer in json
    */
-  async updateOffer(id, timeSlot, description, idType, status) {
+  async updateOffer(id, timeSlot, description, idType, statusOffer, statusObject) {
     let response;
-    console.log(id)
     try {
       let options = {
         method: "PUT", //TODO : change to PUT
         body: JSON.stringify({
           "idOffer": id,
           "timeSlot": timeSlot,
+          "status": statusOffer,
           "object": {
             "description": description,
-            "status": status,
+            "status": statusObject,
           }
         }),
         headers: {
@@ -167,6 +160,65 @@ class OfferLibrary {
       console.log(err);
     }
   }
+
+  async giveObject(idObject) {
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "object": {
+            "idObject": idObject
+          },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/offers/give', options)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async cancelObject(idOffer) {
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "idOffer": idOffer,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/offers/cancelOffer/', options)
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+
+  async notCollectedObject(idOffer) {
+    try {
+      let options = {
+        method: 'POST',
+        body: JSON.stringify({
+          "idOffer": idOffer,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      await fetch('api/offers/notCollected/', options)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+
 }
 
 export default OfferLibrary;

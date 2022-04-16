@@ -29,10 +29,12 @@ class InterestUCCImplTest {
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
   private DALService mockDalService;
+  private ObjectDTO objectDTO;
   private InterestDTO interestDTO;
   private InterestDTO newInterestDTO;
   private int nonExistentId = 1000;
   private ServiceLocator locator;
+  private ObjectFactory objectFactory;
 
   @BeforeEach
   void initAll() {
@@ -41,26 +43,35 @@ class InterestUCCImplTest {
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
+    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
+    this.objectDTO = objectFactory.getObjectDTO();
+    this.objectDTO.setIdObject(10);
+
     InterestFactory interestFactory = locator.getService(InterestFactory.class);
     this.interestDTO = interestFactory.getInterestDTO();
-    this.interestDTO.setIdObject(10);
+    this.interestDTO.setObject(objectDTO);
     this.interestDTO.setIdMember(1);
     this.interestDTO.setAvailabilityDate(LocalDate.now());
     this.interestDTO.setStatus("published");
     this.newInterestDTO = interestFactory.getInterestDTO();
+    this.objectFactory = locator.getService(ObjectFactory.class);
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
   @Test
   public void testGetInterestWithNonExistentObjectAndExistentMember() {
-    Mockito.when(mockInterestDAO.getOne(nonExistentId, 1)).thenReturn(null);
+    objectDTO.setIdObject(nonExistentId);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC
-            .getInterest(nonExistentId, 1)),
+            .getInterest(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getOne(nonExistentId, 1),
+            .getOne(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );
@@ -69,14 +80,18 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with an existent object and a non existent member")
   @Test
   public void testGetInterestWithExistentObjectAndNonExistentMember() {
-    Mockito.when(mockInterestDAO.getOne(1, nonExistentId)).thenReturn(null);
+    interestDTO.setIdMember(nonExistentId);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC
-            .getInterest(1, nonExistentId)),
+            .getInterest(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getOne(1, nonExistentId),
+            .getOne(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );
@@ -85,14 +100,19 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with a non existent object and a non existent member")
   @Test
   public void testGetInterestWithNonExistentObjectAndNonExistentMember() {
-    Mockito.when(mockInterestDAO.getOne(nonExistentId, nonExistentId)).thenReturn(null);
+    interestDTO.setIdMember(nonExistentId);
+    objectDTO.setIdObject(nonExistentId);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () ->
-            interestUCC.getInterest(nonExistentId, nonExistentId)),
+            interestUCC.getInterest(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getOne(nonExistentId, nonExistentId),
+            .getOne(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );
@@ -101,13 +121,17 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with an existent object, member and interest")
   @Test
   public void testGetInterestWithExistentObjectAndExistentMemberAndExistingInterest() {
-    Mockito.when(mockInterestDAO.getOne(10, 1)).thenReturn(interestDTO);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(interestDTO);
     assertAll(
-        () -> assertEquals(interestDTO, interestUCC.getInterest(10, 1)),
+        () -> assertEquals(interestDTO,
+            interestUCC.getInterest(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getOne(10, 1),
+            .getOne(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .commitTransaction()
     );
@@ -116,14 +140,17 @@ class InterestUCCImplTest {
   @DisplayName("test getInterest with an existent object, member and non-existent interest")
   @Test
   public void testGetInterestWithExistentObjectAndExistentMemberAndNonExistentInterest() {
-    Mockito.when(mockInterestDAO.getOne(10, 1)).thenReturn(null);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC
-            .getInterest(10, 1)),
+            .getInterest(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getOne(10, 1),
+            .getOne(interestDTO.getObject().getIdObject(),
+                interestDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );
@@ -132,9 +159,12 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with a good interest")
   @Test
   public void testAddOneWithAGoodInterest() {
-    newInterestDTO.setIdObject(10);
+    newInterestDTO.setObject(objectDTO);
     newInterestDTO.setIdMember(1);
     newInterestDTO.setAvailabilityDate(LocalDate.now());
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(10);
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(newInterestDTO, interestUCC.addOne(newInterestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -146,10 +176,27 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test addOne with a non existent object")
+  @Test
+  public void testAddOneWithANonExistentObject() {
+    objectDTO.setIdObject(nonExistentId);
+    newInterestDTO.setObject(objectDTO);
+    newInterestDTO.setIdMember(1);
+    newInterestDTO.setAvailabilityDate(LocalDate.now());
+    Mockito.when(mockObjectDAO.getOne(nonExistentId)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(newInterestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
   @DisplayName("test addOne with an interest that already exists")
   @Test
   public void testAddOneWithAnAlreadyExistentInterest() {
-    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(),
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
         interestDTO.getIdMember())).thenReturn(interestDTO);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
@@ -180,8 +227,7 @@ class InterestUCCImplTest {
   public void testGetInterestedCountWithExistentObject() {
     List<InterestDTO> allInterests = new ArrayList<>();
     allInterests.add(newInterestDTO);
-    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
-    ObjectDTO object = objectFactory.getObjectDTO();
+    ObjectDTO object = this.objectFactory.getObjectDTO();
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
     Mockito.when(mockInterestDAO.getAll(1)).thenReturn(allInterests);
     assertAll(

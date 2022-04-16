@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = MemberImpl.class)
 public interface MemberDTO {
 
-  int getMemberId();
+  Integer getMemberId();
 
   void setMemberId(int memberId);
 

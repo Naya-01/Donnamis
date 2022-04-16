@@ -3,6 +3,20 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
+
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
   "username": "bazz",
   "password": "Mdpuser.1",
   "rememberMe": true
@@ -12,27 +26,29 @@ client.global.set("token", response.body.access_token);
 %}
 
 ### GET an object
-GET {{baseUri}}/object/3
+GET {{baseUri}}/object/30
 Authorization: {{token}}
 
 
 ### GET an object
-GET {{baseUri}}/object/member/1
+GET {{baseUri}}/object/member/10
 Authorization: {{token}}
 
-### Make an object
+### Make an object with his offer
 POST {{baseUri}}/object
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "type": {
-    "idType": 4
-  },
-  "description": "test",
-  "status": "available",
-  "image": null,
-  "idOfferor": 1
+  "timeSlot": "time slot test",
+  "object": {
+    "type": {
+      "idType": 0,
+      "typeName": "Croissant"
+    },
+    "description": "C'est une voiture de fortnite",
+    "image": null
+  }
 }
 
 ### update an object
@@ -49,3 +65,24 @@ Authorization: {{token}}
   "status": "available",
   "idOfferor": 3
 }
+
+
+### cancel object
+POST {{baseUri}}/object/cancel
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 2
+}
+
+### mark object to not collected
+POST {{baseUri}}/object/notCollected
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 5
+}
+
+
