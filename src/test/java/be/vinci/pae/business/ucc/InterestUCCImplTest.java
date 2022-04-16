@@ -7,10 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
+import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -21,6 +24,7 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 class InterestUCCImplTest {
@@ -162,9 +166,14 @@ class InterestUCCImplTest {
     newInterestDTO.setObject(objectDTO);
     newInterestDTO.setIdMember(1);
     newInterestDTO.setAvailabilityDate(LocalDate.now());
+    OfferFactory offerFactory = locator.getService(OfferFactory.class);
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(10);
+    offerDTO.setObject(objectDTO);
+    OfferDAO mockOfferDAO = locator.getService(OfferDAO.class);
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockOfferDAO.getOneByObject(objectDTO.getIdObject())).thenReturn(offerDTO);
     assertAll(
         () -> assertEquals(newInterestDTO, interestUCC.addOne(newInterestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
