@@ -135,7 +135,7 @@ public class OfferDAOImpl implements OfferDAO {
    * @return an offer that match with the idObject or null
    */
   @Override
-  public OfferDTO getOneByObject(int idObject){
+  public OfferDTO getOneByObject(int idObject) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
         + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "    ty.is_default, of.status "
