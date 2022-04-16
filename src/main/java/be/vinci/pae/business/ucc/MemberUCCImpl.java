@@ -243,10 +243,13 @@ public class MemberUCCImpl implements MemberUCC {
   public MemberDTO updateMember(MemberDTO memberDTO) {
     try {
       dalService.startTransaction();
-      memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
-      AddressDTO addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-      if (addressDTO == null) {
-        throw new ForbiddenException("Problem with updating address");
+      AddressDTO addressDTO = null;
+      if(memberDTO.getAddress() != null){
+        memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
+        addressDTO = addressDAO.updateOne(memberDTO.getAddress());
+        if (addressDTO == null) {
+          throw new ForbiddenException("Problem with updating address");
+        }
       }
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
       if (modifierMemberDTO == null) {
