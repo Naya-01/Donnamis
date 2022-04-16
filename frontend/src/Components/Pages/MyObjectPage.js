@@ -7,7 +7,10 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
 import RatingLibrary from "../../Domain/RatingLibrary";
+import Member from "../../Domain/Member";
 
+const regNumberPhone =
+    new RegExp('^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$');
 const Swal = require('sweetalert2');
 const memberLibrary = new MemberLibrary();
 const offerLibrary = new OfferLibrary();
@@ -34,6 +37,9 @@ let isInterested;
 let localLinkImage;
 let statusObject;
 let note = 1;
+let offer;
+let idMemberConnected;
+
 
 /**
  * Render the page to see an object
@@ -57,7 +63,7 @@ const MyObjectPage = async () => {
   }
 
   // GET all informations of the object (and offer)
-  let offer = await offerLibrary.getOfferById(idOffer);
+  offer = await offerLibrary.getOfferById(idOffer);
   if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
@@ -88,7 +94,7 @@ const MyObjectPage = async () => {
 
   // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
-  let idMemberConnected = member.memberId;
+  idMemberConnected = member.memberId;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
@@ -158,10 +164,11 @@ const MyObjectPage = async () => {
                   </div>
                 </div>
               </div>
-              <div class="row p-2">
+              <div class="row p-2 m-2">
                 <!-- The modify button -->
                 <div id="divB" class="col text-center">
                   <span id="divDate"></span>
+                  <div id="divTel"></div>
                 </div>
               </div>
               <div class="row p-2">
@@ -207,51 +214,7 @@ const MyObjectPage = async () => {
         + memberGiver.username;
     if (!isInterested && (english_status === "interested" || english_status
         === "available")) {
-      // date of disponibility
-      let labelDate = document.createElement("label");
-      labelDate.for = "input_date";
-      labelDate.innerHTML = "Date de disponibilité : ";
-      let input_date = document.createElement("input");
-      input_date.id = "input_date";
-      input_date.type = "date";
-      let date = new Date();
-      let month = "";
-      if (date.getMonth() % 10 !== 0) {
-        month = "0"
-      }
-      month += (date.getMonth() + 1);
-      let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
-      input_date.value = dateActual;
-      input_date.min = dateActual;
-      document.getElementById("divDate").appendChild(labelDate);
-      document.getElementById("divDate").appendChild(input_date);
-
-      // button im interested
-      let new_button = document.createElement("input");
-      new_button.id = "interestedButton";
-      new_button.value = "Je suis interessé";
-      new_button.type = "button";
-      new_button.className = "btn btn-primary";
-      new_button.addEventListener("click", async () => {
-        //if there is no date specified
-        if(input_date.value.length === 0){
-          bottomNotification.fire({
-            icon: 'error',
-            title: 'Aucune date renseignée'
-          })
-          return;
-        }
-        new_button.disabled = true;
-        input_date.disabled = true;
-        await interestLibrary.addOne(offer.object.idObject, input_date.value)
-
-        // the notification to show that the interest is send
-        bottomNotification.fire({
-          icon: 'success',
-          title: 'Votre intérêt a bien été pris en compte.'
-        })
-      });
-      document.getElementById("divB").appendChild(new_button);
+      displayAddInterest();
     }
     else if(english_status === "given"){ //TODO : make minus request to the db here
       let current_rating = await ratingLibrary.getOne(idObject);
@@ -275,6 +238,109 @@ const MyObjectPage = async () => {
       }
     }
   }
+}
+
+
+function displayAddInterest(){
+  // date of disponibility
+  let labelDate = document.createElement("label");
+  labelDate.for = "input_date";
+  labelDate.innerHTML = "Date de disponibilité : ";
+  let input_date = document.createElement("input");
+  input_date.id = "input_date";
+  input_date.type = "date";
+  let date = new Date();
+  let month = "";
+  if (date.getMonth() % 10 !== 0) {
+    month = "0"
+  }
+  month += (date.getMonth() + 1);
+  let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+  input_date.value = dateActual;
+  input_date.min = dateActual;
+  document.getElementById("divDate").appendChild(labelDate);
+  document.getElementById("divDate").appendChild(input_date);
+
+  // tel number
+  let checkboxTel = document.createElement("input");
+  checkboxTel.type = "checkbox";
+  checkboxTel.id = "callMe";
+  checkboxTel.name = "callMe";
+
+  let labelTel = document.createElement("label");
+  labelTel.htmlFor = "callMe";
+  labelTel.innerHTML = "Je souhaite être appelé via ce numéro : ";
+
+  let numTelInput = document.createElement("input");
+  numTelInput.type = "text";
+  numTelInput.size = "20";
+  numTelInput.id = "numTelInput";
+
+  let divTel = document.getElementById("divTel");
+  divTel.appendChild(checkboxTel);
+  divTel.appendChild(labelTel);
+  divTel.appendChild(numTelInput);
+
+  // button im interested
+  let new_button = document.createElement("input");
+  new_button.id = "interestedButton";
+  new_button.value = "Je suis interessé";
+  new_button.type = "button";
+  new_button.className = "btn btn-primary";
+  new_button.addEventListener("click", addOneInterest);
+  document.getElementById("divB").appendChild(new_button);
+}
+
+async function addOneInterest(){
+  let input_date = document.getElementById("input_date");
+  let new_button = document.getElementById("interestedButton");
+  //if there is no date specified
+  if(input_date.value.length === 0){
+    bottomNotification.fire({
+      icon: 'error',
+      title: 'Aucune date renseignée'
+    })
+    return;
+  }
+  let callMeCheckbox = document.getElementById("callMe");
+  let numTelInput = document.getElementById("numTelInput");
+  if(callMeCheckbox.checked){
+    let numTel = numTelInput.value;
+    if(numTel.trim().length === 0){
+      numTelInput.classList.add("border-danger");
+      bottomNotification.fire({
+        icon: 'error',
+        title: 'Si vous souhaitez être appelé, entrez un numéro de téléphone.'
+      })
+      return;
+    }
+    else if(!regNumberPhone.test(numTel.trim())){ //TODO : replace with check num with regex
+      numTelInput.classList.add("border-danger");
+      bottomNotification.fire({
+        icon: 'error',
+        title: 'Le numéro de téléphone entré est incorrect.'
+      })
+      return;
+    }
+    else{ // the num is good
+      //update the tel number of the member
+      let member = new Member(null, null, null,
+          null, numTel, null, idMemberConnected);
+      await memberLibrary.updateMember(member);
+    }
+  }
+  numTelInput.classList.remove("border-danger");
+  numTelInput.disabled = true;
+  new_button.disabled = true;
+  input_date.disabled = true;
+  callMeCheckbox.disabled = true;
+  await interestLibrary.addOne(offer.object.idObject, input_date.value)
+
+  // the notification to show that the interest is send
+  bottomNotification.fire({
+    icon: 'success',
+    title: 'Votre intérêt a bien été pris en compte.'
+  })
 }
 
 /**
