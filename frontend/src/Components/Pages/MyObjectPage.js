@@ -192,10 +192,10 @@ const MyObjectPage = async () => {
     new_button.value = "Modifier";
     new_button.id = "modifyObjectButton";
     new_button.addEventListener("click", changeToForm);
-    if (english_status === "given") {
-      new_button.disabled = true;
-    }
     divB.appendChild(new_button);
+    if (english_status === "given") {
+      new_button.remove();
+    }
   }
   // if this is not the object of the member connected
   else {
@@ -244,6 +244,7 @@ const MyObjectPage = async () => {
         new_button.disabled = true;
         input_date.disabled = true;
         await interestLibrary.addOne(offer.object.idObject, input_date.value)
+
         // the notification to show that the interest is send
         bottomNotification.fire({
           icon: 'success',
@@ -265,13 +266,33 @@ const MyObjectPage = async () => {
           document.getElementById("ratingDiv").appendChild(rating_button);
           rating_button.addEventListener("click", ratingPopUp);
         }
+        else{ // if there is no rating and the member connected is not the receiver
+          displayRating(null, null);
+        }
       }
-      else{
-        //TODO : display the rating or a msg if there isnt yet
-
+      else{ // if there is a rating
+        displayRating(current_rating.rating, current_rating.comment);
       }
-
     }
+  }
+}
+
+/**
+ * Display the rating with its comment
+ * @param rating the rating to display
+ * @param comment the comment to display
+ */
+function displayRating(rating, comment){
+  let ratingDiv = document.getElementById("ratingDiv");
+  if(rating == null || comment == null){
+    let pNoRating = document.createElement("p");
+    pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
+    pNoRating.className = "text-secondary";
+    ratingDiv.appendChild(pNoRating);
+  }
+  else{ //TODO : make a better display
+    ratingDiv.innerHTML += create5StarsHTMLCode(rating);
+    ratingDiv.innerHTML += `<p>${comment}</p>`;
   }
 }
 
@@ -491,6 +512,11 @@ async function updateObject(e) {
 
 }
 
+/**
+ * Display a popup to add a rating
+ * @param e event
+ * @returns {Promise<void>}
+ */
 async function ratingPopUp(e){
   Swal.fire({
     title: 'Donnez une note à cet objet :',
@@ -513,7 +539,6 @@ async function ratingPopUp(e){
         return;
       }
       let rating = await ratingLibrary.addRating(note, text_rating, idObject);
-
       if(rating === undefined){
         bottomNotification.fire({
           icon: 'error',
@@ -526,18 +551,20 @@ async function ratingPopUp(e){
           title: 'Votre note a bien été prise en compte.'
         })
         document.getElementById("buttonGivenRating").remove(); // remove the button
+        displayRating(rating.rating, rating.comment); // display the new rating
       }
-
     }
   })
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
   for(let i = 0; i < allStars.length; i++){
     allStars[i].addEventListener("click", changeColorStars);
   }
-
-
 }
 
+/**
+ * Change the color of the stars in function of the note
+ * @param e event
+ */
 function changeColorStars(e){
   let note_clicked = e.target.id.substring(4);
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
@@ -548,18 +575,34 @@ function changeColorStars(e){
     allStars[i].style = "color:yellow";
   }
   note = note_clicked;
-  console.log(note_clicked)
 }
 
-function createRatingHTMLCode(){
+/**
+ * Generate html code of 5 stars
+ * @param nbYellow the number of yellow stars needed
+ * @returns {string} the html code of the 5 stars
+ */
+function create5StarsHTMLCode(nbYellow){
   let htmlCode = ``;
   // Add 5 stars for the rating
   for(let i = 1; i <= 5; i++){
     let oneStar = document.createElement("i");
     oneStar.className = "bi bi-star-fill clickable";
     oneStar.id = "star" + i;
+    if(i <= nbYellow){
+      oneStar.style = "color:yellow";
+    }
     htmlCode += oneStar.outerHTML;
   }
+  return htmlCode;
+}
+
+/**
+ * Generate html code to add a rating
+ * @returns {string} the html code to add a rating
+ */
+function createRatingHTMLCode(){
+  let htmlCode = create5StarsHTMLCode(1);
   htmlCode += `<div class=row">
                 <textarea class="form-control" id="rating_text" 
                 placeholder="Commentez votre note" rows="2"></textarea>
