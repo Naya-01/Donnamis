@@ -39,6 +39,7 @@ let statusObject;
 let note = 1;
 let offer;
 let idMemberConnected;
+let telNumber;
 
 
 /**
@@ -95,6 +96,7 @@ const MyObjectPage = async () => {
   // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
   idMemberConnected = member.memberId;
+  telNumber = member.phone;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
@@ -216,7 +218,7 @@ const MyObjectPage = async () => {
         === "available")) {
       displayAddInterest();
     }
-    else if(english_status === "given"){ //TODO : make minus request to the db here
+    else if(english_status === "given"){
       let current_rating = await ratingLibrary.getOne(idObject);
       if(current_rating === undefined){ // if there is no rating yet
         let current_interest = await interestLibrary.getOneInterest(idObject, idMemberConnected);
@@ -275,6 +277,7 @@ function displayAddInterest(){
   numTelInput.type = "text";
   numTelInput.size = "20";
   numTelInput.id = "numTelInput";
+  numTelInput.value = telNumber;
 
   let divTel = document.getElementById("divTel");
   divTel.appendChild(checkboxTel);
@@ -314,7 +317,7 @@ async function addOneInterest(){
       })
       return;
     }
-    else if(!regNumberPhone.test(numTel.trim())){ //TODO : replace with check num with regex
+    else if(!regNumberPhone.test(numTel.trim())){
       numTelInput.classList.add("border-danger");
       bottomNotification.fire({
         icon: 'error',
@@ -322,7 +325,7 @@ async function addOneInterest(){
       })
       return;
     }
-    else{ // the num is good
+    else if(numTel !== telNumber){ // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
           null, numTel, null, idMemberConnected);
