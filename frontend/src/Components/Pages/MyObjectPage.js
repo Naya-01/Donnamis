@@ -97,6 +97,9 @@ const MyObjectPage = async () => {
   let member = await memberLibrary.getUserByHisToken();
   idMemberConnected = member.memberId;
   telNumber = member.phone;
+  if(telNumber === undefined) {
+    telNumber = "";
+  }
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
