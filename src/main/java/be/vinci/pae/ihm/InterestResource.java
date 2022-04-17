@@ -8,6 +8,7 @@ import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
@@ -55,7 +56,9 @@ public class InterestResource {
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    return interestUCC.getInterest(idObject, idMember);
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
 
 
@@ -80,7 +83,10 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     interest.setIdMember(authenticatedUser.getMemberId());
     interest.setStatus("published");
-    return interestUCC.addOne(interest);
+
+    InterestDTO interestDTO = interestUCC.addOne(interest);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
 
   /**
@@ -122,8 +128,11 @@ public class InterestResource {
     if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
-
     List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
     return interestDTOList;
   }
 

@@ -18,7 +18,7 @@ GET {{baseUri}}/interest?idObject=1&idMember=2
 Authorization: {{access}}
 
 ### Get all interests
-GET {{baseUri}}/interest/getAllInsterests/2
+GET {{baseUri}}/interest/getAllInterests/1
 Authorization: {{access}}
 
 
