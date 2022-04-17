@@ -44,7 +44,7 @@ Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "idMember": 3,
+  "idMember": 4,
   "object": {
     "idObject": 2
   }

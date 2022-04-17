@@ -101,11 +101,9 @@ public class InterestUCCImpl implements InterestUCC {
       if (interestDTO == null) {
         throw new NotFoundException("Le membre ne présente pas d'intérêt");
       }
-      // update object to assigned
-      interestDTO.getObject().setStatus("assigned");
-      objectDAO.updateOne(interestDTO.getObject());
-
+      
       // update offer to assigned
+      offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
       offerDAO.updateOne(offerDTO);
 
