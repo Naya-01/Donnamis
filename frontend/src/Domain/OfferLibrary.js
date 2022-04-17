@@ -67,7 +67,6 @@ class OfferLibrary {
    */
   async updateOffer(id, timeSlot, description, idType, statusOffer, statusObject) {
     let response;
-    console.log(id)
     try {
       let options = {
         method: "PUT", //TODO : change to PUT

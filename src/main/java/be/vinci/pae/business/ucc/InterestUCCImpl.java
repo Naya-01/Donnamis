@@ -17,6 +17,8 @@ public class InterestUCCImpl implements InterestUCC {
   @Inject
   private InterestDAO interestDAO;
   @Inject
+  private OfferDAO offerDAO;
+  @Inject
   private DALService dalService;
   @Inject
   private ObjectDAO objectDAO;
@@ -68,6 +70,9 @@ public class InterestUCCImpl implements InterestUCC {
         }
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
+        OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
+        offerDTO.setStatus("interested");
+        offerDAO.updateOne(offerDTO);
       }
       interestDAO.addOne(item);
       dalService.commitTransaction();

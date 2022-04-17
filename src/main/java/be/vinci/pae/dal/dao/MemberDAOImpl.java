@@ -11,9 +11,8 @@ import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MemberDAOImpl implements MemberDAO {
@@ -56,7 +55,11 @@ public class MemberDAOImpl implements MemberDAO {
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
-      return getMemberByPreparedStatement(preparedStatement);
+      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
+      if (memberDTO != null) {
+        memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
+      }
+      return memberDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -143,44 +146,44 @@ public class MemberDAOImpl implements MemberDAO {
    */
   @Override
   public MemberDTO updateOne(MemberDTO memberDTO) {
-    Deque<String> memberDTODeque = new ArrayDeque<>();
+    LinkedList<String> memberDTOList = new LinkedList<>();
     String query = "UPDATE donnamis.members SET ";
-    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isEmpty()) {
+    if (memberDTO.getUsername() != null && !memberDTO.getUsername().isBlank()) {
       query += "username = ?,";
-      memberDTODeque.addLast(memberDTO.getUsername());
+      memberDTOList.addLast(memberDTO.getUsername());
     }
-    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isEmpty()) {
+    if (memberDTO.getLastname() != null && !memberDTO.getLastname().isBlank()) {
       query += "lastname = ?,";
-      memberDTODeque.addLast(memberDTO.getLastname());
+      memberDTOList.addLast(memberDTO.getLastname());
     }
-    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isEmpty()) {
+    if (memberDTO.getFirstname() != null && !memberDTO.getFirstname().isBlank()) {
       query += "firstname = ?,";
-      memberDTODeque.addLast(memberDTO.getFirstname());
+      memberDTOList.addLast(memberDTO.getFirstname());
     }
-    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isEmpty()) {
+    if (memberDTO.getStatus() != null && !memberDTO.getStatus().isBlank()) {
       query += "status = ?,";
-      memberDTODeque.addLast(memberDTO.getStatus());
+      memberDTOList.addLast(memberDTO.getStatus());
     }
-    if (memberDTO.getRole() != null && !memberDTO.getRole().isEmpty()) {
+    if (memberDTO.getRole() != null && !memberDTO.getRole().isBlank()) {
       query += "role = ?,";
-      memberDTODeque.addLast(memberDTO.getRole());
+      memberDTOList.addLast(memberDTO.getRole());
     }
-    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isEmpty()) {
-      query += "phone_number = ?,";
-      memberDTODeque.addLast(memberDTO.getPhone());
-    }
-    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isEmpty()) {
+
+    query += "phone_number = ?,";
+    memberDTOList.addLast(memberDTO.getPhone());
+
+    if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
       query += "refusal_reason = ?,";
-      memberDTODeque.addLast(memberDTO.getReasonRefusal());
+      memberDTOList.addLast(memberDTO.getReasonRefusal());
     }
-    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+    if (memberDTO.getPassword() != null && !memberDTO.getPassword().isBlank()) {
       query += "password = ?,";
       Member member = (Member) memberDTO;
-      memberDTODeque.addLast(member.hashPassword(member.getPassword()));
+      memberDTOList.addLast(member.hashPassword(member.getPassword()));
     }
-    if (memberDTO.getImage() != null && !memberDTO.getImage().isEmpty()) {
+    if (memberDTO.getImage() != null && !memberDTO.getImage().isBlank()) {
       query += "image = ?,";
-      memberDTODeque.addLast(memberDTO.getImage());
+      memberDTOList.addLast(memberDTO.getImage());
     }
 
     query = query.substring(0, query.length() - 1);
@@ -193,12 +196,14 @@ public class MemberDAOImpl implements MemberDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       int cnt = 1;
-      for (String str : memberDTODeque) {
+      for (String str : memberDTOList) {
         preparedStatement.setString(cnt++, str);
       }
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
 
-      return getMemberByPreparedStatement(preparedStatement);
+      MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
+
+      return modifiedMember;
     } catch (SQLException e) {
       throw new FatalException(e);
     }

@@ -564,7 +564,7 @@ class MemberUCCImplTest {
     MemberDTO nonExistentMember = memberFactory.getMemberDTO();
     Mockito.when(mockMemberDAO.updateOne(nonExistentMember)).thenReturn(null);
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+        () -> assertThrows(NullPointerException.class, () -> memberUCC
             .updateMember(nonExistentMember)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
@@ -595,6 +595,8 @@ class MemberUCCImplTest {
     existentMemberInDBUpdated.setUsername("lol");
 
     Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockAddressDAO.updateOne(existentMemberInDB.getAddress()))
+        .thenReturn((existentMemberInDB.getAddress()));
     assertAll(
         () -> assertEquals(existentMemberInDB.getMemberId(),
             memberUCC.updateMember(existentMemberInDB).getMemberId()),

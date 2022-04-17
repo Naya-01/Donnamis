@@ -30,6 +30,14 @@ public interface OfferDAO {
    */
   OfferDTO getOne(int idOffer);
 
+  /**
+   * Get the offer with the id of its object.
+   *
+   * @param idObject the id of the object
+   * @return an offer that match with the idObject or null
+   */
+  OfferDTO getOneByObject(int idObject);
+
 
   /**
    * Get last offer of an object.

@@ -125,11 +125,31 @@ public class OfferDAOImpl implements OfferDAO {
         + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
         + "AND of.id_object = (SELECT id_object FROM donnamis.offers "
         + "    WHERE id_offer = ? AND date >= of.date) ORDER BY of.date DESC LIMIT 2";
+    return getOfferDTOWithOldDate(idOffer, query);
+  }
+
+  /**
+   * Get the offer with the id of its object.
+   *
+   * @param idObject the id of the object
+   * @return an offer that match with the idObject or null
+   */
+  @Override
+  public OfferDTO getOneByObject(int idObject) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
+        + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
+        + "    ty.is_default, of.status "
+        + "FROM donnamis.types ty , donnamis.objects ob, donnamis.offers of "
+        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
+        + "AND of.id_object = ? ORDER BY of.date DESC LIMIT 2";
+    return getOfferDTOWithOldDate(idObject, query);
+  }
+
+  private OfferDTO getOfferDTOWithOldDate(int idObject, String query) {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, idOffer);
+      preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-
       List<OfferDTO> offerDTOList = getOffersWithResultSet(resultSet);
       if (offerDTOList.isEmpty()) {
         return null;
@@ -192,11 +212,7 @@ public class OfferDAOImpl implements OfferDAO {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
       preparedStatement.setString(1, offerDTO.getTimeSlot());
       preparedStatement.setInt(2, offerDTO.getObject().getIdObject());
-      if (offerDTO.getStatus().equals("interested")) {
-        preparedStatement.setString(3, offerDTO.getStatus());
-      } else {
-        preparedStatement.setString(3, "available");
-      }
+      preparedStatement.setString(3, offerDTO.getStatus());
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();

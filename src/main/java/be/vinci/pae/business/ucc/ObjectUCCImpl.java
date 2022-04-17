@@ -145,12 +145,10 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
-      if (objectDTO.getImage() != null) {
-        File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
 
-        if (f.exists()) {
-          f.delete();
-        }
+      File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
+      if (f.exists()) {
+        f.delete();
       }
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
@@ -173,6 +171,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       setCorrectType(offerDTO.getObject());
       ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
       offerDTO.setObject(objectDTO);
+      offerDTO.setStatus("available");
       offer = offerDAO.addOne(offerDTO);
 
       dalService.commitTransaction();

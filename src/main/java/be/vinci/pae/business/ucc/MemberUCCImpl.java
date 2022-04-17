@@ -82,13 +82,11 @@ public class MemberUCCImpl implements MemberUCC {
         throw new NotFoundException("Member not found");
       }
 
-      if (memberDTO.getImage() != null) {
-        File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
-        if (f.exists()) {
-          f.delete();
-        }
-
+      File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
+      if (f.exists()) {
+        f.delete();
       }
+
       memberDTO = memberDAO.updateProfilPicture(path, id);
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -245,10 +243,21 @@ public class MemberUCCImpl implements MemberUCC {
   public MemberDTO updateMember(MemberDTO memberDTO) {
     try {
       dalService.startTransaction();
+      AddressDTO addressDTO;
+      if (memberDTO.getAddress() != null) {
+        memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
+        addressDTO = addressDAO.updateOne(memberDTO.getAddress());
+        if (addressDTO == null) {
+          throw new ForbiddenException("Problem with updating address");
+        }
+      } else {
+        addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
+      }
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
       if (modifierMemberDTO == null) {
         throw new ForbiddenException("Problem with updating member");
       }
+      modifierMemberDTO.setAddress(addressDTO);
       dalService.commitTransaction();
       return modifierMemberDTO;
     } catch (Exception e) {

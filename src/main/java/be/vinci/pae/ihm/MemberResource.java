@@ -77,7 +77,6 @@ public class MemberResource {
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
   public Response getPicture(@PathParam("id") int id) {
-    System.out.println(id);
     MemberDTO memberDTO = memberUCC.getMember(id);
 
     if (memberDTO.getImage() == null) {
