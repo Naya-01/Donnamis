@@ -23,12 +23,12 @@ public interface InterestUCC {
   InterestDTO addOne(InterestDTO item);
 
   /**
-   * Assign the object to a member.
+   * Assign the offer to a member.
    *
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
-  InterestDTO assignObject(InterestDTO interestDTO);
+  InterestDTO assignOffer(InterestDTO interestDTO);
 
   /**
    * Get a list of interest, by an id object.

@@ -8,6 +8,7 @@ import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
@@ -55,7 +56,9 @@ public class InterestResource {
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    return interestUCC.getInterest(idObject, idMember);
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
 
 
@@ -80,7 +83,10 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     interest.setIdMember(authenticatedUser.getMemberId());
     interest.setStatus("published");
-    return interestUCC.addOne(interest);
+
+    InterestDTO interestDTO = interestUCC.addOne(interest);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
 
   /**
@@ -112,7 +118,7 @@ public class InterestResource {
    * @return interestDTO List
    */
   @GET
-  @Path("/getAllInsterests/{idObject}")
+  @Path("/getAllInterests/{idObject}")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
@@ -122,8 +128,11 @@ public class InterestResource {
     if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
-
     List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
     return interestDTOList;
   }
 
@@ -135,11 +144,11 @@ public class InterestResource {
    * @return object updated.
    */
   @POST
-  @Path("/assignObject")
+  @Path("/assignOffer")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public InterestDTO assignObject(@Context ContainerRequest request, InterestDTO interestDTO) {
+  public InterestDTO assignOffer(@Context ContainerRequest request, InterestDTO interestDTO) {
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     if (interestDTO.getIdMember() == null
@@ -152,7 +161,7 @@ public class InterestResource {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
 
-    return interestUCC.assignObject(interestDTO);
+    return interestUCC.assignOffer(interestDTO);
   }
 
 

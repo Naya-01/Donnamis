@@ -21,6 +21,8 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private ObjectDAO objectDAO;
+  @Inject
+  private MemberDAO memberDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -85,6 +87,7 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setIdMember(resultSet.getInt(2));
       interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
       interestDTO.setStatus(resultSet.getString(4));
+      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
       resultSet.close();
 
       return interestDTO;
@@ -141,6 +144,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdMember(resultSet.getInt(2));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
         interestDTOList.add(interestDTO);
       }

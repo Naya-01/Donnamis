@@ -3,9 +3,10 @@ import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import itemImage from "../../img/item.jpg";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import ObjectLibrary from "../../Domain/ObjectLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
+import InterestLibrary from "../../Domain/InterestLibrary";
+import Swal from "sweetalert2";
 
 const dictionary = new Map([
   ['interested', 'Disponible'],
@@ -117,27 +118,96 @@ const objectCards = async (searchPattern, type, status) => {
 
     if (offer.object.status !== "given" && offer.object.status
         !== "assigned") {
+
       const viewAllInterestedMembers = document.createElement("button");
       viewAllInterestedMembers.innerText = "Voir les interessés";
       viewAllInterestedMembers.type = "button";
       viewAllInterestedMembers.className = "btn btn-primary mt-3 mx-1";
+      viewAllInterestedMembers.addEventListener("click", async e => {
+        const interests = await InterestLibrary.prototype.getAllInterests(
+            offer.object.idObject);
+        var allInterests = `<div class="container">`
 
+        for (const interest of interests) {
+          let phone;
+          if (interest.member.phone) {
+            phone = "(" + interest.member.phone + ")";
+          } else {
+            phone = "";
+          }
+          let username = interest.member.username;
+
+          let availabilityDate = "Horaire : " + interest.availabilityDate[2]
+              + "/" + interest.availabilityDate[1] + "/"
+              + interest.availabilityDate[0];
+
+          let image;
+          if (interest.member.image) {
+            image = "/api/member/getPicture/" + interest.member.memberId;
+          } else {
+            image = itemImage;
+          }
+          allInterests += `
+              <div class="row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded">
+                <div class="col-1 m-auto">
+                  <img class="img-thumbnail" src="${image}" alt="image">
+                </div>
+                <div class="col-7 mt-3">
+                  <p class="fs-4">${username} ${phone}</p>
+                  <span class="text-secondary fs-5">${availabilityDate}</span>
+                </div>
+                <div class="col-3 mt-2">
+                  <button class="btn btn-lg btn-primary" id="${"interest-"
+          + interest.member.memberId}">Choisir</button>
+                </div>
+              </div>
+            `
+        }
+
+        allInterests += `</div>`
+
+        Swal.fire({
+          title: '<strong>Membres interessés</strong>',
+          html: allInterests,
+          width: 1000,
+          scrollbarPadding: true,
+          showCloseButton: true,
+          showConfirmButton: false,
+          showCancelButton: true,
+          focusConfirm: false,
+          cancelButtonText: 'Annuler',
+        })
+
+        for (const interest of interests) {
+          const btn = document.getElementById(
+              "interest-" + interest.member.memberId);
+          btn.addEventListener("click", async e => {
+            console.log(interest);
+            let d = await InterestLibrary.prototype.assignOffer(
+                interest.object.idObject, interest.member.memberId);
+            Swal.close();
+
+          })
+        }
+
+      });
+      const countInterestedMembers = await InterestLibrary.prototype.getInterestedCount(
+          offer.object.idObject);
       const notificationInterested = document.createElement("span");
       notificationInterested.className = "badge badge-light";
-      notificationInterested.innerText = "4";
+      notificationInterested.innerText = countInterestedMembers.count;
       viewAllInterestedMembers.appendChild(notificationInterested);
 
       buttonCard.appendChild(viewAllInterestedMembers);
     }
 
-    console.log("tefefe ", offer);
     if (offer.object.status === "cancelled" || offer.object.status
         === "not_collected") {
       const reofferButton = document.createElement("button");
       reofferButton.innerText = "Offrir à nouveau";
       reofferButton.type = "button";
       reofferButton.className = "btn btn-success mt-3 mx-1";
-      reofferButton.addEventListener("click", async () =>{
+      reofferButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.addOffer(
             offer.timeSlot,
             offer.object.idObject

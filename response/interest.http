@@ -14,11 +14,11 @@ client.global.set("refresh", response.body.refresh_token);
 
 
 ### Get One interest
-GET {{baseUri}}/interest?idObject=4&idMember=4
-Authorization: {{refresh}}
+GET {{baseUri}}/interest?idObject=1&idMember=2
+Authorization: {{access}}
 
 ### Get all interests
-GET {{baseUri}}/interest/getAllInsterests/2
+GET {{baseUri}}/interest/getAllInterests/1
 Authorization: {{access}}
 
 
@@ -28,7 +28,9 @@ Content-Type: application/json
 Authorization: {{refresh}}
 
 {
-  "idObject": 13,
+  "object": {
+    "idObject": 2
+  },
   "availabilityDate": "2017-01-13"
 }
 
@@ -37,12 +39,12 @@ GET {{baseUri}}/interest/count/2
 Authorization: {{refresh}}
 
 ### Assign an object
-POST {{baseUri}}/interest/assignObject
+POST {{baseUri}}/interest/assignOffer
 Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "idMember": 5,
+  "idMember": 4,
   "object": {
     "idObject": 2
   }

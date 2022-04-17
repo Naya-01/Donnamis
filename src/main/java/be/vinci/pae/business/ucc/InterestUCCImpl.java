@@ -82,26 +82,34 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Assign the object to a member.
+   * Assign the offer to a member.
    *
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
-  public InterestDTO assignObject(InterestDTO interestDTO) {
+  public InterestDTO assignOffer(InterestDTO interestDTO) {
     try {
       dalService.startTransaction();
-      if (!interestDTO.getObject().getStatus().equals("interested")) {
-        throw new ForbiddenException("L'objet n'est pas en mesure d'être assigné");
+
+      OfferDTO offerDTO = offerDAO.getLastObjectOffer(interestDTO.getObject().getIdObject());
+
+      if (!offerDTO.getStatus().equals("interested") || !interestDTO.getObject().getStatus()
+          .equals("interested")) {
+        throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
+
       interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
           interestDTO.getIdMember());
       if (interestDTO == null) {
         throw new NotFoundException("Le membre ne présente pas d'intérêt");
       }
-      // update object to assigned
-      interestDTO.getObject().setStatus("assigned");
-      objectDAO.updateOne(interestDTO.getObject());
+
+      // update offer to assigned
+      offerDTO.getObject().setStatus("assigned");
+      offerDTO.setStatus("assigned");
+      offerDAO.updateOne(offerDTO);
+
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
