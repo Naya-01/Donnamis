@@ -1,6 +1,7 @@
 package be.vinci.pae.business.domain;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,6 +12,8 @@ import java.time.LocalDate;
 public class InterestImpl implements InterestDTO {
 
   @JsonView(Views.Public.class)
+  private MemberDTO member;
+  @JsonView(Views.Public.class)
   private ObjectDTO object;
   @JsonView(Views.Public.class)
   private Integer idMember;
@@ -18,6 +21,16 @@ public class InterestImpl implements InterestDTO {
   private LocalDate availabilityDate;
   @JsonView(Views.Public.class)
   private String status;
+
+  @Override
+  public MemberDTO getMember() {
+    return member;
+  }
+
+  @Override
+  public void setMember(MemberDTO member) {
+    this.member = member;
+  }
 
   @Override
   public ObjectDTO getObject() {

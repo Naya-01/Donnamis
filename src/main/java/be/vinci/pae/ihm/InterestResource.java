@@ -112,7 +112,7 @@ public class InterestResource {
    * @return interestDTO List
    */
   @GET
-  @Path("/getAllInsterests/{idObject}")
+  @Path("/getAllInterests/{idObject}")
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
