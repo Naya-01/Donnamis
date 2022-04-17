@@ -22,8 +22,6 @@ public class InterestUCCImpl implements InterestUCC {
   private DALService dalService;
   @Inject
   private ObjectDAO objectDAO;
-  @Inject
-  private OfferDAO offerDAO;
 
   /**
    * Find an interest, by the id of the interested member and the id of the object.
@@ -106,7 +104,7 @@ public class InterestUCCImpl implements InterestUCC {
       if (interestDTO == null) {
         throw new NotFoundException("Le membre ne présente pas d'intérêt");
       }
-      
+
       // update offer to assigned
       offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
