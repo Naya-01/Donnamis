@@ -28,7 +28,9 @@ Content-Type: application/json
 Authorization: {{refresh}}
 
 {
-  "idObject": 13,
+  "object": {
+    "idObject": 2
+  },
   "availabilityDate": "2017-01-13"
 }
 
@@ -37,12 +39,12 @@ GET {{baseUri}}/interest/count/2
 Authorization: {{refresh}}
 
 ### Assign an object
-POST {{baseUri}}/interest/assignObject
+POST {{baseUri}}/interest/assignOffer
 Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "idMember": 5,
+  "idMember": 3,
   "object": {
     "idObject": 2
   }

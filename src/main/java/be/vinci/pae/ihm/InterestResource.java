@@ -135,11 +135,11 @@ public class InterestResource {
    * @return object updated.
    */
   @POST
-  @Path("/assignObject")
+  @Path("/assignOffer")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public InterestDTO assignObject(@Context ContainerRequest request, InterestDTO interestDTO) {
+  public InterestDTO assignOffer(@Context ContainerRequest request, InterestDTO interestDTO) {
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     if (interestDTO.getIdMember() == null
@@ -152,7 +152,7 @@ public class InterestResource {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
 
-    return interestUCC.assignObject(interestDTO);
+    return interestUCC.assignOffer(interestDTO);
   }
 
 

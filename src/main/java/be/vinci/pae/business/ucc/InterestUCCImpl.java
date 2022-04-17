@@ -2,8 +2,10 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -18,6 +20,8 @@ public class InterestUCCImpl implements InterestUCC {
   private DALService dalService;
   @Inject
   private ObjectDAO objectDAO;
+  @Inject
+  private OfferDAO offerDAO;
 
   /**
    * Find an interest, by the id of the interested member and the id of the object.
@@ -75,18 +79,23 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Assign the object to a member.
+   * Assign the offer to a member.
    *
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
-  public InterestDTO assignObject(InterestDTO interestDTO) {
+  public InterestDTO assignOffer(InterestDTO interestDTO) {
     try {
       dalService.startTransaction();
-      if (!interestDTO.getObject().getStatus().equals("interested")) {
-        throw new ForbiddenException("L'objet n'est pas en mesure d'être assigné");
+
+      OfferDTO offerDTO = offerDAO.getLastObjectOffer(interestDTO.getObject().getIdObject());
+
+      if (!offerDTO.getStatus().equals("interested") || !interestDTO.getObject().getStatus()
+          .equals("interested")) {
+        throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
+
       interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
           interestDTO.getIdMember());
       if (interestDTO == null) {
@@ -95,6 +104,11 @@ public class InterestUCCImpl implements InterestUCC {
       // update object to assigned
       interestDTO.getObject().setStatus("assigned");
       objectDAO.updateOne(interestDTO.getObject());
+
+      // update offer to assigned
+      offerDTO.setStatus("assigned");
+      offerDAO.updateOne(offerDTO);
+
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
