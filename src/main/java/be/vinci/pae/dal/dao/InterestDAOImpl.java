@@ -58,7 +58,7 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO getAssignedInterest(int idObject) {
-    String condition = "i.id_object=? AND i.status=?";
+    String condition = "id_object=? AND status=?";
     List<Object> values = new ArrayList<>();
     values.add(idObject);
     values.add("assigned");
