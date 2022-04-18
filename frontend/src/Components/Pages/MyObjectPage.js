@@ -245,7 +245,9 @@ const MyObjectPage = async () => {
   }
 }
 
-
+/**
+ * Display HTML elements to add an interest
+ */
 function displayAddInterest(){
   // date of disponibility
   let labelDate = document.createElement("label");
@@ -297,6 +299,10 @@ function displayAddInterest(){
   document.getElementById("divB").appendChild(new_button);
 }
 
+/**
+ * Add an interest
+ * @param {Event} e : evenement
+ */
 async function addOneInterest(e){
   e.preventDefault();
   let input_date = document.getElementById("input_date");
@@ -341,8 +347,14 @@ async function addOneInterest(e){
   new_button.disabled = true;
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
-  await interestLibrary.addOne(offer.object.idObject, input_date.value)
-
+  let newInterest = await interestLibrary.addOne(offer.object.idObject, input_date.value)
+  if(newInterest === undefined){
+    bottomNotification.fire({
+      icon: 'error',
+      title: 'Une erreur est survenue lors de l\'insertion de votre intérêt'
+    })
+    return;
+  }
   // the notification to show that the interest is send
   bottomNotification.fire({
     icon: 'success',
@@ -554,17 +566,21 @@ async function updateObject(e) {
     if(objectWithImage === undefined){
       bottomNotification.fire({
         icon: 'error',
-        title: "L'image entrée n'est pas du bon format."
+        title: 'L\'image entrée n\'est pas du bon format.'
       })
       return;
     }
   }
 
   // Call the function to update the offer
-  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description,
-      idType,
-      english_status, statusObject);
-
+  let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
+      new_description, idType, english_status, statusObject);
+  if(newOffer === undefined){
+    bottomNotification.fire({
+      icon: 'error',
+      title: "L\'offre n'a pas pu être mise à jour."
+    })
+  }
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
@@ -586,7 +602,7 @@ async function updateObject(e) {
 
 /**
  * Display a popup to add a rating
- * @param e event
+ * @param {Event} e : evenement
  */
 async function ratingPopUp(e){
   e.preventDefault();
@@ -635,7 +651,7 @@ async function ratingPopUp(e){
 
 /**
  * Change the color of the stars in function of the note
- * @param e event
+ * @param {Event} e : evenement
  */
 function changeColorStars(e){
   e.preventDefault();
