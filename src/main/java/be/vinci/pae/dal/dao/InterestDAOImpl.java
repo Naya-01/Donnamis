@@ -1,5 +1,6 @@
 package be.vinci.pae.dal.dao;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
@@ -19,6 +20,10 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private AbstractDAO abstractDAO;
+  @Inject
+  private MemberDAO memberDAO;
+  @Inject
+  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -53,12 +58,13 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO getAssignedInterest(int idObject) {
-    String query = "select i.id_object, i.id_member, i.availability_date, i.status "
-        + "from donnamis.interests i WHERE i.id_object=? AND i.status=?";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, idObject);
-      preparedStatement.setString(2, "assigned");
+    String condition = "i.id_object=? AND i.status=?";
+    List<Object> values = new ArrayList<>();
+    values.add(idObject);
+    values.add("assigned");
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(InterestDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -80,10 +86,11 @@ public class InterestDAOImpl implements InterestDAO {
       }
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
-      interestDTO.setIdObject(resultSet.getInt("id_object"));
+      interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
       interestDTO.setIdMember(resultSet.getInt("id_member"));
       interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
       interestDTO.setStatus(resultSet.getString("status"));
+      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
       resultSet.close();
 
       return interestDTO;
@@ -102,7 +109,7 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO addOne(InterestDTO item) {
     Map<String, Object> setters = new HashMap<>();
-    setters.put("id_object", item.getIdObject());
+    setters.put("id_object", item.getObject().getIdObject());
     setters.put("id_member", item.getIdMember());
     setters.put("availability_date", item.getAvailabilityDate());
     setters.put("status", item.getStatus());
@@ -140,10 +147,11 @@ public class InterestDAOImpl implements InterestDAO {
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        interestDTO.setIdObject(resultSet.getInt("id_object"));
+        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
         interestDTOList.add(interestDTO);
       }
@@ -161,14 +169,21 @@ public class InterestDAOImpl implements InterestDAO {
    * @return interest
    */
   public InterestDTO updateStatus(InterestDTO interestDTO) {
-    String query = "UPDATE donnamis.interests SET status = ? "
-        + "WHERE id_object= ? AND id_member = ? RETURNING availability_date, status, id_member"
-        + ", id_object";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
-      preparedStatement.setString(1, interestDTO.getStatus());
-      preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
-      preparedStatement.setInt(3, interestDTO.getIdMember());
+    List<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
+
+    List<Object> conditionValues = new ArrayList<>();
+    conditionValues.add(interestDTO.getObject().getIdObject());
+    conditionValues.add(interestDTO.getIdMember());
+
+    Map<String, Object> toUpdate = new HashMap<>();
+    toUpdate.put("status", interestDTO.getStatus());
+
+    String condition = "id_object= ? AND id_member = ? RETURNING *";
+
+    try (PreparedStatement preparedStatement = abstractDAO.updateOne(toUpdate, condition,
+        conditionValues, types)) {
 
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
