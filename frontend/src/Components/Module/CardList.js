@@ -5,6 +5,7 @@ const cardList = async (offers) => {
   let isMemberConnected = getSessionObject("user");
   let nbOffers = 0;
   let defaultImage = noImage;
+  let image;
 
   let page = "<div class='mt-5'>";
   for (let i = 0; i < Math.ceil(offers.length / 3); i++) {
@@ -15,11 +16,11 @@ const cardList = async (offers) => {
     let cnt = 1;
     while (cnt <= 3 && nbOffers < offers.length) {
       if (offers[nbOffers].object.image) {
-        let image = "/api/object/getPicture/"
+        let imageObject = "/api/object/getPicture/"
             + offers[nbOffers].object.idObject;
-        noImage = image;
+        image = imageObject;
       } else {
-        noImage = defaultImage;
+        image = defaultImage;
       }
       page += `
         <div class="col">
@@ -27,7 +28,7 @@ const cardList = async (offers) => {
              data-element-id="
                     ${isMemberConnected ? offers[nbOffers].idOffer : ""}"
              >
-             <img src="${noImage}" height="250px" >
+             <img src="${image}" height="250px" >
             <div class="card-body">
               <p class="card-text">
                 ${offers[nbOffers].object.description}
