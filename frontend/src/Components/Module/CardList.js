@@ -1,12 +1,21 @@
 import {getSessionObject} from "../../utils/session";
 import noImage from "../../img/noImage.png";
 
+const dictionnary = new Map([
+  ['interested', 'Disponible'],
+  ['available', 'Disponible'],
+  ['assigned', 'En cours de donnation'],
+  ['given', 'Donné'],
+  ['cancelled', 'Annulé']
+]);
+
 const cardList = async (offers) => {
   let isMemberConnected = getSessionObject("user");
   let nbOffers = 0;
   let defaultImage = noImage;
   let image;
 
+  console.log(offers);
   let page = "<div class='mt-5'>";
   for (let i = 0; i < Math.ceil(offers.length / 3); i++) {
     page += `
@@ -30,6 +39,8 @@ const cardList = async (offers) => {
              >
              <img src="${image}" height="250px" >
             <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">${dictionnary.get(
+          offers[nbOffers].status)}</h6>
               <p class="card-text">
                 ${offers[nbOffers].object.description}
               </p>
