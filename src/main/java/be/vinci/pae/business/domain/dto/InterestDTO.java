@@ -7,11 +7,15 @@ import java.time.LocalDate;
 @JsonDeserialize(as = InterestImpl.class)
 public interface InterestDTO {
 
-  int getIdObject();
+  MemberDTO getMember();
 
-  void setIdObject(int idObject);
+  void setMember(MemberDTO member);
 
-  int getIdMember();
+  ObjectDTO getObject();
+
+  void setObject(ObjectDTO object);
+
+  Integer getIdMember();
 
   void setIdMember(int idMember);
 

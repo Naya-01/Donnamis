@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "bri",
-  "password": "Rad;293",
+  "username": "tcou",
+  "password": "rayan123",
   "rememberMe": true
 }
 > {%
@@ -30,12 +30,12 @@ GET {{baseUri}}/offers?self=false&type=Décoration
 Authorization: {{refresh}}
 
 ### GET object by status
-GET {{baseUri}}/offers?status=available
+GET {{baseUri}}/offers?status=assigned
 Authorization: {{refresh}}
 ###
 GET {{baseUri}}/offers/lasts
 
-###
+### make a offer
 POST {{baseUri}}/offers/
 Authorization: {{refresh}}
 Content-Type: application/json
@@ -47,46 +47,21 @@ Content-Type: application/json
   }
 }
 
-###
+### make a offer
 POST {{baseUri}}/offers/
-Authorization: {{refresh}}
+Authorization: {{access}}
 Content-Type: application/json
 
 {
   "timeSlot": "tous les mois de janvier",
   "object": {
-    "type": {
-      "idType": 0,
-      "typeName": "Croissant"
-    },
-    "description": "C'est un croissant rien de plus",
-    "status": "available",
-    "image": null,
-    "idOfferor": 2
+    "idObject": 15
   }
 }
 
 ### Get offer by id
-GET {{baseUri}}/offers/getById/1
+GET {{baseUri}}/offers/getById/5
 Authorization: {{refresh}}
-
-### Update time slot of a offer
-POST {{baseUri}}/offers/update
-Authorization: {{refresh}}
-Content-Type: application/json
-
-{
-  "idOffer": 1,
-  "timeSlot": "Je suis disponible le mardi soir",
-  "object": {
-    "description": "Une fusée tintin",
-    "image": null,
-    "status": "interested",
-    "type": {
-      "idType": 4
-    }
-  }
-}
 
 ### get all offer
 GET {{baseUri}}/offers?search-pattern=samEdi&self=true
@@ -98,16 +73,17 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 1,
-  "timeSlot": "tous les mois de janvier",
+  "idOffer": 7,
+  "timeSlot": "uoi",
+  "status": "available",
   "object": {
     "type": {
-      "typeName": "Croissant"
+      "typeName": "Vélo, trottinette"
     },
-    "description": "C'est un croissant rien de plus",
-    "status": "available",
+    "description": "je suis une offre",
+    "status": "inconnu",
     "image": null,
-    "idOfferor": 2
+    "idOfferor": 4
   }
 }
 
@@ -130,5 +106,34 @@ Content-Type: application/json
 }
 
 ### Search given member
-GET {{baseUri}}/offers/givenOffers/3
+GET {{baseUri}}/offers/givenOffers/2
 Authorization: {{access}}
+
+### Cancel offer
+POST {{baseUri}}/offers/cancelOffer
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "idOffer": 17
+}
+
+### Mark offer to not collected
+POST {{baseUri}}/offers/notCollected
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "idOffer": 9
+}
+
+### give an object
+POST {{baseUri}}/offers/give
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "object": {
+    "idObject": 15
+  }
+}

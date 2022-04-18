@@ -1,12 +1,14 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
-import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
-import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -18,9 +20,9 @@ public class OfferUCCImpl implements OfferUCC {
   @Inject
   private ObjectDAO objectDAO;
   @Inject
-  private TypeDAO typeDAO;
-  @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Get the last six offers posted.
@@ -78,25 +80,36 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addOffer(OfferDTO offerDTO) {
-    OfferDTO offer;
     try {
       dalService.startTransaction();
-      setCorrectType(offerDTO);
 
-      if (offerDTO.getObject().getIdObject() == 0
-          && objectDAO.addOne(offerDTO.getObject()) == null) {
-        throw new FatalException("Problème lors de la création d'un objet");
+      OfferDTO offer = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")) {
+        throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
+            + "en créer de nouveau");
       }
-      offer = offerDAO.addOne(offerDTO);
-      if (offer == null) {
-        throw new FatalException("Problème lors de la création d'une offre");
+
+
+      List<InterestDTO> interestDTOList = interestDAO.getAll(offerDTO.getObject().getIdObject());
+
+      if (interestDTOList.size() < 1) {
+        offerDTO.getObject().setStatus("available"); // object
+        offerDTO.setStatus("available"); // offer
+      } else {
+        offerDTO.getObject().setStatus("interested"); // object
+        offerDTO.setStatus("interested"); // offer
       }
+
+      offerDTO = offerDAO.addOne(offerDTO);
+      objectDAO.updateOne(offerDTO.getObject());
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offer;
+    return offerDTO;
   }
 
   /**
@@ -114,6 +127,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (offer == null) {
         throw new FatalException("Problème lors de la mise à jour de l'offre");
       }
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -122,27 +136,6 @@ public class OfferUCCImpl implements OfferUCC {
     return offer;
   }
 
-  /**
-   * Verify the type and set it.
-   *
-   * @param offerDTO the offer that has an object that has a type.
-   */
-  private void setCorrectType(OfferDTO offerDTO) {
-    TypeDTO typeDTO;
-    if (offerDTO.getObject().getType().getTypeName() != null && !offerDTO.getObject().getType()
-        .getTypeName().isBlank()) {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getTypeName());
-      if (typeDTO == null) {
-        typeDTO = typeDAO.addOne(offerDTO.getObject().getType().getTypeName());
-        if (typeDTO == null) {
-          throw new FatalException("Problème lors de la création du type");
-        }
-      }
-    } else {
-      typeDTO = typeDAO.getOne(offerDTO.getObject().getType().getIdType());
-    }
-    offerDTO.getObject().setType(typeDTO);
-  }
 
   /**
    * Get all offers.
@@ -191,4 +184,129 @@ public class OfferUCCImpl implements OfferUCC {
     }
     return offerDTO;
   }
+
+
+  /**
+   * Cancel an Object.
+   *
+   * @param offerDTO object with his id & set the status to 'cancelled'
+   * @return an object
+   */
+  @Override
+  public OfferDTO cancelOffer(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+
+      if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
+        throw new ForbiddenException("Impossible d'annuler l'offre");
+      }
+
+      offerDTO.setStatus("cancelled");
+      offerDTO.getObject().setStatus("cancelled");
+
+      offerDTO = offerDAO.updateOne(offerDTO);
+      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      InterestDTO interestDTO = interestDAO
+          .getAssignedInterest(offerDTO.getObject().getIdObject());
+
+      if (interestDTO != null) {
+        interestDTO.setStatus("published");
+        interestDAO.updateStatus(interestDTO);
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return offerDTO;
+  }
+
+
+  /**
+   * Mark an object to 'not collected'.
+   *
+   * @param offerDTO object with his id & set the status to 'not collected'
+   * @return an object
+   */
+  @Override
+  public OfferDTO notCollectedOffer(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException("Impossible de marquer en non collecté");
+      }
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+
+      if (interestDTO == null) {
+        throw new ForbiddenException("Aucune offre n'a d'offre attribué");
+      }
+
+      interestDTO.setStatus("not_collected");
+      interestDAO.updateStatus(interestDTO);
+
+      offerDTO.setStatus("not_collected");
+      offerDTO.getObject().setStatus("not_collected");
+
+      offerDTO = offerDAO.updateOne(offerDTO);
+      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return offerDTO;
+  }
+
+
+  /**
+   * Give an Object, set the status to 'given'.
+   *
+   * @param offerDTO : object with his id'
+   * @return an object
+   */
+  @Override
+  public OfferDTO giveOffer(OfferDTO offerDTO) {
+    try {
+      dalService.startTransaction();
+
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      if (interestDTO == null) {
+        throw new NotFoundException("aucun membre n'a été assigner");
+      }
+
+      if (!interestDTO.getObject().getStatus().equals("assigned")) {
+        throw new ForbiddenException("aucun objet n'est assigné pour le donner");
+      }
+
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException("aucune offre n'est assigné pour le donner");
+      }
+
+      interestDTO.setStatus("received");
+      offerDTO.getObject().setStatus("given");
+      offerDTO.setStatus("given");
+
+      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
+      interestDAO.updateStatus(interestDTO);
+      offerDTO = offerDAO.updateOne(offerDTO);
+
+      offerDTO.setObject(objectDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return offerDTO;
+  }
+
 }

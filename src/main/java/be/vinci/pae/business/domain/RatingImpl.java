@@ -1,7 +1,5 @@
 package be.vinci.pae.business.domain;
 
-import be.vinci.pae.business.domain.dto.MemberDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,17 +7,18 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RatingImpl implements RatingDTO {
+
   @JsonView(Views.Public.class)
-  private int rating;
+  private Integer rating;
   @JsonView(Views.Public.class)
   private String comment;
   @JsonView(Views.Public.class)
-  private MemberDTO memberDTO;
+  private Integer idMember;
   @JsonView(Views.Public.class)
-  private ObjectDTO objectDTO;
+  private Integer idObject;
 
   @Override
-  public int getRating() {
+  public Integer getRating() {
     return rating;
   }
 
@@ -39,22 +38,22 @@ public class RatingImpl implements RatingDTO {
   }
 
   @Override
-  public MemberDTO getMemberDTO() {
-    return memberDTO;
+  public Integer getIdMember() {
+    return idMember;
   }
 
   @Override
-  public void setMemberDTO(MemberDTO memberDTO) {
-    this.memberDTO = memberDTO;
+  public void setIdMember(Integer idMember) {
+    this.idMember = idMember;
   }
 
   @Override
-  public ObjectDTO getObjectDTO() {
-    return objectDTO;
+  public Integer getIdObject() {
+    return idObject;
   }
 
   @Override
-  public void setObjectDTO(ObjectDTO objectDTO) {
-    this.objectDTO = objectDTO;
+  public void setIdObject(Integer idObject) {
+    this.idObject = idObject;
   }
 }

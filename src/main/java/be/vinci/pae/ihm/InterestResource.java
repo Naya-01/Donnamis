@@ -2,8 +2,13 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
+import be.vinci.pae.business.ucc.ObjectUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
@@ -30,6 +35,8 @@ public class InterestResource {
   private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestUCC interestUCC;
+  @Inject
+  private ObjectUCC objectUCC;
 
   /**
    * Get an interest, by the id of the interested member and the id of the object.
@@ -49,8 +56,11 @@ public class InterestResource {
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    return interestUCC.getInterest(idObject, idMember);
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
+
 
   /**
    * Add one interest.
@@ -67,13 +77,16 @@ public class InterestResource {
     if (interest == null || interest.getAvailabilityDate() == null) {
       throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
     }
-    if (interest.getIdObject() < 1) {
+    if (interest.getObject().getIdObject() < 1) {
       throw new WebApplicationException("Non existent id object", Response.Status.BAD_REQUEST);
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     interest.setIdMember(authenticatedUser.getMemberId());
     interest.setStatus("published");
-    return interestUCC.addOne(interest);
+
+    InterestDTO interestDTO = interestUCC.addOne(interest);
+    interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    return interestDTO;
   }
 
   /**
@@ -96,4 +109,60 @@ public class InterestResource {
         .put("isUserInterested", interestDTOList.stream()
             .anyMatch(i -> i.getIdMember() == authenticatedUser.getMemberId()));
   }
+
+  /**
+   * Get all the interests of an object.
+   *
+   * @param idObject of the object.
+   * @param request  information of the owner.
+   * @return interestDTO List
+   */
+  @GET
+  @Path("/getAllInterests/{idObject}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
+      @Context ContainerRequest request) {
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    ObjectDTO objectDTO = objectUCC.getObject(idObject);
+    if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+    return interestDTOList;
+  }
+
+  /**
+   * Assign an object to a member interested.
+   *
+   * @param request     data of the object's owner.
+   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @return object updated.
+   */
+  @POST
+  @Path("/assignOffer")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public InterestDTO assignOffer(@Context ContainerRequest request, InterestDTO interestDTO) {
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    if (interestDTO.getIdMember() == null
+        && interestDTO.getObject().getIdObject() == null) {
+      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
+    }
+    interestDTO = interestUCC
+        .getInterest(interestDTO.getObject().getIdObject(), interestDTO.getIdMember());
+    if (!ownerDTO.getMemberId().equals(interestDTO.getObject().getIdOfferor())) {
+      throw new UnauthorizedException("Cet objet ne vous appartient pas");
+    }
+
+    return interestUCC.assignOffer(interestDTO);
+  }
+
+
 }

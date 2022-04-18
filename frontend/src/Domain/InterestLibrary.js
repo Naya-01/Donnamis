@@ -1,6 +1,48 @@
 import {getSessionObject} from "../utils/session";
+import Notification from "../Components/Module/Notification";
 
 class InterestLibrary {
+  async assignOffer(idObject, idMember) {
+    let response;
+    let toast = Notification.prototype.getNotification("bottom");
+    try {
+      let options = {
+        method: "POST",
+        body: JSON.stringify({
+          "object": {
+            "idObject": idObject
+          },
+          "idMember": idMember
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest/assignOffer", options);
+      if (!response.ok) {
+        response.text().then((msg) => {
+          toast.fire({
+            icon: 'error',
+            title: msg
+          });
+        })
+      } else {
+        toast.fire({
+          icon: 'success',
+          title: "le membre a été assigné"
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    let newInterest;
+    if (response.status === 200) {
+      newInterest = await response.json();
+    }
+    return newInterest;
+  }
+
   async getInterestedCount(idObject) {
     let response;
     try {
@@ -11,7 +53,7 @@ class InterestLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/interest/count/"+idObject, options);
+      response = await fetch("api/interest/count/" + idObject, options);
     } catch (err) {
       console.log(err);
     }
@@ -21,13 +63,59 @@ class InterestLibrary {
     }
     return allInterests;
   }
-  async addOne(idObject, date){
+
+  async getAllInterests(idObject) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest/getAllInterests/" + idObject,
+          options);
+    } catch (err) {
+      console.log(err);
+    }
+    let allInterests;
+    if (response.status === 200) {
+      allInterests = await response.json();
+    }
+    return allInterests;
+  }
+    
+  async getOneInterest(idObject, idMember) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest?idObject="+idObject+"&idMember="+idMember , options);
+    } catch (err) {
+      console.log(err);
+    }
+    let current_interest;
+    if (response.status === 200) {
+      current_interest = await response.json();
+    }
+    return current_interest;
+  }
+
+  async addOne(idObject, date) {
     let response;
     try {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "idObject": idObject,
+          "object": {
+            "idObject": idObject
+          },
           "availabilityDate": date
         }),
         headers: {

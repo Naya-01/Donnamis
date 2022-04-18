@@ -9,11 +9,19 @@ public interface InterestDAO {
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *
-   * @param idObject : the object id of the interest we want to retrieve.
-   * @param idMember :  the member id of the interest we want to retrieve.
+   * @param idObject : id object of the interest.
+   * @param idMember : id of interested member.
    * @return the interest.
    */
   InterestDTO getOne(int idObject, int idMember);
+
+  /**
+   * Get an assign interest.
+   *
+   * @param idObject the object id of the interest we want to retrieve.
+   * @return the interest.
+   */
+  InterestDTO getAssignedInterest(int idObject);
 
   /**
    * Add one interest in the DB.
@@ -30,4 +38,12 @@ public interface InterestDAO {
    * @return a list of interest, by an id object
    */
   List<InterestDTO> getAll(int idObject);
+
+  /**
+   * Update the status of an interest.
+   *
+   * @param interestDTO the object that we want to edit the status.
+   * @return interest
+   */
+  InterestDTO updateStatus(InterestDTO interestDTO);
 }
