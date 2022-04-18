@@ -297,7 +297,8 @@ function displayAddInterest(){
   document.getElementById("divB").appendChild(new_button);
 }
 
-async function addOneInterest(){
+async function addOneInterest(e){
+  e.preventDefault();
   let input_date = document.getElementById("input_date");
   let new_button = document.getElementById("interestedButton");
   //if there is no date specified
@@ -373,6 +374,7 @@ function displayRating(rating, comment){
  * @param {Event} e : evenement
  */
 function changeToText(e) {
+  e.preventDefault();
   // Make a simple image
   let old = document.getElementById("span_image");
   let image = document.createElement("img");
@@ -415,6 +417,7 @@ function changeToText(e) {
  * @param {Event} e : evenement
  */
 function changeToForm(e) {
+  e.preventDefault();
   // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
@@ -436,7 +439,7 @@ function changeToForm(e) {
   input_file.id = "file_input";
   input_file.type = "file";
   input_file.name = "file";
-  input_file.accept = "image/*";
+  input_file.accept = ".jpg, .jpeg, .png";
 
   // if the image is changed by the user
   input_file.onchange = () => {
@@ -506,6 +509,7 @@ function changeToForm(e) {
  * @param {Event} e : evenement
  */
 async function updateObject(e) {
+  e.preventDefault();
   // Get all elements from the form
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
@@ -513,30 +517,26 @@ async function updateObject(e) {
   let new_time_slot = new_time_slotDOM.value.trim();
 
   // check the description
-  let emptyParameters = 0;
+  let emptyFields = 0;
   if (new_description.length === 0) {
     descriptionDOM.classList.add("border-danger");
-    emptyParameters++;
+    emptyFields++;
   }
   else {
-    if (descriptionDOM.classList.contains("border-danger")) {
       descriptionDOM.classList.remove("border-danger");
-    }
   }
 
   // check the time slot
   if (new_time_slot.length === 0) {
     document.getElementById("time_slot").classList.add("border-danger");
-    emptyParameters++;
+    emptyFields++;
   }
   else {
-    if (new_time_slotDOM.classList.contains("border-danger")) {
       new_time_slotDOM.classList.remove("border-danger");
-    }
   }
 
-  // Check if there is an empty parameter
-  if (emptyParameters > 0) {
+  // Check if there is an empty field
+  if (emptyFields > 0) {
     bottomNotification.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'
@@ -587,9 +587,9 @@ async function updateObject(e) {
 /**
  * Display a popup to add a rating
  * @param e event
- * @returns {Promise<void>}
  */
 async function ratingPopUp(e){
+  e.preventDefault();
   Swal.fire({
     title: 'Donnez une note à cet objet :',
     html: createRatingHTMLCode(),
@@ -638,6 +638,7 @@ async function ratingPopUp(e){
  * @param e event
  */
 function changeColorStars(e){
+  e.preventDefault();
   let note_clicked = e.target.id.substring(4);
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
   for(let i = 0; i < allStars.length; i++){

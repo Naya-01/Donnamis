@@ -46,8 +46,7 @@ Authorization: {{token}}
       "idType": 0,
       "typeName": "Croissant"
     },
-    "description": "C'est une voiture de fortnite",
-    "image": null
+    "description": "C'est une voiture de fortnite"
   }
 }
 
