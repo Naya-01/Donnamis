@@ -1,6 +1,5 @@
 package be.vinci.pae.dal.dao;
 
-import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
@@ -171,7 +170,7 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO updateStatus(InterestDTO interestDTO) {
 
     List<Class> types = new ArrayList<>();
-    types.add(AddressDTO.class);
+    types.add(InterestDTO.class);
 
     List<Object> conditionValues = new ArrayList<>();
     conditionValues.add(interestDTO.getObject().getIdObject());
