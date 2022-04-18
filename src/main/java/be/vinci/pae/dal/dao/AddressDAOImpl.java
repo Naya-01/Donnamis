@@ -2,20 +2,22 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.factories.AddressFactory;
-import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AddressDAOImpl implements AddressDAO {
 
   @Inject
-  private DALBackendService dalBackendService;
-  @Inject
   private AddressFactory addressFactory;
+  @Inject
+  private AbstractDAO abstractDAO;
 
   /**
    * Update any attribute of an address.
@@ -25,43 +27,34 @@ public class AddressDAOImpl implements AddressDAO {
    */
   @Override
   public AddressDTO updateOne(AddressDTO addressDTO) {
-    LinkedList<String> addressDTOList = new LinkedList<>();
-    String query = "UPDATE donnamis.addresses SET ";
+    List<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
 
-    query += "unit_number = ?,";
-    addressDTOList.addLast(addressDTO.getUnitNumber());
+    List<Object> conditionValues = new ArrayList<>();
+    conditionValues.add(addressDTO.getIdMember());
+
+    Map<String, Object> toUpdate = new HashMap<>();
+    toUpdate.put("unit_number", addressDTO.getUnitNumber());
 
     if (addressDTO.getBuildingNumber() != null && !addressDTO.getBuildingNumber().isBlank()) {
-      query += "building_number = ?,";
-      addressDTOList.addLast(addressDTO.getBuildingNumber());
+      toUpdate.put("building_number", addressDTO.getBuildingNumber());
     }
     if (addressDTO.getStreet() != null && !addressDTO.getStreet().isBlank()) {
-      query += "street = ?,";
-      addressDTOList.addLast(addressDTO.getStreet());
+      toUpdate.put("street", addressDTO.getStreet());
     }
     if (addressDTO.getPostcode() != null && !addressDTO.getPostcode().isBlank()) {
-      query += "postcode = ?,";
-      addressDTOList.addLast(addressDTO.getPostcode());
+      toUpdate.put("postcode", addressDTO.getPostcode());
     }
     if (addressDTO.getCommune() != null && !addressDTO.getCommune().isBlank()) {
-      query += "commune = ?,";
-      addressDTOList.addLast(addressDTO.getCommune());
+      toUpdate.put("commune", addressDTO.getCommune());
     }
-    query = query.substring(0, query.length() - 1);
-    if (query.endsWith("SET")) {
-      return null;
-    }
-    query += " WHERE id_member = ? RETURNING id_member, unit_number, building_number, street, "
-        + "postcode, commune";
 
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+    String condition =
+        "id_member = ? RETURNING id_member, unit_number, building_number, street, "
+            + "postcode, commune";
 
-      int cnt = 1;
-      for (String str : addressDTOList) {
-        preparedStatement.setString(cnt++, str);
-      }
-      preparedStatement.setInt(cnt, addressDTO.getIdMember());
-
+    try (PreparedStatement preparedStatement = abstractDAO.updateOne(toUpdate, condition,
+        conditionValues, types)) {
       return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -76,17 +69,18 @@ public class AddressDAOImpl implements AddressDAO {
    */
   @Override
   public AddressDTO createOne(AddressDTO addressDTO) {
-    String query = "INSERT INTO donnamis.addresses (id_member, unit_number, building_number, "
-        + "street, postcode, commune) values (?,?,?,?,?,?) RETURNING id_member, "
-        + "unit_number, building_number, street, postcode, commune";
+    Map<String, Object> setters = new HashMap<>();
+    setters.put("id_member", addressDTO.getIdMember());
+    setters.put("unit_number", addressDTO.getUnitNumber());
+    setters.put("building_number", addressDTO.getBuildingNumber());
+    setters.put("street", addressDTO.getStreet());
+    setters.put("postcode", addressDTO.getPostcode());
+    setters.put("commune", addressDTO.getCommune());
 
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, addressDTO.getIdMember());
-      preparedStatement.setString(2, addressDTO.getUnitNumber());
-      preparedStatement.setString(3, addressDTO.getBuildingNumber());
-      preparedStatement.setString(4, addressDTO.getStreet());
-      preparedStatement.setString(5, addressDTO.getPostcode());
-      preparedStatement.setString(6, addressDTO.getCommune());
+    List<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
+
+    try (PreparedStatement preparedStatement = abstractDAO.insertOne(setters, types)) {
 
       return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
@@ -106,7 +100,7 @@ public class AddressDAOImpl implements AddressDAO {
    * @return the addressDTO created
    */
   @Override
-  public AddressDTO getAddress(int idMember, String unitNumber, String buildingNumber,
+  public AddressDTO createAdressDTO(int idMember, String unitNumber, String buildingNumber,
       String street, String postcode, String commune) {
 
     AddressDTO addressDTO = addressFactory.getAddressDTO();
@@ -127,11 +121,12 @@ public class AddressDAOImpl implements AddressDAO {
    */
   @Override
   public AddressDTO getAddressByMemberId(int idMember) {
-    String query = "SELECT id_member, unit_number, building_number, street, postcode, commune "
-        + "FROM donnamis.addresses WHERE id_member = ?";
-
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, idMember);
+    String condition = "id_member = ?";
+    List<Object> values = new ArrayList<>();
+    values.add(idMember);
+    ArrayList<Class> types = new ArrayList<>();
+    types.add(AddressDTO.class);
+    try (PreparedStatement preparedStatement = abstractDAO.getOne(condition, values, types)) {
       return getAddressByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -152,7 +147,7 @@ public class AddressDAOImpl implements AddressDAO {
       if (!resultSet.next()) {
         return null;
       }
-      return getAddress(resultSet.getInt(1), resultSet.getString(2),
+      return createAdressDTO(resultSet.getInt(1), resultSet.getString(2),
           resultSet.getString(3), resultSet.getString(4),
           resultSet.getString(5), resultSet.getString(6));
     } catch (SQLException e) {

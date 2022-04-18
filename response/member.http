@@ -29,7 +29,7 @@ GET {{baseUri}}/member/id/2
 Authorization: {{access}}
 
 ### Search 'alb' pattern member
-GET {{baseUri}}/member/search?search=alb
+GET {{baseUri}}/member/search?search=tef
 Authorization: {{access}}
 
 ### Search wating member
@@ -59,7 +59,7 @@ Authorization: {{access}}
 
 {
   "memberId": 3,
-  "password":"Mdpuser.1",
+  "lastname": "salut",
   "address": {
     "unitNumber": "B2",
     "street": "je suis une rue"
