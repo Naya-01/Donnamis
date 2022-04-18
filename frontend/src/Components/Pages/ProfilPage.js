@@ -448,7 +448,7 @@ const ProfilPage = async () => {
     return;
   }
   member = await memberLibrary.getUserByHisToken();
-  if (!member.image.endsWith("\\null")) {
+  if (member.image) {
     image = "/api/member/getPicture/" + member.memberId;
   } else {
     image = noImage;
