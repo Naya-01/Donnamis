@@ -9,6 +9,14 @@ const dictionnary = new Map([
   ['cancelled', 'Annulé']
 ]);
 
+const dictionnaryColorStatus = new Map([
+  ['interested', 'greenColor'],
+  ['available', 'greenColor'],
+  ['assigned', 'yellowColor'],
+  ['given', ''],
+  ['cancelled', 'redColor']
+]);
+
 const cardList = async (offers) => {
   let isMemberConnected = getSessionObject("user");
   let nbOffers = 0;
@@ -35,12 +43,13 @@ const cardList = async (offers) => {
         <div class="col">
           <div class="card ${isMemberConnected ? "clickable" : ""}" 
              data-element-id="
-                    ${isMemberConnected ? offers[nbOffers].idOffer : ""}"
-             >
-             <img src="${image}" height="250px" >
+                    ${isMemberConnected ? offers[nbOffers].idOffer : ""}">
+            <img src="${image}" height="250px" >
             <div class="card-body">
-              <h6 class="card-subtitle mb-2 text-muted">${dictionnary.get(
-          offers[nbOffers].status)}</h6>
+              <h6 class="card-subtitle mb-2 
+                ${dictionnaryColorStatus.get(offers[nbOffers].status)}">
+                    ${dictionnary.get(offers[nbOffers].status)}
+              </h6>
               <p class="card-text">
                 ${offers[nbOffers].object.description}
               </p>

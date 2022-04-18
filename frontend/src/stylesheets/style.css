@@ -43,11 +43,23 @@
   cursor: pointer;
 }
 
-[id^='star']{
+[id^='star'] {
   font-size: 2em;
-  color:gray;
+  color: gray;
 }
 
-#star1{
-  color:yellow !important;
+#star1 {
+  color: yellow !important;
+}
+
+.greenColor {
+  color: #00CC00;
+}
+
+.redColor {
+  color: #FF3232;
+}
+
+.pinkColor {
+  color: #FFA07A;
 }
