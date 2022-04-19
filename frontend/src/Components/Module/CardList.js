@@ -32,7 +32,6 @@ const cardList = async (offers) => {
 
     let cnt = 1;
     while (cnt <= 3 && nbOffers < offers.length) {
-      var image = noImage;
       if (offers[nbOffers].object.image) {
         let imageObject = "/api/object/getPicture/"
             + offers[nbOffers].object.idObject;
