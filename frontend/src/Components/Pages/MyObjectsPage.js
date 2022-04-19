@@ -186,7 +186,7 @@ const objectCards = async (searchPattern, type, status) => {
             let d = await InterestLibrary.prototype.assignOffer(
                 interest.object.idObject, interest.member.memberId);
             Swal.close();
-
+            Redirect("/myObjectsPage");
           })
         }
 
