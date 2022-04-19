@@ -41,7 +41,6 @@ let offer;
 let idMemberConnected;
 let telNumber;
 
-
 /**
  * Render the page to see an object
  */
@@ -73,8 +72,7 @@ const MyObjectPage = async () => {
   idObject = offer.object.idObject;
   if (offer.object.image) {
     imageOfObject = "/api/object/getPicture/" + idObject;
-  }
-  else{
+  } else {
     imageOfObject = noImage;
   }
   idType = offer.object.type.idType;
@@ -82,10 +80,9 @@ const MyObjectPage = async () => {
   time_slot = offer.timeSlot;
   statusObject = offer.status;
   let oldDate;
-  if(offer.oldDate === undefined){
+  if (offer.oldDate === undefined) {
     oldDate = "/"
-  }
-  else {
+  } else {
     oldDate = offer.oldDate[2] + "/" + offer.oldDate[1]
         + "/" + offer.oldDate[0];
   }
@@ -97,7 +94,7 @@ const MyObjectPage = async () => {
   let member = await memberLibrary.getUserByHisToken();
   idMemberConnected = member.memberId;
   telNumber = member.phone;
-  if(telNumber === undefined) {
+  if (telNumber === undefined) {
     telNumber = "";
   }
 
@@ -220,12 +217,13 @@ const MyObjectPage = async () => {
     if (!isInterested && (english_status === "interested" || english_status
         === "available")) {
       displayAddInterest();
-    }
-    else if(english_status === "given"){
+    } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(idObject);
-      if(current_rating === undefined){ // if there is no rating yet
-        let current_interest = await interestLibrary.getOneInterest(idObject, idMemberConnected);
-        if(current_interest !== undefined && current_interest.status === "received"){ // if the member connected has received the object
+      if (current_rating === undefined) { // if there is no rating yet
+        let current_interest = await interestLibrary.getOneInterest(idObject);
+        console.log(current_interest)
+        if (current_interest !== undefined && current_interest.status
+            === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
           rating_button.id = "buttonGivenRating";
           rating_button.value = "Donner une note";
@@ -233,12 +231,10 @@ const MyObjectPage = async () => {
           rating_button.className = "btn btn-primary";
           document.getElementById("ratingDiv").appendChild(rating_button);
           rating_button.addEventListener("click", ratingPopUp);
-        }
-        else{ // if there is no rating and the member connected is not the receiver
+        } else { // if there is no rating and the member connected is not the receiver
           displayRating(null, null);
         }
-      }
-      else{ // if there is a rating
+      } else { // if there is a rating
         displayRating(current_rating.rating, current_rating.comment);
       }
     }
@@ -248,7 +244,7 @@ const MyObjectPage = async () => {
 /**
  * Display HTML elements to add an interest
  */
-function displayAddInterest(){
+function displayAddInterest() {
   // date of disponibility
   let labelDate = document.createElement("label");
   labelDate.for = "input_date";
@@ -303,12 +299,12 @@ function displayAddInterest(){
  * Add an interest
  * @param {Event} e : evenement
  */
-async function addOneInterest(e){
+async function addOneInterest(e) {
   e.preventDefault();
   let input_date = document.getElementById("input_date");
   let new_button = document.getElementById("interestedButton");
   //if there is no date specified
-  if(input_date.value.length === 0){
+  if (input_date.value.length === 0) {
     bottomNotification.fire({
       icon: 'error',
       title: 'Aucune date renseignée'
@@ -317,25 +313,23 @@ async function addOneInterest(e){
   }
   let callMeCheckbox = document.getElementById("callMe");
   let numTelInput = document.getElementById("numTelInput");
-  if(callMeCheckbox.checked){
+  if (callMeCheckbox.checked) {
     let numTel = numTelInput.value;
-    if(numTel.trim().length === 0){
+    if (numTel.trim().length === 0) {
       numTelInput.classList.add("border-danger");
       bottomNotification.fire({
         icon: 'error',
         title: 'Si vous souhaitez être appelé, entrez un numéro de téléphone.'
       })
       return;
-    }
-    else if(!regNumberPhone.test(numTel.trim())){
+    } else if (!regNumberPhone.test(numTel.trim())) {
       numTelInput.classList.add("border-danger");
       bottomNotification.fire({
         icon: 'error',
         title: 'Le numéro de téléphone entré est incorrect.'
       })
       return;
-    }
-    else if(numTel !== telNumber){ // the num is good and has changed
+    } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
           null, numTel, null, idMemberConnected);
@@ -347,8 +341,9 @@ async function addOneInterest(e){
   new_button.disabled = true;
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
-  let newInterest = await interestLibrary.addOne(offer.object.idObject, input_date.value)
-  if(newInterest === undefined){
+  let newInterest = await interestLibrary.addOne(offer.object.idObject,
+      input_date.value)
+  if (newInterest === undefined) {
     bottomNotification.fire({
       icon: 'error',
       title: 'Une erreur est survenue lors de l\'insertion de votre intérêt'
@@ -367,15 +362,14 @@ async function addOneInterest(e){
  * @param rating the rating to display
  * @param comment the comment to display
  */
-function displayRating(rating, comment){
+function displayRating(rating, comment) {
   let ratingDiv = document.getElementById("ratingDiv");
-  if(rating == null || comment == null){
+  if (rating == null || comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
-  }
-  else{ //TODO : make a better display
+  } else { //TODO : make a better display
     ratingDiv.innerHTML += create5StarsHTMLCode(rating);
     ratingDiv.innerHTML += `<p>${comment}</p>`;
   }
@@ -533,18 +527,16 @@ async function updateObject(e) {
   if (new_description.length === 0) {
     descriptionDOM.classList.add("border-danger");
     emptyFields++;
-  }
-  else {
-      descriptionDOM.classList.remove("border-danger");
+  } else {
+    descriptionDOM.classList.remove("border-danger");
   }
 
   // check the time slot
   if (new_time_slot.length === 0) {
     document.getElementById("time_slot").classList.add("border-danger");
     emptyFields++;
-  }
-  else {
-      new_time_slotDOM.classList.remove("border-danger");
+  } else {
+    new_time_slotDOM.classList.remove("border-danger");
   }
 
   // Check if there is an empty field
@@ -563,7 +555,7 @@ async function updateObject(e) {
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
     objectWithImage = await objectLibrary.setImage(formData, idObject);
-    if(objectWithImage === undefined){
+    if (objectWithImage === undefined) {
       bottomNotification.fire({
         icon: 'error',
         title: 'L\'image entrée n\'est pas du bon format.'
@@ -575,7 +567,7 @@ async function updateObject(e) {
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
       new_description, idType, english_status, statusObject);
-  if(newOffer === undefined){
+  if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',
       title: "L\'offre n'a pas pu être mise à jour."
@@ -590,13 +582,12 @@ async function updateObject(e) {
   })
 
   if (objectWithImage !== undefined) { // if there is an image
-    if(localLinkImage !== undefined) {
+    if (localLinkImage !== undefined) {
       imageOfObject = localLinkImage;
     }
   }
   // Put text back
   changeToText(e);
-
 
 }
 
@@ -604,7 +595,7 @@ async function updateObject(e) {
  * Display a popup to add a rating
  * @param {Event} e : evenement
  */
-async function ratingPopUp(e){
+async function ratingPopUp(e) {
   e.preventDefault();
   Swal.fire({
     title: 'Donnez une note à cet objet :',
@@ -612,13 +603,13 @@ async function ratingPopUp(e){
     width: 1000,
     padding: '2em',
     scrollbarPadding: false,
-    backdrop: `rgba(80,80,80,0.7)`,
+    backdrop: `rgba(80, 80, 80, 0.7)`,
     allowOutsideClick: true,
     allowEscapeKey: true,
     confirmButtonText: 'Publier la note',
     preConfirm: async () => {
       let text_rating = document.getElementById("rating_text").value;
-      if(text_rating.trim().length === 0){
+      if (text_rating.trim().length === 0) {
         note = 1;
         bottomNotification.fire({
           icon: 'error',
@@ -627,13 +618,12 @@ async function ratingPopUp(e){
         return;
       }
       let rating = await ratingLibrary.addRating(note, text_rating, idObject);
-      if(rating === undefined){
+      if (rating === undefined) {
         bottomNotification.fire({
           icon: 'error',
           title: 'Un problème est survenu lors de la création de la note.'
         })
-      }
-      else{
+      } else {
         bottomNotification.fire({
           icon: 'success',
           title: 'Votre note a bien été prise en compte.'
@@ -644,7 +634,7 @@ async function ratingPopUp(e){
     }
   })
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
-  for(let i = 0; i < allStars.length; i++){
+  for (let i = 0; i < allStars.length; i++) {
     allStars[i].addEventListener("click", changeColorStars);
   }
 }
@@ -653,14 +643,14 @@ async function ratingPopUp(e){
  * Change the color of the stars in function of the note
  * @param {Event} e : evenement
  */
-function changeColorStars(e){
+function changeColorStars(e) {
   e.preventDefault();
   let note_clicked = e.target.id.substring(4);
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
-  for(let i = 0; i < allStars.length; i++){
+  for (let i = 0; i < allStars.length; i++) {
     allStars[i].style = "color:gray";
   }
-  for(let i = 0; i < note_clicked; i++){
+  for (let i = 0; i < note_clicked; i++) {
     allStars[i].style = "color:yellow";
   }
   note = note_clicked;
@@ -671,14 +661,14 @@ function changeColorStars(e){
  * @param nbYellow the number of yellow stars needed
  * @returns {string} the html code of the 5 stars
  */
-function create5StarsHTMLCode(nbYellow){
+function create5StarsHTMLCode(nbYellow) {
   let htmlCode = ``;
   // Add 5 stars for the rating
-  for(let i = 1; i <= 5; i++){
+  for (let i = 1; i <= 5; i++) {
     let oneStar = document.createElement("i");
     oneStar.className = "bi bi-star-fill clickable";
     oneStar.id = "star" + i;
-    if(i <= nbYellow){
+    if (i <= nbYellow) {
       oneStar.style = "color:yellow";
     }
     htmlCode += oneStar.outerHTML;
@@ -690,7 +680,7 @@ function create5StarsHTMLCode(nbYellow){
  * Generate html code to add a rating
  * @returns {string} the html code to add a rating
  */
-function createRatingHTMLCode(){
+function createRatingHTMLCode() {
   let htmlCode = create5StarsHTMLCode(1);
   htmlCode += `<div class=row">
                 <textarea class="form-control" id="rating_text" 

@@ -49,14 +49,14 @@ public class InterestResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public InterestDTO getOne(@DefaultValue("-1") @QueryParam("idObject") int idObject,
-      @DefaultValue("-1") @QueryParam("idMember") int idMember) {
-
-    if (idObject < 1 || idMember < 1) {
+      @Context ContainerRequest request) {
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    if (idObject < 1) {
       throw new WebApplicationException("L'identifiant de l'objet et/ou du membre est/sont "
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, authenticatedUser.getMemberId());
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     return interestDTO;
   }
