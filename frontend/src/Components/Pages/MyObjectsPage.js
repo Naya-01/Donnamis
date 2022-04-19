@@ -159,13 +159,16 @@ const objectCards = async (searchPattern, type, status) => {
                 <div class="col-7 mt-3">
                   <p class="fs-4">${username} ${phone}</p>
                   <span class="text-secondary fs-5">${availabilityDate}</span>
-                </div>
+                </div>`
+          if (offer.status === "available" || offer.status === "interested") {
+            allInterests += ` 
                 <div class="col-3 mt-2">
                   <button class="btn btn-lg btn-primary" id="${"interest-"
-          + interest.member.memberId}">Choisir</button>
-                </div>
-              </div>
-            `
+            + interest.member.memberId}">Choisir</button>
+                </div>`
+          }
+
+          allInterests += `</div>`
         }
 
         allInterests += `</div>`
