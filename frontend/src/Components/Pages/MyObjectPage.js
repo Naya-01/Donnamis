@@ -245,7 +245,9 @@ const MyObjectPage = async () => {
   }
 }
 
-
+/**
+ * Display HTML elements to add an interest
+ */
 function displayAddInterest(){
   // date of disponibility
   let labelDate = document.createElement("label");
@@ -297,7 +299,12 @@ function displayAddInterest(){
   document.getElementById("divB").appendChild(new_button);
 }
 
-async function addOneInterest(){
+/**
+ * Add an interest
+ * @param {Event} e : evenement
+ */
+async function addOneInterest(e){
+  e.preventDefault();
   let input_date = document.getElementById("input_date");
   let new_button = document.getElementById("interestedButton");
   //if there is no date specified
@@ -340,8 +347,14 @@ async function addOneInterest(){
   new_button.disabled = true;
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
-  await interestLibrary.addOne(offer.object.idObject, input_date.value)
-
+  let newInterest = await interestLibrary.addOne(offer.object.idObject, input_date.value)
+  if(newInterest === undefined){
+    bottomNotification.fire({
+      icon: 'error',
+      title: 'Une erreur est survenue lors de l\'insertion de votre intérêt'
+    })
+    return;
+  }
   // the notification to show that the interest is send
   bottomNotification.fire({
     icon: 'success',
@@ -373,6 +386,7 @@ function displayRating(rating, comment){
  * @param {Event} e : evenement
  */
 function changeToText(e) {
+  e.preventDefault();
   // Make a simple image
   let old = document.getElementById("span_image");
   let image = document.createElement("img");
@@ -415,6 +429,7 @@ function changeToText(e) {
  * @param {Event} e : evenement
  */
 function changeToForm(e) {
+  e.preventDefault();
   // Make the image clickable to import a file
   let old = document.getElementById("image");
   let span_image = document.createElement("span");
@@ -436,7 +451,7 @@ function changeToForm(e) {
   input_file.id = "file_input";
   input_file.type = "file";
   input_file.name = "file";
-  input_file.accept = "image/*";
+  input_file.accept = ".jpg, .jpeg, .png";
 
   // if the image is changed by the user
   input_file.onchange = () => {
@@ -506,6 +521,7 @@ function changeToForm(e) {
  * @param {Event} e : evenement
  */
 async function updateObject(e) {
+  e.preventDefault();
   // Get all elements from the form
   let descriptionDOM = document.getElementById("description_object");
   let new_description = descriptionDOM.value.trim();
@@ -513,30 +529,26 @@ async function updateObject(e) {
   let new_time_slot = new_time_slotDOM.value.trim();
 
   // check the description
-  let emptyParameters = 0;
+  let emptyFields = 0;
   if (new_description.length === 0) {
     descriptionDOM.classList.add("border-danger");
-    emptyParameters++;
+    emptyFields++;
   }
   else {
-    if (descriptionDOM.classList.contains("border-danger")) {
       descriptionDOM.classList.remove("border-danger");
-    }
   }
 
   // check the time slot
   if (new_time_slot.length === 0) {
     document.getElementById("time_slot").classList.add("border-danger");
-    emptyParameters++;
+    emptyFields++;
   }
   else {
-    if (new_time_slotDOM.classList.contains("border-danger")) {
       new_time_slotDOM.classList.remove("border-danger");
-    }
   }
 
-  // Check if there is an empty parameter
-  if (emptyParameters > 0) {
+  // Check if there is an empty field
+  if (emptyFields > 0) {
     bottomNotification.fire({
       icon: 'error',
       title: 'Veuillez remplir les champs obligatoires !'
@@ -554,17 +566,21 @@ async function updateObject(e) {
     if(objectWithImage === undefined){
       bottomNotification.fire({
         icon: 'error',
-        title: "L'image entrée n'est pas du bon format."
+        title: 'L\'image entrée n\'est pas du bon format.'
       })
       return;
     }
   }
 
   // Call the function to update the offer
-  await offerLibrary.updateOffer(idOffer, new_time_slot, new_description,
-      idType,
-      english_status, statusObject);
-
+  let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
+      new_description, idType, english_status, statusObject);
+  if(newOffer === undefined){
+    bottomNotification.fire({
+      icon: 'error',
+      title: "L\'offre n'a pas pu être mise à jour."
+    })
+  }
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
@@ -586,10 +602,10 @@ async function updateObject(e) {
 
 /**
  * Display a popup to add a rating
- * @param e event
- * @returns {Promise<void>}
+ * @param {Event} e : evenement
  */
 async function ratingPopUp(e){
+  e.preventDefault();
   Swal.fire({
     title: 'Donnez une note à cet objet :',
     html: createRatingHTMLCode(),
@@ -635,9 +651,10 @@ async function ratingPopUp(e){
 
 /**
  * Change the color of the stars in function of the note
- * @param e event
+ * @param {Event} e : evenement
  */
 function changeColorStars(e){
+  e.preventDefault();
   let note_clicked = e.target.id.substring(4);
   let allStars = document.getElementsByClassName("bi bi-star-fill clickable");
   for(let i = 0; i < allStars.length; i++){
