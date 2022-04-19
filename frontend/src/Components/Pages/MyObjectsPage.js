@@ -1,7 +1,7 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
-import itemImage from "../../img/item.jpg";
+import noImage from "../../img/noImage.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
@@ -92,7 +92,11 @@ const objectCards = async (searchPattern, type, status) => {
     return;
   }
   for (const offer of offers) {
-    managementList(offer.idOffer, memberCards, itemImage,
+    let image = noImage;
+    if (offer.object.image) {
+      image = "/api/object/getPicture/" + offer.object.idObject;
+    }
+    managementList(offer.idOffer, memberCards, image,
         offer.object.type.typeName + ": " + offer.object.description,
         dictionary.get(offer.object.status));
 
@@ -145,7 +149,7 @@ const objectCards = async (searchPattern, type, status) => {
           if (interest.member.image) {
             image = "/api/member/getPicture/" + interest.member.memberId;
           } else {
-            image = itemImage;
+            image = noImage;
           }
           allInterests += `
               <div class="row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded">
