@@ -15,7 +15,7 @@ public class Log {
   public static void config() {
     logger = Logger.getLogger("Log");
     try {
-      FileHandler fileHandler = new FileHandler("LogFile%g.log", 50000, 5, true);
+      FileHandler fileHandler = new FileHandler("LogFile%g.log", 75000, 5, true);
       logger.addHandler(fileHandler);
       SimpleFormatter formatter = new SimpleFormatter();
       fileHandler.setFormatter(formatter);
