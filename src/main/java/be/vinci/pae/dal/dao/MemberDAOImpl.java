@@ -131,15 +131,17 @@ public class MemberDAOImpl implements MemberDAO {
       condition += "AND members.status = 'valid' ";
     }
     if (search != null && !search.isEmpty()) {
-      condition += "AND (lower(members.firstname) LIKE ? OR lower(members.lastname) LIKE ? "
-          + "OR lower(members.username) LIKE ?)";
+      condition += "AND (lower(members.username) LIKE ? OR lower(addresses.commune) LIKE ? "
+          + "OR lower(addresses.postcode) LIKE ?)";
       for (int i = 1; i <= 3; i++) {
         values.add("%" + search.toLowerCase() + "%");
       }
     }
 
     try (PreparedStatement preparedStatement = abstractDAO.getAll(condition, values, types)) {
-      return getMemberListByPreparedStatement(preparedStatement);
+      List<MemberDTO> list = getMemberListByPreparedStatement(preparedStatement);
+      System.out.println(list);
+      return list;
     } catch (SQLException e) {
       throw new FatalException(e);
     }

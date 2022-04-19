@@ -6,7 +6,7 @@ import itemImage from "../../img/item.jpg"
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
 import Notification from "../Module/Notification";
-import autocomplete from 'autocompleter';
+import autocomplete from "../Module/AutoComplete";
 
 /**
  * Render the Members page
@@ -20,28 +20,16 @@ const MembersPage = async () => {
 
   // Search members by enter
   const searchBar = document.getElementById("searchBar");
-  autocomplete({
-    minLength: 1,
-    input: searchBar,
-    fetch: async function (text, update) {
-      members = await MemberLibrary.prototype.getMemberBySearchAndStatus(text.toLowerCase(), "valid");
-      const tab = [];
-      if (members) {
-        for (const member of members) {
-          tab.push({
-            label: member.username,
-
-          });
-        }
-      }
-      update(tab);
-    },
-    onSelect: function(item) {
-      searchBar.value = item.label;
-    }
+  searchBar.addEventListener('keypress', async () => {
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.innerText.toLowerCase(), "valid");
+    let finalArray = [];
+    Array.prototype.push.apply(finalArray, members.map(m => m.username));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.commune));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.postcode));
+    autocomplete(searchBar, finalArray);
   });
 
-  searchBar.addEventListener("keypress", async (e) => {
+  searchBar.addEventListener("keyup", async (e) => {
     if (e.key === "Enter") {
       members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
       await baseMembersList(members);
@@ -54,7 +42,6 @@ const MembersPage = async () => {
     members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
     await baseMembersList(members);
   });
-
 }
 
 const baseMembersList = (members) => {
