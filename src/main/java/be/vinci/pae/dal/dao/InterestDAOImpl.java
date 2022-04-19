@@ -139,6 +139,38 @@ public class InterestDAOImpl implements InterestDAO {
     values.add("cancelled");
     String condition = "id_object = ? AND status != ?";
 
+    return getInterestDTOSList(types, values, condition);
+  }
+
+  /**
+   * Get a list of "published" interest in an id object.
+   *
+   * @param idObject the object we want to retrieve the interests
+   * @return a list of interest, by an id object
+   */
+  @Override
+  public List<InterestDTO> getAllPublished(int idObject) {
+
+    List<Class> types = new ArrayList<>();
+    types.add(InterestDTO.class);
+    List<Object> values = new ArrayList<>();
+    values.add(idObject);
+    values.add("published");
+    String condition = "id_object = ? AND status = ?";
+
+    return getInterestDTOSList(types, values, condition);
+  }
+
+  /**
+   * Get interestDTOs list.
+   *
+   * @param types     of the table
+   * @param values    of the condition
+   * @param condition of the query
+   * @return a list of DTOs
+   */
+  private List<InterestDTO> getInterestDTOSList(List<Class> types, List<Object> values,
+      String condition) {
     try (PreparedStatement preparedStatement = abstractDAO.getAll(condition, values, types)) {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
