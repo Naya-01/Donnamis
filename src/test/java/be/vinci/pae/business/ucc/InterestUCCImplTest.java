@@ -237,7 +237,7 @@ class InterestUCCImplTest {
     allInterests.add(newInterestDTO);
     ObjectDTO object = this.objectFactory.getObjectDTO();
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
-    Mockito.when(mockInterestDAO.getAll(1)).thenReturn(allInterests);
+    Mockito.when(mockInterestDAO.getAllPublished(1)).thenReturn(allInterests);
     assertAll(
         () -> assertEquals(allInterests, interestUCC.getInterestedCount(1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -245,7 +245,7 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(1),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getAll(1),
+            .getAllPublished(1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .commitTransaction()
     );
