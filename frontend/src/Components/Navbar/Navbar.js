@@ -10,11 +10,16 @@ const Navbar = async () => {
   let userSession = getSessionObject("user");
   let username = undefined;
   let user_role = undefined;
+  let image = profilImage;
   if (userSession) {
     let memberLibraryModal = new MemberLibrary();
     let user = await memberLibraryModal.getUserByHisToken();
     username = user.username;
     user_role = user.role;
+    console.log(user)
+    if (user.image) {
+      image = "/api/member/getPicture/" + user.memberId
+    }
   }
   if (username === undefined) {
     navbar = `
@@ -93,7 +98,7 @@ const Navbar = async () => {
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                            href="#"
                            id="navbarDropdown" role="button">
-                            <img alt="profil" src="${profilImage}">
+                            <img class="img-thumbnail" id="navbar-profil-picture" alt="profil" src="${image}">
                         </a>
                         <ul aria-labelledby="navbarDropdown" class="bg-navbar dropdown-menu dropdown-menu-end">
                             <li>

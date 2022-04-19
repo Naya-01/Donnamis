@@ -34,7 +34,8 @@ const htmlPage = `
                   `;
 
 const connectClientAndRedirect = async (username, password, remember) => {
-  let userData = MemberLibrary.prototype.login(username, password, remember)
+  let userData = await MemberLibrary.prototype.login(username, password,
+      remember)
 
   let userLocalStorage = {
     refreshToken: userData.refresh_token,

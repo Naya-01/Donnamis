@@ -16,6 +16,10 @@
   right: 0;
 }
 
+#navbar-profil-picture {
+  width: 65px;
+}
+
 .bg-navbar {
   background-color: rgb(52, 58, 64);
 }
@@ -43,11 +47,11 @@
   cursor: pointer;
 }
 
-[id^='star']{
+[id^='star'] {
   font-size: 2em;
-  color:gray;
+  color: gray;
 }
 
-#star1{
-  color:yellow !important;
+#star1 {
+  color: yellow !important;
 }
