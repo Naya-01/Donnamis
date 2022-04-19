@@ -25,6 +25,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -55,6 +57,7 @@ public class MemberResource {
       @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime) {
 
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
 
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\",
@@ -77,6 +80,8 @@ public class MemberResource {
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
   public Response getPicture(@PathParam("id") int id) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource getPicture");
+
     MemberDTO memberDTO = memberUCC.getMember(id);
 
     if (memberDTO.getImage() == null) {
@@ -97,6 +102,7 @@ public class MemberResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public MemberDTO getMemberByToken(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource getMemberByToken");
     return JsonViews.filterPublicJsonView((MemberDTO) request.getProperty("user"), MemberDTO.class);
   }
 
@@ -111,6 +117,8 @@ public class MemberResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public MemberDTO getMemberById(@PathParam("id") int id) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource getMemberById");
+
     return JsonViews.filterPublicJsonView(memberUCC.getMember(id), MemberDTO.class);
   }
 
@@ -128,6 +136,8 @@ public class MemberResource {
   @Admin
   public List<MemberDTO> searchMembers(@DefaultValue("") @QueryParam("search") String search,
       @DefaultValue("") @QueryParam("status") String status) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource searchMembers");
+
     return JsonViews.filterPublicJsonViewAsList(memberUCC.searchMembers(search, status),
         MemberDTO.class);
   }
@@ -145,6 +155,8 @@ public class MemberResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public MemberDTO updateMember(MemberDTO memberDTO, @Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource updateMember");
+
     MemberDTO requestMember = (MemberDTO) request.getProperty("user");
     if (!requestMember.getRole().equals("administrator")
         && (memberDTO.getMemberId() != requestMember.getMemberId() || memberDTO.getRole() != null
