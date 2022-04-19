@@ -21,6 +21,8 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -48,6 +50,7 @@ public class OfferResource {
       @DefaultValue("") @QueryParam("status") String objectStatus,
       @Context ContainerRequest request
   ) {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getOffers");
     int idOfferor = 0;
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     if (offeror.equals("true")) {
@@ -69,6 +72,7 @@ public class OfferResource {
   @Path("/lasts")
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getLastOffers() {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getLastOffers");
     return offerUcc.getLastOffers();
   }
 
@@ -83,6 +87,7 @@ public class OfferResource {
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   public OfferDTO getOfferById(@PathParam("idOffer") int idOffer) {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getOfferById");
     return offerUcc.getOfferById(idOffer);
   }
 
@@ -98,6 +103,7 @@ public class OfferResource {
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO addOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource addOffer");
     if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot() == null
         || offerDTO.getTimeSlot().isBlank()) {
       throw new BadRequestException("Information manquante !");
@@ -120,6 +126,8 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public OfferDTO updateOffer(OfferDTO offerDTO, @Context ContainerRequest request) {
+
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource updateOffer");
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
 
     if (offerDTO.getIdOffer() == 0) {
@@ -146,6 +154,8 @@ public class OfferResource {
   @Path("/givenOffers/{id}")
   public List<OfferDTO> getGivenOffers(@PathParam("id") int idReceiver,
       @Context ContainerRequest request) {
+
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getGivenOffers");
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
     if (!memberRequest.getRole().equals("administrator")
         && memberRequest.getMemberId() != idReceiver) {
@@ -168,6 +178,7 @@ public class OfferResource {
   @Authorize
   public OfferDTO cancelOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource cancelOffer");
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (offerDTO.getIdOffer() == null) {
@@ -197,6 +208,7 @@ public class OfferResource {
   @Authorize
   public OfferDTO notCollectedOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource notCollectedOffer");
     if (offerDTO.getIdOffer() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
@@ -226,6 +238,7 @@ public class OfferResource {
   @Authorize
   public OfferDTO giveOffer(OfferDTO offerDTO) {
 
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource giveOffer");
     if (offerDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }

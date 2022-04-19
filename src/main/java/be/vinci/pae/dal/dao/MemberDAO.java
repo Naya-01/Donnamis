@@ -8,7 +8,6 @@ public interface MemberDAO {
   /**
    * Get a member we want to retrieve by his username.
    *
-   * @param <T>      class type
    * @param username : the username of the member we want to retrieve
    * @return the member
    */
