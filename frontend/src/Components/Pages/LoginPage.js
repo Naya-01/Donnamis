@@ -1,20 +1,10 @@
 import {getSessionObject, setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
+import MemberLibrary from "../../Domain/MemberLibrary";
+import Notification from "../Module/Notification";
 
-const Swal = require('sweetalert2')
-
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'bottom',
-  showConfirmButton: false,
-  timer: 5000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer)
-    toast.addEventListener('mouseleave', Swal.resumeTimer)
-  }
-})
+const Toast = Notification.prototype.getNotification("bottom")
 
 const htmlPage = `
             <div class="container mt-5">
@@ -44,48 +34,17 @@ const htmlPage = `
                   `;
 
 const connectClientAndRedirect = async (username, password, remember) => {
+  let userData = await MemberLibrary.prototype.login(username, password,
+      remember)
 
-  let userData;
-  try {
-    let options = {
-      method: "POST",
-      body: JSON.stringify({
-        "username": username,
-        "password": password,
-        "rememberMe": remember,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    userData = await fetch("/api/auth/login/", options);
-    if (!userData.ok) {
-      userData.text().then((msg) => {
-        Toast.fire({
-          icon: 'error',
-          title: msg
-        })
-      })
-    }
-  } catch (err) {
-    console.log(err);
+  let userLocalStorage = {
+    refreshToken: userData.refresh_token,
+    accessToken: userData.access_token,
   }
-  if (userData.status === 200) {
-    userData = await userData.json();
 
-    let userLocalStorage = {
-      refreshToken: userData.refresh_token,
-      accessToken: userData.access_token,
-    }
-
-    Toast.fire({
-      icon: 'success',
-      title: "Bienvenue !"
-    })
-    setSessionObject("user", userLocalStorage);
-    await Navbar();
-    Redirect("/");
-  }
+  setSessionObject("user", userLocalStorage);
+  await Navbar();
+  Redirect("/");
 }
 
 const LoginPage = () => {

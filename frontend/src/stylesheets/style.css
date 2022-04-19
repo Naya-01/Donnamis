@@ -16,6 +16,12 @@
   right: 0;
 }
 
+#navbar-profil-picture {
+  border-radius: 50%;
+  height: 65px;
+  width: 65px;
+}
+
 .bg-navbar {
   background-color: rgb(52, 58, 64);
 }

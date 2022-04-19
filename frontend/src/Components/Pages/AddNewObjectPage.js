@@ -3,14 +3,13 @@ import {getSessionObject} from "../../utils/session";
 import noImage from "../../img/noImage.png";
 import TypeLibrary from "../../Domain/TypeLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
-import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
 
 const typeLibrary = new TypeLibrary();
 const memberLibrary = new MemberLibrary();
-const offerLibrary = new OfferLibrary();
 const objectLibrary = new ObjectLibrary();
+const bottomNotification = new Notification().getNotification();
 let idOfferor;
 
 /**
@@ -48,14 +47,13 @@ const AddNewObjectPage = async () => {
             <div class="card-text">
               <form class="form_add">
                 <div class="row justify-content-start p-2">
-                  <!--TODO : make the image changeable-->
                   <!-- The image -->
                   <div class="col-4">
                     <div class="img_file_input">
                       <label for="file_input">
-                        <img alt="no image"  height="75%" width="75%" src="${noImage}"/>
+                        <img id="img" alt="no image" class="clickable" width="75%" src="${noImage}"/>
                       </label>
-                      <input id="file_input" name="file" type="file"/>
+                      <input id="file_input" name="file" type="file" accept = ".jpg, .jpeg, .png"/>
                     </div>
                   </div>
                   <!-- The description -->
@@ -101,8 +99,16 @@ const AddNewObjectPage = async () => {
         </div>
       </div>
     </div>`;
-  document.querySelector("#addObjectButton")
-  .addEventListener("click", addObject);
+  document.querySelector("#addObjectButton").addEventListener("click", addObject);
+  let input_file = document.getElementById("file_input");
+  input_file.onchange = () => {
+    const [file] = input_file.files
+    if (file) {
+      console.log("nouvelle photo");
+      console.log(file);
+      document.getElementById("img").src = URL.createObjectURL(file);
+    }
+  }
 };
 
 /**
@@ -111,22 +117,70 @@ const AddNewObjectPage = async () => {
  */
 async function addObject(e) {
   e.preventDefault();
-  let description = document.getElementById("description_object").value;
-  let typeName = document.getElementById("type_object").value;
-  let timeSlot = document.getElementById("availability_date").value;
+  let descriptionHTML = document.getElementById("description_object");
+  let typeNameHTML = document.getElementById("type_object");
+  let timeSlotHTML = document.getElementById("availability_date");
+  let description = descriptionHTML.value;
+  let typeName = typeNameHTML.value;
+  let timeSlot = timeSlotHTML.value;
 
-  //TODO : get the image if it exists
+  let emptyFields = 0;
+  // check the description
+  if(description.trim().length === 0){
+    descriptionHTML.classList.add("border-danger");
+    emptyFields ++;
+  }
+  else{
+    descriptionHTML.classList.remove("border-danger");
+  }
+  // check the type name
+  if(typeName.trim().length === 0){
+    typeNameHTML.classList.add("border-danger");
+    emptyFields ++;
+  }
+  else{
+    typeNameHTML.classList.remove("border-danger");
+  }
+  // check the time slot
+  if(timeSlot.trim().length === 0){
+    timeSlotHTML.classList.add("border-danger");
+    emptyFields ++;
+  }
+  else{
+    timeSlotHTML.classList.remove("border-danger");
+  }
+  // if there is an empty field
+  if(emptyFields > 0){
+    bottomNotification.fire({
+      icon: 'error',
+      title: 'Vous devez remplir les champs obligatoires'
+    })
+    return;
+  }
 
   // Call the backend to add the offer
   let newOffer = await objectLibrary.addObject(timeSlot, description, typeName);
+  if(newOffer === undefined){
+    bottomNotification.fire({
+      icon: 'error',
+      title: 'Un problème est survenu lors de l\'ajout'
+    })
+    return;
+  }
   let idObject = newOffer.object.idObject;
   let fileInput = document.getElementById("file_input");
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    await objectLibrary.setImage(formData, idObject);
+    let newImage = await objectLibrary.setImage(formData, idObject);
+    if(newImage === undefined){
+      bottomNotification.fire({
+        icon: 'error',
+        title: 'Un problème est survenu lors de l\'ajout de l\'image'
+      })
+      return;
+    }
   }
-
   Redirect("/");
   let notif = new Notification().getNotification("top-end");
   notif.fire({

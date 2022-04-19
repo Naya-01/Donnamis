@@ -36,6 +36,15 @@ public class ImageImpl implements Image {
       return null;
     }
 
+    for (String extension : typesAllowed) {
+      String testPath =
+          Config.getProperty("ImagePath") + "img\\" + path + filename + "." + extension;
+      File f = new File(testPath);
+      if (f.exists()) {
+        f.delete();
+      }
+    }
+
     String internalPath = null;
     try {
       internalPath =
@@ -45,7 +54,6 @@ public class ImageImpl implements Image {
       if (f.exists()) {
         f.delete();
       }
-
       Files.copy(file, Paths.get(finalPath));
     } catch (IOException e) {
       e.printStackTrace();

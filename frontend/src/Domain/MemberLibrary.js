@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
 
-const Toast = new Notification().getNotification("top-end");
+const Toast = new Notification().getNotification("bottom");
 
 class MemberLibrary {
   async getUserByHisToken() {
@@ -74,6 +74,41 @@ class MemberLibrary {
       }
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  async login(username, password, remember) {
+    let userData;
+    try {
+      let options = {
+        method: "POST",
+        body: JSON.stringify({
+          "username": username,
+          "password": password,
+          "rememberMe": remember,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      userData = await fetch("/api/auth/login/", options);
+      if (!userData.ok) {
+        userData.text().then((msg) => {
+          Toast.fire({
+            icon: 'error',
+            title: msg
+          })
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    if (userData.status === 200) {
+      Toast.fire({
+        icon: 'success',
+        title: "Bienvenue !"
+      })
+      return await userData.json();
     }
   }
 

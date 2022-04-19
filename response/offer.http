@@ -32,6 +32,7 @@ Authorization: {{refresh}}
 ### GET object by status
 GET {{baseUri}}/offers?status=assigned
 Authorization: {{refresh}}
+
 ###
 GET {{baseUri}}/offers/lasts
 
@@ -115,7 +116,7 @@ Authorization: {{access}}
 Content-Type: application/json
 
 {
-  "idOffer": 17
+  "idOffer": 18
 }
 
 ### Mark offer to not collected
