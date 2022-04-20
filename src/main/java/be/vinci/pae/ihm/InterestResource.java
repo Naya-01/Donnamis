@@ -42,13 +42,12 @@ public class InterestResource {
    * Get an interest, by the id of the interested member and the id of the object.
    *
    * @param idObject : id object of the interest.
-   * @param idMember : id of interested member.
    * @return a json of the interest.
    */
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public InterestDTO getOne(@DefaultValue("-1") @QueryParam("idObject") int idObject,
+  public InterestDTO getOwnInterest(@DefaultValue("-1") @QueryParam("idObject") int idObject,
       @Context ContainerRequest request) {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     if (idObject < 1) {
