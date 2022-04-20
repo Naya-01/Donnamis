@@ -14,6 +14,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -35,6 +37,7 @@ public class AddressResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public AddressDTO updateOne(AddressDTO addressDTO, @Context ContainerRequest containerRequest) {
+    Logger.getLogger("Log").log(Level.INFO, "AddressResource updateOne");
     MemberDTO memberDTO = (MemberDTO) containerRequest.getProperty("user");
     if (memberDTO.getMemberId() != addressDTO.getIdMember()) {
       throw new UnauthorizedException("Not your address");

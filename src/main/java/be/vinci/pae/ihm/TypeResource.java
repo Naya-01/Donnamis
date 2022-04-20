@@ -13,6 +13,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Singleton
 @Path("/type")
@@ -34,6 +36,7 @@ public class TypeResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectNode getType(@PathParam("id") int id) {
+    Logger.getLogger("Log").log(Level.INFO, "TypeResource getType by id");
     TypeDTO typeDTO = typeUCC.getType(id);
     return jsonMapper.createObjectNode().putPOJO("type", typeDTO);
   }
@@ -49,6 +52,8 @@ public class TypeResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectNode getType(@PathParam("typeName") String typeName) {
+    Logger.getLogger("Log").log(Level.INFO, "TypeResource getType by name");
+
     TypeDTO typeDTO = typeUCC.getType(typeName);
     return jsonMapper.createObjectNode().putPOJO("type", typeDTO);
   }
@@ -63,6 +68,8 @@ public class TypeResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectNode getAllDefaultTypes() {
+    Logger.getLogger("Log").log(Level.INFO, "TypeResource getAllDefaultTypes");
+
     JsonNode allCollection = jsonMapper.valueToTree(typeUCC.getAllDefaultTypes());
     return jsonMapper.createObjectNode().putPOJO("type", allCollection);
   }

@@ -22,6 +22,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -48,7 +50,7 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode login(JsonNode json) {
-
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource Login");
     if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
       throw new BadRequestException("Pseudonyme ou mot de passe requis");
     }
@@ -83,6 +85,7 @@ public class AuthResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectNode refreshToken(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource refreshToken");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
@@ -101,6 +104,7 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode register(MemberDTO member) {
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource register");
     //ALL REGEX FOR FIELDS
     Pattern regOnlyNumbersAndDash = Pattern.compile("^[0-9-]+$");
     Pattern regNumberPhone =

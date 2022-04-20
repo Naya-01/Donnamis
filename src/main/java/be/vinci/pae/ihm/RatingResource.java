@@ -15,6 +15,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -35,6 +37,7 @@ public class RatingResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public RatingDTO getOne(@PathParam("id") int idObject) {
+    Logger.getLogger("Log").log(Level.INFO, "RatingResource getOne");
     return ratingUCC.getOne(idObject);
   }
 
@@ -49,6 +52,8 @@ public class RatingResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public RatingDTO addRating(@Context ContainerRequest request, RatingDTO ratingDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "RatingResource addRating");
+
     if (ratingDTO == null || ratingDTO.getIdObject() == null || ratingDTO.getRating() == null
         || ratingDTO.getComment() == null || ratingDTO.getComment().isBlank()) {
       throw new BadRequestException("Rating need more informations");
