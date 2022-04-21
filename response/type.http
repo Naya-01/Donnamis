@@ -12,14 +12,15 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "AlbertDeBucarest",
-  "password": "albertLePoulet",
+  "username": "bazz",
+  "password": "Mdpuser.1",
   "rememberMe": true
 }
 > {%
 client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
+
 
 
 ###
