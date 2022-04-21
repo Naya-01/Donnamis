@@ -22,6 +22,12 @@
   width: 65px;
 }
 
+#navbar-notification-picture {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+}
+
 .bg-navbar {
   background-color: rgb(52, 58, 64);
 }

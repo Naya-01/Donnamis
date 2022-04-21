@@ -1,5 +1,6 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
+import notificationImage from "../../img/notification.png"
 import MemberLibrary from "../../Domain/MemberLibrary";
 
 const Navbar = async () => {
@@ -90,8 +91,64 @@ const Navbar = async () => {
     navbar +=
         `</ul>
             <div class="d-flex">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item m-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">`
+
+    //Notification
+    navbar += `
+              <li class="nav-item dropdown mx-5">
+                        <a aria-expanded="false" class="nav-link " data-bs-toggle="dropdown"
+                           href="#"
+                           id="navbarDropdown" "role="button">
+                           <div class="button-dot">
+                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                            <span class="dot">2</span>
+                           </div>
+                        </a>
+                        <ul aria-labelledby="navbarDropdown" class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <div class="dropdown-item  fs-5" href="#" onclick="event.stopPropagation()">
+                                <div class="row">
+                                    <div class="fs-5">
+                                      <img src="${profilImage}" alt="objectPicture">
+                                      <span>Cadre représentant un chien noir sur un fond noir.</span>
+                                    </div>
+                                    <div class="fs-5 text-center fw-bolder text-danger">
+                                      <span>Vous n'avez pas récuperer l'objet</span>
+                                    </div>
+                                </div>
+                              </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                              <div class="dropdown-item  fs-5" href="#" onclick="event.stopPropagation()">
+                                <div class="row">
+                                    <div class="fs-5">
+                                      <img src="${profilImage}" alt="objectPicture">
+                                      <span>meuble du frero</span>
+                                    </div>
+                                    <div class="fs-5 text-center fw-bolder text-success">
+                                      <span>Merci d'avoir récuperer l'objet !</span>
+                                    </div>
+                                </div>
+                              </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                              <div class="dropdown-item  fs-5" href="#">
+                                <div class="row">
+                                    <button class="btn btn-lg btn-primary">Tout marquer comme lu</button>
+                                </div>
+                              </div>
+                            </li>
+                        </ul>
+                    </li>
+    `
+
+    navbar += `<li class="nav-item m-auto">
                         <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
                     </li>
                     <li class="nav-item dropdown">
