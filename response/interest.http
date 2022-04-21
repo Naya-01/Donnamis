@@ -13,12 +13,12 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 
-### Get One interest
-GET {{baseUri}}/interest?idObject=1&idMember=2
+### Get Own interest
+GET {{baseUri}}/interest?idObject=2
 Authorization: {{access}}
 
 ### Get all interests
-GET {{baseUri}}/interest/getAllInterests/1
+GET {{baseUri}}/interest/getAllInterests/2
 Authorization: {{access}}
 
 

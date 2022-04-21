@@ -20,6 +20,20 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
+### login valid admin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
 ### Get user by his token
 GET {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
@@ -62,7 +76,7 @@ Authorization: {{access}}
   "lastname": "salut",
   "address": {
     "unitNumber": "B2",
-    "street": "je suis une rue"
+    "street": "je bjr rue"
   }
 }
 
