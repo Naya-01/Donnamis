@@ -104,11 +104,11 @@ const Navbar = async () => {
                             <span class="dot">2</span>
                            </div>
                         </a>
-                        <ul aria-labelledby="navbarDropdown" class="dropdown-menu dropdown-menu-end">
+                        <ul aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
                             <li>
-                              <div class="dropdown-item  fs-5" href="#" onclick="event.stopPropagation()">
-                                <div class="row">
-                                    <div class="fs-5">
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" onclick="event.stopPropagation()">
+                                <div class="row ">
+                                    <div class="fs-5 ">
                                       <img src="${profilImage}" alt="objectPicture">
                                       <span>Cadre représentant un chien noir sur un fond noir.</span>
                                     </div>
@@ -122,7 +122,7 @@ const Navbar = async () => {
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                              <div class="dropdown-item  fs-5" href="#" onclick="event.stopPropagation()">
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" onclick="event.stopPropagation()">
                                 <div class="row">
                                     <div class="fs-5">
                                       <img src="${profilImage}" alt="objectPicture">
