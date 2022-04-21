@@ -111,9 +111,12 @@ const Navbar = async () => {
                                     <div class="fs-5 ">
                                       <img src="${profilImage}" alt="objectPicture">
                                       <span>Cadre représentant un chien noir sur un fond noir.</span>
+                                     
                                     </div>
                                     <div class="fs-5 text-center fw-bolder text-danger">
                                       <span>Vous n'avez pas récuperer l'objet</span>
+                                      <button class="mx-2 btn btn-secondary">Marquer comme lu</button>
+                                      <button class="btn btn-warning">Voir l'offre</button>
                                     </div>
                                 </div>
                               </div>
@@ -130,6 +133,8 @@ const Navbar = async () => {
                                     </div>
                                     <div class="fs-5 text-center fw-bolder text-success">
                                       <span>Merci d'avoir récuperer l'objet !</span>
+                                      <button class="mx-2 btn btn-secondary">Marquer comme lu</button>
+                                      <button class="btn btn-warning">Voir l'offre</button>
                                     </div>
                                 </div>
                               </div>

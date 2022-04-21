@@ -24,8 +24,8 @@
 
 #navbar-notification-picture {
   border-radius: 50%;
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
 }
 
 .bg-navbar {
@@ -37,6 +37,7 @@
 }
 
 .dropdown-profil-element:hover {
+  border: solid black 2px;
   background-color: white;
   color: black;
 }
