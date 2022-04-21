@@ -31,7 +31,7 @@ public interface AddressDAO {
    * @param commune        the commune
    * @return the addressDTO created
    */
-  AddressDTO createAdressDTO(int idMember, String unitNumber, String buildingNumber,
+  AddressDTO createAddressDTO(int idMember, String unitNumber, String buildingNumber,
       String street, String postcode, String commune);
 
   /**
