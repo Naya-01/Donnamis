@@ -470,4 +470,18 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test cancelOffer with given status")
+  @Test
+  public void testCancelOfferWithCancelledStatus() {
+    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(2);
+    Mockito.when(mockOfferDTO.getStatus()).thenReturn("cancelled");
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.cancelOffer(mockOfferDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
