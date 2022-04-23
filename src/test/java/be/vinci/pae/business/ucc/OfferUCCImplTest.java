@@ -330,9 +330,9 @@ class OfferUCCImplTest {
     offerDTO2.setIdOffer(5);
     offerDTO2.getObject().setIdObject(56);
     OfferDTO offerDTO3 = getNewOffer();
-    offerDTO2.setIdOffer(6);
-    offerDTO2.getObject().setIdObject(57);
-    offerDTO2.getObject().setIdOfferor(33);
+    offerDTO3.setIdOffer(6);
+    offerDTO3.getObject().setIdObject(57);
+    offerDTO3.getObject().setIdOfferor(33);
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2, offerDTO3);
 
