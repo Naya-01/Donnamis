@@ -107,12 +107,6 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
-      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
-          interestDTO.getIdMember());
-      if (interestDTO == null) {
-        throw new NotFoundException("Le membre ne présente pas d'intérêt");
-      }
-
       // update offer to assigned
       offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
@@ -121,6 +115,10 @@ public class InterestUCCImpl implements InterestUCC {
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
+
+      // Send Notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -152,6 +150,83 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.rollBackTransaction();
       throw e;
     }
+    return interestDTOList;
+  }
+
+  /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  @Override
+  public List<InterestDTO> getNotifications(int idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+      interestDTOList = interestDAO.getAllNotifications(idMember);
+      if (interestDTOList == null) {
+        throw new NotFoundException("Aucunes notifications n'est disponible");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interestDTOList;
+  }
+
+  /**
+   * Mark a notification shown.
+   *
+   * @param interestDTO to mark as shown.
+   * @return interestDTO updated.
+   */
+  @Override
+  public InterestDTO markNotificationShown(InterestDTO interestDTO) {
+    try {
+      dalService.startTransaction();
+
+      if (!interestDTO.getIsNotificated()) {
+        throw new ForbiddenException("La notification a déjà été marquée comme lue");
+      }
+
+      // Send Notification
+      interestDTO.setIsNotificated(false);
+      interestDAO.updateNotification(interestDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return interestDTO;
+  }
+
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  @Override
+  public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+
+      interestDTOList = interestDAO.markAllNotificationsShown(idMember);
+      if (interestDTOList == null) {
+        throw new NotFoundException("Aucunes notifications n'a été trouvé");
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
     return interestDTOList;
   }
 

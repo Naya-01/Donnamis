@@ -38,4 +38,29 @@ public interface InterestUCC {
    */
   List<InterestDTO> getInterestedCount(int idObject);
 
+  /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  List<InterestDTO> getNotifications(int idMember);
+
+
+  /**
+   * Mark a notification shown.
+   *
+   * @param interestDTO to mark as shown.
+   * @return interestDTO updated.
+   */
+  InterestDTO markNotificationShown(InterestDTO interestDTO);
+
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  List<InterestDTO> markAllNotificationsShown(Integer idMember);
+
 }

@@ -213,6 +213,10 @@ public class OfferUCCImpl implements OfferUCC {
           .getAssignedInterest(offerDTO.getObject().getIdObject());
 
       if (interestDTO != null) {
+        //Send notification
+        interestDTO.setIsNotificated(true);
+        interestDAO.updateNotification(interestDTO);
+
         interestDTO.setStatus("published");
         interestDAO.updateStatus(interestDTO);
       }
@@ -247,6 +251,10 @@ public class OfferUCCImpl implements OfferUCC {
       if (interestDTO == null) {
         throw new ForbiddenException("Aucune offre n'a d'offre attribué");
       }
+
+      //Send notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       interestDTO.setStatus("not_collected");
       interestDAO.updateStatus(interestDTO);
@@ -288,6 +296,10 @@ public class OfferUCCImpl implements OfferUCC {
       if (!offerDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException("aucune offre n'existe pour que l'objet puisse être donné");
       }
+
+      //Send notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       interestDTO.setStatus("received");
       offerDTO.getObject().setStatus("given");
