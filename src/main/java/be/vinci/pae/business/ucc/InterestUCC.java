@@ -39,14 +39,16 @@ public interface InterestUCC {
   int getInterestedCount(int idObject);
 
   /**
-   * Get the number of all interests
+   * Get the number of all interests.
+   *
    * @param idObject the object we want to retrieve the interests
    * @return the number of all interests
    */
   List<InterestDTO> getAllInterests(int idObject);
 
   /**
-   * Check if a member is interested by an object
+   * Check if a member is interested by an object.
+   *
    * @param idMember the id of the member
    * @param idObject the id of the object
    * @return true if he's interested false if he's not

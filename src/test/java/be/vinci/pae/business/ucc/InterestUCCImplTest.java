@@ -321,7 +321,7 @@ class InterestUCCImplTest {
     );
   }
 
-  //  ---------------------------- MARK ALL NOTIFICATIONS SHOWN UCC  -------------------------------  //
+  //  ------------------------ MARK ALL NOTIFICATIONS SHOWN UCC  ---------------------------  //
 
 
   @DisplayName("Test markAllNotificationShown with 1 notification interest")

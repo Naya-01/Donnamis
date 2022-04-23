@@ -110,7 +110,8 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
         .put("count", interestUCC.getInterestedCount(idObject))
-        .put("isUserInterested", interestUCC.isUserInterested(authenticatedUser.getMemberId(), idObject));
+        .put("isUserInterested",
+            interestUCC.isUserInterested(authenticatedUser.getMemberId(), idObject));
   }
 
   /**
