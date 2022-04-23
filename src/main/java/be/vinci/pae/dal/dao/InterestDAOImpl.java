@@ -90,7 +90,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
-        interestDTO.setSendNotification(resultSet.getBoolean("send_notification"));
+        interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
         interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
       } catch (SQLException e) {
         throw new FatalException(e);
@@ -126,7 +126,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
-        interestDTO.setSendNotification(resultSet.getBoolean("send_notification"));
+        interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
         interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
         interestDTOList.add(interestDTO);
       }
@@ -156,7 +156,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(2, item.getIdMember());
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
-      preparedStatement.setBoolean(5, item.sendNotification());
+      preparedStatement.setBoolean(5, item.getIsNotificated());
       preparedStatement.execute();
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -239,7 +239,7 @@ public class InterestDAOImpl implements InterestDAO {
         + " availability_date, status,send_notification ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
-      preparedStatement.setBoolean(1, interestDTO.sendNotification());
+      preparedStatement.setBoolean(1, interestDTO.getIsNotificated());
       preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
 

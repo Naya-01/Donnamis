@@ -11,9 +11,9 @@ public interface InterestDTO {
 
   void setMember(MemberDTO member);
 
-  Boolean sendNotification();
+  Boolean getIsNotificated();
 
-  void setSendNotification(boolean bool);
+  void setIsNotificated(boolean isNotificated);
 
   ObjectDTO getObject();
 

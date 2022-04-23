@@ -22,7 +22,7 @@ public class InterestImpl implements InterestDTO {
   @JsonView(Views.Public.class)
   private String status;
   @JsonView(Views.Public.class)
-  private Boolean sendNotification;
+  private Boolean isNotificated;
 
   @Override
   public MemberDTO getMember() {
@@ -35,13 +35,13 @@ public class InterestImpl implements InterestDTO {
   }
 
   @Override
-  public Boolean sendNotification() {
-    return sendNotification;
+  public Boolean getIsNotificated() {
+    return isNotificated;
   }
 
   @Override
-  public void setSendNotification(boolean bool) {
-    this.sendNotification = bool;
+  public void setIsNotificated(boolean isNotificated) {
+    this.isNotificated = isNotificated;
   }
 
   @Override
