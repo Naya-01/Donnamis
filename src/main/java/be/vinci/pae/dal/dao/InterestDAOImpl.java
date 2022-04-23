@@ -85,7 +85,21 @@ public class InterestDAOImpl implements InterestDAO {
       }
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
-      return getInterestDTO(interestDTO, resultSet);
+      try {
+        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        interestDTO.setIdMember(resultSet.getInt("id_member"));
+        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
+        interestDTO.setStatus(resultSet.getString("status"));
+        interestDTO.setNotification(resultSet.getBoolean("send_notification"));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+      } catch (SQLException e) {
+        throw new FatalException(e);
+      }
+
+      resultSet.close();
+      preparedStatement.close();
+
+      return interestDTO;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -184,48 +198,32 @@ public class InterestDAOImpl implements InterestDAO {
    * @param preparedStatement with the data.
    * @return a list of DTOs
    */
-  private List<InterestDTO> getInterestsDTOS(PreparedStatement preparedStatement)
-      throws SQLException {
-    preparedStatement.executeQuery();
-    ResultSet resultSet = preparedStatement.getResultSet();
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-    while (resultSet.next()) {
-      InterestDTO interestDTO = interestFactory.getInterestDTO();
-      interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
-      interestDTO.setIdMember(resultSet.getInt("id_member"));
-      interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
-      interestDTO.setStatus(resultSet.getString("status"));
-      interestDTO.setNotification(resultSet.getBoolean("send_notification"));
-      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
-      interestDTOList.add(interestDTO);
-    }
-
-    preparedStatement.close();
-    resultSet.close();
-    return interestDTOList;
-  }
-
-  /**
-   * Fill an interestDTO with the data
-   *
-   * @param interestDTO the object to fill.
-   * @param resultSet   the data used to fill the object.
-   * @return the interestDTO filled.
-   */
-  private InterestDTO getInterestDTO(InterestDTO interestDTO, ResultSet resultSet) {
+  private List<InterestDTO> getInterestsDTOS(PreparedStatement preparedStatement) {
     try {
-      interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
-      interestDTO.setIdMember(resultSet.getInt("id_member"));
-      interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
-      interestDTO.setStatus(resultSet.getString("status"));
-      interestDTO.setNotification(resultSet.getBoolean("send_notification"));
-      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+      // Create the interestDTO if we have a result
+      List<InterestDTO> interestDTOList = new ArrayList<>();
+      while (resultSet.next()) {
+        InterestDTO interestDTO = interestFactory.getInterestDTO();
+        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        interestDTO.setIdMember(resultSet.getInt("id_member"));
+        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
+        interestDTO.setStatus(resultSet.getString("status"));
+        interestDTO.setNotification(resultSet.getBoolean("send_notification"));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+        interestDTOList.add(interestDTO);
+      }
+
+      preparedStatement.close();
       resultSet.close();
+      return interestDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return interestDTO;
   }
 
 
@@ -245,15 +243,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
 
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-
-      if (!resultSet.next()) {
-        return null;
-      }
-
-      interestDTO = interestFactory.getInterestDTO();
-      return getInterestDTO(interestDTO, resultSet);
+      return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -278,15 +268,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
 
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-
-      if (!resultSet.next()) {
-        return null;
-      }
-
-      interestDTO = interestFactory.getInterestDTO();
-      return getInterestDTO(interestDTO, resultSet);
+      return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
