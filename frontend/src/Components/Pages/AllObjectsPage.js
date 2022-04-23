@@ -41,7 +41,7 @@ const AllObjectsPage = async () => {
       offer.addEventListener("click", async (e) => {
         e.preventDefault();
         let offerId = parseInt(e.currentTarget.dataset.elementId);
-        RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offerId);
+        RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offerId);
       });
     }
   }

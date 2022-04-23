@@ -44,7 +44,7 @@ let telNumber;
 /**
  * Render the page to see an object
  */
-const MyObjectPage = async () => {
+const ObjectDetailsPage = async () => {
   // If he's not log in he's redirect to the homepage
   if (!getSessionObject("user")) {
     Redirect("/");
@@ -689,4 +689,4 @@ function createRatingHTMLCode() {
   return htmlCode;
 }
 
-export default MyObjectPage;
+export default ObjectDetailsPage;
