@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -221,6 +222,7 @@ class InterestUCCImplTest {
     );
   }
 
+
   @DisplayName("test getInterestedCount with non-existent object")
   @Test
   public void testGetInterestedCountWithNonExistentObject() {
@@ -346,4 +348,21 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
+
+  @DisplayName("Test mark notification shown success")
+  @Test
+  public void testMarkNotificationShownSuccess() {
+    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
+    interestDTONotNotificated.setIsNotificated(true);
+    interestDTONotNotificated.setIdMember(3);
+    interestDTONotNotificated.setIdMember(2);
+
+    assertAll(
+        () -> assertFalse(
+            interestUCC.markNotificationShown(interestDTONotNotificated).getIsNotificated()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
