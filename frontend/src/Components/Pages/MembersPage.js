@@ -104,7 +104,7 @@ const baseMembersList = (members) => {
             const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
             });
           }
         } else {
@@ -131,7 +131,7 @@ const baseMembersList = (members) => {
             const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-received");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
             });
           }
         } else {

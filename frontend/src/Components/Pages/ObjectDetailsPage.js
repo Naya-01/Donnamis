@@ -1,6 +1,7 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
+import noImageProfile from "../../img/profil.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
@@ -44,7 +45,7 @@ let telNumber;
 /**
  * Render the page to see an object
  */
-const MyObjectPage = async () => {
+const ObjectDetailsPage = async () => {
   // If he's not log in he's redirect to the homepage
   if (!getSessionObject("user")) {
     Redirect("/");
@@ -109,7 +110,7 @@ const MyObjectPage = async () => {
   pageDiv.innerHTML =
       `<div class="container p-3">
       <div class="mx-5 my-5">
-      <h3 id="titleObject" class=pb-3></h3>
+      <h2 id="titleObject" class=pb-3></h2>
       <div class="card">
         <!-- Body of the card -->
         <div class="card-body">
@@ -181,12 +182,14 @@ const MyObjectPage = async () => {
                 </div>
               </div>
               <div class="row p-2">
-                <!-- The rating button or rating shown -->
+                <!-- The rating button -->
                 <div id="ratingDiv" class="text-center p-2"></div>
               </div>
           </p>
         </div>
       </div>
+      <!-- The comment with the rating-->
+      <div id="displayRating"></div>
     </div>
   </div>`;
 
@@ -221,7 +224,6 @@ const MyObjectPage = async () => {
       let current_rating = await ratingLibrary.getOne(idObject);
       if (current_rating === undefined) { // if there is no rating yet
         let current_interest = await interestLibrary.getOneInterest(idObject);
-        console.log(current_interest)
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -232,10 +234,10 @@ const MyObjectPage = async () => {
           document.getElementById("ratingDiv").appendChild(rating_button);
           rating_button.addEventListener("click", ratingPopUp);
         } else { // if there is no rating and the member connected is not the receiver
-          displayRating(null, null);
+          displayRating(null);
         }
       } else { // if there is a rating
-        displayRating(current_rating.rating, current_rating.comment);
+        displayRating(current_rating);
       }
     }
   }
@@ -359,19 +361,48 @@ async function addOneInterest(e) {
 
 /**
  * Display the rating with its comment
- * @param rating the rating to display
- * @param comment the comment to display
+ * @param current_rating the rating to display
  */
-function displayRating(rating, comment) {
+function displayRating(current_rating) {
   let ratingDiv = document.getElementById("ratingDiv");
-  if (rating == null || comment == null) {
+  if (current_rating == null || current_rating.rating == null || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
-  } else { //TODO : make a better display
-    ratingDiv.innerHTML += create5StarsHTMLCode(rating);
-    ratingDiv.innerHTML += `<p>${comment}</p>`;
+  } else {
+    let displayRatingDiv = document.getElementById("displayRating");
+    let profilPicture;
+    if(current_rating.memberRater.image === undefined){
+      profilPicture = noImageProfile;
+    }
+    else{
+      profilPicture = "/api/member/getPicture/" + current_rating.idMember;
+    }
+    displayRatingDiv.innerHTML += `
+    <div class="card bg-light my-3">
+      <div class="card-body">
+        
+        <p class="card-text">
+          <div class="row">
+            <div class="col-4 mx-auto">
+              <img id="image" alt="no image" width="75%" src="${profilPicture}"/>
+              <p>${create5StarsHTMLCode(current_rating.rating)}</p>
+              
+            </div>
+            <div class="col-8">
+            <h3 class="card-title mb-3">La note de ${current_rating.memberRater.username} pour cet objet</h3>
+              <h5>Commentaire :</h5>
+              <p>${current_rating.comment}</p>
+            </div>
+          </div>
+        </p>
+      </div>
+    </div>
+
+
+`
+
   }
 }
 
@@ -689,4 +720,4 @@ function createRatingHTMLCode() {
   return htmlCode;
 }
 
-export default MyObjectPage;
+export default ObjectDetailsPage;

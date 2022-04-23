@@ -266,7 +266,7 @@ const objectCards = async (searchPattern, type, status) => {
     const informationDiv = document.getElementById(
         "information-object-" + offer.idOffer);
     informationDiv.addEventListener('click', () => {
-      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+      RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
     });
 
   }
