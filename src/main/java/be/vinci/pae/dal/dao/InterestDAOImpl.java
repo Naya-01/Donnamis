@@ -105,6 +105,40 @@ public class InterestDAOImpl implements InterestDAO {
     }
   }
 
+  /**
+   * Get interestDTOs list.
+   *
+   * @param preparedStatement with the data.
+   * @return a list of DTOs
+   */
+  private List<InterestDTO> getInterestsDTOSList(PreparedStatement preparedStatement) {
+    try {
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return null;
+      }
+      // Create the interestDTO if we have a result
+      List<InterestDTO> interestDTOList = new ArrayList<>();
+      while (resultSet.next()) {
+        InterestDTO interestDTO = interestFactory.getInterestDTO();
+        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        interestDTO.setIdMember(resultSet.getInt("id_member"));
+        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
+        interestDTO.setStatus(resultSet.getString("status"));
+        interestDTO.setNotification(resultSet.getBoolean("send_notification"));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+        interestDTOList.add(interestDTO);
+      }
+
+      preparedStatement.close();
+      resultSet.close();
+      return interestDTOList;
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
 
   /**
    * Add one interest in the DB.
@@ -144,7 +178,7 @@ public class InterestDAOImpl implements InterestDAO {
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      return getInterestsDTOS(preparedStatement);
+      return getInterestsDTOSList(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -164,7 +198,7 @@ public class InterestDAOImpl implements InterestDAO {
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      return getInterestsDTOS(preparedStatement);
+      return getInterestsDTOSList(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -186,41 +220,7 @@ public class InterestDAOImpl implements InterestDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
       preparedStatement.setBoolean(2, true);
-      return getInterestsDTOS(preparedStatement);
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-  }
-
-  /**
-   * Get interestDTOs list.
-   *
-   * @param preparedStatement with the data.
-   * @return a list of DTOs
-   */
-  private List<InterestDTO> getInterestsDTOS(PreparedStatement preparedStatement) {
-    try {
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return null;
-      }
-      // Create the interestDTO if we have a result
-      List<InterestDTO> interestDTOList = new ArrayList<>();
-      while (resultSet.next()) {
-        InterestDTO interestDTO = interestFactory.getInterestDTO();
-        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
-        interestDTO.setIdMember(resultSet.getInt("id_member"));
-        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
-        interestDTO.setStatus(resultSet.getString("status"));
-        interestDTO.setNotification(resultSet.getBoolean("send_notification"));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
-        interestDTOList.add(interestDTO);
-      }
-
-      preparedStatement.close();
-      resultSet.close();
-      return interestDTOList;
+      return getInterestsDTOSList(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
