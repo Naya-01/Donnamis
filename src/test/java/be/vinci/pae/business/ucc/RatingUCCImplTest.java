@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.business.factories.RatingFactory;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.RatingDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -22,6 +23,7 @@ class RatingUCCImplTest {
 
   private RatingUCC ratingUCC;
   private RatingDAO mockRatingDAO;
+  private InterestDAO mockInterestDAO;
   private RatingDTO ratingDTO;
   private DALService mockDalService;
   private RatingFactory ratingFactory;
@@ -32,6 +34,7 @@ class RatingUCCImplTest {
     ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.ratingUCC = locator.getService(RatingUCC.class);
     this.mockRatingDAO = locator.getService(RatingDAO.class);
+    this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
     this.ratingFactory = locator.getService(RatingFactory.class);
     this.ratingDTO = ratingFactory.getRatingDTO();
@@ -84,6 +87,22 @@ class RatingUCCImplTest {
   @Test
   public void testAddRatingWhenThereIsAlreadyARatingForThisObject() {
     Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(this.ratingDTO);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> ratingUCC.addRating(this.ratingDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test addRating without interest for this object and member")
+  @Test
+  public void testAddRatingWithoutInterestForThisObjectAndMember() {
+    Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(null);
+    Mockito.when(
+        mockInterestDAO.getOne(this.ratingDTO.getIdObject(), this.ratingDTO.getIdMember())
+    ).thenReturn(null);
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> ratingUCC.addRating(this.ratingDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
