@@ -29,7 +29,7 @@ GET {{baseUri}}/interest/getAllNotifications
 Authorization: {{access}}
 
 ### Get all interests
-GET {{baseUri}}/interest/getAllInterests/2
+GET {{baseUri}}/interest/getAllInterests/18
 Authorization: {{access}}
 
 
@@ -46,7 +46,7 @@ Authorization: {{refresh}}
 }
 
 ### Get interest count
-GET {{baseUri}}/interest/count/2
+GET {{baseUri}}/interest/count/4
 Authorization: {{refresh}}
 
 ### Assign an object

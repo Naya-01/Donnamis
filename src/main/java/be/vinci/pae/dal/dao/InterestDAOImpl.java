@@ -1,6 +1,7 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -115,29 +116,26 @@ public class InterestDAOImpl implements InterestDAO {
     try {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return null;
-      }
-      // Create the interestDTO if we have a result
+
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
-        interestDTO.setIdMember(resultSet.getInt("id_member"));
-        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
-        interestDTO.setStatus(resultSet.getString("status"));
-        interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
+        ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(1));
+        interestDTO.setObject(objectDTO);
+        interestDTO.setIdMember(resultSet.getInt(2));
+        interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
+        interestDTO.setStatus(resultSet.getString(4));
         interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+
         interestDTOList.add(interestDTO);
       }
-
-      preparedStatement.close();
       resultSet.close();
       return interestDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);
     }
   }
+
 
 
   /**
@@ -185,6 +183,32 @@ public class InterestDAOImpl implements InterestDAO {
   }
 
   /**
+   * Get the number of all interests
+   * @param idObject the object we want to retrieve the interests
+   * @return the number of all interests
+   */
+  @Override
+  public int getAllPublishedCount(int idObject) {
+
+    String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
+        + "WHERE i.id_object = ? AND i.status = 'published'";
+    int nbInterests = 0;
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idObject);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return 0;
+      }
+      nbInterests = resultSet.getInt("nb");
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    return nbInterests;
+
+  }
+
+  /**
    * Get a list of "published" interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
@@ -192,17 +216,44 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
-
-    String query = "SELECT id_object, id_member, availability_date, status,send_notification "
+    String query = "SELECT id_object, id_member, availability_date, status "
         + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
-
+    List<InterestDTO> allInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      return getInterestsDTOSList(preparedStatement);
+      allInterests = getInterestsDTOSList(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+    return allInterests;
+  }
 
+  /**
+   * Check if a member is interested by an object
+   * @param idMember the id of the member
+   * @param idObject the id of the object
+   * @return true if he's interested false if he's not
+   */
+  @Override
+  public boolean isUserInterested(int idMember, int idObject){
+    String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
+        + "WHERE i.id_object = ? AND i.status = 'published' AND i.id_member = ?";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idObject);
+      preparedStatement.setInt(2, idMember);
+
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return false;
+      }
+      if (resultSet.getInt("nb") == 1) {
+        return true;
+      }
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+    return false;
   }
 
   /**

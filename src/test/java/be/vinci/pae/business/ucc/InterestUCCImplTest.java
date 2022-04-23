@@ -239,19 +239,17 @@ class InterestUCCImplTest {
   @DisplayName("test getInterestedCount with existent object")
   @Test
   public void testGetInterestedCountWithExistentObject() {
-    List<InterestDTO> allInterests = new ArrayList<>();
-    allInterests.add(newInterestDTO);
     ObjectDTO object = this.objectFactory.getObjectDTO();
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
-    Mockito.when(mockInterestDAO.getAllPublished(1)).thenReturn(allInterests);
+    Mockito.when(mockInterestDAO.getAllPublishedCount(1)).thenReturn(300); //TODO
     assertAll(
-        () -> assertEquals(allInterests, interestUCC.getInterestedCount(1)),
+        () -> assertEquals(300, interestUCC.getInterestedCount(1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(1),
         () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getAllPublished(1),
+            .getAllPublishedCount(1),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .commitTransaction()
     );

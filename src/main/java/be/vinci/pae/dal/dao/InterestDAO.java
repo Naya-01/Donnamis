@@ -56,12 +56,27 @@ public interface InterestDAO {
   InterestDTO addOne(InterestDTO item);
 
   /**
+   * Get the number of all interests
+   * @param idObject the object we want to retrieve the interests
+   * @return the number of all interests
+   */
+  int getAllPublishedCount(int idObject);
+
+  /**
    * Get a list of "published" interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
    * @return a list of interest, by an id object
    */
   List<InterestDTO> getAllPublished(int idObject);
+
+  /**
+   * Check if a member is interested by an object
+   * @param idMember the id of the member
+   * @param idObject the id of the object
+   * @return true if he's interested false if he's not
+   */
+  boolean isUserInterested(int idMember, int idObject);
 
   /**
    * Get a list of interest in an id object.

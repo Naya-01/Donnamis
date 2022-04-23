@@ -107,12 +107,10 @@ public class InterestResource {
   public JsonNode getInterestedCount(@PathParam("idObject") int idObject,
       @Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getInterestedCount");
-    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
-        .put("count", interestDTOList.size())
-        .put("isUserInterested", interestDTOList.stream()
-            .anyMatch(i -> i.getIdMember() == authenticatedUser.getMemberId()));
+        .put("count", interestUCC.getInterestedCount(idObject))
+        .put("isUserInterested", interestUCC.isUserInterested(authenticatedUser.getMemberId(), idObject));
   }
 
   /**
@@ -134,7 +132,8 @@ public class InterestResource {
     if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
-    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+
+    List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject);
     for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));

@@ -313,7 +313,9 @@ async function addOneInterest(e) {
   }
   let callMeCheckbox = document.getElementById("callMe");
   let numTelInput = document.getElementById("numTelInput");
+  let notificationCall = false;
   if (callMeCheckbox.checked) {
+    notificationCall = true;
     let numTel = numTelInput.value;
     if (numTel.trim().length === 0) {
       numTelInput.classList.add("border-danger");
@@ -342,7 +344,7 @@ async function addOneInterest(e) {
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
-      input_date.value)
+      input_date.value, notificationCall);
   if (newInterest === undefined) {
     bottomNotification.fire({
       icon: 'error',
