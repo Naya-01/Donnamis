@@ -43,5 +43,4 @@ public interface ObjectUCC {
    */
   ObjectDTO updateObjectPicture(String internalPath, int id);
 
-  OfferDTO addObject(OfferDTO offerDTO);
 }

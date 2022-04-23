@@ -34,21 +34,6 @@ Authorization: {{token}}
 GET {{baseUri}}/object/member/10
 Authorization: {{token}}
 
-### Make an object with his offer
-POST {{baseUri}}/object
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "timeSlot": "time slot test",
-  "object": {
-    "type": {
-      "idType": 0,
-      "typeName": "Croissant"
-    },
-    "description": "C'est une voiture de fortnite"
-  }
-}
 
 ### update an object
 PUT {{baseUri}}/object/update
