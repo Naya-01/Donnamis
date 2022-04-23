@@ -224,7 +224,7 @@ class InterestUCCImplTest {
             () -> interestUCC.getInterestedCount(nonExistentId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
-        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(1),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(nonExistentId),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );
