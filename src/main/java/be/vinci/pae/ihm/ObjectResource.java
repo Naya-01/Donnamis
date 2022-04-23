@@ -96,7 +96,6 @@ public class ObjectResource {
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
   public Response getPicture(@PathParam("id") int id) {
-    System.out.println(id);
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
     if (objectDTO.getImage() == null) {

@@ -67,7 +67,7 @@ const baseMembersList = (members) => {
     } else {
       const buttonPromote = document.createElement("button");
       buttonPromote.id = "promote-" + member.memberId;
-      buttonPromote.className = "btn btn-lg btn-success mb-2";
+      buttonPromote.className = "btn btn-success mb-2";
       buttonPromote.type = "button";
       buttonPromote.innerText = "Promouvoir";
       buttonDiv.appendChild(buttonPromote);
@@ -75,8 +75,12 @@ const baseMembersList = (members) => {
 
 
     buttonDiv.innerHTML += `
-        <button id="offered-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets offerts</button>
-        <button id="received-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets reçus</button>
+        <button id="offered-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
+          Objets offerts
+        </button>
+        <button id="received-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
+          Objets reçus
+        </button>
       `;
 
     const offeredObjects = document.getElementById("offered-object-" + member.memberId);
@@ -88,11 +92,11 @@ const baseMembersList = (members) => {
     offeredObjects.addEventListener('click', async () => {
       cardForm.innerHTML = ``;
       if (isOfferedObjectsOpen) {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
       } else {
-        offeredObjects.className = "btn btn-lg btn-success mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-success mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
         const offers = await OfferLibrary.prototype.getOffers("", member.memberId.toLocaleString(), "", "")
         if (offers) {
           for (const offer of offers) {
@@ -112,15 +116,16 @@ const baseMembersList = (members) => {
     });
 
     receivedObjects.addEventListener('click', async () => {
-      cardForm.innerHTML = ``;
+      cardForm.innerHTML = '';
       if (isReceivedObjectsOpen) {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
       } else {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-success mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-success mb-2";
         const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
         if (offers) {
+          cardForm.innerHTML = `<h5 class="d-flex justify-content-start">${offers.length} offres</h5>`;
           for (const offer of offers) {
             ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "received");
             const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-received");

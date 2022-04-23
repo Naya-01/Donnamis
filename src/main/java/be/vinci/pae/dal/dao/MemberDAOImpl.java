@@ -140,7 +140,6 @@ public class MemberDAOImpl implements MemberDAO {
 
     try (PreparedStatement preparedStatement = abstractDAO.getAll(condition, values, types)) {
       List<MemberDTO> list = getMemberListByPreparedStatement(preparedStatement);
-      System.out.println(list);
       return list;
     } catch (SQLException e) {
       throw new FatalException(e);
