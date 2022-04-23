@@ -286,7 +286,7 @@ class InterestUCCImplTest {
     );
   }
 
-  @DisplayName("Test getNotification with an empty list notification interest")
+  @DisplayName("Test getNotification with an empty list of notification interest")
   @Test
   public void testGetNotificationsWithAnEmptyListNotificationInterest() {
 
@@ -326,6 +326,23 @@ class InterestUCCImplTest {
             interestUCC.markAllNotificationsShown(3).contains(interestDTONotNotificated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test markAllNotificationShown with an empty list of notification interest")
+  @Test
+  public void testMarkAllNotificationsShownWithAnEmptyListNotificationInterest() {
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+
+    Mockito.when(interestDAO.markAllNotificationsShown(3))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markAllNotificationsShown(3)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
