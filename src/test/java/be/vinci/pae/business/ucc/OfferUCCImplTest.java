@@ -550,4 +550,21 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  ----------------------------  GET GIVEN OFFERS UCC  -------------------------------  //
+
+  @DisplayName("Test getGivenOffers with empty list of offers")
+  @Test
+  public void testGetGivenOffersWithEmptyListOffers() {
+    List<OfferDTO> listOffers = new ArrayList<>();
+    Mockito.when(offerDAO.getAllGivenOffers(2)).thenReturn(listOffers);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.getGivenOffers(2)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 }
