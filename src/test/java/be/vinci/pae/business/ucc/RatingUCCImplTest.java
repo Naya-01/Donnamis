@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
+import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.RatingDAO;
@@ -25,8 +27,8 @@ class RatingUCCImplTest {
   private RatingDAO mockRatingDAO;
   private InterestDAO mockInterestDAO;
   private RatingDTO ratingDTO;
+  private InterestDTO interestDTO;
   private DALService mockDalService;
-  private RatingFactory ratingFactory;
   private final int nonExistingId = 1000;
 
   @BeforeEach
@@ -36,12 +38,15 @@ class RatingUCCImplTest {
     this.mockRatingDAO = locator.getService(RatingDAO.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
-    this.ratingFactory = locator.getService(RatingFactory.class);
+    RatingFactory ratingFactory = locator.getService(RatingFactory.class);
     this.ratingDTO = ratingFactory.getRatingDTO();
     this.ratingDTO.setIdObject(1);
     this.ratingDTO.setIdMember(1);
     this.ratingDTO.setRating(3);
     this.ratingDTO.setComment("Not the best object.");
+    InterestFactory interestFactory = locator.getService(InterestFactory.class);
+    this.interestDTO = interestFactory.getInterestDTO();
+    this.interestDTO.setStatus("received");
   }
 
   @DisplayName("Test getOne with existing id")
@@ -103,6 +108,22 @@ class RatingUCCImplTest {
     Mockito.when(
         mockInterestDAO.getOne(this.ratingDTO.getIdObject(), this.ratingDTO.getIdMember())
     ).thenReturn(null);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> ratingUCC.addRating(this.ratingDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+  @DisplayName("Test addRating with interest for this object and member but not received")
+  @Test
+  public void testAddRatingWithInterestForThisObjectAndMemberButNotReceived() {
+    this.interestDTO.setStatus("published");
+    Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(null);
+    Mockito.when(
+        mockInterestDAO.getOne(this.ratingDTO.getIdObject(), this.ratingDTO.getIdMember())
+    ).thenReturn(this.interestDTO);
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> ratingUCC.addRating(this.ratingDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
