@@ -1,6 +1,7 @@
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
+import noImageProfile from "../../img/profil.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import Notification from "../Module/Notification";
 import MemberLibrary from "../../Domain/MemberLibrary";
@@ -223,7 +224,6 @@ const ObjectDetailsPage = async () => {
       let current_rating = await ratingLibrary.getOne(idObject);
       if (current_rating === undefined) { // if there is no rating yet
         let current_interest = await interestLibrary.getOneInterest(idObject);
-        console.log(current_interest)
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -371,17 +371,19 @@ function displayRating(current_rating) {
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
-  } else { //TODO : make a better display
-    //ratingDiv.innerHTML += create5StarsHTMLCode(current_rating.rating);
-    //ratingDiv.innerHTML += `<p>${current_rating.comment}</p>`;
-    console.log(current_rating);
+  } else {
     let displayRatingDiv = document.getElementById("displayRating");
-    //TODO : profilpicture si on en a pas
-    let profilPicture = "/api/member/getPicture/" + current_rating.idMember;
+    let profilPicture;
+    if(current_rating.memberRater.image === undefined){
+      profilPicture = noImageProfile;
+    }
+    else{
+      profilPicture = "/api/member/getPicture/" + current_rating.idMember;
+    }
     displayRatingDiv.innerHTML += `
     <div class="card bg-light my-3">
       <div class="card-body">
-        <h4 class="card-title">La note de ${current_rating.memberRater.username} pour cet objet</h4>
+        
         <p class="card-text">
           <div class="row">
             <div class="col-4 mx-auto">
@@ -390,6 +392,7 @@ function displayRating(current_rating) {
               
             </div>
             <div class="col-8">
+            <h3 class="card-title mb-3">La note de ${current_rating.memberRater.username} pour cet objet</h3>
               <h5>Commentaire :</h5>
               <p>${current_rating.comment}</p>
             </div>
