@@ -3,6 +3,20 @@ import profilImage from "../../img/profil.png";
 import notificationImage from "../../img/notification.png"
 import MemberLibrary from "../../Domain/MemberLibrary";
 
+const notificationDictionnary = new Map([
+  ['assigned', "Vous avez été selectionné !"],
+  ['received', "Merci d'avoir récupérer l'objet !"],
+  ['cancelled', "L'offre a été annulée"],
+  ['not_collected', "Vous n'êtes pas venu chercher l'objet"]
+]);
+
+const colorDictionnary = new Map([
+  ['assigned', 'text-success'],
+  ['received', 'text-success'],
+  ['cancelled', 'text-danger'],
+  ['not_collected', 'text-danger']
+]);
+
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
   let navbar;
