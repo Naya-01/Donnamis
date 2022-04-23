@@ -570,7 +570,6 @@ class OfferUCCImplTest {
   @DisplayName("Test getGivenOffers success")
   @Test
   public void testGetGivenOffersSuccess() {
-    List<OfferDTO> listOffers = new ArrayList<>();
     OfferDTO offerGiven = getNewOffer();
     offerGiven.setStatus("given");
     offerGiven.getObject().setStatus("given");
@@ -578,6 +577,7 @@ class OfferUCCImplTest {
     offerAvailable.setStatus("available");
     offerAvailable.getObject().setStatus("available");
 
+    List<OfferDTO> listOffers = new ArrayList<>();
     listOffers.add(offerGiven);
     Mockito.when(offerDAO.getAllGivenOffers(2)).thenReturn(listOffers);
 
@@ -586,6 +586,25 @@ class OfferUCCImplTest {
         () -> assertTrue(offerUCC.getGivenOffers(2).contains(offerGiven)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  //  ---------------------------- GIVE OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test giveOffer without having interest")
+  @Test
+  public void testGiveOfferWithoutHavingAnyInterest() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+
+    Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
