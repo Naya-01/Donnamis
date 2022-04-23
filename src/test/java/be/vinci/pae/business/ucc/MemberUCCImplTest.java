@@ -618,8 +618,9 @@ class MemberUCCImplTest {
     existentMember.setMemberId(2);
     Mockito.when(mockMemberDAO.updateOne(existentMember)).thenReturn(null);
 
-    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMember.getMemberId()))
-        .thenReturn(existentMember.getAddress());
+    Mockito.when(mockAddressDAO.updateOne(existentMember.getAddress()))
+        .thenReturn((existentMember.getAddress()));
+
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> memberUCC
             .updateMember(existentMember)),
