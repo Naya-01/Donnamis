@@ -116,6 +116,7 @@ class RatingUCCImplTest {
             .rollBackTransaction()
     );
   }
+
   @DisplayName("Test addRating with interest for this object and member but not received")
   @Test
   public void testAddRatingWithInterestForThisObjectAndMemberButNotReceived() {
@@ -130,6 +131,23 @@ class RatingUCCImplTest {
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test addRating with interest for this object and member")
+  @Test
+  public void testAddRatingWithInterestForThisObjectAndMember() {
+    Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(null);
+    Mockito.when(
+        mockInterestDAO.getOne(this.ratingDTO.getIdObject(), this.ratingDTO.getIdMember())
+    ).thenReturn(this.interestDTO);
+    Mockito.when(mockRatingDAO.addOne(this.ratingDTO)).thenReturn(this.ratingDTO);
+    assertAll(
+        () -> assertEquals(this.ratingDTO, ratingUCC.addRating(this.ratingDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
 
