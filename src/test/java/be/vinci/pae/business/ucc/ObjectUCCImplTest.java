@@ -27,8 +27,8 @@ class ObjectUCCImplTest {
   private DALService mockDalService;
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
-  private int inexistentId = 1000;
-  private String pathImage = "C:/img";
+  private final int inexistentId = 1000;
+  private final String pathImage = "C:/img";
 
   @BeforeEach
   void initAll() {
@@ -198,6 +198,19 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test getPicture with non-existent object")
+  @Test
+  public void testGetPictureWithNonExistentObject(){
+    Mockito.when(mockObjectDAO.getOne(this.inexistentId)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.getPicture(this.inexistentId)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .getOne(this.inexistentId),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
