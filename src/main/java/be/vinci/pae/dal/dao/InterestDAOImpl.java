@@ -226,6 +226,28 @@ public class InterestDAOImpl implements InterestDAO {
     }
   }
 
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  @Override
+  public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
+    String query = "UPDATE donnamis.interests SET send_notification = ? "
+        + "WHERE id_member = ? AND send_notification = true RETURNING id_object, id_member,"
+        + " availability_date, status,send_notification ";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
+      preparedStatement.setBoolean(1, false);
+      preparedStatement.setInt(2, idMember);
+
+      return getInterestsDTOSList(preparedStatement);
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
 
   /**
    * Update the notification field to know if we have to send one.

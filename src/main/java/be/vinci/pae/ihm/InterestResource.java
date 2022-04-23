@@ -17,6 +17,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -199,7 +200,7 @@ public class InterestResource {
    * @param idObject of the interest.
    * @return interestDTO updated.
    */
-  @POST
+  @PUT
   @Path("/notificationShown/{idObject}")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
@@ -211,6 +212,24 @@ public class InterestResource {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     InterestDTO interestDTO = interestUCC.getInterest(idObject, memberDTO.getMemberId());
     return interestUCC.markNotificationShown(interestDTO);
+  }
+
+  /**
+   * Mark all notifications as shown.
+   *
+   * @param request data of the member.
+   * @return interestDTO updated.
+   */
+  @PUT
+  @Path("/allNotificationShown")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
+
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    return interestUCC.markAllNotificationsShown(memberDTO.getMemberId());
   }
 
 

@@ -204,5 +204,31 @@ public class InterestUCCImpl implements InterestUCC {
     return interestDTO;
   }
 
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  @Override
+  public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+
+      interestDTOList = interestDAO.markAllNotificationsShown(idMember);
+      if (interestDTOList == null) {
+        throw new NotFoundException("Aucunes notifications n'a été trouvé");
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return interestDTOList;
+  }
+
 
 }

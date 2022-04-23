@@ -55,4 +55,12 @@ public interface InterestUCC {
    */
   InterestDTO markNotificationShown(InterestDTO interestDTO);
 
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  List<InterestDTO> markAllNotificationsShown(Integer idMember);
+
 }

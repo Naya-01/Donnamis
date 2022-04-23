@@ -13,7 +13,11 @@ client.global.set("refresh", response.body.refresh_token);
 %}
 
 ### markNotificationShown
-POST {{baseUri}}/interest/notificationShown/2
+PUT {{baseUri}}/interest/notificationShown/2
+Authorization: {{access}}
+
+### markAllNotificationsShown
+PUT {{baseUri}}/interest/allNotificationShown
 Authorization: {{access}}
 
 ### Get Own interest
