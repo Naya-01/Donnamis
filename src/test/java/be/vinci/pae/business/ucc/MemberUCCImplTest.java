@@ -697,7 +697,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(memberNonExistent.getMemberId())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.getMember(memberNonExistent.getMemberId())),
+            () -> memberUCC.getPicture(memberNonExistent.getMemberId())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
