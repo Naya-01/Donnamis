@@ -259,9 +259,9 @@ class InterestUCCImplTest {
 
   //  ---------------------------- GET NOTIFICATION UCC  -------------------------------  //
 
-  @DisplayName("Test giveOffer without having interest")
+  @DisplayName("Test getNotification with 1 notification interest")
   @Test
-  public void testGetNotifications() {
+  public void testGetNotificationsWith1NotificationInterest() {
     InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
     interestDTONotificated.setIsNotificated(true);
     interestDTONotificated.setIdMember(3);
@@ -283,6 +283,22 @@ class InterestUCCImplTest {
         () -> assertTrue(interestUCC.getNotifications(3).contains(interestDTONotificated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test getNotification with an empty list notification interest")
+  @Test
+  public void testGetNotificationsWithAnEmptyListNotificationInterest() {
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+
+    Mockito.when(interestDAO.getAllNotifications(3))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.getNotifications(3)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
