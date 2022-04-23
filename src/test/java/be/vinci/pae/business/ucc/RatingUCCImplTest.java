@@ -66,6 +66,20 @@ class RatingUCCImplTest {
     );
   }
 
+  @DisplayName("Test getOne with negative id")
+  @Test
+  public void testGetOneWithNegativeId() {
+    Mockito.when(mockRatingDAO.getOne(-1)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> ratingUCC.getOne(-1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+
 
 
 
