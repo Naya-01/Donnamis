@@ -6,7 +6,6 @@ import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.UnauthorizedException;
-import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
