@@ -283,14 +283,10 @@ public class OfferUCCImpl implements OfferUCC {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      if (!interestDTO.getObject().getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucun objet n'est assigné pour le donner");
-      }
-
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucune offre n'est assigné pour le donner");
+        throw new ForbiddenException("aucune offre n'existe pour que l'objet puisse être donné");
       }
 
       interestDTO.setStatus("received");
