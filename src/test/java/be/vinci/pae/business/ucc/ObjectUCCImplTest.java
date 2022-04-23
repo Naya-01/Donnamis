@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.ObjectFactory;
+import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -27,6 +29,7 @@ class ObjectUCCImplTest {
   private DALService mockDalService;
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
+  private OfferDTO offerDTO;
   private final int inexistentId = 1000;
   private final String pathImage = "C:/img";
 
@@ -48,6 +51,9 @@ class ObjectUCCImplTest {
     this.objectDTOUpdated.setDescription("the description2");
     this.objectDTOUpdated.setIdOfferor(1);
     this.objectDTOUpdated.setStatus("available");
+    OfferFactory offerFactory = locator.getService(OfferFactory.class);
+    this.offerDTO = offerFactory.getOfferDTO();
+    this.offerDTO.setObject(objectDTO);
     Config.load("test.properties");
   }
 
@@ -205,7 +211,7 @@ class ObjectUCCImplTest {
 
   @DisplayName("test getPicture with non-existent object")
   @Test
-  public void testGetPictureWithNonExistentObject(){
+  public void testGetPictureWithNonExistentObject() {
     Mockito.when(mockObjectDAO.getOne(this.inexistentId)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> objectUCC.getPicture(this.inexistentId)),
@@ -218,10 +224,11 @@ class ObjectUCCImplTest {
 
   @DisplayName("test getPicture with existent object that has no image")
   @Test
-  public void testGetPictureWithExistentObjectThatHasNoImage(){
+  public void testGetPictureWithExistentObjectThatHasNoImage() {
     Mockito.when(mockObjectDAO.getOne(this.objectDTO.getIdObject())).thenReturn(this.objectDTO);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> objectUCC.getPicture(this.objectDTO.getIdObject())),
+        () -> assertThrows(NotFoundException.class,
+            () -> objectUCC.getPicture(this.objectDTO.getIdObject())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(this.objectDTO.getIdObject()),
