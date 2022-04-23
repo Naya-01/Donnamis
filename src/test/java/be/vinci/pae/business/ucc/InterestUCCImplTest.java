@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +17,7 @@ import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -221,6 +223,25 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test addOne with existing interests for an object")
+  @Test
+  public void testAddOneWithANonExistentInterestAndAlreadyExistingInterestsForObject() {
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+    interestDTOList.add(interestFactory.getInterestDTO());
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
+        interestDTO.getIdMember())).thenReturn(null);
+    Mockito.when(mockInterestDAO.getAll(interestDTO.getObject().getIdObject()))
+        .thenReturn(interestDTOList);
+    assertAll(
+        () -> assertEquals(interestDTO, interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
+    );
+  }
+
+
   @DisplayName("test getInterestedCount with non-existent object")
   @Test
   public void testGetInterestedCountWithNonExistentObject() {
@@ -344,4 +365,37 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
+
+  @DisplayName("Test mark notification shown success")
+  @Test
+  public void testMarkNotificationShownSuccess() {
+    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
+    interestDTONotificated.setIsNotificated(true);
+    interestDTONotificated.setIdMember(3);
+    interestDTONotificated.setIdMember(2);
+
+    assertAll(
+        () -> assertFalse(
+            interestUCC.markNotificationShown(interestDTONotificated).getIsNotificated()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown with field isNotificated already false")
+  @Test
+  public void testMarkNotificationShownWithFieldIsNotificatedAlreadyFalse() {
+    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
+    interestDTONotNotificated.setIsNotificated(false);
+    interestDTONotNotificated.setIdMember(3);
+    interestDTONotNotificated.setIdMember(2);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTONotNotificated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
