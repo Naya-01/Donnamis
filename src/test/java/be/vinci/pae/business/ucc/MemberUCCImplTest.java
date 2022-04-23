@@ -581,6 +581,33 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test updateMember success with null address field dto")
+  @Test
+  public void testUpdateMemberSuccessWithNullAddressFieldDTO() {
+    MemberDTO existentMemberInDB = getMemberNewMember();
+    existentMemberInDB.setMemberId(5);
+    existentMemberInDB.setAddress(null);
+
+    MemberDTO existentMemberInDBUpdated = getMemberNewMember();
+    existentMemberInDBUpdated.setMemberId(5);
+    existentMemberInDBUpdated.setUsername("lol");
+
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDBUpdated.getAddress());
+
+    MemberDTO memberUpdated = memberUCC.updateMember(existentMemberInDB);
+    assertAll(
+        () -> assertEquals(existentMemberInDB.getMemberId(),
+            memberUpdated.getMemberId()),
+        () -> assertNotEquals(existentMemberInDB.getUsername(),
+            memberUpdated.getUsername()),
+        () -> assertEquals(existentMemberInDBUpdated.getAddress(),
+            memberUpdated.getAddress()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 
   @DisplayName("Test updateMember with a member having his fields by default")
   @Test
