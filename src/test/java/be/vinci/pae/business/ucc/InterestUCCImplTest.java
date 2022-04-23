@@ -270,7 +270,7 @@ class InterestUCCImplTest {
     InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
     interestDTONotNotificated.setIsNotificated(false);
     interestDTONotNotificated.setIdMember(3);
-    interestDTONotificated.setIdMember(2);
+    interestDTONotNotificated.setIdMember(2);
 
     List<InterestDTO> interestDTOList = new ArrayList<>();
     interestDTOList.add(interestDTONotificated);
@@ -299,6 +299,33 @@ class InterestUCCImplTest {
         () -> assertThrows(NotFoundException.class, () -> interestUCC.getNotifications(3)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  //  ---------------------------- MARK ALL NOTIFICATIONS SHOWN UCC  -------------------------------  //
+
+
+  @DisplayName("Test markAllNotificationShown with 1 notification interest")
+  @Test
+  public void testMarkAllNotificationsShownWith1NotificationInterest() {
+
+    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
+    interestDTONotNotificated.setIsNotificated(false);
+    interestDTONotNotificated.setIdMember(3);
+    interestDTONotNotificated.setIdMember(2);
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+    interestDTOList.add(interestDTONotNotificated);
+
+    Mockito.when(interestDAO.markAllNotificationsShown(3))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertEquals(1, interestUCC.markAllNotificationsShown(3).size()),
+        () -> assertTrue(
+            interestUCC.markAllNotificationsShown(3).contains(interestDTONotNotificated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 }

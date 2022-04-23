@@ -217,7 +217,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
 
       interestDTOList = interestDAO.markAllNotificationsShown(idMember);
-      if (interestDTOList == null) {
+      if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");
       }
 
