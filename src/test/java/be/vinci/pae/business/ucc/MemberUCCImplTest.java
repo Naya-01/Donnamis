@@ -688,6 +688,21 @@ class MemberUCCImplTest {
 
   //  -----------------------------  GET PICTURE UCC  -----------------------------------  //
 
+  @DisplayName("Test getPicture without image")
+  @Test
+  public void testGetPictureWithoutImage() {
+    MemberDTO memberExistent = getMemberNewMember();
+    memberExistent.setMemberId(3);
+
+    Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberExistent);
+    assertAll(
+        () -> assertThrows(NullPointerException.class,
+            () -> memberUCC.getPicture(memberExistent.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 
   @DisplayName("Test getPicture of non existent member")
   @Test
