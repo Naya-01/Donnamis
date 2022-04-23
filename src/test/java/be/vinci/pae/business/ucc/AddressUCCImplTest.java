@@ -19,6 +19,8 @@ import org.mockito.Mockito;
 
 class AddressUCCImplTest {
 
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
+
   private AddressUCC addressUCC;
   private AddressDAO mockAddressDAO;
   private AddressDTO addressDTO;
@@ -26,7 +28,6 @@ class AddressUCCImplTest {
 
   @BeforeEach
   void initAll() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.addressUCC = locator.getService(AddressUCC.class);
     this.mockAddressDAO = locator.getService(AddressDAO.class);
     this.mockDalService = locator.getService(DALService.class);

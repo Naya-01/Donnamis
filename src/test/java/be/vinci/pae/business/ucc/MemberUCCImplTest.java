@@ -32,6 +32,8 @@ import org.mockito.Mockito;
 
 class MemberUCCImplTest {
 
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
+
   private final String username = "rayan";
   private final String badUsername = "test";
   private final String passwd1 = "rayan123";
@@ -80,7 +82,6 @@ class MemberUCCImplTest {
   void initAll() {
     Config.load("test.properties");
     this.pathImage = Config.getProperty("ImagePath");
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.memberUCC = locator.getService(MemberUCC.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
     this.mockAddressDAO = locator.getService(AddressDAO.class);
@@ -557,33 +558,6 @@ class MemberUCCImplTest {
 
   //  -----------------------------  UPDATE MEMBER UCC  -----------------------------------  //
 
-
-  @DisplayName("Test updateMember with a member having his fields by default")
-  @Test
-  public void testUpdateMemberWithEmptyFieldsMember() {
-    MemberDTO nonExistentMember = memberFactory.getMemberDTO();
-    Mockito.when(mockMemberDAO.updateOne(nonExistentMember)).thenReturn(null);
-    assertAll(
-        () -> assertThrows(NullPointerException.class, () -> memberUCC
-            .updateMember(nonExistentMember)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  @DisplayName("Test updateMember with a non existent member")
-  @Test
-  public void testUpdateMemberNonExistentInDB() {
-    MemberDTO nonExistentMemberInDB = getMemberNewMember();
-    Mockito.when(mockMemberDAO.updateOne(nonExistentMemberInDB)).thenReturn(null);
-    assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC
-            .updateMember(nonExistentMemberInDB)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
   @DisplayName("Test updateMember success")
   @Test
   public void testUpdateMemberSuccess() {
@@ -604,6 +578,85 @@ class MemberUCCImplTest {
             memberUCC.updateMember(existentMemberInDB).getUsername()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember success with null address field dto")
+  @Test
+  public void testUpdateMemberSuccessWithNullAddressFieldDTO() {
+    MemberDTO existentMemberInDB = getMemberNewMember();
+    existentMemberInDB.setMemberId(5);
+    existentMemberInDB.setAddress(null);
+
+    MemberDTO existentMemberInDBUpdated = getMemberNewMember();
+    existentMemberInDBUpdated.setMemberId(5);
+    existentMemberInDBUpdated.setUsername("lol");
+
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDBUpdated.getAddress());
+
+    MemberDTO memberUpdated = memberUCC.updateMember(existentMemberInDB);
+    assertAll(
+        () -> assertEquals(existentMemberInDB.getMemberId(),
+            memberUpdated.getMemberId()),
+        () -> assertNotEquals(existentMemberInDB.getUsername(),
+            memberUpdated.getUsername()),
+        () -> assertEquals(existentMemberInDBUpdated.getAddress(),
+            memberUpdated.getAddress()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember with a member having his fields by default")
+  @Test
+  public void testUpdateMemberWithEmptyFieldsMember() {
+    MemberDTO existentMember = memberFactory.getMemberDTO();
+    existentMember.setAddress(getMemberNewMember().getAddress());
+    existentMember.getAddress().setIdMember(2);
+    existentMember.setMemberId(2);
+    Mockito.when(mockMemberDAO.updateOne(existentMember)).thenReturn(null);
+
+    Mockito.when(mockAddressDAO.updateOne(existentMember.getAddress()))
+        .thenReturn((existentMember.getAddress()));
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(existentMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember with a non existent member")
+  @Test
+  public void testUpdateMemberNonExistentInDB() {
+    MemberDTO nonExistentMemberInDB = getMemberNewMember();
+    Mockito.when(mockMemberDAO.updateOne(nonExistentMemberInDB)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(nonExistentMemberInDB)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember with a non existent member with null address field")
+  @Test
+  public void testUpdateMemberNonExistentInDBWithNullAddressFieldDTO() {
+    MemberDTO nonExistentMemberInDBWithoutAddress = getMemberNewMember();
+    nonExistentMemberInDBWithoutAddress.setAddress(null);
+
+    Mockito.when(
+            mockAddressDAO.getAddressByMemberId(nonExistentMemberInDBWithoutAddress.getMemberId()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(nonExistentMemberInDBWithoutAddress)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 

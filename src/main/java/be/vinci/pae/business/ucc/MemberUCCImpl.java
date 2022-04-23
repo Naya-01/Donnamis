@@ -247,12 +247,14 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-        if (addressDTO == null) {
-          throw new ForbiddenException("Problem with updating address");
-        }
       } else {
         addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       }
+
+      if (addressDTO == null) {
+        throw new ForbiddenException("Problem with updating address");
+      }
+
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
       if (modifierMemberDTO == null) {
         throw new ForbiddenException("Problem with updating member");

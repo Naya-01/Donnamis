@@ -28,6 +28,8 @@ import org.mockito.Mockito;
 
 class InterestUCCImplTest {
 
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
+
   private InterestUCC interestUCC;
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
@@ -36,12 +38,10 @@ class InterestUCCImplTest {
   private InterestDTO interestDTO;
   private InterestDTO newInterestDTO;
   private int nonExistentId = 1000;
-  private ServiceLocator locator;
   private ObjectFactory objectFactory;
 
   @BeforeEach
   void initAll() {
-    locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.interestUCC = locator.getService(InterestUCC.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
