@@ -11,7 +11,7 @@ public interface InterestDAO {
    * @param idMember the member we want to retrieve notifications
    * @return a list of interest, by an id member
    */
-  List<InterestDTO> getAllNotification(int idMember);
+  List<InterestDTO> getAllNotifications(int idMember);
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the

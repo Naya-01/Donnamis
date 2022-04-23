@@ -12,6 +12,9 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
+### markNotificationShown
+POST {{baseUri}}/interest/notificationShown/42
+Authorization: {{access}}
 
 ### Get Own interest
 GET {{baseUri}}/interest?idObject=2

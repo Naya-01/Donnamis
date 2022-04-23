@@ -107,12 +107,6 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
-      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
-          interestDTO.getIdMember());
-      if (interestDTO == null) {
-        throw new NotFoundException("Le membre ne présente pas d'intérêt");
-      }
-
       // update offer to assigned
       offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
@@ -121,6 +115,10 @@ public class InterestUCCImpl implements InterestUCC {
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
+
+      // Send Notification
+      interestDTO.setSendNotification(true);
+      interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -166,13 +164,41 @@ public class InterestUCCImpl implements InterestUCC {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
-      interestDTOList = interestDAO.getAllNotification(idMember);
+      interestDTOList = interestDAO.getAllNotifications(idMember);
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
     return interestDTOList;
+  }
+
+  /**
+   * Mark a notification shown.
+   *
+   * @param interestDTO to mark as shown.
+   * @return interestDTO updated.
+   */
+  @Override
+  public InterestDTO markNotificationShown(InterestDTO interestDTO) {
+    try {
+      dalService.startTransaction();
+
+      if (!interestDTO.sendNotification()) {
+        throw new ForbiddenException("La notification a déjà été marquée comme lue");
+      }
+
+      // Send Notification
+      interestDTO.setSendNotification(false);
+      interestDAO.updateNotification(interestDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return interestDTO;
   }
 
 

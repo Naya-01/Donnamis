@@ -192,5 +192,26 @@ public class InterestResource {
     return interestUCC.assignOffer(interestDTO);
   }
 
+  /**
+   * Mark a notification as shown.
+   *
+   * @param request  data of the member.
+   * @param idObject of the interest.
+   * @return interestDTO updated.
+   */
+  @POST
+  @Path("/notificationShown/{idObject}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public InterestDTO markNotificationShown(@Context ContainerRequest request,
+      @PathParam("idObject") int idObject) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
+
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, memberDTO.getMemberId());
+    return interestUCC.markNotificationShown(interestDTO);
+  }
+
 
 }
