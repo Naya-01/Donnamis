@@ -9,6 +9,7 @@ import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.dal.dao.RatingDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -58,7 +59,7 @@ class RatingUCCImplTest {
   public void testGetOneWithNonExistingId() {
     Mockito.when(mockRatingDAO.getOne(this.nonExistingId)).thenReturn(null);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> ratingUCC.getOne(this.ratingDTO.getIdObject())),
+        () -> assertThrows(NotFoundException.class, () -> ratingUCC.getOne(this.nonExistingId)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -72,6 +73,19 @@ class RatingUCCImplTest {
     Mockito.when(mockRatingDAO.getOne(-1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> ratingUCC.getOne(-1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test addRating with rating that have non existing id")
+  @Test
+  public void testAddRatingWhenThereIsAlreadyARatingForThisObject() {
+    Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(this.ratingDTO);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> ratingUCC.addRating(this.ratingDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
