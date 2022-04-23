@@ -612,11 +612,17 @@ class MemberUCCImplTest {
   @DisplayName("Test updateMember with a member having his fields by default")
   @Test
   public void testUpdateMemberWithEmptyFieldsMember() {
-    MemberDTO nonExistentMember = memberFactory.getMemberDTO();
-    Mockito.when(mockMemberDAO.updateOne(nonExistentMember)).thenReturn(null);
+    MemberDTO existentMember = memberFactory.getMemberDTO();
+    existentMember.setAddress(getMemberNewMember().getAddress());
+    existentMember.getAddress().setIdMember(2);
+    existentMember.setMemberId(2);
+    Mockito.when(mockMemberDAO.updateOne(existentMember)).thenReturn(null);
+
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMember.getMemberId()))
+        .thenReturn(existentMember.getAddress());
     assertAll(
-        () -> assertThrows(NullPointerException.class, () -> memberUCC
-            .updateMember(nonExistentMember)),
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(existentMember)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
