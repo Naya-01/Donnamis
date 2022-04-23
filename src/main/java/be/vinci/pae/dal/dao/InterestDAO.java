@@ -6,6 +6,14 @@ import java.util.List;
 public interface InterestDAO {
 
   /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  List<InterestDTO> getAllNotification(int idMember);
+
+  /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *
@@ -14,6 +22,14 @@ public interface InterestDAO {
    * @return the interest.
    */
   InterestDTO getOne(int idObject, int idMember);
+
+  /**
+   * Update the notification field to know if we have to send one.
+   *
+   * @param interestDTO with the notification attribute.
+   * @return the interest updated.
+   */
+  InterestDTO updateNotification(InterestDTO interestDTO);
 
   /**
    * Get an assign interest.

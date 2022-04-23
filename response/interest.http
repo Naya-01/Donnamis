@@ -17,6 +17,10 @@ client.global.set("refresh", response.body.refresh_token);
 GET {{baseUri}}/interest?idObject=2
 Authorization: {{access}}
 
+### Get all notifications
+GET {{baseUri}}/interest/getAllNotifications
+Authorization: {{access}}
+
 ### Get all interests
 GET {{baseUri}}/interest/getAllInterests/2
 Authorization: {{access}}

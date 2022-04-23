@@ -155,5 +155,25 @@ public class InterestUCCImpl implements InterestUCC {
     return interestDTOList;
   }
 
+  /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  @Override
+  public List<InterestDTO> getNotifications(int idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+      interestDTOList = interestDAO.getAllNotification(idMember);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interestDTOList;
+  }
+
 
 }

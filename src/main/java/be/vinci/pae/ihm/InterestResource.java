@@ -142,6 +142,28 @@ public class InterestResource {
   }
 
   /**
+   * Get all the notification of a member.
+   *
+   * @param request information of the member.
+   * @return interestDTO List filtered with notifications
+   */
+  @GET
+  @Path("/getAllNotifications")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> getAllNotifications(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getAllNotifications");
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    List<InterestDTO> interestDTOList = interestUCC.getNotifications(
+        authenticatedUser.getMemberId());
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+    return interestDTOList;
+  }
+
+  /**
    * Assign an object to a member interested.
    *
    * @param request     data of the object's owner.
