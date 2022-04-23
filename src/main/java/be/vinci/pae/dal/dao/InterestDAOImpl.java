@@ -237,7 +237,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @return true if he's interested false if he's not
    */
   @Override
-  public boolean isUserInterested(int idMember, int idObject){
+  public boolean isUserInterested(int idMember, int idObject) {
     String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
         + "WHERE i.id_object = ? AND i.status = 'published' AND i.id_member = ?";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
