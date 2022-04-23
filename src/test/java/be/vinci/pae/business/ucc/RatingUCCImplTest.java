@@ -2,12 +2,14 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.dal.dao.RatingDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.NotFoundException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ class RatingUCCImplTest {
   private RatingDTO ratingDTO;
   private DALService mockDalService;
   private RatingFactory ratingFactory;
+  private final int nonExistingId = 1000;
 
   @BeforeEach
   void initAll() {
@@ -42,11 +45,24 @@ class RatingUCCImplTest {
   public void testGetOneWithExistingId() {
     Mockito.when(mockRatingDAO.getOne(this.ratingDTO.getIdObject())).thenReturn(this.ratingDTO);
     assertAll(
-        () -> assertEquals(ratingUCC.getOne(this.ratingDTO.getIdObject()), this.ratingDTO),
+        () -> assertEquals(this.ratingDTO, ratingUCC.getOne(this.ratingDTO.getIdObject())),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .commitTransaction()
+    );
+  }
+
+  @DisplayName("Test getOne with non existing id")
+  @Test
+  public void testGetOneWithNonExistingId() {
+    Mockito.when(mockRatingDAO.getOne(this.nonExistingId)).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> ratingUCC.getOne(this.ratingDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
     );
   }
 
