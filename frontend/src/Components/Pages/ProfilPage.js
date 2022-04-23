@@ -438,7 +438,7 @@ const profilRender = async () => {
     e.preventDefault();
 
     await modifyProfilRender();
-  })
+  });
 
 }
 

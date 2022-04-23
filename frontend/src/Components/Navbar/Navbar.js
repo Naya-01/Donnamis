@@ -16,7 +16,6 @@ const Navbar = async () => {
     let user = await memberLibraryModal.getUserByHisToken();
     username = user.username;
     user_role = user.role;
-    console.log(user)
     if (user.image) {
       image = "/api/member/getPicture/" + user.memberId
     }

@@ -124,7 +124,7 @@ public class MemberDAOImpl implements MemberDAO {
       query += "AND m.status = 'valid' ";
     }
     if (search != null && !search.isEmpty()) {
-      query += "AND (lower(m.firstname) LIKE ? OR lower(m.lastname) LIKE ? "
+      query += "AND (lower(a.postcode) LIKE ? OR lower(a.commune) LIKE ? "
           + "OR lower(m.username) LIKE ?)";
     }
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {

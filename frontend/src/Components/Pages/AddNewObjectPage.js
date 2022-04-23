@@ -104,8 +104,6 @@ const AddNewObjectPage = async () => {
   input_file.onchange = () => {
     const [file] = input_file.files
     if (file) {
-      console.log("nouvelle photo");
-      console.log(file);
       document.getElementById("img").src = URL.createObjectURL(file);
     }
   }

@@ -164,7 +164,6 @@ public class OfferResource {
     return offerUcc.getGivenOffers(idReceiver);
   }
 
-
   /**
    * Cancel an Offer, set the status to 'cancelled'.
    *

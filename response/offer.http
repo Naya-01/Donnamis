@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "tcou",
-  "password": "rayan123",
+  "username": "bri",
+  "password": "Rad;293",
   "rememberMe": true
 }
 > {%
@@ -138,3 +138,7 @@ Authorization: {{access}}
     "idObject": 15
   }
 }
+
+###
+GET {{baseUri}}/offers/offersCount/10
+Authorization: {{access}}

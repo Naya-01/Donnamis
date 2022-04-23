@@ -313,7 +313,6 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
-
   /**
    * Get a list of offers according to the query.
    *
