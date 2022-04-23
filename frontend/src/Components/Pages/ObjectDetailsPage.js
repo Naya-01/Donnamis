@@ -361,8 +361,7 @@ async function addOneInterest(e) {
 
 /**
  * Display the rating with its comment
- * @param rating the rating to display
- * @param comment the comment to display
+ * @param current_rating the rating to display
  */
 function displayRating(current_rating) {
   let ratingDiv = document.getElementById("ratingDiv");
