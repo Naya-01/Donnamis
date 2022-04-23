@@ -35,7 +35,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   public BufferedImage getPicture(int id) {
     ObjectDTO objectDTO;
-    BufferedImage picture = null;
+    BufferedImage picture;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
@@ -152,9 +152,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       }
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
-      if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
-      }
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
