@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
@@ -33,18 +34,21 @@ class InterestUCCImplTest {
   private InterestUCC interestUCC;
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
+  private InterestDAO interestDAO;
   private DALService mockDalService;
   private ObjectDTO objectDTO;
   private InterestDTO interestDTO;
   private InterestDTO newInterestDTO;
   private int nonExistentId = 1000;
   private ObjectFactory objectFactory;
+  private InterestFactory interestFactory;
 
   @BeforeEach
   void initAll() {
     this.interestUCC = locator.getService(InterestUCC.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
+    this.interestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
     ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
@@ -58,6 +62,8 @@ class InterestUCCImplTest {
     this.interestDTO.setStatus("published");
     this.newInterestDTO = interestFactory.getInterestDTO();
     this.objectFactory = locator.getService(ObjectFactory.class);
+    this.interestFactory = locator.getService(InterestFactory.class);
+
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
@@ -251,4 +257,32 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ---------------------------- GET NOTIFICATION UCC  -------------------------------  //
+
+  @DisplayName("Test giveOffer without having interest")
+  @Test
+  public void testGetNotifications() {
+    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
+    interestDTONotificated.setIsNotificated(true);
+    interestDTONotificated.setIdMember(3);
+    interestDTONotificated.setIdMember(3);
+
+    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
+    interestDTONotNotificated.setIsNotificated(false);
+    interestDTONotNotificated.setIdMember(3);
+    interestDTONotificated.setIdMember(2);
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+    interestDTOList.add(interestDTONotificated);
+
+    Mockito.when(interestDAO.getAllNotifications(3))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertEquals(1, interestUCC.getNotifications(3).size()),
+        () -> assertTrue(interestUCC.getNotifications(3).contains(interestDTONotificated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
