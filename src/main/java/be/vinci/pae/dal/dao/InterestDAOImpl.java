@@ -80,7 +80,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        throw new FatalException();
+        return null;
       }
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
@@ -205,7 +205,7 @@ public class InterestDAOImpl implements InterestDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
 
       if (!resultSet.next()) {
-        throw new FatalException();
+        return null;
       }
 
       interestDTO = interestFactory.getInterestDTO();

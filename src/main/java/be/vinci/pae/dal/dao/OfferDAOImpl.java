@@ -217,7 +217,7 @@ public class OfferDAOImpl implements OfferDAO {
 
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        throw new FatalException();
+        return null;
       }
       offerDTO.setIdOffer(resultSet.getInt(1));
       offerDTO.setDate(resultSet.getDate(2).toLocalDate());
@@ -268,7 +268,7 @@ public class OfferDAOImpl implements OfferDAO {
       ResultSet resultSet = preparedStatement.getResultSet();
 
       if (!resultSet.next()) {
-        throw new FatalException();
+        return null;
       }
 
       OfferDTO offerDTOUpdated = offerFactory.getOfferDTO();

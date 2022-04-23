@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
-import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
@@ -30,6 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class OfferUCCImplTest {
+
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
   private DALService mockDalService;
   private OfferDAO offerDAO;
@@ -58,7 +59,6 @@ class OfferUCCImplTest {
 
   @BeforeEach
   void setUp() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.mockDalService = locator.getService(DALService.class);
     this.offerDAO = locator.getService(OfferDAO.class);
     this.typeDAO = locator.getService(TypeDAO.class);
