@@ -152,7 +152,7 @@ public class AddressDAOImpl implements AddressDAO {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        return null;
+        throw new FatalException();
       }
       return createAddressDTO(resultSet.getInt(1), resultSet.getString(2),
           resultSet.getString(3), resultSet.getString(4),

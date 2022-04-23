@@ -297,7 +297,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
-        return null;
+        throw new FatalException();
       }
       MemberDTO memberDTO = getMemberByResultSet(resultSet);
       resultSet.close();
