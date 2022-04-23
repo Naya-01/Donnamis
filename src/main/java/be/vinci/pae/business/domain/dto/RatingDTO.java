@@ -18,6 +18,10 @@ public interface RatingDTO {
 
   void setIdMember(Integer memberId);
 
+  MemberDTO getMemberRater();
+
+  void setMemberRater(MemberDTO memberRater);
+
   Integer getIdObject();
 
   void setIdObject(Integer objectId);
