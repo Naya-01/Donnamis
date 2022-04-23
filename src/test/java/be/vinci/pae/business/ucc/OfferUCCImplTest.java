@@ -17,6 +17,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.FatalException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -454,4 +455,19 @@ class OfferUCCImplTest {
     );
   }
 
+  //  ----------------------------  CANCEL OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test cancelOffer with given status")
+  @Test
+  public void testCancelOfferWithGivenStatus() {
+    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
+    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(2);
+    Mockito.when(mockOfferDTO.getStatus()).thenReturn("given");
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.cancelOffer(mockOfferDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
