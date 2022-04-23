@@ -2,7 +2,6 @@ package be.vinci.pae.utils;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -15,10 +14,8 @@ public class Log {
    */
   public static void config() {
     logger = Logger.getLogger("Log");
-    logger.setLevel(Level.INFO);
     try {
-      FileHandler fileHandler = new FileHandler("LogFile%g.log", 50000, 5, true);
-      fileHandler.setLevel(Level.ALL);
+      FileHandler fileHandler = new FileHandler("LogFile%g.log", 75000, 5, true);
       logger.addHandler(fileHandler);
       SimpleFormatter formatter = new SimpleFormatter();
       fileHandler.setFormatter(formatter);

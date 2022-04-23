@@ -23,6 +23,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -48,6 +50,7 @@ public class ObjectResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectDTO getObject(@PathParam("id") int id) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource getObject");
     return objectUCC.getObject(id);
   }
 
@@ -70,6 +73,7 @@ public class ObjectResource {
       @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime) {
 
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
@@ -96,6 +100,7 @@ public class ObjectResource {
   @Path("/getPicture/{id}")
   @Produces({"image/png", "image/jpg", "image/jpeg"})
   public Response getPicture(@PathParam("id") int id) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource getPicture");
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
     if (objectDTO.getImage() == null) {
@@ -116,6 +121,7 @@ public class ObjectResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource getAllObjectMember");
     return objectUCC.getAllObjectMember(idMember);
   }
 
@@ -131,6 +137,7 @@ public class ObjectResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource updateOne");
     return objectUCC.updateOne(objectDTO);
   }
 
@@ -145,6 +152,7 @@ public class ObjectResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public OfferDTO addObject(@Context ContainerRequest request, OfferDTO offerDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource addObject");
     if (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getType().getIdType() == null
         && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()

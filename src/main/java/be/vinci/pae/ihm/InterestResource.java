@@ -26,6 +26,8 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -42,21 +44,21 @@ public class InterestResource {
    * Get an interest, by the id of the interested member and the id of the object.
    *
    * @param idObject : id object of the interest.
-   * @param idMember : id of interested member.
    * @return a json of the interest.
    */
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
-  public InterestDTO getOne(@DefaultValue("-1") @QueryParam("idObject") int idObject,
-      @DefaultValue("-1") @QueryParam("idMember") int idMember) {
-
-    if (idObject < 1 || idMember < 1) {
+  public InterestDTO getOwnInterest(@DefaultValue("-1") @QueryParam("idObject") int idObject,
+      @Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getOne");
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    if (idObject < 1) {
       throw new WebApplicationException("L'identifiant de l'objet et/ou du membre est/sont "
           + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
     }
 
-    InterestDTO interestDTO = interestUCC.getInterest(idObject, idMember);
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, authenticatedUser.getMemberId());
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     return interestDTO;
   }
@@ -74,6 +76,7 @@ public class InterestResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public InterestDTO addOne(InterestDTO interest, @Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource addOne");
     if (interest == null || interest.getAvailabilityDate() == null) {
       throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
     }
@@ -102,6 +105,7 @@ public class InterestResource {
   @Authorize
   public JsonNode getInterestedCount(@PathParam("idObject") int idObject,
       @Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getInterestedCount");
     List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
@@ -123,6 +127,7 @@ public class InterestResource {
   @Authorize
   public List<InterestDTO> getAllInterests(@PathParam("idObject") int idObject,
       @Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getAllInterests");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     ObjectDTO objectDTO = objectUCC.getObject(idObject);
     if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
@@ -149,6 +154,7 @@ public class InterestResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public InterestDTO assignOffer(@Context ContainerRequest request, InterestDTO interestDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource assignOffer");
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     if (interestDTO.getIdMember() == null

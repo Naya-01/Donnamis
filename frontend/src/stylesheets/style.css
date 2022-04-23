@@ -58,8 +58,17 @@
   color: yellow !important;
 }
 
+.greenColor {
+  color: #00CC00;
+}
 
+.redColor {
+  color: #FF3232;
+}
 
+.pinkColor {
+  color: #FFA07A;
+}
 
 
 /** { box-sizing: border-box; }*/

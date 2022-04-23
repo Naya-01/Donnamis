@@ -133,7 +133,13 @@ const objectCards = async (searchPattern, type, status) => {
         var allInterests = `<div class="container">`
 
         for (const interest of interests) {
+
+          if (interest.status !== "published") {
+            continue;
+          }
+
           let phone;
+
           if (interest.member.phone) {
             phone = "(" + interest.member.phone + ")";
           } else {

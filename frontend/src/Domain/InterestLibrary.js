@@ -85,8 +85,8 @@ class InterestLibrary {
     }
     return allInterests;
   }
-    
-  async getOneInterest(idObject, idMember) {
+
+  async getOneInterest(idObject) {
     let response;
     try {
       let options = {
@@ -96,7 +96,7 @@ class InterestLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/interest?idObject="+idObject+"&idMember="+idMember , options);
+      response = await fetch("api/interest?idObject=" + idObject, options);
     } catch (err) {
       console.log(err);
     }

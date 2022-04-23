@@ -32,6 +32,14 @@ public interface InterestDAO {
   InterestDTO addOne(InterestDTO item);
 
   /**
+   * Get a list of "published" interest in an id object.
+   *
+   * @param idObject the object we want to retrieve the interests
+   * @return a list of interest, by an id object
+   */
+  List<InterestDTO> getAllPublished(int idObject);
+
+  /**
    * Get a list of interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests

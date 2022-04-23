@@ -116,7 +116,7 @@ const modifyProfilRender = async () => {
             <!-- LAST LINE-->
             <div class="col-12">
               <button type="submit" class="btn btn-primary" id="submit_cancel_modify">Annuler</button>
-              <button type="submit" class="btn btn-primary" id="submit_valid_modify">Modifier</button>
+              <button type="submit" class="btn btn-primary" id="submit_valid_modify">Confirmer</button>
             </div>
           </form>
         </div> 

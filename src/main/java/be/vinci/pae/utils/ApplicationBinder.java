@@ -28,8 +28,6 @@ import be.vinci.pae.business.ucc.RatingUCC;
 import be.vinci.pae.business.ucc.RatingUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
-import be.vinci.pae.dal.dao.AbstractDAO;
-import be.vinci.pae.dal.dao.AbstractDAOImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.dao.AddressDAOImpl;
 import be.vinci.pae.dal.dao.InterestDAO;
@@ -88,6 +86,5 @@ public class ApplicationBinder extends AbstractBinder {
 
     bind(TokenImpl.class).to(Token.class).in(Singleton.class);
     bind(ImageImpl.class).to(Image.class).in(Singleton.class);
-    bind(AbstractDAOImpl.class).to(AbstractDAO.class).in(Singleton.class);
   }
 }

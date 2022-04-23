@@ -99,6 +99,14 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 
+      if (interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()) != null) {
+        throw new ForbiddenException("L'offre est déjà assignée à un membre");
+      }
+
+      if (!interestDTO.getStatus().equals("published")) {
+        throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
+      }
+
       interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
           interestDTO.getIdMember());
       if (interestDTO == null) {
@@ -138,7 +146,7 @@ public class InterestUCCImpl implements InterestUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
-      interestDTOList = interestDAO.getAll(idObject);
+      interestDTOList = interestDAO.getAllPublished(idObject);
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
