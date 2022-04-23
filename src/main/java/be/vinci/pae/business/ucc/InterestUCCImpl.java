@@ -117,7 +117,7 @@ public class InterestUCCImpl implements InterestUCC {
       interestDAO.updateStatus(interestDTO);
 
       // Send Notification
-      interestDTO.setSendNotification(true);
+      interestDTO.setIsNotificated(true);
       interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
@@ -165,6 +165,9 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
       interestDTOList = interestDAO.getAllNotifications(idMember);
+      if (interestDTOList == null) {
+        throw new NotFoundException("Aucunes notifications n'est disponible");
+      }
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -184,12 +187,12 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
 
-      if (!interestDTO.sendNotification()) {
+      if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }
 
       // Send Notification
-      interestDTO.setSendNotification(false);
+      interestDTO.setIsNotificated(false);
       interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
