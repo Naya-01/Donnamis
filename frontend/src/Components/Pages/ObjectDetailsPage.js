@@ -109,7 +109,7 @@ const ObjectDetailsPage = async () => {
   pageDiv.innerHTML =
       `<div class="container p-3">
       <div class="mx-5 my-5">
-      <h3 id="titleObject" class=pb-3></h3>
+      <h2 id="titleObject" class=pb-3></h2>
       <div class="card">
         <!-- Body of the card -->
         <div class="card-body">
@@ -181,12 +181,14 @@ const ObjectDetailsPage = async () => {
                 </div>
               </div>
               <div class="row p-2">
-                <!-- The rating button or rating shown -->
+                <!-- The rating button -->
                 <div id="ratingDiv" class="text-center p-2"></div>
               </div>
           </p>
         </div>
       </div>
+      <!-- The comment with the rating-->
+      <div id="displayRating"></div>
     </div>
   </div>`;
 
@@ -232,10 +234,10 @@ const ObjectDetailsPage = async () => {
           document.getElementById("ratingDiv").appendChild(rating_button);
           rating_button.addEventListener("click", ratingPopUp);
         } else { // if there is no rating and the member connected is not the receiver
-          displayRating(null, null);
+          displayRating(null);
         }
       } else { // if there is a rating
-        displayRating(current_rating.rating, current_rating.comment);
+        displayRating(current_rating);
       }
     }
   }
@@ -362,16 +364,43 @@ async function addOneInterest(e) {
  * @param rating the rating to display
  * @param comment the comment to display
  */
-function displayRating(rating, comment) {
+function displayRating(current_rating) {
   let ratingDiv = document.getElementById("ratingDiv");
-  if (rating == null || comment == null) {
+  if (current_rating == null || current_rating.rating == null || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
   } else { //TODO : make a better display
-    ratingDiv.innerHTML += create5StarsHTMLCode(rating);
-    ratingDiv.innerHTML += `<p>${comment}</p>`;
+    //ratingDiv.innerHTML += create5StarsHTMLCode(current_rating.rating);
+    //ratingDiv.innerHTML += `<p>${current_rating.comment}</p>`;
+    console.log(current_rating);
+    let displayRatingDiv = document.getElementById("displayRating");
+    //TODO : profilpicture si on en a pas
+    let profilPicture = "/api/member/getPicture/" + current_rating.idMember;
+    displayRatingDiv.innerHTML += `
+    <div class="card bg-light my-3">
+      <div class="card-body">
+        <h4 class="card-title">La note de ${current_rating.memberRater.username} pour cet objet</h4>
+        <p class="card-text">
+          <div class="row">
+            <div class="col-4 mx-auto">
+              <img id="image" alt="no image" width="75%" src="${profilPicture}"/>
+              <p>${create5StarsHTMLCode(current_rating.rating)}</p>
+              
+            </div>
+            <div class="col-8">
+              <h5>Commentaire :</h5>
+              <p>${current_rating.comment}</p>
+            </div>
+          </div>
+        </p>
+      </div>
+    </div>
+
+
+`
+
   }
 }
 
