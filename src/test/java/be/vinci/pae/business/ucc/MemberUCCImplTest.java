@@ -685,4 +685,21 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  //  -----------------------------  GET PICTURE UCC  -----------------------------------  //
+
+
+  @DisplayName("Test getPicture of non existent member")
+  @Test
+  public void testGetPictureOfNonExistentMember() {
+    MemberDTO memberNonExistent = getMemberNewMember();
+
+    Mockito.when(mockMemberDAO.getOne(memberNonExistent.getMemberId())).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> memberUCC.getMember(memberNonExistent.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
