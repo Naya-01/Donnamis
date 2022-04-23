@@ -17,6 +17,7 @@ import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -353,16 +354,32 @@ class InterestUCCImplTest {
   @DisplayName("Test mark notification shown success")
   @Test
   public void testMarkNotificationShownSuccess() {
+    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
+    interestDTONotificated.setIsNotificated(true);
+    interestDTONotificated.setIdMember(3);
+    interestDTONotificated.setIdMember(2);
+
+    assertAll(
+        () -> assertFalse(
+            interestUCC.markNotificationShown(interestDTONotificated).getIsNotificated()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown with field isNotificated already false")
+  @Test
+  public void testMarkNotificationShownWithFieldIsNotificatedAlreadyFalse() {
     InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
-    interestDTONotNotificated.setIsNotificated(true);
+    interestDTONotNotificated.setIsNotificated(false);
     interestDTONotNotificated.setIdMember(3);
     interestDTONotNotificated.setIdMember(2);
 
     assertAll(
-        () -> assertFalse(
-            interestUCC.markNotificationShown(interestDTONotNotificated).getIsNotificated()),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTONotNotificated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 }
