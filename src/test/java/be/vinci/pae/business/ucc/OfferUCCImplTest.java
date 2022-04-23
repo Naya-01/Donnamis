@@ -567,4 +567,25 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test getGivenOffers success")
+  @Test
+  public void testGetGivenOffersSuccess() {
+    List<OfferDTO> listOffers = new ArrayList<>();
+    OfferDTO offerGiven = getNewOffer();
+    offerGiven.setStatus("given");
+    offerGiven.getObject().setStatus("given");
+    OfferDTO offerAvailable = getNewOffer();
+    offerAvailable.setStatus("available");
+    offerAvailable.getObject().setStatus("available");
+
+    listOffers.add(offerGiven);
+    Mockito.when(offerDAO.getAllGivenOffers(2)).thenReturn(listOffers);
+
+    assertAll(
+        () -> assertEquals(1, offerDAO.getAllGivenOffers(2).size()),
+        () -> assertTrue(offerUCC.getGivenOffers(2).contains(offerGiven)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
