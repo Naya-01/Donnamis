@@ -640,4 +640,47 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test giveOffer success")
+  @Test
+  public void testGiveOfferSuccess() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.setStatus("assigned");
+
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setIdOffer(3);
+    offerDTOFromDAO.getObject().setIdObject(3);
+    offerDTOFromDAO.setStatus("assigned");
+
+    ObjectDTO objectDTO = offerDTO.getObject();
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIdMember(3);
+    interestDTO.setObject(objectDTO);
+    interestDTO.setStatus("published");
+
+    Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(interestDTO);
+
+    Mockito.when(offerDAO.getLastObjectOffer(objectDTO.getIdObject()))
+        .thenReturn(offerDTOFromDAO);
+
+    Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
+        .thenReturn(offerDTOFromDAO.getObject());
+
+    Mockito.when(offerDAO.updateOne(offerDTOFromDAO))
+        .thenReturn(offerDTOFromDAO);
+
+    OfferDTO offerDTOUpdated = offerUCC.giveOffer(offerDTO);
+
+    assertAll(
+        () -> assertEquals("received", interestDTO.getStatus()),
+        () -> assertEquals("given", offerDTOUpdated.getStatus()),
+        () -> assertEquals("given", offerDTOUpdated.getObject().getStatus()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
