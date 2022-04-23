@@ -38,10 +38,11 @@ class ObjectUCCImplTest {
     this.mockDalService = locator.getService(DALService.class);
     ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
-    objectDTO.setIdObject(1);
-    objectDTO.setDescription("the description");
-    objectDTO.setIdOfferor(1);
-    objectDTO.setStatus("available");
+    this.objectDTO.setIdObject(1);
+    this.objectDTO.setDescription("the description");
+    this.objectDTO.setIdOfferor(1);
+    this.objectDTO.setStatus("available");
+    this.objectDTO.setImage(this.pathImage);
     this.objectDTOUpdated = objectFactory.getObjectDTO();
     this.objectDTOUpdated.setIdObject(1);
     this.objectDTOUpdated.setDescription("the description2");
@@ -211,6 +212,19 @@ class ObjectUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(this.inexistentId),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test getPicture with existent object that has no image")
+  @Test
+  public void testGetPictureWithExistentObjectThatHasNoImage(){
+    Mockito.when(mockObjectDAO.getOne(this.objectDTO.getIdObject())).thenReturn(this.objectDTO);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.getPicture(this.objectDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .getOne(this.objectDTO.getIdObject()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
     );
   }
