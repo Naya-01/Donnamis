@@ -35,13 +35,13 @@ public class InterestImpl implements InterestDTO {
   }
 
   @Override
-  public Boolean isNotificated() {
+  public Boolean getIsNotificated() {
     return isNotificated;
   }
 
   @Override
-  public void setNotification(boolean bool) {
-    this.isNotificated = bool;
+  public void setIsNotificated(boolean isNotificated) {
+    this.isNotificated = isNotificated;
   }
 
   @Override
