@@ -7,9 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
+import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
@@ -43,6 +45,7 @@ class OfferUCCImplTest {
   private TypeFactory typeFactory;
   private ObjectFactory objectFactory;
   private OfferFactory offerFactory;
+  private InterestFactory interestFactory;
   private InterestDAO interestDAO;
 
 
@@ -72,6 +75,7 @@ class OfferUCCImplTest {
     this.typeFactory = locator.getService(TypeFactory.class);
     this.objectFactory = locator.getService(ObjectFactory.class);
     this.offerFactory = locator.getService(OfferFactory.class);
+    this.interestFactory = locator.getService(InterestFactory.class);
     this.interestDAO = locator.getService(InterestDAO.class);
   }
 
@@ -512,6 +516,36 @@ class OfferUCCImplTest {
         () -> assertEquals("cancelled", offerDTOUpdated.getStatus()),
         () -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
         () -> assertEquals(offerDTOUpdated, offerDTOFromDAO),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test cancelOffer success with interest assigned")
+  @Test
+  public void testCancelOfferSuccessWithInterestAssigned() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setStatus("available");
+    offerDTO.getObject().setStatus("available");
+
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setStatus("cancelled");
+    offerDTOFromDAO.getObject().setStatus("cancelled");
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+
+    Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
+    Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
+        .thenReturn(offerDTOFromDAO.getObject());
+    Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(interestDTO);
+
+    OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO);
+    assertAll(
+        () -> assertEquals("cancelled", offerDTOUpdated.getStatus()),
+        () -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
+        () -> assertEquals(offerDTOUpdated, offerDTOFromDAO),
+        () -> assertEquals("published", interestDTO.getStatus()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
