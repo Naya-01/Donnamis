@@ -489,17 +489,17 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
-/*
+
   @DisplayName("Test cancelOffer success without interest assigned")
   @Test
   public void testCancelOfferSuccessWithoutInterestAssigned() {
     OfferDTO offerDTO = getNewOffer();
-    Mockito.when(offerDTO.getStatus()).thenReturn("available");
+    offerDTO.setStatus("available");
     offerDTO.getObject().setStatus("available");
 
     OfferDTO offerDTOFromDAO = getNewOffer();
-    Mockito.when(offerDTOFromDAO.getStatus()).thenReturn("cancelled");
-    offerDTOFromDAO.getObject().setStatus("available");
+    offerDTOFromDAO.setStatus("cancelled");
+    offerDTOFromDAO.getObject().setStatus("cancelled");
 
     Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
@@ -510,10 +510,10 @@ class OfferUCCImplTest {
     OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO);
     assertAll(
         () -> assertEquals("cancelled", offerDTOUpdated.getStatus()),
-        //() -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
-        //() -> assertEquals(offerDTOUpdated, offerDTOFromDAO),
+        () -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
+        () -> assertEquals(offerDTOUpdated, offerDTOFromDAO),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
-  }*/
+  }
 }
