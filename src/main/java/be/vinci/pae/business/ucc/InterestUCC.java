@@ -36,7 +36,15 @@ public interface InterestUCC {
    * @param idObject the object we want to retrieve the interests
    * @return a list of interest, by an id object
    */
-  int getInterestedCount(int idObject);
+  Integer getInterestedCount(Integer idObject);
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  Integer getNotificationCount(Integer idMember);
 
   /**
    * Get the number of all interests.

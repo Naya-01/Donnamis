@@ -197,13 +197,14 @@ const objectCards = async (searchPattern, type, status) => {
         for (const interest of interests) {
           const btn = document.getElementById(
               "interest-" + interest.member.memberId);
-          btn.addEventListener("click", async e => {
-            console.log(interest);
-            let d = await InterestLibrary.prototype.assignOffer(
-                interest.object.idObject, interest.member.memberId);
-            Swal.close();
-            Redirect("/myObjectsPage");
-          })
+          if (btn) {
+            btn.addEventListener("click", async e => {
+              await InterestLibrary.prototype.assignOffer(
+                  interest.object.idObject, interest.member.memberId);
+              Swal.close();
+              Redirect("/myObjectsPage");
+            })
+          }
         }
 
       });
@@ -270,7 +271,7 @@ const objectCards = async (searchPattern, type, status) => {
     const informationDiv = document.getElementById(
         "information-object-" + offer.idOffer);
     informationDiv.addEventListener('click', () => {
-      RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+      RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
     });
 
   }

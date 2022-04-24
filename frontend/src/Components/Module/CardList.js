@@ -23,7 +23,6 @@ const cardList = async (offers) => {
   let defaultImage = noImage;
   let image;
 
-  console.log(offers);
   let page = "<div class='mt-5'>";
   for (let i = 0; i < Math.ceil(offers.length / 3); i++) {
     page += `

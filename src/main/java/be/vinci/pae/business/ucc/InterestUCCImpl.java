@@ -136,7 +136,7 @@ public class InterestUCCImpl implements InterestUCC {
    * @return the number of all interests
    */
   @Override
-  public int getInterestedCount(int idObject) {
+  public Integer getInterestedCount(Integer idObject) {
     int interests;
     try {
       dalService.startTransaction();
@@ -145,6 +145,26 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interests = interestDAO.getAllPublishedCount(idObject);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interests;
+  }
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  @Override
+  public Integer getNotificationCount(Integer idMember) {
+    Integer interests;
+    try {
+      dalService.startTransaction();
+      interests = interestDAO.getNotificationCount(idMember);
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -169,6 +189,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
+      
       if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }

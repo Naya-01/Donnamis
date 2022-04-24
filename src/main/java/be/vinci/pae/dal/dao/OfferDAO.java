@@ -2,6 +2,7 @@ package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.util.List;
+import java.util.Map;
 
 public interface OfferDAO {
 
@@ -70,4 +71,13 @@ public interface OfferDAO {
    * @return a list of offerDTO
    */
   List<OfferDTO> getAllGivenOffers(int idReceiver);
+
+  /**
+   * Get a map of data about a member (nb of received object, nb of not colected objects,
+   * nb of given objects and nb of total offers).
+   *
+   * @param idReceiver the id of the member
+   * @return a map with all th datas.
+   */
+  Map<String, Integer> getOffersCount(int idReceiver);
 }

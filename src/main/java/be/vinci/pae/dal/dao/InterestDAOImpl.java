@@ -130,7 +130,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
-      if(interestDTOList.isEmpty()){
+      if (interestDTOList.isEmpty()) {
         return null;
       }
       return interestDTOList;
@@ -138,7 +138,6 @@ public class InterestDAOImpl implements InterestDAO {
       throw new FatalException(e);
     }
   }
-
 
 
   /**
@@ -180,7 +179,7 @@ public class InterestDAOImpl implements InterestDAO {
     return getnbInterests(idObject, query);
   }
 
-  private int getnbInterests(int idObject, String query) {
+  private Integer getnbInterests(Integer idObject, String query) {
     int nbInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -204,7 +203,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @return the number of all interests
    */
   @Override
-  public int getAllPublishedCount(int idObject) {
+  public Integer getAllPublishedCount(Integer idObject) {
 
     String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
         + "WHERE i.id_object = ? AND i.status = 'published'";
@@ -302,6 +301,34 @@ public class InterestDAOImpl implements InterestDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+  }
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  @Override
+
+  public Integer getNotificationCount(Integer idMember) {
+    String query = "SELECT count(id_member) "
+        + "FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
+    Integer notificationCount = null;
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idMember);
+      preparedStatement.setBoolean(2, true);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (resultSet.next()) {
+        notificationCount = resultSet.getInt(1);
+      }
+      resultSet.close();
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+
+    return notificationCount;
   }
 
 

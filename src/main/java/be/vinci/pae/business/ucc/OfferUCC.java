@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.util.List;
+import java.util.Map;
 
 public interface OfferUCC {
 
@@ -47,13 +48,20 @@ public interface OfferUCC {
   List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus);
 
   /**
+   * Return the last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  OfferDTO getLastOffer(int idObject);
+
+  /**
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
    * @return a list of offerDTO
    */
   List<OfferDTO> getGivenOffers(int idReceiver);
-
 
   /**
    * Cancel an Object.
@@ -79,6 +87,15 @@ public interface OfferUCC {
    * @return an object
    */
   OfferDTO giveOffer(OfferDTO offerDTO);
+
+  /**
+   * Get a map of data about a member (nb of received object, nb of not colected objects,
+   * nb of given objects and nb of total offers).
+   *
+   * @param idReceiver the id of the member
+   * @return a map with all th datas.
+   */
+  Map<String, Integer> getOffersCount(int idReceiver);
 
   /**
    * Make an Object with his offer.

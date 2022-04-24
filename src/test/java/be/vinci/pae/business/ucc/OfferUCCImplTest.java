@@ -20,7 +20,6 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -416,7 +415,7 @@ class OfferUCCImplTest {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
     assertAll(
-        () -> assertThrows(FatalException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -430,7 +429,7 @@ class OfferUCCImplTest {
 
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
     assertAll(
-        () -> assertThrows(FatalException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );

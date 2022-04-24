@@ -9,11 +9,11 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 public class OfferUCCImpl implements OfferUCC {
 
@@ -128,7 +128,7 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
-        throw new FatalException("Problème lors de la mise à jour de l'offre");
+        throw new NotFoundException("Aucune offre");
       }
 
       dalService.commitTransaction();
@@ -155,6 +155,29 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
       if (offerDTO.isEmpty()) {
+        throw new NotFoundException("Aucune offre");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return offerDTO;
+  }
+
+  /**
+   * Return the last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  @Override
+  public OfferDTO getLastOffer(int idObject) {
+    OfferDTO offerDTO;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getLastObjectOffer(idObject);
+      if (offerDTO == null) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
@@ -321,6 +344,29 @@ public class OfferUCCImpl implements OfferUCC {
     }
 
     return offerDTO;
+  }
+
+  /**
+   * Get a map of data about a member (nb of received object, nb of not colected objects,
+   * nb of given objects and nb of total offers).
+   *
+   * @param idReceiver the id of the member
+   * @return a map with all th datas.
+   */
+  @Override
+  public Map<String, Integer> getOffersCount(int idReceiver) {
+    try {
+      dalService.startTransaction();
+      Map<String, Integer> map = offerDAO.getOffersCount(idReceiver);
+      if (map == null) {
+        throw new NotFoundException("Aucune donnée");
+      }
+      dalService.commitTransaction();
+      return map;
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
   }
 
   /**

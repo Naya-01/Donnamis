@@ -42,6 +42,22 @@ public class InterestResource {
   private ObjectUCC objectUCC;
 
   /**
+   * Get notifications count.
+   *
+   * @param request data of the member.
+   * @return notification count
+   */
+  @GET
+  @Path("/notificationCount")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Integer getNotificationCount(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getOne");
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    return interestUCC.getNotificationCount(authenticatedUser.getMemberId());
+  }
+
+  /**
    * Get an interest, by the id of the interested member and the id of the object.
    *
    * @param idObject : id object of the interest.

@@ -1,5 +1,6 @@
 package be.vinci.pae.business.domain;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,6 +15,8 @@ public class RatingImpl implements RatingDTO {
   private String comment;
   @JsonView(Views.Public.class)
   private Integer idMember;
+  @JsonView(Views.Public.class)
+  private MemberDTO memberRater;
   @JsonView(Views.Public.class)
   private Integer idObject;
 
@@ -45,6 +48,16 @@ public class RatingImpl implements RatingDTO {
   @Override
   public void setIdMember(Integer idMember) {
     this.idMember = idMember;
+  }
+
+  @Override
+  public MemberDTO getMemberRater() {
+    return this.memberRater;
+  }
+
+  @Override
+  public void setMemberRater(MemberDTO memberRater) {
+    this.memberRater = memberRater;
   }
 
   @Override
