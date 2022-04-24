@@ -44,6 +44,7 @@ class InterestUCCImplTest {
   private int nonExistentId = 1000;
   private ObjectFactory objectFactory;
   private InterestFactory interestFactory;
+  private OfferFactory offerFactory;
 
   @BeforeEach
   void initAll() {
@@ -52,9 +53,6 @@ class InterestUCCImplTest {
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.interestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
-    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
-    this.objectDTO = objectFactory.getObjectDTO();
-    this.objectDTO.setIdObject(10);
 
     InterestFactory interestFactory = locator.getService(InterestFactory.class);
     this.interestDTO = interestFactory.getInterestDTO();
@@ -65,7 +63,10 @@ class InterestUCCImplTest {
     this.newInterestDTO = interestFactory.getInterestDTO();
     this.objectFactory = locator.getService(ObjectFactory.class);
     this.interestFactory = locator.getService(InterestFactory.class);
+    this.offerFactory = locator.getService(OfferFactory.class);
 
+    this.objectDTO = objectFactory.getObjectDTO();
+    this.objectDTO.setIdObject(10);
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
@@ -470,4 +471,21 @@ class InterestUCCImplTest {
   }
 
   //  ---------------------------- IS USER INTERESTED UCC  -------------------------------  //
+
+  @DisplayName("Test isUserInterested with a non existent interest")
+  @Test
+  public void testIsUserInterestedWithANonExistentInterest() {
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(2);
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setIdOffer(2);
+    Mockito.when(interestDAO.getOne(objectDTO.getIdObject(), offerDTO.getIdOffer()))
+        .thenReturn(null);
+    assertAll(
+        () -> assertFalse(
+            interestUCC.isUserInterested(objectDTO.getIdObject(), offerDTO.getIdOffer())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
