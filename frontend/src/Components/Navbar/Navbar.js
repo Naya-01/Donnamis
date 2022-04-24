@@ -111,8 +111,11 @@ const Navbar = async () => {
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">`
 
     //Notification
+
+    //TODO nombre de notif
+
     navbar += `
-              <li class="nav-item dropdown mx-5">
+             <li class="nav-item dropdown mx-5">
                         <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
                            <div class="button-dot">
                             <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
@@ -153,6 +156,7 @@ const Navbar = async () => {
         </div>
     </div>
 </nav>`;
+
     navbarWrapper.innerHTML = navbar;
 
     let notificationButton = document.getElementById("notificationButton");
@@ -170,6 +174,7 @@ const Navbar = async () => {
         if (!description) {
           description = "";
         }
+
         notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
                                 <div class="row">
@@ -199,7 +204,7 @@ const Navbar = async () => {
       notifications += `<li>
                         <div class="dropdown-item fs-5" href="#">
                           <div class="row">
-                            <button class="btn btn-lg btn-primary">
+                            <button id="allRead" class="btn btn-lg btn-primary">
                                 Tout marquer comme lu
                             </button>
                           </div>
@@ -207,6 +212,11 @@ const Navbar = async () => {
                       </li>`
 
       notificationContentUL.innerHTML = notifications;
+
+      let markAllReadBtn = document.getElementById("allRead");
+      markAllReadBtn.addEventListener("click", async e => {
+        await InterestLibrary.prototype.markAllNotificationShown();
+      });
 
       //TODO réparer la propagation
       let notifItems = document.querySelectorAll("#notif-items");

@@ -7,7 +7,7 @@ class InterestLibrary {
     let response;
     try {
       let options = {
-        method: "GET",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": getSessionObject("user").accessToken,
@@ -29,7 +29,7 @@ class InterestLibrary {
     let response;
     try {
       let options = {
-        method: "GET",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": getSessionObject("user").accessToken,
