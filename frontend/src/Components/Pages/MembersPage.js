@@ -6,7 +6,7 @@ import itemImage from "../../img/item.jpg"
 import OfferLibrary from "../../Domain/OfferLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
 import Notification from "../Module/Notification";
-import autocomplete from 'autocompleter';
+import autocomplete from "../Module/AutoComplete";
 
 /**
  * Render the Members page
@@ -20,28 +20,16 @@ const MembersPage = async () => {
 
   // Search members by enter
   const searchBar = document.getElementById("searchBar");
-  autocomplete({
-    minLength: 1,
-    input: searchBar,
-    fetch: async function (text, update) {
-      members = await MemberLibrary.prototype.getMemberBySearchAndStatus(text.toLowerCase(), "valid");
-      const tab = [];
-      if (members) {
-        for (const member of members) {
-          tab.push({
-            label: member.username,
-
-          });
-        }
-      }
-      update(tab);
-    },
-    onSelect: function(item) {
-      searchBar.value = item.label;
-    }
+  searchBar.addEventListener('keypress', async () => {
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.innerText.toLowerCase(), "valid");
+    let finalArray = [];
+    Array.prototype.push.apply(finalArray, members.map(m => m.username));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.commune));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.postcode));
+    autocomplete(searchBar, finalArray);
   });
 
-  searchBar.addEventListener("keypress", async (e) => {
+  searchBar.addEventListener("keyup", async (e) => {
     if (e.key === "Enter") {
       members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
       await baseMembersList(members);
@@ -54,7 +42,6 @@ const MembersPage = async () => {
     members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
     await baseMembersList(members);
   });
-
 }
 
 const baseMembersList = (members) => {
@@ -80,7 +67,7 @@ const baseMembersList = (members) => {
     } else {
       const buttonPromote = document.createElement("button");
       buttonPromote.id = "promote-" + member.memberId;
-      buttonPromote.className = "btn btn-lg btn-success mb-2";
+      buttonPromote.className = "btn btn-success mb-2";
       buttonPromote.type = "button";
       buttonPromote.innerText = "Promouvoir";
       buttonDiv.appendChild(buttonPromote);
@@ -88,8 +75,12 @@ const baseMembersList = (members) => {
 
 
     buttonDiv.innerHTML += `
-        <button id="offered-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets offerts</button>
-        <button id="received-object-${member.memberId}" class="btn btn-lg btn-primary mb-2" type="button">Objets reçus</button>
+        <button id="offered-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
+          Objets offerts
+        </button>
+        <button id="received-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
+          Objets reçus
+        </button>
       `;
 
     const offeredObjects = document.getElementById("offered-object-" + member.memberId);
@@ -101,11 +92,11 @@ const baseMembersList = (members) => {
     offeredObjects.addEventListener('click', async () => {
       cardForm.innerHTML = ``;
       if (isOfferedObjectsOpen) {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
       } else {
-        offeredObjects.className = "btn btn-lg btn-success mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-success mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
         const offers = await OfferLibrary.prototype.getOffers("", member.memberId.toLocaleString(), "", "")
         if (offers) {
           for (const offer of offers) {
@@ -113,7 +104,7 @@ const baseMembersList = (members) => {
             const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
             });
           }
         } else {
@@ -125,21 +116,22 @@ const baseMembersList = (members) => {
     });
 
     receivedObjects.addEventListener('click', async () => {
-      cardForm.innerHTML = ``;
+      cardForm.innerHTML = '';
       if (isReceivedObjectsOpen) {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-primary mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-primary mb-2";
       } else {
-        offeredObjects.className = "btn btn-lg btn-primary mb-2";
-        receivedObjects.className = "btn btn-lg btn-success mb-2";
+        offeredObjects.className = "btn btn-primary mb-2";
+        receivedObjects.className = "btn btn-success mb-2";
         const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
         if (offers) {
+          cardForm.innerHTML = `<h5 class="d-flex justify-content-start">${offers.length} offres</h5>`;
           for (const offer of offers) {
             ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "received");
             const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-received");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/myObjectPage", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
             });
           }
         } else {

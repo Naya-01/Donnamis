@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
+import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.RatingDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -13,6 +14,8 @@ public class RatingUCCImpl implements RatingUCC {
 
   @Inject
   private RatingDAO ratingDAO;
+  @Inject
+  private MemberDAO memberDAO;
   @Inject
   private InterestDAO interestDAO;
   @Inject
@@ -33,6 +36,7 @@ public class RatingUCCImpl implements RatingUCC {
       if (ratingDTO == null) {
         throw new NotFoundException("Note non trouvé");
       }
+      ratingDTO.setMemberRater(memberDAO.getOne(ratingDTO.getIdMember()));
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -61,6 +65,7 @@ public class RatingUCCImpl implements RatingUCC {
         throw new ForbiddenException("Ce membre n'a pas reçu cet objet.");
       }
       rating = ratingDAO.addOne(ratingDTO);
+      rating.setMemberRater(memberDAO.getOne(rating.getIdMember()));
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();

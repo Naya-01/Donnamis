@@ -3,7 +3,7 @@ import LoginPage from "../Pages/LoginPage";
 import Logout from "../Logout/Logout";
 import AddNewObjectPage from "../Pages/AddNewObjectPage";
 import Navbar from "../Navbar/Navbar";
-import MyObjectPage from "../Pages/MyObjectPage";
+import ObjectDetailsPage from "../Pages/ObjectDetailsPage";
 import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
 import AllObjectsPage from "../Pages/AllObjectsPage";
 import RegisterPage from "../Pages/RegisterPage";
@@ -27,7 +27,7 @@ const routes = {
   "/login": LoginPage,
   "/logout": Logout,
   "/register": RegisterPage,
-  "/myObjectPage": MyObjectPage,
+  "/objectDetails": ObjectDetailsPage,
   "/myObjectsPage": MyObjectsPage,
   "/members": MembersPage,
   "/assignedObjects": AssignedObjectsPage,

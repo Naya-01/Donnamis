@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "tcou",
-  "password": "rayan123",
+  "username": "bri",
+  "password": "Rad;293",
   "rememberMe": true
 }
 > {%
@@ -143,18 +143,6 @@ Authorization: {{access}}
   }
 }
 
-### Make an object with his offer
-POST {{baseUri}}/offers
-Content-Type: application/json
+###
+GET {{baseUri}}/offers/offersCount/10
 Authorization: {{access}}
-
-{
-  "timeSlot": "time slot test with move",
-  "object": {
-    "type": {
-      "idType": 0,
-      "typeName": "Jouets"
-    },
-    "description": "une petite pioche"
-  }
-}

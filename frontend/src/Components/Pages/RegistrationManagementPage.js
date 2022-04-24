@@ -2,6 +2,7 @@ import profilImage from "../../img/profil.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import SearchBar from "../Module/SearchBar";
 import managementList from "../Module/ManagementList";
+import autocomplete from "../Module/AutoComplete";
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';
@@ -20,6 +21,11 @@ const RegistrationManagementPage = async () => {
       members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, actualStatus);
       await baseMembersList(members);
     }
+    let finalArray = [];
+    Array.prototype.push.apply(finalArray, members.map(m => m.username));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.commune));
+    Array.prototype.push.apply(finalArray, members.map(m => m.address.postcode));
+    autocomplete(searchBar, finalArray);
   });
 
   // Search members by click

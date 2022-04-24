@@ -62,7 +62,6 @@ public interface OfferUCC {
    */
   List<OfferDTO> getGivenOffers(int idReceiver);
 
-
   /**
    * Cancel an Object.
    *
