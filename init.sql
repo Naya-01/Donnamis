@@ -63,10 +63,9 @@ CREATE TABLE donnamis.interests
     id_member         INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object         INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     phone_contact     BOOLEAN                                         NULL, -- change
-    send_notification     BOOLEAN                                         NULL, -- change
+    send_notification BOOLEAN                                         NOT NULL,
     be_called         BOOLEAN                                         NULL, -- change
     version           INTEGER                                         NULL,
-    send_notification BOOLEAN                                         NULL,
     PRIMARY KEY (id_object, id_member)
 );
 

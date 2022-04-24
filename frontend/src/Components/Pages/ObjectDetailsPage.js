@@ -213,6 +213,7 @@ const ObjectDetailsPage = async () => {
   // if this is not the object of the member connected
   else {
     // we get the member that gives the object
+    console.log(offer)
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
     // change buttons
