@@ -269,7 +269,7 @@ const Navbar = async () => {
           btnGoto.addEventListener("click", async e => {
             let lastOffer = await OfferLibrary.prototype.getLastOfferById(
                 interest.object.idObject);
-            RedirectWithParamsInUrl("/myObjectPage",
+            RedirectWithParamsInUrl("/objectDetails",
                 "?idOffer=" + lastOffer.idOffer);
           });
 
