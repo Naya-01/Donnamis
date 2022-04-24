@@ -7,6 +7,7 @@ import OfferLibrary from "../../Domain/OfferLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
 import Notification from "../Module/Notification";
 import autocomplete from "../Module/AutoComplete";
+import noImage from "../../img/noImage.png";
 
 /**
  * Render the Members page
@@ -110,7 +111,11 @@ const baseMembersList = async (members) => {
             member.memberId.toLocaleString(), "", "")
         if (offers) {
           for (const offer of offers) {
-            ManagementList(offer.idOffer, cardForm, itemImage,
+            let image = noImage;
+            if (offer.object.image) {
+              image = "/api/object/getPicture/" + offer.object.idObject;
+            }
+            ManagementList(offer.idOffer, cardForm, image,
                 offer.object.description, offer.timeSlot, "offered");
             const subCardDiv = document.getElementById(
                 "member-card-" + offer.idOffer + "-offered");
@@ -140,7 +145,11 @@ const baseMembersList = async (members) => {
             member.memberId);
         if (offers) {
           for (const offer of offers) {
-            ManagementList(offer.idOffer, cardForm, itemImage,
+            let image = noImage;
+            if (offer.object.image) {
+              image = "/api/object/getPicture/" + offer.object.idObject;
+            }
+            ManagementList(offer.idOffer, cardForm, image,
                 offer.object.description, offer.timeSlot, "received");
             const subCardDiv = document.getElementById(
                 "member-card-" + offer.idOffer + "-received");

@@ -44,9 +44,9 @@ public class OfferDAOImpl implements OfferDAO {
         + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "       ty.is_default, of.status "
         + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty, donnamis.members mb "
-        + "WHERE ob.id_object = of.id_object AND mb.id_member = ob.id_offeror AND ty.id_type = ob.id_type "
-        + "AND of.date = (SELECT max(of2.date) FROM donnamis.offers of2 "
-        + "WHERE of2.id_object = of.id_object ORDER BY of.date DESC)";
+        + "WHERE ob.id_object = of.id_object AND mb.id_member = ob.id_offeror "
+        + "AND ty.id_type = ob.id_type AND of.date = (SELECT max(of2.date) "
+        + "FROM donnamis.offers of2 WHERE of2.id_object = of.id_object ORDER BY of.date DESC)";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
@@ -397,7 +397,8 @@ public class OfferDAOImpl implements OfferDAO {
             resultSet.getString(12), resultSet.getInt(4),
             resultSet.getString(6), resultSet.getString(7),
             resultSet.getString(8), resultSet.getInt(5),
-            resultSet.getString(10), resultSet.getBoolean(11)));
+            resultSet.getString(10), resultSet.getBoolean(11),
+            resultSet.getInt(9)));
       }
       resultSet.close();
       return listOfferDTO;
@@ -416,7 +417,8 @@ public class OfferDAOImpl implements OfferDAO {
           resultSet.getString(12), resultSet.getInt(4),
           resultSet.getString(6), resultSet.getString(7),
           resultSet.getString(8), resultSet.getInt(5),
-          resultSet.getString(10), resultSet.getBoolean(11));
+          resultSet.getString(10), resultSet.getBoolean(11),
+          resultSet.getInt(9));
 
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -425,7 +427,7 @@ public class OfferDAOImpl implements OfferDAO {
 
   private OfferDTO getOfferWithTypeAndObject(int idOffer, LocalDate date, String timeSlot,
       String statusOffer, int idObject, String descriptionObject, String statusObject,
-      String imageObject, int idType, String typeName, boolean isTypeDefault) {
+      String imageObject, int idType, String typeName, boolean isTypeDefault, int idOfferor) {
 
     OfferDTO offerDTO = offerFactory.getOfferDTO();
     offerDTO.setIdOffer(idOffer);
@@ -439,7 +441,7 @@ public class OfferDAOImpl implements OfferDAO {
     typeDTO.setIsDefault(isTypeDefault);
 
     ObjectDTO objectDTO = objectDAO.getObject(idObject, descriptionObject, statusObject,
-        imageObject, idOffer);
+        imageObject, idOfferor);
     objectDTO.setType(typeDTO);
     offerDTO.setObject(objectDTO);
 
