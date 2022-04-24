@@ -212,16 +212,19 @@ public class InterestUCCImpl implements InterestUCC {
    */
   @Override
   public boolean isUserInterested(int idMember, int idObject) {
-    boolean isUserInterested;
+    InterestDTO userInterested;
     try {
       dalService.startTransaction();
-      isUserInterested = interestDAO.isUserInterested(idMember, idObject);
+      userInterested = interestDAO.getOne(idMember, idObject);
       dalService.commitTransaction();
+      if (userInterested == null) {
+        return false;
+      }
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return isUserInterested;
+    return true;
   }
 
   /**

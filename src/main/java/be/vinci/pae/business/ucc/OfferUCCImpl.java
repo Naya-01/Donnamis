@@ -347,8 +347,8 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th datas.
@@ -359,7 +359,7 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
       Map<String, Integer> map = offerDAO.getOffersCount(idReceiver);
       if (map == null) {
-        throw new NotFoundException("Aucune donnée");
+        throw new NotFoundException("Aucune donnée pour ce membre");
       }
       dalService.commitTransaction();
       return map;
