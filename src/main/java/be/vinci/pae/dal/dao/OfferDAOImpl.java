@@ -310,8 +310,8 @@ public class OfferDAOImpl implements OfferDAO {
   }
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th datas.
@@ -408,7 +408,7 @@ public class OfferDAOImpl implements OfferDAO {
 
   private OfferDTO getOfferWithPreparedStatement(PreparedStatement preparedStatement) {
     try (ResultSet resultSet = preparedStatement.executeQuery()) {
-      if (resultSet.next()) {
+      if (!resultSet.next()) {
         return null;
       }
       return getOfferWithTypeAndObject(resultSet.getInt(1),

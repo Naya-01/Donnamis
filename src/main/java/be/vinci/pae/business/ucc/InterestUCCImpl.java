@@ -94,8 +94,10 @@ public class InterestUCCImpl implements InterestUCC {
 
       OfferDTO offerDTO = offerDAO.getLastObjectOffer(interestDTO.getObject().getIdObject());
 
-      if (!offerDTO.getStatus().equals("interested") || !interestDTO.getObject().getStatus()
-          .equals("interested")) {
+      if ((!offerDTO.getStatus().equals("interested") || !interestDTO.getObject().getStatus()
+          .equals("interested")) && (!offerDTO.getStatus().equals("not_collected")
+          || !interestDTO.getObject().getStatus()
+          .equals("not_collected"))) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 
@@ -189,7 +191,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
-      
+
       if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }

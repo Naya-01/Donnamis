@@ -24,7 +24,8 @@ const dictionnary = new Map([
   ['available', 'Disponible'],
   ['assigned', 'En cours de donnation'],
   ['given', 'Donné'],
-  ['cancelled', 'Annulé']
+  ['cancelled', 'Annulé'],
+  ['not_collected', 'Non récupéré']
 ]);
 let idOffer;
 let idObject;
@@ -367,7 +368,8 @@ async function addOneInterest(e) {
  */
 function displayRating(current_rating) {
   let ratingDiv = document.getElementById("ratingDiv");
-  if (current_rating == null || current_rating.rating == null || current_rating.comment == null) {
+  if (current_rating == null || current_rating.rating == null
+      || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
@@ -375,10 +377,9 @@ function displayRating(current_rating) {
   } else {
     let displayRatingDiv = document.getElementById("displayRating");
     let profilPicture;
-    if(current_rating.memberRater.image === undefined){
+    if (current_rating.memberRater.image === undefined) {
       profilPicture = noImageProfile;
-    }
-    else{
+    } else {
       profilPicture = "/api/member/getPicture/" + current_rating.idMember;
     }
     displayRatingDiv.innerHTML += `

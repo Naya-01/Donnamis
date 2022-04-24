@@ -12,7 +12,7 @@ const notificationDictionnary = new Map([
   ['received', "Merci d'avoir récupérer l'objet !"],
   ['cancelled', "L'offre a été annulée"],
   ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
-  ['published', "Vous avez marquer un interet pour cette offre."]
+  ['published', "Vous avez marquer un interet pour cette offre."],
 ]);
 
 const colorDictionnary = new Map([

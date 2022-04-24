@@ -59,7 +59,7 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO getAssignedInterest(int idObject) {
     String query =
         "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification"
-            + "from donnamis.interests i WHERE i.id_object=? AND i.status=?";
+            + " from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -219,7 +219,7 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
-    String query = "SELECT id_object, id_member, availability_date, status "
+    String query = "SELECT id_object, id_member, availability_date, status, send_notification "
         + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
     List<InterestDTO> allInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -365,7 +365,7 @@ public class InterestDAOImpl implements InterestDAO {
 
     String query = "UPDATE donnamis.interests SET status = ? "
         + "WHERE id_object= ? AND id_member = ? RETURNING availability_date, status, id_member"
-        + ", id_object";
+        + ", id_object , send_notification";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 

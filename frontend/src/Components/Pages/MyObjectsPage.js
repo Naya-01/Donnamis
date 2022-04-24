@@ -130,7 +130,7 @@ const objectCards = async (searchPattern, type, status) => {
       viewAllInterestedMembers.addEventListener("click", async e => {
         let interests = await InterestLibrary.prototype.getAllInterests(
             offer.object.idObject);
-        if(interests === undefined){
+        if (interests === undefined) {
           interests = [];
         }
         var allInterests = `<div class="container">`
@@ -169,13 +169,12 @@ const objectCards = async (searchPattern, type, status) => {
                   <p class="fs-4">${username} ${phone}</p>
                   <span class="text-secondary fs-5">${availabilityDate}</span>
                 </div>`
-          if (offer.status === "available" || offer.status === "interested") {
-            allInterests += ` 
+
+          allInterests += ` 
                 <div class="col-3 mt-2">
                   <button class="btn btn-lg btn-primary" id="${"interest-"
-            + interest.member.memberId}">Choisir</button>
+          + interest.member.memberId}">Choisir</button>
                 </div>`
-          }
 
           allInterests += `</div>`
         }
