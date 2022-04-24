@@ -130,7 +130,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
-      if(interestDTOList.isEmpty()){
+      if (interestDTOList.isEmpty()) {
         return null;
       }
       return interestDTOList;
@@ -138,7 +138,6 @@ public class InterestDAOImpl implements InterestDAO {
       throw new FatalException(e);
     }
   }
-
 
 
   /**
@@ -302,6 +301,33 @@ public class InterestDAOImpl implements InterestDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+  }
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  @Override
+
+  public Integer getNotificationCount(Integer idMember) {
+    String query = "SELECT count(id_member) "
+        + "FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
+    Integer notificationCount;
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idMember);
+      preparedStatement.setBoolean(2, true);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      resultSet.next();
+      notificationCount = resultSet.getInt(1);
+      resultSet.close();
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+
+    return notificationCount;
   }
 
 

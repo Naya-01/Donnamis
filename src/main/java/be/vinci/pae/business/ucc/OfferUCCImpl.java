@@ -166,6 +166,29 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
+   * Return the last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  @Override
+  public OfferDTO getLastOffer(int idObject) {
+    OfferDTO offerDTO;
+    try {
+      dalService.startTransaction();
+      offerDTO = offerDAO.getLastObjectOffer(idObject);
+      if (offerDTO == null) {
+        throw new NotFoundException("Aucune offre");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return offerDTO;
+  }
+
+  /**
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver

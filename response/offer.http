@@ -64,6 +64,10 @@ Content-Type: application/json
 GET {{baseUri}}/offers/getById/5
 Authorization: {{refresh}}
 
+### Get last offer with idObject
+GET {{baseUri}}/offers/last/21
+Authorization: {{refresh}}
+
 ### get all offer
 GET {{baseUri}}/offers?search-pattern=samEdi&self=true
 Authorization: {{refresh}}

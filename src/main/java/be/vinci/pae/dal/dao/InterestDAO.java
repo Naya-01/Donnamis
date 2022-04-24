@@ -22,6 +22,14 @@ public interface InterestDAO {
   List<InterestDTO> markAllNotificationsShown(Integer idMember);
 
   /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  Integer getNotificationCount(Integer idMember);
+
+  /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *

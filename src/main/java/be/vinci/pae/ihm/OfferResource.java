@@ -32,6 +32,22 @@ public class OfferResource {
   @Inject
   private OfferUCC offerUcc;
 
+
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  @GET
+  @Path("/last/{idObject}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public OfferDTO getLastOffer(@PathParam("idObject") Integer idObject) {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getLastOffer");
+    return offerUcc.getLastOffer(idObject);
+  }
+
   /**
    * Get all offers.
    *
