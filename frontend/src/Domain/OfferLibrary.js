@@ -117,6 +117,25 @@ class OfferLibrary {
     return allLastOffers;
   }
 
+  async getCountOffers(idMember) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/offers/countOffers/" + idMember, options);
+    } catch (err) {
+      console.log(err);
+    }
+    if (response.status === 200) {
+      return await response.json();
+    }
+    return null;
+  }
+
   async getOffers(searchPattern, self, type, objStatus) {
     try {
       let options = {

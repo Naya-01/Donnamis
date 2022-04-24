@@ -6,6 +6,7 @@ import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.UnauthorizedException;
+import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -21,6 +22,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -236,13 +238,27 @@ public class OfferResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public OfferDTO giveOffer(OfferDTO offerDTO) {
-
     Logger.getLogger("Log").log(Level.INFO, "OfferResource giveOffer");
     if (offerDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }
-
     return offerUcc.giveOffer(offerDTO);
+  }
+
+  /**
+   * Get a map of data about a member (nb of received object, nb of not colected objects,
+   * nb of given objects and nb of total offers).
+   *
+   * @param idReceiver the id of the member
+   * @return a map with all th data's.
+   */
+  @GET
+  @Path("/countOffers/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Admin
+  public Map<String, Integer> getOffersCount(@PathParam("id") int idReceiver) {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getOffersCount");
+    return offerUcc.getOffersCount(idReceiver);
   }
 
 }

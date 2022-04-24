@@ -16,7 +16,7 @@ const MembersPage = async () => {
 
   let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("","valid");
 
-  baseMembersList(members);
+  await baseMembersList(members);
 
   // Search members by enter
   const searchBar = document.getElementById("searchBar");
@@ -44,7 +44,7 @@ const MembersPage = async () => {
   });
 }
 
-const baseMembersList = (members) => {
+const baseMembersList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
@@ -73,19 +73,28 @@ const baseMembersList = (members) => {
       buttonDiv.appendChild(buttonPromote);
     }
 
+    const countdata = await OfferLibrary.prototype.getCountOffers(member.memberId);
+
+    const informationMember = document.getElementById("information-object-" + member.memberId);
+    informationMember.innerHTML +=
+        `<p class="text-secondary fs-5">
+          ${countdata.nbNotCollected} offre(s) non-cherchée(s) | ${countdata.nbGiven} offre(s) donnée(s)
+          </p>`;
 
     buttonDiv.innerHTML += `
         <button id="offered-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
-          Objets offerts
+          Objets offerts (${countdata.nbOffers})
         </button>
         <button id="received-object-${member.memberId}" class="btn btn-primary mb-2" type="button">
-          Objets reçus
+          Objets reçus (${countdata.nbReceived})
         </button>
       `;
 
-    const offeredObjects = document.getElementById("offered-object-" + member.memberId);
+    const offeredObjects = document.getElementById(
+        "offered-object-" + member.memberId);
     let isOfferedObjectsOpen = false;
-    const receivedObjects = document.getElementById("received-object-" + member.memberId);
+    const receivedObjects = document.getElementById(
+        "received-object-" + member.memberId);
     let isReceivedObjectsOpen = false;
     const cardForm = document.getElementById("card-form-" + member.memberId);
 
@@ -97,14 +106,18 @@ const baseMembersList = (members) => {
       } else {
         offeredObjects.className = "btn btn-success mb-2";
         receivedObjects.className = "btn btn-primary mb-2";
-        const offers = await OfferLibrary.prototype.getOffers("", member.memberId.toLocaleString(), "", "")
+        const offers = await OfferLibrary.prototype.getOffers("",
+            member.memberId.toLocaleString(), "", "")
         if (offers) {
           for (const offer of offers) {
-            ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "offered");
-            const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
+            ManagementList(offer.idOffer, cardForm, itemImage,
+                offer.object.description, offer.timeSlot, "offered");
+            const subCardDiv = document.getElementById(
+                "member-card-" + offer.idOffer + "-offered");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails",
+                  "?idOffer=" + offer.idOffer);
             });
           }
         } else {
@@ -123,15 +136,18 @@ const baseMembersList = (members) => {
       } else {
         offeredObjects.className = "btn btn-primary mb-2";
         receivedObjects.className = "btn btn-success mb-2";
-        const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
+        const offers = await OfferLibrary.prototype.getGivenOffers(
+            member.memberId);
         if (offers) {
-          cardForm.innerHTML = `<h5 class="d-flex justify-content-start">${offers.length} offres</h5>`;
           for (const offer of offers) {
-            ManagementList(offer.idOffer, cardForm, itemImage, offer.object.description, offer.timeSlot, "received");
-            const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-received");
+            ManagementList(offer.idOffer, cardForm, itemImage,
+                offer.object.description, offer.timeSlot, "received");
+            const subCardDiv = document.getElementById(
+                "member-card-" + offer.idOffer + "-received");
             subCardDiv.className += " clickable";
             subCardDiv.addEventListener('click', () => {
-              RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
+              RedirectWithParamsInUrl("/objectDetails",
+                  "?idOffer=" + offer.idOffer);
             });
           }
         } else {
@@ -142,17 +158,20 @@ const baseMembersList = (members) => {
       isOfferedObjectsOpen = false;
     });
 
-    const promoteMemberButton = document.getElementById("promote-" + member.memberId);
+    const promoteMemberButton = document.getElementById(
+        "promote-" + member.memberId);
     if (promoteMemberButton) {
-          promoteMemberButton.addEventListener('click', async () => {
-        await MemberLibrary.prototype.updateStatus("", member.memberId, "", "administrator");
-          Notification.prototype.getNotification().fire({
-            icon: 'success',
-            title: "Utilisateur promu !"
-          });
-          const adminSign = document.getElementById("admin-div-" + member.memberId);
-          adminSign.innerText = "Administrateur";
-          promoteMemberButton.parentNode.removeChild(promoteMemberButton);
+      promoteMemberButton.addEventListener('click', async () => {
+        await MemberLibrary.prototype.updateStatus("", member.memberId, "",
+            "administrator");
+        Notification.prototype.getNotification().fire({
+          icon: 'success',
+          title: "Utilisateur promu !"
+        });
+        const adminSign = document.getElementById(
+            "admin-div-" + member.memberId);
+        adminSign.innerText = "Administrateur";
+        promoteMemberButton.parentNode.removeChild(promoteMemberButton);
       });
     }
 
