@@ -490,4 +490,26 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test isUserInterested with an existent interest")
+  @Test
+  public void testIsUserInterestedWithAnExistentInterest() {
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(2);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIdMember(memberDTO.getMemberId());
+    interestDTO.setObject(objectDTO);
+
+    Mockito.when(interestDAO.getOne(memberDTO.getMemberId(), objectDTO.getIdObject()))
+        .thenReturn(interestDTO);
+    assertAll(
+        () -> assertTrue(
+            interestUCC.isUserInterested(memberDTO.getMemberId(), objectDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
