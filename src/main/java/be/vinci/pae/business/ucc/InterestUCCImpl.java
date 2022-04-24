@@ -136,7 +136,7 @@ public class InterestUCCImpl implements InterestUCC {
    * @return the number of all interests
    */
   @Override
-  public int getInterestedCount(int idObject) {
+  public Integer getInterestedCount(Integer idObject) {
     int interests;
     try {
       dalService.startTransaction();

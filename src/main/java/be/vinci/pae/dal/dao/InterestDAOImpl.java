@@ -179,7 +179,7 @@ public class InterestDAOImpl implements InterestDAO {
     return getnbInterests(idObject, query);
   }
 
-  private int getnbInterests(int idObject, String query) {
+  private Integer getnbInterests(Integer idObject, String query) {
     int nbInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -203,7 +203,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @return the number of all interests
    */
   @Override
-  public int getAllPublishedCount(int idObject) {
+  public Integer getAllPublishedCount(Integer idObject) {
 
     String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
         + "WHERE i.id_object = ? AND i.status = 'published'";

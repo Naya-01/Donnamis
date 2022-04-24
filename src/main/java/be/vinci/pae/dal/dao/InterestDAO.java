@@ -69,7 +69,7 @@ public interface InterestDAO {
    * @param idObject the object we want to retrieve the interests
    * @return the number of all interests
    */
-  int getAllPublishedCount(int idObject);
+  Integer getAllPublishedCount(Integer idObject);
 
   /**
    * Get a list of "published" interest in an id object.
