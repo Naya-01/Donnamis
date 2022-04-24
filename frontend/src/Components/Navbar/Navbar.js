@@ -166,16 +166,16 @@ const Navbar = async () => {
       let notifications = ``;
 
       let allNotificationsFetch = await InterestLibrary.prototype.getAllNotifications();
+      if (allNotificationsFetch.length !== 0) {
+        for (const interest of allNotificationsFetch) {
+          let memberId = interest.member.memberId;
+          let objectId = interest.object.idObject;
+          let description = interest.object.description;
+          if (!description) {
+            description = "";
+          }
 
-      for (const interest of allNotificationsFetch) {
-        let memberId = interest.member.memberId;
-        let objectId = interest.object.idObject;
-        let description = interest.object.description;
-        if (!description) {
-          description = "";
-        }
-
-        notifications += `<li>
+          notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
                                 <div class="row">
                                     <div class="fs-5">
@@ -183,9 +183,9 @@ const Navbar = async () => {
                                       <span>${description}</span>
                                     </div>
                                     <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
-            interest.status)}">
+              interest.status)}">
                                       <span>${notificationDictionnary.get(
-            interest.status)}</span>
+              interest.status)}</span>
                                       <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
                                       Marquer comme lu
                                       </button>
@@ -199,9 +199,9 @@ const Navbar = async () => {
                             <li>
                                 <hr class="dropdown-divider">
                             </li>`;
-      }
+        }
 
-      notifications += `<li>
+        notifications += `<li>
                         <div class="dropdown-item fs-5" href="#">
                           <div class="row">
                             <button id="allRead" class="btn btn-lg btn-primary">
@@ -211,38 +211,51 @@ const Navbar = async () => {
                         </div>
                       </li>`
 
-      notificationContentUL.innerHTML = notifications;
+        notificationContentUL.innerHTML = notifications;
 
-      let markAllReadBtn = document.getElementById("allRead");
-      markAllReadBtn.addEventListener("click", async e => {
-        await InterestLibrary.prototype.markAllNotificationShown();
-      });
-
-      //TODO réparer la propagation
-      let notifItems = document.querySelectorAll("#notif-items");
-      for (const item of notifItems) {
-        item.addEventListener("click", event.stopPropagation);
-      }
-
-      for (const interest of allNotificationsFetch) {
-        let btnShown = document.getElementById(
-            "shown-" + interest.member.memberId + "-"
-            + interest.object.idObject);
-
-        //TODO à relier avec le backend
-        btnShown.addEventListener("click", e => {
-
+        let markAllReadBtn = document.getElementById("allRead");
+        markAllReadBtn.addEventListener("click", async e => {
+          await InterestLibrary.prototype.markAllNotificationShown();
         });
 
-        let btnGoto = document.getElementById(
-            "goto-" + interest.member.memberId + "-"
-            + interest.object.idObject);
+        //TODO réparer la propagation
+        let notifItems = document.querySelectorAll("#notif-items");
+        for (const item of notifItems) {
+          item.addEventListener("click", event.stopPropagation);
+        }
 
-        //TODO à relier avec le backend
-        btnGoto.addEventListener("click", e => {
+        for (const interest of allNotificationsFetch) {
+          let btnShown = document.getElementById(
+              "shown-" + interest.member.memberId + "-"
+              + interest.object.idObject);
 
-        });
+          //TODO à relier avec le backend
+          btnShown.addEventListener("click", e => {
 
+          });
+
+          let btnGoto = document.getElementById(
+              "goto-" + interest.member.memberId + "-"
+              + interest.object.idObject);
+
+          //TODO à relier avec le backend
+          btnGoto.addEventListener("click", e => {
+
+          });
+
+        }
+      } else {
+        notifications += `<li>
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
+                                <div class="row">
+                                    <div class="fs-5 text-warning">
+                                      <span>Aucune notifications pour le moment...</span>
+                                    </div>
+                                </div>
+                              </div>
+                            </li> `
+
+        notificationContentUL.innerHTML = notifications;
       }
 
     })

@@ -65,6 +65,8 @@ class InterestLibrary {
     let allInterests;
     if (response.status === 200) {
       allInterests = await response.json();
+    } else {
+      allInterests = [];
     }
     return allInterests;
   }
