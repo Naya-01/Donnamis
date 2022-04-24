@@ -1,6 +1,35 @@
 import {getSessionObject} from "../utils/session";
 
 class OfferLibrary {
+
+  /**
+   * Get last offer of an object.
+   *
+   * @param id the id of the offer
+   * @returns {Promise<*>} the offer in json and the status
+   */
+  async getLastOfferById(id) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/offers/last/" + id, options);
+    } catch (err) {
+      console.log(err);
+    }
+    let current_offer;
+    if (response.status === 200) {
+      current_offer = await response.json();
+    }
+
+    return current_offer;
+  }
+
   /**
    * Get an offer by its id.
    * @param id the id of the offer
@@ -28,7 +57,7 @@ class OfferLibrary {
     return current_offer;
   }
 
-  async addOffer(timeSlot,idObject) {
+  async addOffer(timeSlot, idObject) {
     let response;
     try {
       let options = {
@@ -98,7 +127,8 @@ class OfferLibrary {
    * @param status the status of the object
    * @returns {Promise<*>} the offer in json
    */
-  async updateOffer(id, timeSlot, description, idType, statusOffer, statusObject) {
+  async updateOffer(id, timeSlot, description, idType, statusOffer,
+      statusObject) {
     let response;
     try {
       let options = {
@@ -160,7 +190,7 @@ class OfferLibrary {
         },
       };
       let query = "/api/offers?search-pattern=" + searchPattern + "&type="
-          + type+"&status="+objStatus;
+          + type + "&status=" + objStatus;
       if (self) {
         query += "&self=" + self;
       }
@@ -250,7 +280,6 @@ class OfferLibrary {
       console.log(err);
     }
   }
-
 
 }
 

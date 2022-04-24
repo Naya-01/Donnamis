@@ -1,8 +1,11 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
+import noImage from "../../img/noImage.png"
 import notificationImage from "../../img/notification.png"
 import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
+import {RedirectWithParamsInUrl} from "../Router/Router";
+import OfferLibrary from "../../Domain/OfferLibrary";
 
 const notificationDictionnary = new Map([
   ['assigned', "Vous avez été selectionné !"],
@@ -34,7 +37,6 @@ const Navbar = async () => {
     let user = await memberLibraryModal.getUserByHisToken();
     username = user.username;
     user_role = user.role;
-    console.log(user)
     if (user.image) {
       image = "/api/member/getPicture/" + user.memberId
     }
@@ -89,9 +91,8 @@ const Navbar = async () => {
                 <li class="nav-item">
                     <a class="nav-link fs-5 " data-uri="/objects" href="#">Offres</a>
                 </li>
-                <li class="nav-item button-dot">
+                <li class="nav-item">
                     <a class="nav-link fs-5" data-uri="/assignedObjects" href="#">Objets attribués</a>
-<!--                    <span class="dot">5</span>-->
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes offres</a>
@@ -112,14 +113,14 @@ const Navbar = async () => {
 
     //Notification
 
-    //TODO nombre de notif
+    let notificationCount = await InterestLibrary.prototype.getInterestCount();
 
-    navbar += `
+    if (notificationCount === 0) {
+      navbar += `
              <li class="nav-item dropdown mx-5">
                         <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
-                           <div class="button-dot">
+                           <div>
                             <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
-                            <span class="dot">2</span>
                            </div>
                         </a>
                         <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
@@ -127,6 +128,21 @@ const Navbar = async () => {
                         </ul>
                     </li>
     `
+    } else {
+      navbar += `
+             <li class="nav-item dropdown mx-5">
+                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                           <div id="button-dot">
+                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                            <span id="dot">${notificationCount}</span>
+                           </div>
+                        </a>
+                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
+                           
+                        </ul>
+                    </li>
+    `
+    }
 
     navbar += `<li class="nav-item m-auto">
                         <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
@@ -171,15 +187,19 @@ const Navbar = async () => {
           let memberId = interest.member.memberId;
           let objectId = interest.object.idObject;
           let description = interest.object.description;
-          if (!description) {
-            description = "";
+          let notificationPicture;
+          if (interest.object.image) {
+            notificationPicture = "/api/object/getPicture/"
+                + interest.object.idObject
+          } else {
+            notificationPicture = noImage;
           }
 
           notifications += `<li>
-                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
                                 <div class="row">
                                     <div class="fs-5">
-                                      <img src="${profilImage}" alt="objectPicture">
+                                      <img src="${notificationPicture}" class="notificationPicture" alt="objectPicture">
                                       <span>${description}</span>
                                     </div>
                                     <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
@@ -187,18 +207,16 @@ const Navbar = async () => {
                                       <span>${notificationDictionnary.get(
               interest.status)}</span>
                                       <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
-                                      Marquer comme lu
+                                        Marquer comme lu
                                       </button>
                                       <button class="btn btn-warning" id="goto-${memberId}-${objectId}">
-                                      Voir l'offre
+                                        Voir l'offre
                                       </button>
                                     </div>
                                 </div>
                               </div>
                             </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>`;
+                            `;
         }
 
         notifications += `<li>
@@ -218,29 +236,39 @@ const Navbar = async () => {
           await InterestLibrary.prototype.markAllNotificationShown();
         });
 
-        //TODO réparer la propagation
-        let notifItems = document.querySelectorAll("#notif-items");
+        let notifItems = document.getElementsByClassName("notif-items");
         for (const item of notifItems) {
-          item.addEventListener("click", event.stopPropagation);
+          item.addEventListener("click", e => {
+            event.stopPropagation();
+          });
         }
 
         for (const interest of allNotificationsFetch) {
+          let divNotification = document.getElementById(
+              "notification-" + interest.member.memberId + "-"
+              + interest.object.idObject);
+
           let btnShown = document.getElementById(
               "shown-" + interest.member.memberId + "-"
               + interest.object.idObject);
 
-          //TODO à relier avec le backend
-          btnShown.addEventListener("click", e => {
-
+          btnShown.addEventListener("click", async e => {
+            divNotification.remove();
+            notificationCount--;
+            document.getElementById("dot").innerText = notificationCount;
+            await InterestLibrary.prototype.markNotificationShown(
+                interest.object.idObject);
           });
 
           let btnGoto = document.getElementById(
               "goto-" + interest.member.memberId + "-"
               + interest.object.idObject);
 
-          //TODO à relier avec le backend
-          btnGoto.addEventListener("click", e => {
-
+          btnGoto.addEventListener("click", async e => {
+            let lastOffer = await OfferLibrary.prototype.getLastOfferById(
+                interest.object.idObject);
+            RedirectWithParamsInUrl("/myObjectPage",
+                "?idOffer=" + lastOffer.idOffer);
           });
 
         }

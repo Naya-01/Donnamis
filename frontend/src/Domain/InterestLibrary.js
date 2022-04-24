@@ -3,6 +3,28 @@ import Notification from "../Components/Module/Notification";
 
 class InterestLibrary {
 
+  async getInterestCount() {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest//notificationCount",
+          options);
+    } catch (err) {
+      console.log(err);
+    }
+    let notificationCount;
+    if (response.status === 200) {
+      notificationCount = await response.json();
+    }
+    return notificationCount;
+  }
+
   async markNotificationShown(idObject) {
     let response;
     try {

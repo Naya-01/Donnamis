@@ -1,12 +1,12 @@
 
-.button-dot {
+#button-dot {
   color: white;
   display: inline-block;
   position: relative;
   padding: 2px 5px;
 }
 
-.dot {
+#dot {
   background-color: #fa3e3e;
   border-radius: 33px 33px;
   color: white;
@@ -40,6 +40,11 @@
   border: solid black 2px;
   background-color: white;
   color: black;
+}
+
+.notificationPicture {
+  width: 55px;
+  height: 55px;
 }
 
 .vertical-text {
