@@ -39,17 +39,17 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public List<OfferDTO> getAll(String searchPattern, int idMember, String type,
       String objectStatus) {
-    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object,\n"
-        + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name,\n"
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
+        + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "       ty.is_default, of.status "
-        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty\n"
-        + "WHERE ob.id_object = of.id_object AND ty.id_type = ob.id_type AND of.date = "
-        + "(SELECT max(of2.date) FROM donnamis.offers of2 WHERE of2.id_object = of.id_object\n"
-        + "      ORDER BY of.date DESC) ";
+        + "FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty, donnamis.members mb "
+        + "WHERE ob.id_object = of.id_object AND mb.id_member = ob.id_offeror AND ty.id_type = ob.id_type "
+        + "AND of.date = (SELECT max(of2.date) FROM donnamis.offers of2 "
+        + "WHERE of2.id_object = of.id_object ORDER BY of.date DESC)";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       // Search /!\ nom de l'offreur, type
-      query += "AND (LOWER(ob.status) LIKE ? OR LOWER(of.time_slot) LIKE ?"
+      query += "AND (LOWER(mb.username) LIKE ? OR LOWER(of.time_slot) LIKE ?"
           + " OR LOWER(ob.description) LIKE ?) ";
     }
     if (type != null && !type.isEmpty()) {
