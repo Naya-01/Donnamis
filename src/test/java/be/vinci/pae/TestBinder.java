@@ -10,6 +10,8 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.ObjectFactoryImpl;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.OfferFactoryImpl;
+import be.vinci.pae.business.factories.RatingFactory;
+import be.vinci.pae.business.factories.RatingFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
 import be.vinci.pae.business.ucc.AddressUCC;
@@ -22,6 +24,8 @@ import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.business.ucc.ObjectUCCImpl;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.business.ucc.OfferUCCImpl;
+import be.vinci.pae.business.ucc.RatingUCC;
+import be.vinci.pae.business.ucc.RatingUCCImpl;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.business.ucc.TypeUCCImpl;
 import be.vinci.pae.dal.dao.AddressDAO;
@@ -34,6 +38,8 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.ObjectDAOImpl;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.OfferDAOImpl;
+import be.vinci.pae.dal.dao.RatingDAO;
+import be.vinci.pae.dal.dao.RatingDAOImpl;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.dao.TypeDAOImpl;
 import be.vinci.pae.dal.services.DALService;
@@ -55,6 +61,7 @@ public class TestBinder extends AbstractBinder {
     bind(MemberFactoryImpl.class).to(MemberFactory.class).in(Singleton.class);
     bind(ObjectFactoryImpl.class).to(ObjectFactory.class).in(Singleton.class);
     bind(OfferFactoryImpl.class).to(OfferFactory.class).in(Singleton.class);
+    bind(RatingFactoryImpl.class).to(RatingFactory.class).in(Singleton.class);
 
     bind(Mockito.mock(DALServiceImpl.class)).to(DALService.class);
 
@@ -64,6 +71,7 @@ public class TestBinder extends AbstractBinder {
     bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
     bind(OfferUCCImpl.class).to(OfferUCC.class).in(Singleton.class);
     bind(AddressUCCImpl.class).to(AddressUCC.class).in(Singleton.class);
+    bind(RatingUCCImpl.class).to(RatingUCC.class).in(Singleton.class);
 
     bind(Mockito.mock(AddressDAOImpl.class)).to(AddressDAO.class);
     bind(Mockito.mock(TypeDAOImpl.class)).to(TypeDAO.class);
@@ -71,5 +79,6 @@ public class TestBinder extends AbstractBinder {
     bind(Mockito.mock(InterestDAOImpl.class)).to(InterestDAO.class);
     bind(Mockito.mock(ObjectDAOImpl.class)).to(ObjectDAO.class);
     bind(Mockito.mock(OfferDAOImpl.class)).to(OfferDAO.class);
+    bind(Mockito.mock(RatingDAOImpl.class)).to(RatingDAO.class);
   }
 }

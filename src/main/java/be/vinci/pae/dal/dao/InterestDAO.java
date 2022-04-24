@@ -6,6 +6,30 @@ import java.util.List;
 public interface InterestDAO {
 
   /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  List<InterestDTO> getAllNotifications(int idMember);
+
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  List<InterestDTO> markAllNotificationsShown(Integer idMember);
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  Integer getNotificationCount(Integer idMember);
+
+  /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
    * object.
    *
@@ -14,6 +38,14 @@ public interface InterestDAO {
    * @return the interest.
    */
   InterestDTO getOne(int idObject, int idMember);
+
+  /**
+   * Update the notification field to know if we have to send one.
+   *
+   * @param interestDTO with the notification attribute.
+   * @return the interest updated.
+   */
+  InterestDTO updateNotification(InterestDTO interestDTO);
 
   /**
    * Get an assign interest.
@@ -32,6 +64,14 @@ public interface InterestDAO {
   InterestDTO addOne(InterestDTO item);
 
   /**
+   * Get the number of all interests.
+   *
+   * @param idObject the object we want to retrieve the interests
+   * @return the number of all interests
+   */
+  Integer getAllPublishedCount(Integer idObject);
+
+  /**
    * Get a list of "published" interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
@@ -40,12 +80,21 @@ public interface InterestDAO {
   List<InterestDTO> getAllPublished(int idObject);
 
   /**
-   * Get a list of interest in an id object.
+   * Check if a member is interested by an object.
+   *
+   * @param idMember the id of the member
+   * @param idObject the id of the object
+   * @return true if he's interested false if he's not
+   */
+  boolean isUserInterested(int idMember, int idObject);
+
+  /**
+   * Get a count of interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
-   * @return a list of interest, by an id object
+   * @return a count of interest, by an id object
    */
-  List<InterestDTO> getAll(int idObject);
+  int getAllCount(int idObject);
 
   /**
    * Update the status of an interest.

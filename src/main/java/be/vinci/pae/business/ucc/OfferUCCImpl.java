@@ -3,9 +3,11 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
@@ -22,6 +24,8 @@ public class OfferUCCImpl implements OfferUCC {
   private DALService dalService;
   @Inject
   private InterestDAO interestDAO;
+  @Inject
+  private TypeDAO typeDAO;
 
   /**
    * Get the last six offers posted.
@@ -89,10 +93,9 @@ public class OfferUCCImpl implements OfferUCC {
             + "en créer de nouveau");
       }
 
+      int nbInterests = interestDAO.getAllCount(offerDTO.getObject().getIdObject());
 
-      List<InterestDTO> interestDTOList = interestDAO.getAll(offerDTO.getObject().getIdObject());
-
-      if (interestDTOList.size() < 1) {
+      if (nbInterests < 1) {
         offerDTO.getObject().setStatus("available"); // object
         offerDTO.setStatus("available"); // offer
       } else {
@@ -162,18 +165,18 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
-   * Get all offers received by a member.
+   * Return the last offer of an object.
    *
-   * @param idReceiver the id of the receiver
-   * @return a list of offerDTO
+   * @param idObject to search.
+   * @return last offer.
    */
   @Override
-  public List<OfferDTO> getGivenOffers(int idReceiver) {
-    List<OfferDTO> offerDTO;
+  public OfferDTO getLastOffer(int idObject) {
+    OfferDTO offerDTO;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getAllGivenOffers(idReceiver);
-      if (offerDTO.isEmpty()) {
+      offerDTO = offerDAO.getLastObjectOffer(idObject);
+      if (offerDTO == null) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
@@ -182,6 +185,29 @@ public class OfferUCCImpl implements OfferUCC {
       throw e;
     }
     return offerDTO;
+  }
+
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  @Override
+  public List<OfferDTO> getGivenOffers(int idReceiver) {
+    List<OfferDTO> givenOffers;
+    try {
+      dalService.startTransaction();
+      givenOffers = offerDAO.getAllGivenOffers(idReceiver);
+      if (givenOffers.isEmpty()) {
+        throw new NotFoundException("Aucune offre");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return givenOffers;
   }
 
 
@@ -209,6 +235,10 @@ public class OfferUCCImpl implements OfferUCC {
           .getAssignedInterest(offerDTO.getObject().getIdObject());
 
       if (interestDTO != null) {
+        //Send notification
+        interestDTO.setIsNotificated(true);
+        interestDAO.updateNotification(interestDTO);
+
         interestDTO.setStatus("published");
         interestDAO.updateStatus(interestDTO);
       }
@@ -234,15 +264,21 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("Impossible de marquer en non collecté");
-      }
-
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
-
       if (interestDTO == null) {
-        throw new ForbiddenException("Aucune offre n'a d'offre attribué");
+        throw new NotFoundException("aucun membre n'a été assigner");
       }
+
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException(
+            "aucune offre attribuée n'existe pour que l'objet puisse être non collecté");
+      }
+
+      //Send notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       interestDTO.setStatus("not_collected");
       interestDAO.updateStatus(interestDTO);
@@ -279,15 +315,16 @@ public class OfferUCCImpl implements OfferUCC {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      if (!interestDTO.getObject().getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucun objet n'est assigné pour le donner");
-      }
-
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucune offre n'est assigné pour le donner");
+        throw new ForbiddenException(
+            "aucune offre attribuée n'existe pour que l'objet puisse être donné");
       }
+
+      //Send notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       interestDTO.setStatus("received");
       offerDTO.getObject().setStatus("given");
@@ -306,6 +343,51 @@ public class OfferUCCImpl implements OfferUCC {
     }
 
     return offerDTO;
+  }
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain id object & offerDTO information
+   * @return offer
+   */
+  @Override
+  public OfferDTO addObject(OfferDTO offerDTO) {
+    OfferDTO offer;
+    try {
+      dalService.startTransaction();
+      setCorrectType(offerDTO.getObject());
+      ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
+      offerDTO.setObject(objectDTO);
+      offerDTO.setStatus("available");
+      offer = offerDAO.addOne(offerDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return offer;
+  }
+
+  /**
+   * Verify the type and set it.
+   *
+   * @param objectDTO the offer that has an object that has a type.
+   */
+  private void setCorrectType(ObjectDTO objectDTO) {
+    TypeDTO typeDTO;
+    if (objectDTO.getType().getTypeName() != null && !objectDTO.getType()
+        .getTypeName().isBlank()) {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getTypeName());
+
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(objectDTO.getType().getTypeName());
+      }
+    } else {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getIdType());
+    }
+    objectDTO.setType(typeDTO);
   }
 
 }

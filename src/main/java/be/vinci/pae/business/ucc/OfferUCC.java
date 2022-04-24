@@ -47,6 +47,14 @@ public interface OfferUCC {
   List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus);
 
   /**
+   * Return the last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  OfferDTO getLastOffer(int idObject);
+
+  /**
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
@@ -78,4 +86,12 @@ public interface OfferUCC {
    * @return an object
    */
   OfferDTO giveOffer(OfferDTO offerDTO);
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain id object & offerDTO information
+   * @return offer
+   */
+  OfferDTO addObject(OfferDTO offerDTO);
 }

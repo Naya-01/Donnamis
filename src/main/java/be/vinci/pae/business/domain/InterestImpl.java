@@ -21,6 +21,8 @@ public class InterestImpl implements InterestDTO {
   private LocalDate availabilityDate;
   @JsonView(Views.Public.class)
   private String status;
+  @JsonView(Views.Public.class)
+  private Boolean isNotificated;
 
   @Override
   public MemberDTO getMember() {
@@ -30,6 +32,16 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setMember(MemberDTO member) {
     this.member = member;
+  }
+
+  @Override
+  public Boolean getIsNotificated() {
+    return isNotificated;
+  }
+
+  @Override
+  public void setIsNotificated(boolean isNotificated) {
+    this.isNotificated = isNotificated;
   }
 
   @Override

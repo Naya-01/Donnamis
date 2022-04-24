@@ -32,6 +32,22 @@ public class OfferResource {
   @Inject
   private OfferUCC offerUcc;
 
+
+  /**
+   * Get last offer of an object.
+   *
+   * @param idObject to search.
+   * @return last offer.
+   */
+  @GET
+  @Path("/last/{idObject}")
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  public OfferDTO getLastOffer(@PathParam("idObject") Integer idObject) {
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getLastOffer");
+    return offerUcc.getLastOffer(idObject);
+  }
+
   /**
    * Get all offers.
    *
@@ -98,6 +114,7 @@ public class OfferResource {
    * @return the offerDTO added
    */
   @POST
+  @Path("/newOffer")
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
@@ -243,6 +260,39 @@ public class OfferResource {
     }
 
     return offerUcc.giveOffer(offerDTO);
+  }
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain objectDTO & offerDTO information
+   * @return offer
+   */
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public OfferDTO addFirstOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "ObjectResource addObject");
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getType().getIdType() == null
+        && offerDTO.getObject().getType().getTypeName() == null && offerDTO.getObject()
+        .getType().getTypeName().isEmpty()
+        || offerDTO.getObject().getType().getIdType() != null
+        && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject().getType()
+        .getTypeName().isEmpty()) {
+      throw new BadRequestException("Type need more informations");
+    }
+    if (offerDTO.getObject().getType() == null
+        || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
+        .isEmpty()) {
+      throw new BadRequestException("Bad json object sent");
+    }
+
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
+
+    return offerUcc.addObject(offerDTO);
   }
 
 }
