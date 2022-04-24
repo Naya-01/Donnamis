@@ -314,7 +314,7 @@ public class InterestDAOImpl implements InterestDAO {
   public Integer getNotificationCount(Integer idMember) {
     String query = "SELECT count(id_member) "
         + "FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
-    Integer notificationCount;
+    Integer notificationCount = null;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
       preparedStatement.setBoolean(2, true);
