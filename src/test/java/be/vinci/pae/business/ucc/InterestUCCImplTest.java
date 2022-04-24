@@ -422,5 +422,36 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test getAllInterests with 1 interest")
+  @Test
+  public void testGetAllInterestsWith1Interest() {
+    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
+    interestDTONotificated.setIsNotificated(true);
+    interestDTONotificated.setStatus("published");
+    interestDTONotificated.setIdMember(3);
+    interestDTONotificated.setIdMember(3);
+
+    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
+    interestDTONotNotificated.setIsNotificated(false);
+    interestDTONotNotificated.setIdMember(3);
+    interestDTONotNotificated.setIdMember(2);
+    interestDTONotificated.setStatus("not_collected");
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+    interestDTOList.add(interestDTONotificated);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(interestDAO.getAllPublished(objectDTO.getIdObject()))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertEquals(1, interestUCC.getAllInterests(objectDTO.getIdObject()).size()),
+        () -> assertTrue(
+            interestUCC.getAllInterests(objectDTO.getIdObject()).contains(interestDTONotificated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 
 }
