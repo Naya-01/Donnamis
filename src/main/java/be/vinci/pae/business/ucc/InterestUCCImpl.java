@@ -169,7 +169,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
-      if (interestDTOList == null) {
+      if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }
       dalService.commitTransaction();

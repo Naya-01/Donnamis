@@ -396,4 +396,31 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  //  ---------------------------- GET ALL INTERESTS UCC  -------------------------------  //
+
+
+  @DisplayName("Test getAllInterests with an empty list of interests")
+  @Test
+  public void testGetAllInterestsWithAnEmptyListOfInterests() {
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(2);
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(interestDAO.getAllPublished(objectDTO.getIdObject()))
+        .thenReturn(interestDTOList);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.getAllInterests(objectDTO.getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+
 }
