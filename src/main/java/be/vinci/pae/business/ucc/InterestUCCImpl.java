@@ -169,7 +169,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
-      if(interestDTOList == null){
+      if (interestDTOList == null) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }
       dalService.commitTransaction();
@@ -213,7 +213,7 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
       interestDTOList = interestDAO.getAllNotifications(idMember);
-      if (interestDTOList == null) {
+      if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'est disponible");
       }
       dalService.commitTransaction();
@@ -265,7 +265,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
 
       interestDTOList = interestDAO.markAllNotificationsShown(idMember);
-      if (interestDTOList == null) {
+      if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");
       }
 
