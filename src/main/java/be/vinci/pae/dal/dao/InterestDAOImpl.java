@@ -130,6 +130,9 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
+      if(interestDTOList.isEmpty()){
+        return null;
+      }
       return interestDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);

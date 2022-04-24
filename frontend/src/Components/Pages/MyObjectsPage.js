@@ -128,10 +128,11 @@ const objectCards = async (searchPattern, type, status) => {
       viewAllInterestedMembers.type = "button";
       viewAllInterestedMembers.className = "btn btn-primary mt-3 mx-1";
       viewAllInterestedMembers.addEventListener("click", async e => {
-        const interests = await InterestLibrary.prototype.getAllInterests(
+        let interests = await InterestLibrary.prototype.getAllInterests(
             offer.object.idObject);
-        console.log("alala");
-        console.log(interests);
+        if(interests === undefined){
+          interests = [];
+        }
         var allInterests = `<div class="container">`
 
         for (const interest of interests) {
