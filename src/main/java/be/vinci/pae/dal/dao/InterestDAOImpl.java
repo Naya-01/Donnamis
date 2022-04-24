@@ -130,6 +130,9 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
+      if(interestDTOList.isEmpty()){
+        return null;
+      }
       return interestDTOList;
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -169,17 +172,29 @@ public class InterestDAOImpl implements InterestDAO {
    * @return a list of interest, by an id object
    */
   @Override
-  public List<InterestDTO> getAll(int idObject) {
+  public int getAllCount(int idObject) {
 
-    String query = "SELECT id_object, id_member, availability_date, status, send_notification "
-        + "FROM donnamis.interests WHERE id_object = ? AND status != 'cancelled'";
+    String query = "SELECT count(*) as nb "
+        + " FROM donnamis.interests WHERE id_object = ? ";
 
+    return getnbInterests(idObject, query);
+  }
+
+  private int getnbInterests(int idObject, String query) {
+    int nbInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      return getInterestsDTOSList(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      if (!resultSet.next()) {
+        return 0;
+      }
+      nbInterests = resultSet.getInt("nb");
+      resultSet.close();
     } catch (SQLException e) {
       throw new FatalException(e);
     }
+    return nbInterests;
   }
 
   /**
@@ -193,19 +208,7 @@ public class InterestDAOImpl implements InterestDAO {
 
     String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
         + "WHERE i.id_object = ? AND i.status = 'published'";
-    int nbInterests = 0;
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, idObject);
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return 0;
-      }
-      nbInterests = resultSet.getInt("nb");
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    return nbInterests;
+    return getnbInterests(idObject, query);
 
   }
 

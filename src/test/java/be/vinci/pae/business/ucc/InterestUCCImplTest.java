@@ -226,12 +226,10 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with existing interests for an object")
   @Test
   public void testAddOneWithANonExistentInterestAndAlreadyExistingInterestsForObject() {
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-    interestDTOList.add(interestFactory.getInterestDTO());
     Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
         interestDTO.getIdMember())).thenReturn(null);
-    Mockito.when(mockInterestDAO.getAll(interestDTO.getObject().getIdObject()))
-        .thenReturn(interestDTOList);
+    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getObject().getIdObject()))
+        .thenReturn(5);
     assertAll(
         () -> assertEquals(interestDTO, interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
