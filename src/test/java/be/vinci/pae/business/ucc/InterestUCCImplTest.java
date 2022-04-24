@@ -8,9 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.InterestFactory;
+import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
@@ -44,7 +46,7 @@ class InterestUCCImplTest {
   private int nonExistentId = 1000;
   private ObjectFactory objectFactory;
   private InterestFactory interestFactory;
-  private OfferFactory offerFactory;
+  private MemberFactory memberFactory;
 
   @BeforeEach
   void initAll() {
@@ -63,7 +65,7 @@ class InterestUCCImplTest {
     this.newInterestDTO = interestFactory.getInterestDTO();
     this.objectFactory = locator.getService(ObjectFactory.class);
     this.interestFactory = locator.getService(InterestFactory.class);
-    this.offerFactory = locator.getService(OfferFactory.class);
+    this.memberFactory = locator.getService(MemberFactory.class);
 
     this.objectDTO = objectFactory.getObjectDTO();
     this.objectDTO.setIdObject(10);
@@ -477,13 +479,13 @@ class InterestUCCImplTest {
   public void testIsUserInterestedWithANonExistentInterest() {
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(2);
-    OfferDTO offerDTO = offerFactory.getOfferDTO();
-    offerDTO.setIdOffer(2);
-    Mockito.when(interestDAO.getOne(objectDTO.getIdObject(), offerDTO.getIdOffer()))
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+    Mockito.when(interestDAO.getOne(memberDTO.getMemberId(), objectDTO.getIdObject()))
         .thenReturn(null);
     assertAll(
         () -> assertFalse(
-            interestUCC.isUserInterested(objectDTO.getIdObject(), offerDTO.getIdOffer())),
+            interestUCC.isUserInterested(memberDTO.getMemberId(), objectDTO.getIdObject())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
