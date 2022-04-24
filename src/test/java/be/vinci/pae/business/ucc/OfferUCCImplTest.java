@@ -859,4 +859,37 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test notCollectedOffer with offer that is not assigned")
+  @Test
+  public void testNotCollectedOfferThatIsNotAssigned() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.setStatus("cancelled");
+
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setIdOffer(3);
+    offerDTOFromDAO.getObject().setIdObject(3);
+    offerDTOFromDAO.setStatus("cancelled");
+
+    ObjectDTO objectDTO = offerDTO.getObject();
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIdMember(3);
+    interestDTO.setObject(objectDTO);
+    interestDTO.setStatus("published");
+
+    Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(interestDTO);
+
+    Mockito.when(offerDAO.getLastObjectOffer(objectDTO.getIdObject()))
+        .thenReturn(offerDTOFromDAO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.notCollectedOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
