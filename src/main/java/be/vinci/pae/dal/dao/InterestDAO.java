@@ -81,12 +81,12 @@ public interface InterestDAO {
   boolean isUserInterested(int idMember, int idObject);
 
   /**
-   * Get a list of interest in an id object.
+   * Get a count of interest in an id object.
    *
    * @param idObject the object we want to retrieve the interests
-   * @return a list of interest, by an id object
+   * @return a count of interest, by an id object
    */
-  List<InterestDTO> getAll(int idObject);
+  int getAllCount(int idObject);
 
   /**
    * Update the status of an interest.

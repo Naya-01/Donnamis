@@ -61,7 +61,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
       // if there is no interest
-      if (interestDAO.getAll(item.getObject().getIdObject()) != null) {
+      if (interestDAO.getAllCount(item.getObject().getIdObject()) == 0) {
         ObjectDTO objectDTO = objectDAO.getOne(item.getObject().getIdObject());
         if (objectDTO == null) {
           throw new NotFoundException("Object not found");
