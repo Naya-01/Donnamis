@@ -780,4 +780,34 @@ class OfferUCCImplTest {
   }
 
 
+  @DisplayName("Test addObject with an id type and type name null")
+  @Test
+  public void testAddObjectWithNullTypeNameOfOfferType() {
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setIdOffer(5);
+
+    TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
+    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setTypeName("Jouets");
+    typeDTOFromDaoGetOne.setIsDefault(true);
+
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().getType().setTypeName(null);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
+        .thenReturn(typeDTOFromDaoGetOne);
+    Mockito.when(objectDAO.addOne(offerDTO.getObject()))
+        .thenReturn(offerDTOFromDAO.getObject());
+    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
+
+    OfferDTO offerFromAdd = offerUCC.addObject(offerDTO);
+
+    assertAll(
+        () -> assertEquals(offerFromAdd, offerDTOFromDAO),
+        () -> assertNotEquals(offerFromAdd.getIdOffer(), offerDTO.getIdOffer()),
+        () -> assertEquals(offerDTO.getObject().getType(), offerFromAdd.getObject().getType()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }
