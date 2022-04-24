@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -333,7 +332,9 @@ public class OfferDAOImpl implements OfferDAO {
       }
       preparedStatement.execute();
       try (ResultSet resultSet = preparedStatement.getResultSet()) {
-        if (!resultSet.next()) return null;
+        if (!resultSet.next()) {
+          return null;
+        }
         return Map.of(
             "nbReceived", resultSet.getInt(1),
             "nbNotCollected", resultSet.getInt(2),
@@ -407,7 +408,9 @@ public class OfferDAOImpl implements OfferDAO {
 
   private OfferDTO getOfferWithPreparedStatement(PreparedStatement preparedStatement) {
     try (ResultSet resultSet = preparedStatement.executeQuery()) {
-      if (resultSet.next()) return null;
+      if (resultSet.next()) {
+        return null;
+      }
       return getOfferWithTypeAndObject(resultSet.getInt(1),
           resultSet.getDate(2).toLocalDate(), resultSet.getString(3),
           resultSet.getString(12), resultSet.getInt(4),
