@@ -256,12 +256,12 @@ public class ObjectDAOImpl implements ObjectDAO {
    * @param description the description of the object
    * @param status      the status of the object
    * @param image       the image of the object
-   * @param idOffer     the id of the offeror
+   * @param idOfferor     the id of the offeror
    * @return an objectDTO filled of attributes
    */
   @Override
   public ObjectDTO getObject(int idObject, String description, String status, String image,
-      int idOffer) {
+      int idOfferor) {
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(idObject);
     objectDTO.setDescription(description);
@@ -271,7 +271,7 @@ public class ObjectDAOImpl implements ObjectDAO {
     } else {
       objectDTO.setImage(Config.getProperty("ImagePath") + image);
     }
-    objectDTO.setIdOfferor(idOffer);
+    objectDTO.setIdOfferor(idOfferor);
     return objectDTO;
   }
 

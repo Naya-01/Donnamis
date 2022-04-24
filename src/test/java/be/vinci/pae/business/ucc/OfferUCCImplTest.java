@@ -24,7 +24,9 @@ import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -931,6 +933,37 @@ class OfferUCCImplTest {
         () -> assertEquals("not_collected", interestDTO.getStatus()),
         () -> assertEquals("not_collected", offerDTOUpdated.getStatus()),
         () -> assertEquals("not_collected", offerDTOUpdated.getObject().getStatus()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  //  ---------------------------- GET OFFERS COUNT UCC  -------------------------------  //
+
+  @DisplayName("Test getOffersCount with non existent member")
+  @Test
+  public void testGetOffersCountNonExistentMember() {
+    Mockito.when(offerDAO.getOffersCount(0)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getOffersCount(0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test getOffersCount with existent member")
+  @Test
+  public void testGetOffersCountExistentMember() {
+    Map<String, Integer> map = new HashMap<>();
+    map.put("nbReceived", 0);
+    map.put("nbNotCollected", 3);
+    map.put("nbGiven", 0);
+    map.put("nbOffers", 0);
+    Mockito.when(offerDAO.getOffersCount(3)).thenReturn(map);
+
+    assertAll(
+        () -> assertEquals(map, offerUCC.getOffersCount(3)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
