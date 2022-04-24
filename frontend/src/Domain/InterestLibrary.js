@@ -2,6 +2,73 @@ import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
 
 class InterestLibrary {
+
+  async markNotificationShown(idObject) {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest/notificationShown/" + idObject,
+          options);
+    } catch (err) {
+      console.log(err);
+    }
+    let allInterests;
+    if (response.status === 200) {
+      allInterests = await response.json();
+    }
+    return allInterests;
+  }
+
+  async markAllNotificationShown() {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest/allNotificationShown",
+          options);
+    } catch (err) {
+      console.log(err);
+    }
+    let allInterests;
+    if (response.status === 200) {
+      allInterests = await response.json();
+    }
+    return allInterests;
+  }
+
+  async getAllNotifications() {
+    let response;
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/interest/getAllNotifications",
+          options);
+    } catch (err) {
+      console.log(err);
+    }
+    let allInterests;
+    if (response.status === 200) {
+      allInterests = await response.json();
+    }
+    return allInterests;
+  }
+
   async assignOffer(idObject, idMember) {
     let response;
     let toast = Notification.prototype.getNotification("bottom");

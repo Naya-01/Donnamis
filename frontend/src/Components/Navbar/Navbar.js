@@ -2,19 +2,22 @@ import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
 import notificationImage from "../../img/notification.png"
 import MemberLibrary from "../../Domain/MemberLibrary";
+import InterestLibrary from "../../Domain/InterestLibrary";
 
 const notificationDictionnary = new Map([
   ['assigned', "Vous avez été selectionné !"],
   ['received', "Merci d'avoir récupérer l'objet !"],
   ['cancelled', "L'offre a été annulée"],
-  ['not_collected', "Vous n'êtes pas venu chercher l'objet"]
+  ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
+  ['published', "Vous avez marquer un interet pour cette offre."]
 ]);
 
 const colorDictionnary = new Map([
   ['assigned', 'text-success'],
   ['received', 'text-success'],
   ['cancelled', 'text-danger'],
-  ['not_collected', 'text-danger']
+  ['not_collected', 'text-danger'],
+  ['published', 'text-success']
 ]);
 
 const Navbar = async () => {
@@ -110,59 +113,14 @@ const Navbar = async () => {
     //Notification
     navbar += `
               <li class="nav-item dropdown mx-5">
-                        <a aria-expanded="false" class="nav-link " data-bs-toggle="dropdown"
-                           href="#"
-                           id="navbarDropdown" "role="button">
+                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
                            <div class="button-dot">
                             <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
                             <span class="dot">2</span>
                            </div>
                         </a>
-                        <ul aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
-                            <li>
-                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" onclick="event.stopPropagation()">
-                                <div class="row ">
-                                    <div class="fs-5 ">
-                                      <img src="${profilImage}" alt="objectPicture">
-                                      <span>Cadre représentant un chien noir sur un fond noir.</span>
-                                     
-                                    </div>
-                                    <div class="fs-5 text-center fw-bolder text-danger">
-                                      <span>Vous n'avez pas récuperer l'objet</span>
-                                      <button class="mx-2 btn btn-secondary">Marquer comme lu</button>
-                                      <button class="btn btn-warning">Voir l'offre</button>
-                                    </div>
-                                </div>
-                              </div>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" onclick="event.stopPropagation()">
-                                <div class="row">
-                                    <div class="fs-5">
-                                      <img src="${profilImage}" alt="objectPicture">
-                                      <span>meuble du frero</span>
-                                    </div>
-                                    <div class="fs-5 text-center fw-bolder text-success">
-                                      <span>Merci d'avoir récuperer l'objet !</span>
-                                      <button class="mx-2 btn btn-secondary">Marquer comme lu</button>
-                                      <button class="btn btn-warning">Voir l'offre</button>
-                                    </div>
-                                </div>
-                              </div>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                              <div class="dropdown-item  fs-5" href="#">
-                                <div class="row">
-                                    <button class="btn btn-lg btn-primary">Tout marquer comme lu</button>
-                                </div>
-                              </div>
-                            </li>
+                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
+                           
                         </ul>
                     </li>
     `
@@ -196,6 +154,88 @@ const Navbar = async () => {
     </div>
 </nav>`;
     navbarWrapper.innerHTML = navbar;
+
+    let notificationButton = document.getElementById("notificationButton");
+    let notificationContentUL = document.getElementById("notificationContent");
+
+    notificationButton.addEventListener("click", async e => {
+      let notifications = ``;
+
+      let allNotificationsFetch = await InterestLibrary.prototype.getAllNotifications();
+
+      for (const interest of allNotificationsFetch) {
+        let memberId = interest.member.memberId;
+        let objectId = interest.object.idObject;
+        let description = interest.object.description;
+        if (!description) {
+          description = "";
+        }
+        notifications += `<li>
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
+                                <div class="row">
+                                    <div class="fs-5">
+                                      <img src="${profilImage}" alt="objectPicture">
+                                      <span>${description}</span>
+                                    </div>
+                                    <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
+            interest.status)}">
+                                      <span>${notificationDictionnary.get(
+            interest.status)}</span>
+                                      <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
+                                      Marquer comme lu
+                                      </button>
+                                      <button class="btn btn-warning" id="goto-${memberId}-${objectId}">
+                                      Voir l'offre
+                                      </button>
+                                    </div>
+                                </div>
+                              </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>`;
+      }
+
+      notifications += `<li>
+                        <div class="dropdown-item fs-5" href="#">
+                          <div class="row">
+                            <button class="btn btn-lg btn-primary">
+                                Tout marquer comme lu
+                            </button>
+                          </div>
+                        </div>
+                      </li>`
+
+      notificationContentUL.innerHTML = notifications;
+
+      //TODO réparer la propagation
+      let notifItems = document.querySelectorAll("#notif-items");
+      for (const item of notifItems) {
+        item.addEventListener("click", event.stopPropagation);
+      }
+
+      for (const interest of allNotificationsFetch) {
+        let btnShown = document.getElementById(
+            "shown-" + interest.member.memberId + "-"
+            + interest.object.idObject);
+
+        //TODO à relier avec le backend
+        btnShown.addEventListener("click", e => {
+
+        });
+
+        let btnGoto = document.getElementById(
+            "goto-" + interest.member.memberId + "-"
+            + interest.object.idObject);
+
+        //TODO à relier avec le backend
+        btnGoto.addEventListener("click", e => {
+
+        });
+
+      }
+
+    })
 
   }
 
