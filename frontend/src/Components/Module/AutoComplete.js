@@ -51,7 +51,6 @@ function autocomplete(inp, arr) {
       increase the currentFocus variable:*/
       currentFocus++;
       /*and and make the current item more visible:*/
-      console.log(x)
       addActive(x);
     } else if (e.keyCode == 38) { //up
       /*If the arrow UP key is pressed,
@@ -77,7 +76,6 @@ function autocomplete(inp, arr) {
   //   if (currentFocus < 0) currentFocus = (x.length - 1);
   //   /*add class "autocomplete-active":*/
   //   x[currentFocus].classList.add("autocomplete-active");
-  //   console.log(x)
   // }
   // function removeActive(x) {
   //   /*a function to remove the "active" class from all autocomplete items:*/

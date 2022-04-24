@@ -111,7 +111,7 @@ Content-Type: application/json
 }
 
 ### Search given member
-GET {{baseUri}}/offers/givenOffers/2
+GET {{baseUri}}/offers/givenOffers/4
 Authorization: {{access}}
 
 ### Cancel offer
@@ -143,6 +143,6 @@ Authorization: {{access}}
   }
 }
 
-###
-GET {{baseUri}}/offers/offersCount/10
+### get count offers of a member
+GET {{baseUri}}/offers/countOffers/4
 Authorization: {{access}}
