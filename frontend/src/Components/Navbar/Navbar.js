@@ -204,8 +204,10 @@ const Navbar = async () => {
                                     </div>
                                     <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
               interest.status)}">
-                                      <span>${notificationDictionnary.get(
-              interest.status)}</span>
+                                      <span>
+                                        ${notificationDictionnary.get(
+              interest.status)}
+                                      </span>
                                       <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
                                         Marquer comme lu
                                       </button>
