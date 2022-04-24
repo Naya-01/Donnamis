@@ -935,4 +935,18 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  ---------------------------- GET OFFERS COUNT UCC  -------------------------------  //
+
+  @DisplayName("Test getOffersCount with non existent member")
+  @Test
+  public void testGetOffersCountNonExistentMember() {
+    Mockito.when(offerDAO.getOffersCount(0)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getOffersCount(0)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
