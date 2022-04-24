@@ -5,11 +5,13 @@ import TypeLibrary from "../../Domain/TypeLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import Notification from "../Module/Notification";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
+import OfferLibrary from "../../Domain/OfferLibrary";
 
 const typeLibrary = new TypeLibrary();
 const memberLibrary = new MemberLibrary();
 const objectLibrary = new ObjectLibrary();
 const bottomNotification = new Notification().getNotification();
+const offerLibrary = new OfferLibrary();
 let idOfferor;
 
 /**
@@ -159,7 +161,7 @@ async function addObject(e) {
   }
 
   // Call the backend to add the offer
-  let newOffer = await objectLibrary.addObject(timeSlot, description, typeName);
+  let newOffer = await offerLibrary.addFirstOffer(timeSlot, description, typeName);
   if(newOffer === undefined){
     bottomNotification.fire({
       icon: 'error',

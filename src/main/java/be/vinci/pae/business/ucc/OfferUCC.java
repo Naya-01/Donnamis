@@ -79,4 +79,12 @@ public interface OfferUCC {
    * @return an object
    */
   OfferDTO giveOffer(OfferDTO offerDTO);
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain id object & offerDTO information
+   * @return offer
+   */
+  OfferDTO addObject(OfferDTO offerDTO);
 }

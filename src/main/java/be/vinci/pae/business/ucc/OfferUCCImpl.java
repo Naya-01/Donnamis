@@ -3,9 +3,11 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
+import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
+import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -23,6 +25,8 @@ public class OfferUCCImpl implements OfferUCC {
   private DALService dalService;
   @Inject
   private InterestDAO interestDAO;
+  @Inject
+  private TypeDAO typeDAO;
 
   /**
    * Get the last six offers posted.
@@ -169,11 +173,11 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getGivenOffers(int idReceiver) {
-    List<OfferDTO> offerDTO;
+    List<OfferDTO> givenOffers;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getAllGivenOffers(idReceiver);
-      if (offerDTO.isEmpty()) {
+      givenOffers = offerDAO.getAllGivenOffers(idReceiver);
+      if (givenOffers.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
@@ -181,7 +185,7 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offerDTO;
+    return givenOffers;
   }
 
 
@@ -287,14 +291,10 @@ public class OfferUCCImpl implements OfferUCC {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      if (!interestDTO.getObject().getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucun objet n'est assigné pour le donner");
-      }
-
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucune offre n'est assigné pour le donner");
+        throw new ForbiddenException("aucune offre n'existe pour que l'objet puisse être donné");
       }
 
       //Send notification
@@ -318,6 +318,51 @@ public class OfferUCCImpl implements OfferUCC {
     }
 
     return offerDTO;
+  }
+
+  /**
+   * Make an Object with his offer.
+   *
+   * @param offerDTO object that contain id object & offerDTO information
+   * @return offer
+   */
+  @Override
+  public OfferDTO addObject(OfferDTO offerDTO) {
+    OfferDTO offer;
+    try {
+      dalService.startTransaction();
+      setCorrectType(offerDTO.getObject());
+      ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
+      offerDTO.setObject(objectDTO);
+      offerDTO.setStatus("available");
+      offer = offerDAO.addOne(offerDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return offer;
+  }
+
+  /**
+   * Verify the type and set it.
+   *
+   * @param objectDTO the offer that has an object that has a type.
+   */
+  private void setCorrectType(ObjectDTO objectDTO) {
+    TypeDTO typeDTO;
+    if (objectDTO.getType().getTypeName() != null && !objectDTO.getType()
+        .getTypeName().isBlank()) {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getTypeName());
+
+      if (typeDTO == null) {
+        typeDTO = typeDAO.addOne(objectDTO.getType().getTypeName());
+      }
+    } else {
+      typeDTO = typeDAO.getOne(objectDTO.getType().getIdType());
+    }
+    objectDTO.setType(typeDTO);
   }
 
 }

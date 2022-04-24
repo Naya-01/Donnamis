@@ -130,6 +130,8 @@ const objectCards = async (searchPattern, type, status) => {
       viewAllInterestedMembers.addEventListener("click", async e => {
         const interests = await InterestLibrary.prototype.getAllInterests(
             offer.object.idObject);
+        console.log("alala");
+        console.log(interests);
         var allInterests = `<div class="container">`
 
         for (const interest of interests) {
