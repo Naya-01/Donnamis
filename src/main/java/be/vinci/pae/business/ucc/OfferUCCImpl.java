@@ -242,14 +242,16 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("Impossible de marquer en non collecté");
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      if (interestDTO == null) {
+        throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
-      if (interestDTO == null) {
-        throw new ForbiddenException("Aucune offre n'a d'offre attribué");
+      if (!offerDTO.getStatus().equals("assigned")) {
+        throw new ForbiddenException(
+            "aucune offre attribuée n'existe pour que l'objet puisse être non collecté");
       }
 
       //Send notification
@@ -294,7 +296,8 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
-        throw new ForbiddenException("aucune offre n'existe pour que l'objet puisse être donné");
+        throw new ForbiddenException(
+            "aucune offre attribuée n'existe pour que l'objet puisse être donné");
       }
 
       //Send notification
