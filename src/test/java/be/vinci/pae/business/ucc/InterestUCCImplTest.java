@@ -55,6 +55,9 @@ class InterestUCCImplTest {
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.interestDAO = locator.getService(InterestDAO.class);
     this.mockDalService = locator.getService(DALService.class);
+    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
+    this.objectDTO = objectFactory.getObjectDTO();
+    this.objectDTO.setIdObject(10);
 
     InterestFactory interestFactory = locator.getService(InterestFactory.class);
     this.interestDTO = interestFactory.getInterestDTO();
@@ -66,9 +69,6 @@ class InterestUCCImplTest {
     this.objectFactory = locator.getService(ObjectFactory.class);
     this.interestFactory = locator.getService(InterestFactory.class);
     this.memberFactory = locator.getService(MemberFactory.class);
-
-    this.objectDTO = objectFactory.getObjectDTO();
-    this.objectDTO.setIdObject(10);
   }
 
   @DisplayName("test getInterest with a non existent object and an existent member")
@@ -473,7 +473,6 @@ class InterestUCCImplTest {
   }
 
   //  ---------------------------- IS USER INTERESTED UCC  -------------------------------  //
-
   @DisplayName("Test isUserInterested with a non existent interest")
   @Test
   public void testIsUserInterestedWithANonExistentInterest() {
@@ -490,6 +489,7 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
 
   @DisplayName("Test isUserInterested with an existent interest")
   @Test
@@ -512,4 +512,5 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
 }
