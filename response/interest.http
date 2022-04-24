@@ -12,13 +12,28 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
+### markNotificationShown
+PUT {{baseUri}}/interest/notificationShown/2
+Authorization: {{access}}
+
+### markAllNotificationsShown
+PUT {{baseUri}}/interest/allNotificationShown
+Authorization: {{access}}
+
+### GetNotificationCount
+GET {{baseUri}}/interest/notificationCount
+Authorization: {{access}}
 
 ### Get Own interest
 GET {{baseUri}}/interest?idObject=2
 Authorization: {{access}}
 
+### Get all notifications
+GET {{baseUri}}/interest/getAllNotifications
+Authorization: {{access}}
+
 ### Get all interests
-GET {{baseUri}}/interest/getAllInterests/2
+GET {{baseUri}}/interest/getAllInterests/18
 Authorization: {{access}}
 
 
@@ -35,7 +50,7 @@ Authorization: {{refresh}}
 }
 
 ### Get interest count
-GET {{baseUri}}/interest/count/2
+GET {{baseUri}}/interest/count/4
 Authorization: {{refresh}}
 
 ### Assign an object

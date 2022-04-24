@@ -17,6 +17,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -39,6 +40,22 @@ public class InterestResource {
   private InterestUCC interestUCC;
   @Inject
   private ObjectUCC objectUCC;
+
+  /**
+   * Get notifications count.
+   *
+   * @param request data of the member.
+   * @return notification count
+   */
+  @GET
+  @Path("/notificationCount")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public Integer getNotificationCount(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getOne");
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    return interestUCC.getNotificationCount(authenticatedUser.getMemberId());
+  }
 
   /**
    * Get an interest, by the id of the interested member and the id of the object.
@@ -106,12 +123,11 @@ public class InterestResource {
   public JsonNode getInterestedCount(@PathParam("idObject") int idObject,
       @Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getInterestedCount");
-    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     return jsonMapper.createObjectNode()
-        .put("count", interestDTOList.size())
-        .put("isUserInterested", interestDTOList.stream()
-            .anyMatch(i -> i.getIdMember() == authenticatedUser.getMemberId()));
+        .put("count", interestUCC.getInterestedCount(idObject))
+        .put("isUserInterested",
+            interestUCC.isUserInterested(authenticatedUser.getMemberId(), idObject));
   }
 
   /**
@@ -133,7 +149,30 @@ public class InterestResource {
     if (authenticatedUser.getMemberId() != objectDTO.getIdOfferor()) {
       throw new UnauthorizedException("Cet objet ne vous appartient pas");
     }
-    List<InterestDTO> interestDTOList = interestUCC.getInterestedCount(idObject);
+
+    List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject);
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+    return interestDTOList;
+  }
+
+  /**
+   * Get all the notification of a member.
+   *
+   * @param request information of the member.
+   * @return interestDTO List filtered with notifications
+   */
+  @GET
+  @Path("/getAllNotifications")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> getAllNotifications(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource getAllNotifications");
+    MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
+    List<InterestDTO> interestDTOList = interestUCC.getNotifications(
+        authenticatedUser.getMemberId());
     for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
@@ -168,6 +207,45 @@ public class InterestResource {
     }
 
     return interestUCC.assignOffer(interestDTO);
+  }
+
+  /**
+   * Mark a notification as shown.
+   *
+   * @param request  data of the member.
+   * @param idObject of the interest.
+   * @return interestDTO updated.
+   */
+  @PUT
+  @Path("/notificationShown/{idObject}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public InterestDTO markNotificationShown(@Context ContainerRequest request,
+      @PathParam("idObject") int idObject) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
+
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    InterestDTO interestDTO = interestUCC.getInterest(idObject, memberDTO.getMemberId());
+    return interestUCC.markNotificationShown(interestDTO);
+  }
+
+  /**
+   * Mark all notifications as shown.
+   *
+   * @param request data of the member.
+   * @return interestDTO updated.
+   */
+  @PUT
+  @Path("/allNotificationShown")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Authorize
+  public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
+
+    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+    return interestUCC.markAllNotificationsShown(memberDTO.getMemberId());
   }
 
 

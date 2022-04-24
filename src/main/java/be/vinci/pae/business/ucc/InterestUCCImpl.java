@@ -61,7 +61,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
       // if there is no interest
-      if (interestDAO.getAll(item.getObject().getIdObject()).isEmpty()) {
+      if (interestDAO.getAllCount(item.getObject().getIdObject()) == 0) {
         ObjectDTO objectDTO = objectDAO.getOne(item.getObject().getIdObject());
         if (objectDTO == null) {
           throw new NotFoundException("Object not found");
@@ -107,12 +107,6 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
-      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
-          interestDTO.getIdMember());
-      if (interestDTO == null) {
-        throw new NotFoundException("Le membre ne présente pas d'intérêt");
-      }
-
       // update offer to assigned
       offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
@@ -121,6 +115,10 @@ public class InterestUCCImpl implements InterestUCC {
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
+
+      // Send Notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -132,13 +130,57 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
+   * Get the number of all interests.
+   *
+   * @param idObject the object we want to retrieve the interests
+   * @return the number of all interests
+   */
+  @Override
+  public Integer getInterestedCount(Integer idObject) {
+    int interests;
+    try {
+      dalService.startTransaction();
+      ObjectDTO objectDTO = objectDAO.getOne(idObject);
+      if (objectDTO == null) {
+        throw new NotFoundException("Object not found");
+      }
+      interests = interestDAO.getAllPublishedCount(idObject);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interests;
+  }
+
+  /**
+   * Get notification count.
+   *
+   * @param idMember of the member.
+   * @return count of notification
+   */
+  @Override
+  public Integer getNotificationCount(Integer idMember) {
+    Integer interests;
+    try {
+      dalService.startTransaction();
+      interests = interestDAO.getNotificationCount(idMember);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interests;
+  }
+
+  /**
    * Get a list of interest, by an id object.
    *
    * @param idObject the object we want to retrieve the interests
    * @return a list of interest, by an id object
    */
   @Override
-  public List<InterestDTO> getInterestedCount(int idObject) {
+  public List<InterestDTO> getAllInterests(int idObject) {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
@@ -147,11 +189,113 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
+      
+      if (interestDTOList.isEmpty()) {
+        throw new NotFoundException("Aucun intérêt trouvé");
+      }
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
+    return interestDTOList;
+  }
+
+  /**
+   * Check if a member is interested by an object.
+   *
+   * @param idMember the id of the member
+   * @param idObject the id of the object
+   * @return true if he's interested false if he's not
+   */
+  @Override
+  public boolean isUserInterested(int idMember, int idObject) {
+    boolean isUserInterested;
+    try {
+      dalService.startTransaction();
+      isUserInterested = interestDAO.isUserInterested(idMember, idObject);
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return isUserInterested;
+  }
+
+  /**
+   * Get a list of notificated interest in an id object.
+   *
+   * @param idMember the member we want to retrieve notifications
+   * @return a list of interest, by an id member
+   */
+  @Override
+  public List<InterestDTO> getNotifications(int idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+      interestDTOList = interestDAO.getAllNotifications(idMember);
+      if (interestDTOList.isEmpty()) {
+        throw new NotFoundException("Aucunes notifications n'est disponible");
+      }
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return interestDTOList;
+  }
+
+  /**
+   * Mark a notification shown.
+   *
+   * @param interestDTO to mark as shown.
+   * @return interestDTO updated.
+   */
+  @Override
+  public InterestDTO markNotificationShown(InterestDTO interestDTO) {
+    try {
+      dalService.startTransaction();
+
+      if (!interestDTO.getIsNotificated()) {
+        throw new ForbiddenException("La notification a déjà été marquée comme lue");
+      }
+
+      // Send Notification
+      interestDTO.setIsNotificated(false);
+      interestDAO.updateNotification(interestDTO);
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
+    return interestDTO;
+  }
+
+  /**
+   * Mark all notifications shown.
+   *
+   * @param idMember to mark all his notifications showns.
+   * @return interestDTOs updated.
+   */
+  @Override
+  public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
+    List<InterestDTO> interestDTOList;
+    try {
+      dalService.startTransaction();
+
+      interestDTOList = interestDAO.markAllNotificationsShown(idMember);
+      if (interestDTOList.isEmpty()) {
+        throw new NotFoundException("Aucunes notifications n'a été trouvé");
+      }
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
     return interestDTOList;
   }
 
