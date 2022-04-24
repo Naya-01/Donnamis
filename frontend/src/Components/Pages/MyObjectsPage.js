@@ -194,12 +194,14 @@ const objectCards = async (searchPattern, type, status) => {
         for (const interest of interests) {
           const btn = document.getElementById(
               "interest-" + interest.member.memberId);
-          btn.addEventListener("click", async e => {
-            let d = await InterestLibrary.prototype.assignOffer(
-                interest.object.idObject, interest.member.memberId);
-            Swal.close();
-            Redirect("/myObjectsPage");
-          })
+          if (btn) {
+            btn.addEventListener("click", async e => {
+              await InterestLibrary.prototype.assignOffer(
+                  interest.object.idObject, interest.member.memberId);
+              Swal.close();
+              Redirect("/myObjectsPage");
+            })
+          }
         }
 
       });
