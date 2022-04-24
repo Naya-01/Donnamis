@@ -49,19 +49,23 @@ Content-Type: application/json
 }
 
 ### make a offer
-POST {{baseUri}}/offers/
+POST {{baseUri}}/offers/newOffer
 Authorization: {{access}}
 Content-Type: application/json
 
 {
   "timeSlot": "tous les mois de janvier",
   "object": {
-    "idObject": 15
+    "idObject": 46
   }
 }
 
 ### Get offer by id
 GET {{baseUri}}/offers/getById/5
+Authorization: {{refresh}}
+
+### Get last offer with idObject
+GET {{baseUri}}/offers/last/21
 Authorization: {{refresh}}
 
 ### get all offer
@@ -116,7 +120,7 @@ Authorization: {{access}}
 Content-Type: application/json
 
 {
-  "idOffer": 18
+  "idOffer": 68
 }
 
 ### Mark offer to not collected

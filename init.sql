@@ -66,6 +66,7 @@ CREATE TABLE donnamis.interests
     send_notification     BOOLEAN                                         NULL, -- change
     be_called         BOOLEAN                                         NULL, -- change
     version           INTEGER                                         NULL,
+    send_notification BOOLEAN                                         NULL,
     PRIMARY KEY (id_object, id_member)
 );
 

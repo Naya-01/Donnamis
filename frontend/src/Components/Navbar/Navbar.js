@@ -1,6 +1,27 @@
 import {getSessionObject} from "../../utils/session";
 import profilImage from "../../img/profil.png";
+import noImage from "../../img/noImage.png"
+import notificationImage from "../../img/notification.png"
 import MemberLibrary from "../../Domain/MemberLibrary";
+import InterestLibrary from "../../Domain/InterestLibrary";
+import {RedirectWithParamsInUrl} from "../Router/Router";
+import OfferLibrary from "../../Domain/OfferLibrary";
+
+const notificationDictionnary = new Map([
+  ['assigned', "Vous avez été selectionné !"],
+  ['received', "Merci d'avoir récupérer l'objet !"],
+  ['cancelled', "L'offre a été annulée"],
+  ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
+  ['published', "Vous avez marquer un interet pour cette offre."]
+]);
+
+const colorDictionnary = new Map([
+  ['assigned', 'text-success'],
+  ['received', 'text-success'],
+  ['cancelled', 'text-danger'],
+  ['not_collected', 'text-danger'],
+  ['published', 'text-success']
+]);
 
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
@@ -70,9 +91,8 @@ const Navbar = async () => {
                 <li class="nav-item">
                     <a class="nav-link fs-5 " data-uri="/objects" href="#">Offres</a>
                 </li>
-                <li class="nav-item button-dot">
+                <li class="nav-item">
                     <a class="nav-link fs-5" data-uri="/assignedObjects" href="#">Objets attribués</a>
-<!--                    <span class="dot">5</span>-->
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes offres</a>
@@ -89,8 +109,42 @@ const Navbar = async () => {
     navbar +=
         `</ul>
             <div class="d-flex">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item m-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">`
+
+    //Notification
+
+    let notificationCount = await InterestLibrary.prototype.getInterestCount();
+
+    if (notificationCount === 0) {
+      navbar += `
+             <li class="nav-item dropdown mx-5">
+                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                           <div>
+                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                           </div>
+                        </a>
+                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
+                           
+                        </ul>
+                    </li>
+    `
+    } else {
+      navbar += `
+             <li class="nav-item dropdown mx-5">
+                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                           <div id="button-dot">
+                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                            <span id="dot">${notificationCount}</span>
+                           </div>
+                        </a>
+                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
+                           
+                        </ul>
+                    </li>
+    `
+    }
+
+    navbar += `<li class="nav-item m-auto">
                         <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
                     </li>
                     <li class="nav-item dropdown">
@@ -118,7 +172,123 @@ const Navbar = async () => {
         </div>
     </div>
 </nav>`;
+
     navbarWrapper.innerHTML = navbar;
+
+    let notificationButton = document.getElementById("notificationButton");
+    let notificationContentUL = document.getElementById("notificationContent");
+
+    notificationButton.addEventListener("click", async e => {
+      let notifications = ``;
+
+      let allNotificationsFetch = await InterestLibrary.prototype.getAllNotifications();
+      if (allNotificationsFetch.length !== 0) {
+        for (const interest of allNotificationsFetch) {
+          let memberId = interest.member.memberId;
+          let objectId = interest.object.idObject;
+          let description = interest.object.description;
+          let notificationPicture;
+          if (interest.object.image) {
+            notificationPicture = "/api/object/getPicture/"
+                + interest.object.idObject
+          } else {
+            notificationPicture = noImage;
+          }
+
+          notifications += `<li>
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
+                                <div class="row">
+                                    <div class="fs-5">
+                                      <img src="${notificationPicture}" class="notificationPicture" alt="objectPicture">
+                                      <span>${description}</span>
+                                    </div>
+                                    <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
+              interest.status)}">
+                                      <span>
+                                        ${notificationDictionnary.get(
+              interest.status)}
+                                      </span>
+                                      <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
+                                        Marquer comme lu
+                                      </button>
+                                      <button class="btn btn-warning" id="goto-${memberId}-${objectId}">
+                                        Voir l'offre
+                                      </button>
+                                    </div>
+                                </div>
+                              </div>
+                            </li>
+                            `;
+        }
+
+        notifications += `<li>
+                        <div class="dropdown-item fs-5" href="#">
+                          <div class="row">
+                            <button id="allRead" class="btn btn-lg btn-primary">
+                                Tout marquer comme lu
+                            </button>
+                          </div>
+                        </div>
+                      </li>`
+
+        notificationContentUL.innerHTML = notifications;
+
+        let markAllReadBtn = document.getElementById("allRead");
+        markAllReadBtn.addEventListener("click", async e => {
+          await InterestLibrary.prototype.markAllNotificationShown();
+        });
+
+        let notifItems = document.getElementsByClassName("notif-items");
+        for (const item of notifItems) {
+          item.addEventListener("click", e => {
+            event.stopPropagation();
+          });
+        }
+
+        for (const interest of allNotificationsFetch) {
+          let divNotification = document.getElementById(
+              "notification-" + interest.member.memberId + "-"
+              + interest.object.idObject);
+
+          let btnShown = document.getElementById(
+              "shown-" + interest.member.memberId + "-"
+              + interest.object.idObject);
+
+          btnShown.addEventListener("click", async e => {
+            divNotification.remove();
+            notificationCount--;
+            document.getElementById("dot").innerText = notificationCount;
+            await InterestLibrary.prototype.markNotificationShown(
+                interest.object.idObject);
+          });
+
+          let btnGoto = document.getElementById(
+              "goto-" + interest.member.memberId + "-"
+              + interest.object.idObject);
+
+          btnGoto.addEventListener("click", async e => {
+            let lastOffer = await OfferLibrary.prototype.getLastOfferById(
+                interest.object.idObject);
+            RedirectWithParamsInUrl("/myObjectPage",
+                "?idOffer=" + lastOffer.idOffer);
+          });
+
+        }
+      } else {
+        notifications += `<li>
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
+                                <div class="row">
+                                    <div class="fs-5 text-warning">
+                                      <span>Aucune notifications pour le moment...</span>
+                                    </div>
+                                </div>
+                              </div>
+                            </li> `
+
+        notificationContentUL.innerHTML = notifications;
+      }
+
+    })
 
   }
 
