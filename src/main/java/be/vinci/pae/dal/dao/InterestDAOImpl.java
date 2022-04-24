@@ -320,8 +320,9 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setBoolean(2, true);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-      resultSet.next();
-      notificationCount = resultSet.getInt(1);
+      if (resultSet.next()) {
+        notificationCount = resultSet.getInt(1);
+      }
       resultSet.close();
     } catch (SQLException e) {
       throw new FatalException(e);

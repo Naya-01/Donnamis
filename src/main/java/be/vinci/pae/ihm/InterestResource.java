@@ -41,6 +41,12 @@ public class InterestResource {
   @Inject
   private ObjectUCC objectUCC;
 
+  /**
+   * Get notifications count.
+   *
+   * @param request data of the member.
+   * @return notification count
+   */
   @GET
   @Path("/notificationCount")
   @Produces(MediaType.APPLICATION_JSON)
