@@ -68,7 +68,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("An Interest for this Object and Member already exists");
       }
       // if there is no interest
-      if (interestDAO.getAllCount(item.getObject().getIdObject()) == 0) {
+      if (interestDAO.getAllCount(item.getIdObject()) == 0) {
         ObjectDTO objectDTO = objectDAO.getOne(item.getIdObject());
         if (objectDTO == null) {
           throw new NotFoundException("Object not found");
@@ -110,7 +110,7 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
 
-      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
+      interestDTO = interestDAO.getOne(interestDTO.getIdObject(),
           interestDTO.getIdMember());
 
       if (interestDTO == null) {
@@ -232,7 +232,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       interestDTOList = interestDAO.getAllPublished(idObject);
 
-      if (interestDTOList.isEmpty()) {
+      if (interestDTOList == null) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }
 
@@ -285,12 +285,12 @@ public class InterestUCCImpl implements InterestUCC {
     try {
       dalService.startTransaction();
       interestDTOList = interestDAO.getAllNotifications(member.getMemberId());
+      if (interestDTOList == null) {
+        throw new NotFoundException("Aucunes notifications n'est disponible");
+      }
       for (InterestDTO interestDTO : interestDTOList) {
         interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
         interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
-      }
-      if (interestDTOList.isEmpty()) {
-        throw new NotFoundException("Aucunes notifications n'est disponible");
       }
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -349,7 +349,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
 
       interestDTOList = interestDAO.markAllNotificationsShown(member.getMemberId());
-      if (interestDTOList.isEmpty()) {
+      if (interestDTOList == null) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");
       }
       for (InterestDTO interestDTO : interestDTOList) {
