@@ -78,7 +78,7 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
-   * Add an offer in the db with out without an object.
+   * Add an offer in the db without an object.
    *
    * @param offerDTO an offer we want to add in the db
    * @return the offerDTO added
