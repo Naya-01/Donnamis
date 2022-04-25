@@ -20,7 +20,7 @@ const colorDictionnary = new Map([
   ['received', 'text-success'],
   ['cancelled', 'text-danger'],
   ['not_collected', 'text-danger'],
-  ['published', 'text-success']
+  ['published', 'text-info']
 ]);
 
 const Navbar = async () => {
@@ -120,7 +120,7 @@ const Navbar = async () => {
              <li class="nav-item dropdown mx-5">
                         <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
                            <div>
-                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                            <img class="" id="navbar-notification-picture" alt="notification" src="${notificationImage}">
                            </div>
                         </a>
                         <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
@@ -202,7 +202,7 @@ const Navbar = async () => {
                                       <img src="${notificationPicture}" class="notificationPicture" alt="objectPicture">
                                       <span>${description}</span>
                                     </div>
-                                    <div class="fs-5 text-center fw-bolder ${colorDictionnary.get(
+                                    <div class="fs-5 text-end fw-bolder ${colorDictionnary.get(
               interest.status)}">
                                       <span>
                                         ${notificationDictionnary.get(
@@ -288,6 +288,7 @@ const Navbar = async () => {
           btnGoto.addEventListener("click", async e => {
             let lastOffer = await OfferLibrary.prototype.getLastOfferById(
                 interest.object.idObject);
+            document.getElementById("notificationButton").click();
             RedirectWithParamsInUrl("/objectDetails",
                 "?idOffer=" + lastOffer.idOffer);
           });
