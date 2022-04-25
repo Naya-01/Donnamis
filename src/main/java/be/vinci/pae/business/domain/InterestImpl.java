@@ -23,6 +23,8 @@ public class InterestImpl implements InterestDTO {
   private String status;
   @JsonView(Views.Public.class)
   private Boolean isNotificated;
+  @JsonView(Views.Public.class)
+  private Integer version;
 
   @Override
   public MemberDTO getMember() {
@@ -82,5 +84,19 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public void setIdMember(Integer idMember) {
+    this.idMember = idMember;
+  }
+
+  @Override
+  public Integer getVersion() {
+    return version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 }

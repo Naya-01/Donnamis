@@ -46,6 +46,7 @@ Authorization: {{refresh}}
   "object": {
     "idObject": 2
   },
+  "isNotificated": false,
   "availabilityDate": "2017-01-13"
 }
 
@@ -59,10 +60,11 @@ Content-Type: application/json
 Authorization: {{access}}
 
 {
-  "idMember": 4,
+  "idMember": 2,
   "object": {
-    "idObject": 2
-  }
+    "idObject": 20
+  },
+  "version": 1
 }
 
 

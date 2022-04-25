@@ -75,6 +75,9 @@ public interface InterestUCC {
   /**
    * Mark a notification shown.
    *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
+   *
    * @param interestDTO to mark as shown.
    * @return interestDTO updated.
    */
@@ -82,6 +85,9 @@ public interface InterestUCC {
 
   /**
    * Mark all notifications shown.
+   *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
    *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.

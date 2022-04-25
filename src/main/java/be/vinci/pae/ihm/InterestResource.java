@@ -212,6 +212,9 @@ public class InterestResource {
   /**
    * Mark a notification as shown.
    *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
+   *
    * @param request  data of the member.
    * @param idObject of the interest.
    * @return interestDTO updated.
@@ -231,10 +234,12 @@ public class InterestResource {
   }
 
   /**
-   * Mark all notifications as shown.
+   * Mark all notifications shown.
    *
-   * @param request data of the member.
-   * @return interestDTO updated.
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
+   *
+   * @return interestDTOs updated.
    */
   @PUT
   @Path("/allNotificationShown")
@@ -243,7 +248,6 @@ public class InterestResource {
   @Authorize
   public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
-
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     return interestUCC.markAllNotificationsShown(memberDTO.getMemberId());
   }

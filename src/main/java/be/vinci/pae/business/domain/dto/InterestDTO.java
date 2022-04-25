@@ -30,4 +30,8 @@ public interface InterestDTO {
   String getStatus();
 
   void setStatus(String status);
+
+  Integer getVersion();
+
+  void setVersion(Integer version);
 }

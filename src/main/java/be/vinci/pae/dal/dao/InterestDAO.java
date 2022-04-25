@@ -16,6 +16,9 @@ public interface InterestDAO {
   /**
    * Mark all notifications shown.
    *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
+   *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.
    */
@@ -41,6 +44,9 @@ public interface InterestDAO {
 
   /**
    * Update the notification field to know if we have to send one.
+   *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
    *
    * @param interestDTO with the notification attribute.
    * @return the interest updated.

@@ -66,13 +66,14 @@ public class InterestUCCImpl implements InterestUCC {
         if (objectDTO == null) {
           throw new NotFoundException("Object not found");
         }
-        objectDTO.setStatus("interested");
-        objectDAO.updateOne(objectDTO);
+        // TODO verifier version offre & objet
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
         offerDTO.setStatus("interested");
+        offerDTO.getObject().setStatus("interested");
+        System.out.println(offerDTO);
         offerDAO.updateOne(offerDTO);
       }
-      interestDAO.addOne(item);
+      item = interestDAO.addOne(item);
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -109,6 +110,13 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
+      Integer interestVersionDB = interestDAO.getOne(interestDTO.getObject().getIdObject(),
+          interestDTO.getIdMember()).getVersion();
+      if (!interestVersionDB.equals(interestDTO.getVersion())) {
+        throw new ForbiddenException("Les versions de l'intérêt ne correspondent pas.");
+      }
+
+      // TODO verifier version offre
       // update offer to assigned
       offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
@@ -253,6 +261,9 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Mark a notification shown.
    *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
+   *
    * @param interestDTO to mark as shown.
    * @return interestDTO updated.
    */
@@ -267,19 +278,21 @@ public class InterestUCCImpl implements InterestUCC {
 
       // Send Notification
       interestDTO.setIsNotificated(false);
-      interestDAO.updateNotification(interestDTO);
+      interestDTO = interestDAO.updateNotification(interestDTO);
 
       dalService.commitTransaction();
+      return interestDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return interestDTO;
   }
 
   /**
    * Mark all notifications shown.
+   *
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
    *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.
@@ -289,7 +302,6 @@ public class InterestUCCImpl implements InterestUCC {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
-
       interestDTOList = interestDAO.markAllNotificationsShown(idMember);
       if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");
