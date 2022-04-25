@@ -21,6 +21,9 @@ public class ObjectImpl implements ObjectDTO {
   private String image;
   @JsonView(Views.Public.class)
   private Integer idOfferor;
+  @JsonView(Views.Public.class)
+  private Integer version;
+
 
   @Override
   public Integer getIdObject() {
@@ -80,6 +83,16 @@ public class ObjectImpl implements ObjectDTO {
   @Override
   public void setIdOfferor(int idOfferor) {
     this.idOfferor = idOfferor;
+  }
+
+  @Override
+  public Integer getVersion() {
+    return version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 
 }

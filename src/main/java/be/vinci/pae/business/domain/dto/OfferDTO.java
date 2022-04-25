@@ -30,4 +30,8 @@ public interface OfferDTO {
   String getStatus();
 
   void setStatus(String status);
+
+  void setVersion(Integer version);
+
+  Integer getVersion();
 }

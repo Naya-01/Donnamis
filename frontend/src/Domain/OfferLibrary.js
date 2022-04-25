@@ -124,15 +124,18 @@ class OfferLibrary {
    * @param timeSlot the time slot of the offer
    * @param description the description of the object
    * @param idType the id of the type
-   * @param status the status of the object
+   * @param statusOffer
+   * @param statusObject
+   * @param versionObject
+   * @param versionOffer
    * @returns {Promise<*>} the offer in json
    */
   async updateOffer(id, timeSlot, description, idType, statusOffer,
-      statusObject) {
+      statusObject, versionObject, versionOffer) {
     let response;
     try {
       let options = {
-        method: "PUT", //TODO : change to PUT
+        method: "PUT",
         body: JSON.stringify({
           "idOffer": id,
           "timeSlot": timeSlot,
@@ -140,7 +143,9 @@ class OfferLibrary {
           "object": {
             "description": description,
             "status": statusObject,
-          }
+            "version": versionObject
+          },
+          "version": versionOffer
         }),
         headers: {
           "Content-Type": "application/json",

@@ -211,7 +211,6 @@ public class InterestResource {
 
   /**
    * Mark a notification as shown.
-   *
    * /!\ There is no version update because of
    * the non-sensibility of the send_notification field /!\
    *
@@ -235,7 +234,6 @@ public class InterestResource {
 
   /**
    * Mark all notifications shown.
-   *
    * /!\ There is no version update because of
    * the non-sensibility of the send_notification field /!\
    *

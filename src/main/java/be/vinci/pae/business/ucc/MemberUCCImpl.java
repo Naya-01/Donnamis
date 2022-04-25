@@ -39,10 +39,9 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO login(String username, String password) {
-    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
-      memberDTO = memberDAO.getOne(username);
+      MemberDTO memberDTO = memberDAO.getOne(username);
       Member member = (Member) memberDTO;
       if (memberDTO == null) {
         throw new NotFoundException("Membre non trouvé");
@@ -58,11 +57,11 @@ public class MemberUCCImpl implements MemberUCC {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
 
   }
 
@@ -93,11 +92,11 @@ public class MemberUCCImpl implements MemberUCC {
 
       memberDTO = memberDAO.updateProfilPicture(path, id);
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
   }
 
   /**
@@ -108,19 +107,18 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO getMember(int id) {
-    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
-      memberDTO = memberDAO.getOne(id);
+      MemberDTO memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
   }
 
   /**
@@ -190,19 +188,18 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public List<MemberDTO> searchMembers(String search, String status) {
-    List<MemberDTO> memberDTOList;
     try {
       dalService.startTransaction();
-      memberDTOList = memberDAO.getAll(search, status);
+      List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
       if (memberDTOList == null || memberDTOList.isEmpty()) {
         throw new NotFoundException("Aucun membre");
       }
       dalService.commitTransaction();
+      return memberDTOList;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTOList;
   }
 
 
@@ -214,11 +211,10 @@ public class MemberUCCImpl implements MemberUCC {
    */
   public BufferedImage getPicture(int id) {
     MemberDTO memberDTO;
-    BufferedImage picture = null;
+    BufferedImage picture;
     try {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
-
       if (memberDTO == null) {
         throw new NotFoundException("Membre non trouvé");
       }

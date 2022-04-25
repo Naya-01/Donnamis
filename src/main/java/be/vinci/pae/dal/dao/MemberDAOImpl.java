@@ -228,7 +228,6 @@ public class MemberDAOImpl implements MemberDAO {
         preparedStatement.setString(cnt++, str);
       }
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
-
       MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
       preparedStatement.getResultSet().close();
       preparedStatement.close();
@@ -278,6 +277,7 @@ public class MemberDAOImpl implements MemberDAO {
         AddressDTO addressDTO = getAddressDTOByResultSet(resultSet);
         memberDTO.setAddress(addressDTO);
 
+        memberDTO.setAddress(addressDTO);
         memberDTOList.add(memberDTO);
       }
       preparedStatement.close();
