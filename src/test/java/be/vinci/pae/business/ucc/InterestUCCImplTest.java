@@ -218,7 +218,7 @@ class InterestUCCImplTest {
     Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
         interestDTO.getIdMember())).thenReturn(interestDTO);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
