@@ -143,8 +143,10 @@ const objectCards = async (searchPattern, type, status) => {
 
           let phone;
 
-          if (interest.member.phone) {
-            phone = "(" + interest.member.phone + ")";
+          if (interest.member.phone) {// TODO ajouter l'attribut be_called à true
+            phone = "(Appelez moi :  "
+                + interest.member.phone
+                + ")";
           } else {
             phone = "";
           }
@@ -162,7 +164,7 @@ const objectCards = async (searchPattern, type, status) => {
           }
           allInterests += `
               <div class="row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded">
-                <div class="col-1 m-auto">
+                <div class="col-2 m-auto">
                   <img class="img-thumbnail" src="${image}" alt="image">
                 </div>
                 <div class="col-7 mt-3">
