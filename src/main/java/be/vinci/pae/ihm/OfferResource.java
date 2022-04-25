@@ -242,14 +242,15 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public OfferDTO giveOffer(OfferDTO offerDTO) {
+  public OfferDTO giveOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
     Logger.getLogger("Log").log(Level.INFO, "OfferResource giveOffer");
     if (offerDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }
 
-    return offerUcc.giveOffer(offerDTO);
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    return offerUcc.giveOffer(offerDTO, ownerDTO);
   }
 
   /**

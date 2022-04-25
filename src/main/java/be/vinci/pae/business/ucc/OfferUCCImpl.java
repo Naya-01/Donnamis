@@ -319,19 +319,28 @@ public class OfferUCCImpl implements OfferUCC {
    * Give an Object, set the status to 'given'.
    *
    * @param offerDTO : object with his id'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO giveOffer(OfferDTO offerDTO) {
+  public OfferDTO giveOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (offerDTO == null) {
+        throw new NotFoundException("cet object n'existe pas");
+      }
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
       if (interestDTO == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
-
-      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException(

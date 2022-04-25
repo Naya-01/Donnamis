@@ -87,9 +87,10 @@ public interface OfferUCC {
    * Give an Object, set the status to 'given'.
    *
    * @param offerDTO : object with his id'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO giveOffer(OfferDTO offerDTO);
+  OfferDTO giveOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
    * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
