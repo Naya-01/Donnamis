@@ -58,7 +58,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       if (interestDAO.getOne(item.getObject().getIdObject(), item.getIdMember()) != null) {
         //change name exception
-        throw new NotFoundException("An Interest for this Object and Member already exists");
+        throw new ForbiddenException("An Interest for this Object and Member already exists");
       }
       // if there is no interest
       if (interestDAO.getAllCount(item.getObject().getIdObject()) == 0) {
@@ -218,7 +218,7 @@ public class InterestUCCImpl implements InterestUCC {
     InterestDTO userInterested;
     try {
       dalService.startTransaction();
-      userInterested = interestDAO.getOne(idMember, idObject);
+      userInterested = interestDAO.getOne(idObject, idMember);
       dalService.commitTransaction();
       if (userInterested == null) {
         return false;

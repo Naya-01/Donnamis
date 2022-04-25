@@ -103,7 +103,9 @@ const ObjectDetailsPage = async () => {
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
       offer.object.idObject);
+  console.log(jsonInterests);
   isInterested = jsonInterests.isUserInterested;
+  console.log(isInterested);
   let nbMembersInterested = jsonInterests.count;
 
   // Construct all the HTML
