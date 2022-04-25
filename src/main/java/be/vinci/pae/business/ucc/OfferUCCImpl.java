@@ -81,16 +81,25 @@ public class OfferUCCImpl implements OfferUCC {
    * Add an offer in the db without an object.
    *
    * @param offerDTO an offer we want to add in the db
+   * @param ownerDTO member object
    * @return the offerDTO added
    */
   @Override
-  public OfferDTO addOffer(OfferDTO offerDTO) {
+  public OfferDTO addOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
 
-      OfferDTO offer = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
-      if (!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")) {
+      if (offerDTO == null) {
+        throw new NotFoundException("cet object n'existe pas");
+      }
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
+
+      if (!offerDTO.getStatus().equals("cancelled") && !offerDTO.getStatus().equals("not_collected")) {
         throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
             + "en créer de nouveau");
       }

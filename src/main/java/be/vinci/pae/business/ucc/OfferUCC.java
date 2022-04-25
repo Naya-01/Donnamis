@@ -26,9 +26,10 @@ public interface OfferUCC {
    * Add an offer for an object.
    *
    * @param offerDTO an offer we want to add
+   * @param ownerDTO member object
    * @return the offerDTO added
    */
-  OfferDTO addOffer(OfferDTO offerDTO);
+  OfferDTO addOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
    * Update the time slot of an offer or an errorcode.
