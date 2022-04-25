@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -22,7 +23,7 @@ public class MemberDAOImpl implements MemberDAO {
   @Inject
   private MemberFactory memberFactory;
   @Inject
-  private AddressDAO addressDAO;
+  private AddressFactory addressFactory;
 
   /**
    * Get a member we want to retrieve by his username.
@@ -55,11 +56,7 @@ public class MemberDAOImpl implements MemberDAO {
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
-      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
-      if (memberDTO != null) {
-        memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
-      }
-      return memberDTO;
+      return getMemberByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -202,9 +199,7 @@ public class MemberDAOImpl implements MemberDAO {
       }
       preparedStatement.setInt(cnt, memberDTO.getMemberId());
 
-      MemberDTO modifiedMember = getMemberByPreparedStatement(preparedStatement);
-
-      return modifiedMember;
+      return getMemberByPreparedStatement(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -249,12 +244,15 @@ public class MemberDAOImpl implements MemberDAO {
       while (resultSet.next()) {
         MemberDTO memberDTO = getMemberByResultSet(resultSet);
 
-        AddressDTO addressDTO = addressDAO.createAddressDTO(resultSet.getInt(11),
-            resultSet.getString(12), resultSet.getString(13),
-            resultSet.getString(14), resultSet.getString(15),
-            resultSet.getString(16));
-        memberDTO.setAddress(addressDTO);
+        AddressDTO addressDTO = addressFactory.getAddressDTO();
+        addressDTO.setIdMember(resultSet.getInt(11));
+        addressDTO.setUnitNumber(resultSet.getString(12));
+        addressDTO.setBuildingNumber(resultSet.getString(13));
+        addressDTO.setStreet(resultSet.getString(14));
+        addressDTO.setPostcode(resultSet.getString(15));
+        addressDTO.setCommune(resultSet.getString(16));
 
+        memberDTO.setAddress(addressDTO);
         memberDTOList.add(memberDTO);
       }
       resultSet.close();
