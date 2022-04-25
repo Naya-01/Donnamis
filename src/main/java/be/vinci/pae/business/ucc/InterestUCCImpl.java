@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
@@ -9,7 +10,6 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.exceptions.UnauthorizedException;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -91,19 +91,24 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Assign the offer to a member.
    *
-   * @param idOwner     id of the object's owner
+   * @param owner       the object's owner
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
-  public InterestDTO assignOffer(InterestDTO interestDTO, int idOwner) {
+  public InterestDTO assignOffer(InterestDTO interestDTO, MemberDTO owner) {
     try {
       dalService.startTransaction();
 
       interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
           interestDTO.getIdMember());
-      if (idOwner != interestDTO.getObject().getIdOfferor()) {
-        throw new UnauthorizedException("Cet objet ne vous appartient pas");
+
+      if (interestDTO == null) {
+        throw new NotFoundException("Cet interet n'existe pas");
+      }
+
+      if (!(owner.getMemberId().equals(interestDTO.getObject().getIdOfferor()))) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
       OfferDTO offerDTO = offerDAO.getLastObjectOffer(interestDTO.getObject().getIdObject());
@@ -172,15 +177,15 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Get notification count.
    *
-   * @param idMember of the member.
+   * @param member of the member.
    * @return count of notification
    */
   @Override
-  public Integer getNotificationCount(Integer idMember) {
+  public Integer getNotificationCount(MemberDTO member) {
     Integer interests;
     try {
       dalService.startTransaction();
-      interests = interestDAO.getNotificationCount(idMember);
+      interests = interestDAO.getNotificationCount(member.getMemberId());
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -192,12 +197,12 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Get a list of interest, by an id object.
    *
-   * @param idObject  the object we want to retrieve the interests
-   * @param idOfferor the owner of the object
+   * @param idObject the object we want to retrieve the interests
+   * @param offeror  the owner of the object
    * @return a list of interest, by an id object
    */
   @Override
-  public List<InterestDTO> getAllInterests(int idObject, int idOfferor) {
+  public List<InterestDTO> getAllInterests(int idObject, MemberDTO offeror) {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
@@ -206,8 +211,8 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("Object not found");
       }
 
-      if (idOfferor != objectDTO.getIdOfferor()) {
-        throw new UnauthorizedException("Cet objet ne vous appartient pas");
+      if (!offeror.getMemberId().equals(objectDTO.getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
       interestDTOList = interestDAO.getAllPublished(idObject);
@@ -226,16 +231,16 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Check if a member is interested by an object.
    *
-   * @param idMember the id of the member
+   * @param member   the id of the member
    * @param idObject the id of the object
    * @return true if he's interested false if he's not
    */
   @Override
-  public boolean isUserInterested(int idMember, int idObject) {
+  public boolean isUserInterested(MemberDTO member, int idObject) {
     InterestDTO userInterested;
     try {
       dalService.startTransaction();
-      userInterested = interestDAO.getOne(idMember, idObject);
+      userInterested = interestDAO.getOne(member.getMemberId(), idObject);
       dalService.commitTransaction();
       if (userInterested == null) {
         return false;
@@ -250,15 +255,15 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Get a list of notificated interest in an id object.
    *
-   * @param idMember the member we want to retrieve notifications
+   * @param member the member we want to retrieve notifications
    * @return a list of interest, by an id member
    */
   @Override
-  public List<InterestDTO> getNotifications(int idMember) {
+  public List<InterestDTO> getNotifications(MemberDTO member) {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
-      interestDTOList = interestDAO.getAllNotifications(idMember);
+      interestDTOList = interestDAO.getAllNotifications(member.getMemberId());
       if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'est disponible");
       }
@@ -273,17 +278,17 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Mark a notification shown.
    *
-   * @param idMember of the member
+   * @param member   of the member
    * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
   @Override
-  public InterestDTO markNotificationShown(int idObject, int idMember) {
+  public InterestDTO markNotificationShown(int idObject, MemberDTO member) {
     InterestDTO interestDTO = null;
     try {
       dalService.startTransaction();
 
-      interestDTO = interestDAO.getOne(idObject, idMember);
+      interestDTO = interestDAO.getOne(idObject, member.getMemberId());
       if (interestDTO == null) {
         throw new NotFoundException("La notification n'existe pas");
       }
@@ -307,16 +312,16 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Mark all notifications shown.
    *
-   * @param idMember to mark all his notifications showns.
+   * @param member to mark all his notifications showns.
    * @return interestDTOs updated.
    */
   @Override
-  public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
+  public List<InterestDTO> markAllNotificationsShown(MemberDTO member) {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
 
-      interestDTOList = interestDAO.markAllNotificationsShown(idMember);
+      interestDTOList = interestDAO.markAllNotificationsShown(member.getMemberId());
       if (interestDTOList.isEmpty()) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");
       }

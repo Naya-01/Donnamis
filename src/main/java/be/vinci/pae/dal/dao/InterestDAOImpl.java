@@ -87,7 +87,7 @@ public class InterestDAOImpl implements InterestDAO {
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
       try {
-        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        //interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));

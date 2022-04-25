@@ -3,7 +3,6 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
-import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.utils.JsonViews;
@@ -36,8 +35,6 @@ public class InterestResource {
   private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestUCC interestUCC;
-  @Inject
-  private ObjectUCC objectUCC;
 
   /**
    * Get notifications count.
@@ -52,7 +49,7 @@ public class InterestResource {
   public Integer getNotificationCount(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getOne");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
-    return interestUCC.getNotificationCount(authenticatedUser.getMemberId());
+    return interestUCC.getNotificationCount(authenticatedUser);
   }
 
   /**
@@ -125,7 +122,7 @@ public class InterestResource {
     return jsonMapper.createObjectNode()
         .put("count", interestUCC.getInterestedCount(idObject))
         .put("isUserInterested",
-            interestUCC.isUserInterested(authenticatedUser.getMemberId(), idObject));
+            interestUCC.isUserInterested(authenticatedUser, idObject));
   }
 
   /**
@@ -144,7 +141,7 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getAllInterests");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject,
-        authenticatedUser.getMemberId());
+        authenticatedUser);
     for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
@@ -166,7 +163,7 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getAllNotifications");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getNotifications(
-        authenticatedUser.getMemberId());
+        authenticatedUser);
     for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
@@ -190,12 +187,13 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource assignOffer");
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+
     if (interestDTO.getIdMember() == null
         && interestDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
 
-    return interestUCC.assignOffer(interestDTO, ownerDTO.getMemberId());
+    return interestUCC.assignOffer(interestDTO, ownerDTO);
   }
 
   /**
@@ -215,7 +213,7 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markNotificationShown(idObject, memberDTO.getMemberId());
+    return interestUCC.markNotificationShown(idObject, memberDTO);
   }
 
   /**
@@ -233,7 +231,7 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markAllNotificationsShown(memberDTO.getMemberId());
+    return interestUCC.markAllNotificationsShown(memberDTO);
   }
 
 

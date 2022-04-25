@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import java.util.List;
 
 public interface InterestUCC {
@@ -25,10 +26,11 @@ public interface InterestUCC {
   /**
    * Assign the offer to a member.
    *
+   * @param owner       of the object
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
-  InterestDTO assignOffer(InterestDTO interestDTO, int idOwner);
+  InterestDTO assignOffer(InterestDTO interestDTO, MemberDTO owner);
 
   /**
    * Get a list of interest, by an id object.
@@ -41,53 +43,53 @@ public interface InterestUCC {
   /**
    * Get notification count.
    *
-   * @param idMember of the member.
+   * @param member of the member.
    * @return count of notification
    */
-  Integer getNotificationCount(Integer idMember);
+  Integer getNotificationCount(MemberDTO member);
 
   /**
    * Get the number of all interests.
    *
-   * @param idObject  the object we want to retrieve the interests
-   * @param idOfferor the owner of the object
+   * @param idObject the object we want to retrieve the interests
+   * @param offeror  the owner of the object
    * @return the number of all interests
    */
-  List<InterestDTO> getAllInterests(int idObject, int idOfferor);
+  List<InterestDTO> getAllInterests(int idObject, MemberDTO offeror);
 
   /**
    * Check if a member is interested by an object.
    *
-   * @param idMember the id of the member
+   * @param member   the id of the member
    * @param idObject the id of the object
    * @return true if he's interested false if he's not
    */
-  boolean isUserInterested(int idMember, int idObject);
+  boolean isUserInterested(MemberDTO member, int idObject);
 
   /**
    * Get a list of notificated interest in an id object.
    *
-   * @param idMember the member we want to retrieve notifications
+   * @param member the member we want to retrieve notifications
    * @return a list of interest, by an id member
    */
-  List<InterestDTO> getNotifications(int idMember);
+  List<InterestDTO> getNotifications(MemberDTO member);
 
 
   /**
    * Mark a notification shown.
    *
-   * @param idMember of the member
+   * @param member   of the member
    * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
-  InterestDTO markNotificationShown(int idObject, int idMember);
+  InterestDTO markNotificationShown(int idObject, MemberDTO member);
 
   /**
    * Mark all notifications shown.
    *
-   * @param idMember to mark all his notifications showns.
+   * @param member to mark all his notifications showns.
    * @return interestDTOs updated.
    */
-  List<InterestDTO> markAllNotificationsShown(Integer idMember);
+  List<InterestDTO> markAllNotificationsShown(MemberDTO member);
 
 }
