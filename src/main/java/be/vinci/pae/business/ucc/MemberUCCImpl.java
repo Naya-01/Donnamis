@@ -234,7 +234,7 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Update any attribute of a member.
+   * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
    * @return the modified member
