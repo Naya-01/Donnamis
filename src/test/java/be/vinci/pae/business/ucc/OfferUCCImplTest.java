@@ -557,13 +557,10 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setStatus("cancelled");
     offerDTOFromDAO.getObject().setStatus("cancelled");
 
-    InterestDTO interestDTO = interestFactory.getInterestDTO();
-
     MemberDTO mockMember = memberFactory.getMemberDTO();
-
     mockMember.setMemberId(5);
     offerDTO.getObject().setIdOfferor(5);
-
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
     Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
         .thenReturn(offerDTOFromDAO.getObject());
