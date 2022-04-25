@@ -183,6 +183,7 @@ class InterestUCCImplTest {
     offerDTO.setObject(objectDTO);
     OfferDAO mockOfferDAO = locator.getService(OfferDAO.class);
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.addOne(newInterestDTO)).thenReturn(newInterestDTO);
     Mockito.when(mockOfferDAO.getOneByObject(objectDTO.getIdObject())).thenReturn(offerDTO);
     assertAll(
         () -> assertEquals(newInterestDTO, interestUCC.addOne(newInterestDTO)),
@@ -233,6 +234,7 @@ class InterestUCCImplTest {
         interestDTO.getIdMember())).thenReturn(null);
     Mockito.when(mockInterestDAO.getAllCount(interestDTO.getObject().getIdObject()))
         .thenReturn(5);
+    Mockito.when(mockInterestDAO.addOne(interestDTO)).thenReturn(interestDTO);
     assertAll(
         () -> assertEquals(interestDTO, interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -375,6 +377,7 @@ class InterestUCCImplTest {
     interestDTONotificated.setIsNotificated(true);
     interestDTONotificated.setIdMember(3);
     interestDTONotificated.setIdMember(2);
+    Mockito.when(interestDAO.updateNotification(interestDTONotificated)).thenReturn(interestDTONotificated);
 
     assertAll(
         () -> assertFalse(
