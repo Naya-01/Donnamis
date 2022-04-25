@@ -224,14 +224,12 @@ public class InterestDAOImpl implements InterestDAO {
   public List<InterestDTO> getAllPublished(int idObject) {
     String query = "SELECT id_object, id_member, availability_date, status, send_notification, "
         + "version FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
-    List<InterestDTO> allInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      allInterests = getInterestsDTOSList(preparedStatement);
+      return getInterestsDTOSList(preparedStatement);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-    return allInterests;
   }
 
   /**
