@@ -102,6 +102,8 @@ public class OfferDAOImpl implements OfferDAO {
         + "ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "ty.is_default, of.status FROM donnamis.offers of, donnamis.objects ob, donnamis.types ty"
         + " WHERE of.id_object = ob.id_object AND ty.id_type = ob.id_type "
+        + "AND of.status != 'not_collected' "
+        + "AND of.status != 'cancelled' "
         + "AND of.date = (SELECT max(of2.date) FROM donnamis.offers of2 "
         + "WHERE of2.id_object = of.id_object "
         + "ORDER BY of.date DESC) "

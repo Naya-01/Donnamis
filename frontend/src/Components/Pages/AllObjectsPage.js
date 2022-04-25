@@ -24,6 +24,8 @@ const AllObjectsPage = async () => {
   const all = document.getElementById("btn-status-all");
   const given = document.getElementById("btn-status-given");
   const assigned = document.getElementById("btn-status-assigned");
+  let cancelled = document.getElementById("btn-status-cancelled");
+  let not_collected = document.getElementById("btn-status-not_collected");
 
   const actualizeCards = async () => {
     let type = typeObject.options[typeObject.selectedIndex].value;
@@ -74,6 +76,16 @@ const AllObjectsPage = async () => {
 
   assigned.addEventListener('click', async () => {
     status = "assigned";
+    await actualizeCards();
+  });
+
+  cancelled.addEventListener('click', async () => {
+    status = "cancelled";
+    await actualizeCards();
+  });
+
+  not_collected.addEventListener('click', async () => {
+    status = "not_collected";
     await actualizeCards();
   });
 
