@@ -1,5 +1,6 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
+import Swal from "sweetalert2";
 
 class InterestLibrary {
 
@@ -113,12 +114,14 @@ class InterestLibrary {
       response = await fetch("api/interest/assignOffer", options);
       if (!response.ok) {
         response.text().then((msg) => {
+          Swal.close();
           toast.fire({
             icon: 'error',
             title: msg
           });
         })
       } else {
+        Swal.close();
         toast.fire({
           icon: 'success',
           title: "le membre a été assigné"
