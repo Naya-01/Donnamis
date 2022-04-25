@@ -93,7 +93,7 @@ class InterestLibrary {
     return allInterests;
   }
 
-  async assignOffer(idObject, idMember) {
+  async assignOffer(idObject, idMember, version) {
     let response;
     let toast = Notification.prototype.getNotification("bottom");
     try {
@@ -103,7 +103,8 @@ class InterestLibrary {
           "object": {
             "idObject": idObject
           },
-          "idMember": idMember
+          "idMember": idMember,
+          "version": version,
         }),
         headers: {
           "Content-Type": "application/json",
