@@ -32,12 +32,19 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
               <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-assigned">Attribué</label>
             
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-given" autocomplete="off">
               <label class="btn btn-outline-dark" for="btn-status-given">Donné</label>
               
-              <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
-              <label class="btn btn-outline-danger" for="btn-status-assigned">En cours</label>
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-cancelled" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-cancelled">Annulé</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-not_collected" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-not_collected">Non récupéré</label>
+              
             </div>`;
     }
     if (hasType) {
