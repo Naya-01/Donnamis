@@ -99,7 +99,8 @@ public class OfferUCCImpl implements OfferUCC {
         throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
-      if (!offerDTO.getStatus().equals("cancelled") && !offerDTO.getStatus().equals("not_collected")) {
+      if (!offerDTO.getStatus().equals("cancelled") && !offerDTO.getStatus()
+          .equals("not_collected")) {
         throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
             + "en créer de nouveau");
       }

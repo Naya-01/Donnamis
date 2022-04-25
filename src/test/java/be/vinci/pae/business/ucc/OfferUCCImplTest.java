@@ -267,7 +267,6 @@ class OfferUCCImplTest {
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
         .thenReturn(typeDTOFromDaoGetOne);
 
-
     OfferDTO offerStatus = getNewOffer();
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
