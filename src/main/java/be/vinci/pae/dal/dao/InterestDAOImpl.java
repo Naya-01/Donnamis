@@ -1,7 +1,6 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -19,10 +18,6 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private DALBackendService dalBackendService;
-  @Inject
-  private MemberDAO memberDAO;
-  @Inject
-  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -87,12 +82,11 @@ public class InterestDAOImpl implements InterestDAO {
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
       try {
-        //interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        interestDTO.setIdObject(resultSet.getInt("id_object"));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
       } catch (SQLException e) {
         throw new FatalException(e);
       }
@@ -120,12 +114,9 @@ public class InterestDAOImpl implements InterestDAO {
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(1));
-        interestDTO.setObject(objectDTO);
         interestDTO.setIdMember(resultSet.getInt(2));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
         interestDTOList.add(interestDTO);
       }

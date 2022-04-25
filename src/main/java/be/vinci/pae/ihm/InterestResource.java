@@ -92,7 +92,7 @@ public class InterestResource {
     if (interest == null || interest.getAvailabilityDate() == null) {
       throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
     }
-    if (interest.getObject().getIdObject() < 1) {
+    if (interest.getIdObject() < 1) {
       throw new WebApplicationException("Non existent id object", Response.Status.BAD_REQUEST);
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
@@ -189,7 +189,7 @@ public class InterestResource {
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (interestDTO.getIdMember() == null
-        && interestDTO.getObject().getIdObject() == null) {
+        && interestDTO.getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
 

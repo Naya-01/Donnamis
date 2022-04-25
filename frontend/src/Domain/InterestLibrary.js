@@ -101,9 +101,7 @@ class InterestLibrary {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
+          "idObject": idObject,
           "idMember": idMember
         }),
         headers: {
@@ -207,9 +205,7 @@ class InterestLibrary {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
+          "idObject": idObject,
           "availabilityDate": date,
           "isNotificated": isNotificated
         }),
