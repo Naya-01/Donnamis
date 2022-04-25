@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
@@ -216,12 +217,19 @@ public class OfferUCCImpl implements OfferUCC {
    * Cancel an Object.
    *
    * @param offerDTO object with his id & set the status to 'cancelled'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO cancelOffer(OfferDTO offerDTO) {
+  public OfferDTO cancelOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
         throw new ForbiddenException("Impossible d'annuler l'offre");

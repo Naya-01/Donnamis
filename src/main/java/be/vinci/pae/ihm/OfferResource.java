@@ -203,13 +203,7 @@ public class OfferResource {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
 
-    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
-
-    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
-      throw new ForbiddenException("Cet objet ne vous appartient pas");
-    }
-
-    return offerUcc.cancelOffer(offerDTO);
+    return offerUcc.cancelOffer(offerDTO, ownerDTO);
   }
 
 
@@ -265,8 +259,8 @@ public class OfferResource {
   }
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th data's.

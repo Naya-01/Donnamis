@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +68,10 @@ public interface OfferUCC {
    * Cancel an Object.
    *
    * @param offerDTO object with his id & set the status to 'cancelled'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO cancelOffer(OfferDTO offerDTO);
+  OfferDTO cancelOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
 
   /**
@@ -89,8 +91,8 @@ public interface OfferUCC {
   OfferDTO giveOffer(OfferDTO offerDTO);
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th datas.
