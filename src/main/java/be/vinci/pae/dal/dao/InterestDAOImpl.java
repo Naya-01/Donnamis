@@ -156,7 +156,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setInt(2, item.getIdMember());
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
-      preparedStatement.setBoolean(5, item.getIsNotificated());
+      preparedStatement.setBoolean(5, true);
       preparedStatement.execute();
     } catch (SQLException e) {
       throw new FatalException(e);

@@ -73,11 +73,8 @@ public class InterestUCCImpl implements InterestUCC {
         offerDTO.setStatus("interested");
         offerDAO.updateOne(offerDTO);
       }
-      InterestDTO interestDTO = interestDAO.addOne(item);
-      
-      // Send Notification
-      interestDTO.setIsNotificated(true);
-      interestDAO.updateNotification(interestDTO);
+      interestDAO.addOne(item);
+
 
       dalService.commitTransaction();
     } catch (Exception e) {
