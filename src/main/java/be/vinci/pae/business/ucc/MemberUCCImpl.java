@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 
+//TODO : changer tt la doc
 
 public class MemberUCCImpl implements MemberUCC {
 
@@ -73,13 +74,16 @@ public class MemberUCCImpl implements MemberUCC {
    * @return memberDTO updated
    */
   @Override
-  public MemberDTO updateProfilPicture(String path, int id) {
+  public MemberDTO updateProfilPicture(String path, int id, Integer version) {
     MemberDTO memberDTO;
     try {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
+      }
+      if(!memberDTO.getVersion().equals(version)){
+        throw new ForbiddenException("Les versions ne correspondent pas.");
       }
 
       File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
@@ -240,12 +244,16 @@ public class MemberUCCImpl implements MemberUCC {
    * @return the modified member
    */
   @Override
-  public MemberDTO updateMember(MemberDTO memberDTO) {
+  public MemberDTO updateMember(MemberDTO memberDTO, Integer version) {
     try {
       dalService.startTransaction();
+      if(!memberDTO.getVersion().equals(version)){
+        throw new ForbiddenException("Les versions ne correspondent pas.");
+      }
       AddressDTO addressDTO;
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
+        //TODO : verifier versions de l'adresse
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
       } else {
         addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());

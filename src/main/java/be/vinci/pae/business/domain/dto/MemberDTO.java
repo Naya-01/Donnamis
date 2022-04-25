@@ -50,4 +50,8 @@ public interface MemberDTO {
 
   void setImage(String image);
 
+  Integer getVersion();
+
+  void setVersion(Integer version);
+
 }
