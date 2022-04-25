@@ -117,6 +117,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdMember(resultSet.getInt(2));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
+        interestDTO.setIdObject(resultSet.getInt("id_object"));
 
         interestDTOList.add(interestDTO);
       }

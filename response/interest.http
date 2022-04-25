@@ -12,6 +12,21 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "mehdi",
+  "password": "123",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+
 ### markNotificationShown
 PUT {{baseUri}}/interest/notificationShown/2
 Authorization: {{access}}
