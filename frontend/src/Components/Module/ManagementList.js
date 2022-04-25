@@ -1,5 +1,5 @@
-
-const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, overlayId = null) => {
+const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText,
+    overlayId = null) => {
   const buttonCardId = "button-card-" + uniqueId;
 
   let divCardId = "member-card-" + uniqueId;
@@ -11,34 +11,34 @@ const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, ov
   divCard.id = divCardId;
   divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
 
-  const profileImageDiv = document.createElement("div");
-  profileImageDiv.className = "col-1 m-auto";
+  const pictureDiv = document.createElement("div");
+  pictureDiv.className = "col-2 m-auto";
 
-  const profileImage = document.createElement("img");
-  profileImage.className = "img-thumbnail";
-  profileImage.src = image;
-  profileImage.alt = "image"
-  profileImageDiv.appendChild(profileImage);
+  const picture = document.createElement("img");
+  picture.className = "img-thumbnail";
+  picture.src = image;
+  picture.alt = "image"
+  pictureDiv.appendChild(picture);
 
-  divCard.appendChild(profileImageDiv);
+  divCard.appendChild(pictureDiv);
 
-  const informationMemberDiv = document.createElement("div");
-  informationMemberDiv.className = "col-7 mt-3";
-  informationMemberDiv.id = "information-object-" + uniqueId;
+  const informationDiv = document.createElement("div");
+  informationDiv.className = "col-7 mt-3";
+  informationDiv.id = "information-object-" + uniqueId;
 
-  const memberBaseInformationSpan = document.createElement("span");
-  memberBaseInformationSpan.className = "fs-4";
-  memberBaseInformationSpan.innerText = primaryText;
+  const baseInformationSpan = document.createElement("span");
+  baseInformationSpan.className = "fs-4";
+  baseInformationSpan.innerText = primaryText;
 
-  const memberAddressInformationSpan = document.createElement("span")
-  memberAddressInformationSpan.className = "text-secondary fs-5";
-  memberAddressInformationSpan.innerText = secondaryText;
+  const informationSpan = document.createElement("span")
+  informationSpan.className = "text-secondary fs-5";
+  informationSpan.innerText = secondaryText;
 
-  informationMemberDiv.appendChild(memberBaseInformationSpan);
-  informationMemberDiv.appendChild(document.createElement("br"));
-  informationMemberDiv.appendChild(memberAddressInformationSpan);
+  informationDiv.appendChild(baseInformationSpan);
+  informationDiv.appendChild(document.createElement("br"));
+  informationDiv.appendChild(informationSpan);
 
-  divCard.appendChild(informationMemberDiv);
+  divCard.appendChild(informationDiv);
 
   const buttonsCard = document.createElement("div");
   buttonsCard.className = "col-3 mb-4";
