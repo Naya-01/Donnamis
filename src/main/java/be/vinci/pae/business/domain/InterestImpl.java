@@ -62,7 +62,7 @@ public class InterestImpl implements InterestDTO {
   }
 
   @Override
-  public void setIdMember(int idMember) {
+  public void setIdMember(Integer idMember) {
     this.idMember = idMember;
   }
 
@@ -84,10 +84,6 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setStatus(String status) {
     this.status = status;
-  }
-
-  public void setIdMember(Integer idMember) {
-    this.idMember = idMember;
   }
 
   @Override

@@ -259,7 +259,6 @@ public class InterestUCCImpl implements InterestUCC {
 
   /**
    * Mark a notification shown.
-   *
    * /!\ There is no version update because of
    * the non-sensibility of the send_notification field /!\
    *
@@ -289,7 +288,6 @@ public class InterestUCCImpl implements InterestUCC {
 
   /**
    * Mark all notifications shown.
-   *
    * /!\ There is no version update because of
    * the non-sensibility of the send_notification field /!\
    *
@@ -314,6 +312,4 @@ public class InterestUCCImpl implements InterestUCC {
 
     return interestDTOList;
   }
-
-
 }

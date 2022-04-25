@@ -98,20 +98,14 @@ Authorization: {{refresh}}
 Content-Type: application/json
 
 {
-  "idOffer": 1,
+  "idOffer": 81,
   "timeSlot": "en fevrier",
-  "object": {
-    "type": {
-      "typeName": "Canette"
-    },
-    "description": "C'est une canette rien de plus",
-    "status": "available",
-    "image": null
-  }
+  "version": 6,
+  "status": "available"
 }
 
 ### Search given member
-GET {{baseUri}}/offers/givenOffers/4
+GET {{baseUri}}/offers/givenOffers/3
 Authorization: {{access}}
 
 ### Cancel offer

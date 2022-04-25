@@ -42,6 +42,8 @@ let note = 1;
 let offer;
 let idMemberConnected;
 let telNumber;
+let versionObject;
+let versionOffer;
 
 /**
  * Render the page to see an object
@@ -81,6 +83,11 @@ const ObjectDetailsPage = async () => {
   description = offer.object.description;
   time_slot = offer.timeSlot;
   statusObject = offer.status;
+  statusObject = offer.status;
+
+  versionObject = offer.object.version;
+  versionOffer = offer.version;
+
   let oldDate;
   if (offer.oldDate === undefined) {
     oldDate = "/"
@@ -599,9 +606,12 @@ async function updateObject(e) {
     }
   }
 
+  if (!versionObject) versionObject = ""
+  if (!versionOffer) versionOffer = ""
+
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject);
+      new_description, idType, english_status, statusObject, versionObject, versionOffer);
   if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',

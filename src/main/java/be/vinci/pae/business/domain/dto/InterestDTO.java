@@ -21,7 +21,7 @@ public interface InterestDTO {
 
   Integer getIdMember();
 
-  void setIdMember(int idMember);
+  void setIdMember(Integer idMember);
 
   LocalDate getAvailabilityDate();
 
