@@ -9,6 +9,7 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class InterestUCCImpl implements InterestUCC {
         offerDAO.updateOne(offerDTO);
       }
       InterestDTO interestDTO = interestDAO.addOne(item);
-      
+
       // Send Notification
       interestDTO.setIsNotificated(true);
       interestDAO.updateNotification(interestDTO);
@@ -90,13 +91,20 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Assign the offer to a member.
    *
+   * @param idOwner     id of the object's owner
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
-  public InterestDTO assignOffer(InterestDTO interestDTO) {
+  public InterestDTO assignOffer(InterestDTO interestDTO, int idOwner) {
     try {
       dalService.startTransaction();
+
+      interestDTO = interestDAO.getOne(interestDTO.getObject().getIdObject(),
+          interestDTO.getIdMember());
+      if (idOwner != interestDTO.getObject().getIdOfferor()) {
+        throw new UnauthorizedException("Cet objet ne vous appartient pas");
+      }
 
       OfferDTO offerDTO = offerDAO.getLastObjectOffer(interestDTO.getObject().getIdObject());
 
@@ -184,11 +192,12 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Get a list of interest, by an id object.
    *
-   * @param idObject the object we want to retrieve the interests
+   * @param idObject  the object we want to retrieve the interests
+   * @param idOfferor the owner of the object
    * @return a list of interest, by an id object
    */
   @Override
-  public List<InterestDTO> getAllInterests(int idObject) {
+  public List<InterestDTO> getAllInterests(int idObject, int idOfferor) {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
@@ -196,6 +205,11 @@ public class InterestUCCImpl implements InterestUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Object not found");
       }
+
+      if (idOfferor != objectDTO.getIdOfferor()) {
+        throw new UnauthorizedException("Cet objet ne vous appartient pas");
+      }
+
       interestDTOList = interestDAO.getAllPublished(idObject);
 
       if (interestDTOList.isEmpty()) {
@@ -259,14 +273,20 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Mark a notification shown.
    *
-   * @param interestDTO to mark as shown.
+   * @param idMember of the member
+   * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
   @Override
-  public InterestDTO markNotificationShown(InterestDTO interestDTO) {
+  public InterestDTO markNotificationShown(int idObject, int idMember) {
+    InterestDTO interestDTO = null;
     try {
       dalService.startTransaction();
 
+      interestDTO = interestDAO.getOne(idObject, idMember);
+      if (interestDTO == null) {
+        throw new NotFoundException("La notification n'existe pas");
+      }
       if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }

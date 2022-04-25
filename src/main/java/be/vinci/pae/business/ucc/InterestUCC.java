@@ -28,7 +28,7 @@ public interface InterestUCC {
    * @param interestDTO : the interest informations (id of the object and id of the member).
    * @return objectDTO updated.
    */
-  InterestDTO assignOffer(InterestDTO interestDTO);
+  InterestDTO assignOffer(InterestDTO interestDTO, int idOwner);
 
   /**
    * Get a list of interest, by an id object.
@@ -49,10 +49,11 @@ public interface InterestUCC {
   /**
    * Get the number of all interests.
    *
-   * @param idObject the object we want to retrieve the interests
+   * @param idObject  the object we want to retrieve the interests
+   * @param idOfferor the owner of the object
    * @return the number of all interests
    */
-  List<InterestDTO> getAllInterests(int idObject);
+  List<InterestDTO> getAllInterests(int idObject, int idOfferor);
 
   /**
    * Check if a member is interested by an object.
@@ -75,10 +76,11 @@ public interface InterestUCC {
   /**
    * Mark a notification shown.
    *
-   * @param interestDTO to mark as shown.
+   * @param idMember of the member
+   * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
-  InterestDTO markNotificationShown(InterestDTO interestDTO);
+  InterestDTO markNotificationShown(int idObject, int idMember);
 
   /**
    * Mark all notifications shown.
