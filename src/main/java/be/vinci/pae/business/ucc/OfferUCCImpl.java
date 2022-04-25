@@ -266,12 +266,19 @@ public class OfferUCCImpl implements OfferUCC {
    * Mark an object to 'not collected'.
    *
    * @param offerDTO object with his id & set the status to 'not collected'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO notCollectedOffer(OfferDTO offerDTO) {
+  public OfferDTO notCollectedOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
       if (interestDTO == null) {

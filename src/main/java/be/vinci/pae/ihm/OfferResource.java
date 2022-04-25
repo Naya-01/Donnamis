@@ -225,14 +225,9 @@ public class OfferResource {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
 
-    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
-
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
-      throw new ForbiddenException("Cet objet ne vous appartient pas");
-    }
 
-    return offerUcc.notCollectedOffer(offerDTO);
+    return offerUcc.notCollectedOffer(offerDTO, ownerDTO);
 
   }
 

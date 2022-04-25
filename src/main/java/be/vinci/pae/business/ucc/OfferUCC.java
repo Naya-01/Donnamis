@@ -78,9 +78,10 @@ public interface OfferUCC {
    * Mark an object to 'not collected'.
    *
    * @param offerDTO object with his id & set the status to 'not collected'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO notCollectedOffer(OfferDTO offerDTO);
+  OfferDTO notCollectedOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
    * Give an Object, set the status to 'given'.
