@@ -70,16 +70,16 @@ public class InterestUCCImpl implements InterestUCC {
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
         offerDTO.setStatus("interested");
         offerDTO.getObject().setStatus("interested");
-        System.out.println(offerDTO);
         offerDAO.updateOne(offerDTO);
+        objectDAO.updateOne(offerDTO.getObject());
       }
       item = interestDAO.addOne(item);
       dalService.commitTransaction();
+      return item;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return item;
   }
 
   /**
@@ -97,8 +97,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       if ((!offerDTO.getStatus().equals("interested") || !interestDTO.getObject().getStatus()
           .equals("interested")) && (!offerDTO.getStatus().equals("not_collected")
-          || !interestDTO.getObject().getStatus()
-          .equals("not_collected"))) {
+          || !interestDTO.getObject().getStatus().equals("not_collected"))) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 
@@ -118,9 +117,12 @@ public class InterestUCCImpl implements InterestUCC {
 
       // TODO verifier version offre
       // update offer to assigned
-      offerDTO.getObject().setStatus("assigned");
       offerDTO.setStatus("assigned");
       offerDAO.updateOne(offerDTO);
+
+      // update object to assigned
+      offerDTO.getObject().setStatus("assigned");
+      objectDAO.updateOne(offerDTO.getObject());
 
       // update interest to assigned
       interestDTO.setStatus("assigned");

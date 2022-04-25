@@ -3,6 +3,7 @@ package be.vinci.pae.dal.dao;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
+import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.services.DALBackendService;
@@ -27,7 +28,7 @@ public class OfferDAOImpl implements OfferDAO {
   @Inject
   private TypeFactory typeFactory;
   @Inject
-  private ObjectDAO objectDAO;
+  private ObjectFactory objectFactory;
 
   /**
    * Get all offers.
@@ -243,20 +244,10 @@ public class OfferDAOImpl implements OfferDAO {
   @Override
   public OfferDTO updateOne(OfferDTO offerDTO) {
     String query = "UPDATE donnamis.offers SET time_slot = ?, status = ?, version = version + 1";
-    ObjectDTO realObject = getOne(offerDTO.getIdOffer()).getObject();
-    ObjectDTO objectDTO = null;
-    if (offerDTO.getObject() != null) {
-      offerDTO.getObject().setIdObject(realObject.getIdObject());
-      objectDTO = objectDAO.updateOne(offerDTO.getObject());
-    }
 
     if (offerDTO.getTimeSlot() != null && !offerDTO.getTimeSlot().isEmpty()) {
       query += " WHERE id_offer = ? RETURNING id_offer, date, time_slot, id_object, status";
     } else {
-      if (objectDTO != null) {
-        offerDTO.setObject(objectDTO);
-        return offerDTO;
-      }
       throw new BadRequestException("Vous ne modifiez rien");
     }
 
@@ -273,10 +264,6 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
         offerDTOUpdated.setTimeSlot(resultSet.getString(3));
         offerDTOUpdated.setStatus(resultSet.getString(5));
-        if (objectDTO != null) {
-          offerDTOUpdated.setObject(objectDTO);
-          offerDTOUpdated.getObject().setIdObject(resultSet.getInt(4));
-        }
         return offerDTOUpdated;
       }
     } catch (SQLException e) {
@@ -383,10 +370,15 @@ public class OfferDAOImpl implements OfferDAO {
       typeDTO.setTypeName(resultSet.getString(10));
       typeDTO.setIsDefault(resultSet.getBoolean(11));
 
-      ObjectDTO objectDTO = objectDAO.getObject(resultSet.getInt(4), resultSet.getString(6),
-          resultSet.getString(7), resultSet.getString(8), resultSet.getInt(9));
+      ObjectDTO objectDTO = objectFactory.getObjectDTO();
+      objectDTO.setIdObject(resultSet.getInt(4));
+      objectDTO.setDescription(resultSet.getString(6));
+      objectDTO.setStatus(resultSet.getString(7));
+      objectDTO.setImage(resultSet.getString(8));
+      objectDTO.setIdOfferor(resultSet.getInt(9));
       objectDTO.setVersion(resultSet.getInt(14));
       objectDTO.setType(typeDTO);
+
       offerDTO.setObject(objectDTO);
       return offerDTO;
     } catch (SQLException e) {

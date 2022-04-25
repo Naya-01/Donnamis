@@ -95,4 +95,16 @@ public class ObjectImpl implements ObjectDTO {
     this.version = version;
   }
 
+  @Override
+  public String toString() {
+    return "ObjectImpl{" +
+        "idObject=" + idObject +
+        ", type=" + type +
+        ", description='" + description + '\'' +
+        ", status='" + status + '\'' +
+        ", image='" + image + '\'' +
+        ", idOfferor=" + idOfferor +
+        ", version=" + version +
+        '}';
+  }
 }

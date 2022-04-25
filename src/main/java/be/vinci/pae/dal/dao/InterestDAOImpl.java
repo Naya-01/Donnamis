@@ -367,9 +367,9 @@ public class InterestDAOImpl implements InterestDAO {
    */
   public InterestDTO updateStatus(InterestDTO interestDTO) {
 
-    String query = "UPDATE donnamis.interests SET status = ? AND version = ? "
-        + "WHERE id_object= ? AND id_member = ? RETURNING availability_date, status, id_member"
-        + ", id_object , send_notification, version";
+    String query = "UPDATE donnamis.interests SET status = ?, version = ? "
+        + "WHERE id_object = ? AND id_member = ? RETURNING id_object, id_member, "
+        + "availability_date, status, send_notification, version";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 

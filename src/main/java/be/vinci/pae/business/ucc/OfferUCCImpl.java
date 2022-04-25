@@ -18,11 +18,11 @@ import java.util.Map;
 public class OfferUCCImpl implements OfferUCC {
 
   @Inject
+  private DALService dalService;
+  @Inject
   private OfferDAO offerDAO;
   @Inject
   private ObjectDAO objectDAO;
-  @Inject
-  private DALService dalService;
   @Inject
   private InterestDAO interestDAO;
   @Inject
@@ -35,20 +35,18 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getLastOffers() {
-    List<OfferDTO> offers;
     try {
       dalService.startTransaction();
-      offers = offerDAO.getAllLast();
+      List<OfferDTO> offers = offerDAO.getAllLast();
       if (offers.isEmpty()) {
         throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
-
+      return offers;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offers;
   }
 
   /**
@@ -59,21 +57,18 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO getOfferById(int idOffer) {
-    OfferDTO offerDTO;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getOne(idOffer);
+      OfferDTO offerDTO = offerDAO.getOne(idOffer);
       if (offerDTO == null) {
         throw new NotFoundException("Aucune offres");
       }
       dalService.commitTransaction();
-
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offerDTO;
-
   }
 
   /**
@@ -108,11 +103,11 @@ public class OfferUCCImpl implements OfferUCC {
       objectDAO.updateOne(offerDTO.getObject());
 
       dalService.commitTransaction();
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offerDTO;
   }
 
   /**
@@ -125,18 +120,19 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO updateOffer(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
-      System.out.println("a" + offerDTO);
-      System.out.println("b" + offerDAO.getOne(offerDTO.getIdOffer()));
-      if (offerDTO.getVersion() == null ||
-          !offerDTO.getVersion().equals(offerDAO.getOne(offerDTO.getIdOffer()).getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
-      }
-
       // TODO verifier version objet
+
       OfferDTO offer = offerDAO.updateOne(offerDTO);
       if (offer == null) {
         throw new NotFoundException("Aucune offre");
       }
+
+      if (offerDTO.getObject() != null) {
+        ObjectDTO objectFromDB = offerDAO.getOne(offerDTO.getIdOffer()).getObject();
+        offerDTO.getObject().setIdObject(objectFromDB.getIdObject());
+        offer.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      }
+
       dalService.commitTransaction();
       return offer;
     } catch (Exception e) {
@@ -156,19 +152,18 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus) {
-    List<OfferDTO> offerDTO = null;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
+      List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
       if (offerDTO.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offerDTO;
   }
 
   /**
@@ -179,19 +174,18 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO getLastOffer(int idObject) {
-    OfferDTO offerDTO;
     try {
       dalService.startTransaction();
-      offerDTO = offerDAO.getLastObjectOffer(idObject);
+      OfferDTO offerDTO = offerDAO.getLastObjectOffer(idObject);
       if (offerDTO == null) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offerDTO;
   }
 
   /**
@@ -202,19 +196,18 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public List<OfferDTO> getGivenOffers(int idReceiver) {
-    List<OfferDTO> givenOffers;
     try {
       dalService.startTransaction();
-      givenOffers = offerDAO.getAllGivenOffers(idReceiver);
+      List<OfferDTO> givenOffers = offerDAO.getAllGivenOffers(idReceiver);
       if (givenOffers.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
       dalService.commitTransaction();
+      return givenOffers;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return givenOffers;
   }
 
 
@@ -229,18 +222,21 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
+      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (offerFromDB.getStatus().equals("given") || offerFromDB.getStatus().equals("cancelled")) {
         throw new ForbiddenException("Impossible d'annuler l'offre");
       }
 
       offerDTO.setStatus("cancelled");
       offerDTO.getObject().setStatus("cancelled");
 
-      offerDTO = offerDAO.updateOne(offerDTO);
-      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
-      InterestDTO interestDTO = interestDAO
-          .getAssignedInterest(offerDTO.getObject().getIdObject());
+      OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
+      if (offerDTO.getObject() != null) {
+        offerDTO.getObject().setIdObject(offerFromDB.getObject().getIdObject());
+        updatedOffer.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      }
 
+      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerFromDB.getObject().getIdObject());
       if (interestDTO != null) {
         //Send notification
         interestDTO.setIsNotificated(true);
@@ -251,12 +247,11 @@ public class OfferUCCImpl implements OfferUCC {
       }
 
       dalService.commitTransaction();
+      return updatedOffer;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return offerDTO;
   }
 
 
@@ -297,12 +292,11 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
 
       dalService.commitTransaction();
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return offerDTO;
   }
 
 
@@ -323,7 +317,7 @@ public class OfferUCCImpl implements OfferUCC {
       }
 
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
-
+      System.out.println(offerDTO);
       if (!offerDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException(
             "aucune offre attribuée n'existe pour que l'objet puisse être donné");
@@ -344,12 +338,11 @@ public class OfferUCCImpl implements OfferUCC {
       offerDTO.setObject(objectDTO);
 
       dalService.commitTransaction();
+      return offerDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return offerDTO;
   }
 
   /**
@@ -383,21 +376,19 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO addObject(OfferDTO offerDTO) {
-    OfferDTO offer;
     try {
       dalService.startTransaction();
       setCorrectType(offerDTO.getObject());
       ObjectDTO objectDTO = objectDAO.addOne(offerDTO.getObject());
       offerDTO.setObject(objectDTO);
       offerDTO.setStatus("available");
-      offer = offerDAO.addOne(offerDTO);
-
+      OfferDTO offer = offerDAO.addOne(offerDTO);
       dalService.commitTransaction();
+      return offer;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return offer;
   }
 
   /**
