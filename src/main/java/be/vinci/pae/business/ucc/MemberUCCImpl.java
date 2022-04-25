@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 
+//TODO : changer tt la doc
 
 public class MemberUCCImpl implements MemberUCC {
 
@@ -72,14 +73,17 @@ public class MemberUCCImpl implements MemberUCC {
    * @return memberDTO updated
    */
   @Override
-  public MemberDTO updateProfilPicture(String path, int id) {
+  public MemberDTO updateProfilPicture(String path, int id, Integer version) {
+    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
-      MemberDTO memberDTO = memberDAO.getOne(id);
+      memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
-      memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
+      if(!memberDTO.getVersion().equals(version)){
+        throw new ForbiddenException("Les versions ne correspondent pas.");
+      }
 
       File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
       if (f.exists()) {
@@ -109,7 +113,6 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
-      memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
       dalService.commitTransaction();
       return memberDTO;
     } catch (Exception e) {
@@ -215,7 +218,6 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Membre non trouvé");
       }
-      memberDTO.setAddress(addressDAO.getAddressByMemberId(id));
 
       try {
         File file = new File(memberDTO.getImage());
@@ -232,18 +234,22 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Update any attribute of a member.
+   * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
    * @return the modified member
    */
   @Override
-  public MemberDTO updateMember(MemberDTO memberDTO) {
+  public MemberDTO updateMember(MemberDTO memberDTO, Integer version) {
     try {
       dalService.startTransaction();
+      if(!memberDTO.getVersion().equals(version)){
+        throw new ForbiddenException("Les versions ne correspondent pas.");
+      }
       AddressDTO addressDTO;
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
+        //TODO : verifier versions de l'adresse
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
       } else {
         addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());

@@ -22,7 +22,7 @@ public interface MemberUCC {
    * @param id   of the member
    * @return memberDTO updated
    */
-  MemberDTO updateProfilPicture(String path, int id);
+  MemberDTO updateProfilPicture(String path, int id, Integer version);
 
   /**
    * Find a member with his id.
@@ -59,10 +59,10 @@ public interface MemberUCC {
   List<MemberDTO> searchMembers(String search, String status);
 
   /**
-   * Update any attribute of a member.
+   * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
    * @return the modified member
    */
-  MemberDTO updateMember(MemberDTO memberDTO);
+  MemberDTO updateMember(MemberDTO memberDTO, Integer version);
 }
