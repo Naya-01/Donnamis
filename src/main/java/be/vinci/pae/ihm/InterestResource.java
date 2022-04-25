@@ -119,10 +119,7 @@ public class InterestResource {
       @Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getInterestedCount");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
-    return jsonMapper.createObjectNode()
-        .put("count", interestUCC.getInterestedCount(idObject))
-        .put("isUserInterested",
-            interestUCC.isUserInterested(authenticatedUser, idObject));
+    return interestUCC.getInterestedCount(idObject, authenticatedUser);
   }
 
   /**

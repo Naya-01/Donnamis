@@ -11,11 +11,14 @@ import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import java.util.List;
 
 public class InterestUCCImpl implements InterestUCC {
 
+  private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestDAO interestDAO;
   @Inject
@@ -166,30 +169,6 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Get the number of all interests.
-   *
-   * @param idObject the object we want to retrieve the interests
-   * @return the number of all interests
-   */
-  @Override
-  public Integer getInterestedCount(Integer idObject) {
-    int interests;
-    try {
-      dalService.startTransaction();
-      ObjectDTO objectDTO = objectDAO.getOne(idObject);
-      if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
-      }
-      interests = interestDAO.getAllPublishedCount(idObject);
-      dalService.commitTransaction();
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-    return interests;
-  }
-
-  /**
    * Get notification count.
    *
    * @param member of the member.
@@ -250,30 +229,6 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Check if a member is interested by an object.
-   *
-   * @param member   the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  @Override
-  public boolean isUserInterested(MemberDTO member, int idObject) {
-    InterestDTO userInterested;
-    try {
-      dalService.startTransaction();
-      userInterested = interestDAO.getOne(member.getMemberId(), idObject);
-      dalService.commitTransaction();
-      if (userInterested == null) {
-        return false;
-      }
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-    return true;
-  }
-
-  /**
    * Get a list of notificated interest in an id object.
    *
    * @param member the member we want to retrieve notifications
@@ -298,6 +253,38 @@ public class InterestUCCImpl implements InterestUCC {
       throw e;
     }
     return interestDTOList;
+  }
+
+  /**
+   * Get the count of interested people of an object.
+   *
+   * @param idObject  the object we want to retrieve the interest count.
+   * @param memberDTO to check if he is in the interested people.
+   * @return jsonNode with count of interests and a boolean if the user is one of the interested
+   */
+  @Override
+  public JsonNode getInterestedCount(Integer idObject, MemberDTO memberDTO) {
+    int count;
+    Boolean userInterested;
+    try {
+      dalService.startTransaction();
+      ObjectDTO objectDTO = objectDAO.getOne(idObject);
+      if (objectDTO == null) {
+        throw new NotFoundException("Object not found");
+      }
+      count = interestDAO.getAllPublishedCount(idObject);
+
+      InterestDTO interestDTO = interestDAO.getOne(memberDTO.getMemberId(), idObject);
+      userInterested = interestDTO != null;
+
+      dalService.commitTransaction();
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+    return jsonMapper.createObjectNode()
+        .put("count", count)
+        .put("isUserInterested", userInterested);
   }
 
   /**

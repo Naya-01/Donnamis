@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 public interface InterestUCC {
@@ -33,14 +34,6 @@ public interface InterestUCC {
   InterestDTO assignOffer(InterestDTO interestDTO, MemberDTO owner);
 
   /**
-   * Get a list of interest, by an id object.
-   *
-   * @param idObject the object we want to retrieve the interests
-   * @return a list of interest, by an id object
-   */
-  Integer getInterestedCount(Integer idObject);
-
-  /**
    * Get notification count.
    *
    * @param member of the member.
@@ -58,21 +51,21 @@ public interface InterestUCC {
   List<InterestDTO> getAllInterests(int idObject, MemberDTO offeror);
 
   /**
-   * Check if a member is interested by an object.
-   *
-   * @param member   the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  boolean isUserInterested(MemberDTO member, int idObject);
-
-  /**
    * Get a list of notificated interest in an id object.
    *
    * @param member the member we want to retrieve notifications
    * @return a list of interest, by an id member
    */
   List<InterestDTO> getNotifications(MemberDTO member);
+
+  /**
+   * Get the count of interested people of an object.
+   *
+   * @param idObject  the object we want to retrieve the interest count.
+   * @param memberDTO to check if he is in the interested people.
+   * @return jsonNode with count of interests and a boolean if the user is one of the interested
+   */
+  JsonNode getInterestedCount(Integer idObject, MemberDTO memberDTO);
 
 
   /**
