@@ -221,14 +221,17 @@ const RegisterPage = async () => {
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address);
+      console.log(member);
       // Requête DB inscription et redirect
-      await memberLibrary.registerMember(member);
-      toast.fire({
-        icon: 'success',
-        title: `Vous êtes désormais dans l'attente de la validation d'un 
+      let isRegistered = await memberLibrary.registerMember(member);
+      if (isRegistered) {
+        toast.fire({
+          icon: 'success',
+          title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`
-      });
-      Redirect("/");
+        });
+        Redirect("/");
+      }
     }
   });
 };
