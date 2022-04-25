@@ -345,6 +345,7 @@ const modifyProfilRender = async () => {
 
     if (memberWithImage !== undefined) {
       image = provImage;
+      document.getElementById("navbar-profil-picture").src = image;
     }
     await profilRender();
 
