@@ -66,13 +66,19 @@ public class InterestUCCImpl implements InterestUCC {
         if (objectDTO == null) {
           throw new NotFoundException("Object not found");
         }
+
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
         offerDTO.setStatus("interested");
         offerDAO.updateOne(offerDTO);
       }
-      interestDAO.addOne(item);
+      InterestDTO interestDTO = interestDAO.addOne(item);
+      
+      // Send Notification
+      interestDTO.setIsNotificated(true);
+      interestDAO.updateNotification(interestDTO);
+
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
