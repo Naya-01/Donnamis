@@ -200,11 +200,9 @@ const objectCards = async (searchPattern, type, status) => {
               "interest-" + interest.member.memberId);
           if (btn) {
             btn.addEventListener("click", async e => {
-              console.log(interest);
               await InterestLibrary.prototype.assignOffer(
                   interest.object.idObject, interest.member.memberId, interest.version);
-              Swal.close();
-              //Redirect("/myObjectsPage");
+              Redirect("/myObjectsPage");
             })
           }
         }

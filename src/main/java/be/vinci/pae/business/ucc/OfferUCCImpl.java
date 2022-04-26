@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
+import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -25,6 +26,8 @@ public class OfferUCCImpl implements OfferUCC {
   private ObjectDAO objectDAO;
   @Inject
   private InterestDAO interestDAO;
+  @Inject
+  private MemberDAO memberDAO;
   @Inject
   private TypeDAO typeDAO;
 
@@ -244,6 +247,9 @@ public class OfferUCCImpl implements OfferUCC {
 
         interestDTO.setStatus("published");
         interestDAO.updateStatus(interestDTO);
+        interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
+        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+
       }
 
       dalService.commitTransaction();
@@ -284,6 +290,8 @@ public class OfferUCCImpl implements OfferUCC {
 
       interestDTO.setStatus("not_collected");
       interestDAO.updateStatus(interestDTO);
+      interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
+      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
       offerDTO.setStatus("not_collected");
       offerDTO.getObject().setStatus("not_collected");
@@ -328,11 +336,16 @@ public class OfferUCCImpl implements OfferUCC {
       interestDAO.updateNotification(interestDTO);
 
       interestDTO.setStatus("received");
+      interestDAO.updateStatus(interestDTO);
+
+      interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
+      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+
       offerDTO.getObject().setStatus("given");
       offerDTO.setStatus("given");
 
       ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-      interestDAO.updateStatus(interestDTO);
+
       offerDTO = offerDAO.updateOne(offerDTO);
 
       offerDTO.setObject(objectDTO);

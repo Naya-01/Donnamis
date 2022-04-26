@@ -18,6 +18,8 @@ public class InterestImpl implements InterestDTO {
   @JsonView(Views.Public.class)
   private Integer idMember;
   @JsonView(Views.Public.class)
+  private Integer idObject;
+  @JsonView(Views.Public.class)
   private LocalDate availabilityDate;
   @JsonView(Views.Public.class)
   private String status;
@@ -54,6 +56,16 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setObject(ObjectDTO object) {
     this.object = object;
+  }
+
+  @Override
+  public Integer getIdObject() {
+    return idObject;
+  }
+
+  @Override
+  public void setIdObject(int idObject) {
+    this.idObject = idObject;
   }
 
   @Override

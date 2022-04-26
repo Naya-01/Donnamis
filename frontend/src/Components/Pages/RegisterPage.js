@@ -220,7 +220,7 @@ const RegisterPage = async () => {
           postcode.value.trim(), commune.value.trim());
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-          phoneNumber.value.trim(), address);
+          phoneNumber.value.trim(), address, 10); //TODO : changer 10 en version
       // Requête DB inscription et redirect
       await memberLibrary.registerMember(member);
       toast.fire({

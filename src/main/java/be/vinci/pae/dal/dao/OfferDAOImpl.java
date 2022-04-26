@@ -264,6 +264,7 @@ public class OfferDAOImpl implements OfferDAO {
         offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());
         offerDTOUpdated.setTimeSlot(resultSet.getString(3));
         offerDTOUpdated.setStatus(resultSet.getString(5));
+        offerDTOUpdated.setObject(offerDTO.getObject());
         return offerDTOUpdated;
       }
     } catch (SQLException e) {

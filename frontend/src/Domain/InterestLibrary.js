@@ -1,5 +1,6 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
+import Swal from "sweetalert2";
 
 class InterestLibrary {
 
@@ -100,11 +101,9 @@ class InterestLibrary {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
           "idMember": idMember,
           "version": version,
+          "idObject": idObject,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -114,12 +113,14 @@ class InterestLibrary {
       response = await fetch("api/interest/assignOffer", options);
       if (!response.ok) {
         response.text().then((msg) => {
+          Swal.close();
           toast.fire({
             icon: 'error',
             title: msg
           });
         })
       } else {
+        Swal.close();
         toast.fire({
           icon: 'success',
           title: "le membre a été assigné"
@@ -199,17 +200,14 @@ class InterestLibrary {
     return current_interest;
   }
 
-  async addOne(idObject, date, isNotificated) {
+  async addOne(idObject, date, be_called) {
     let response;
     try {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
+          "idObject": idObject,
           "availabilityDate": date,
-          "isNotificated": isNotificated
         }),
         headers: {
           "Content-Type": "application/json",

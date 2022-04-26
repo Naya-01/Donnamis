@@ -325,7 +325,7 @@ const modifyProfilRender = async () => {
 
     let newMember = new Member(username.value.split(' ').join(''),
         lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-        nullFields[0] === null ? null : nullFields[0], newAddress,
+        nullFields[0] === null ? null : nullFields[0], newAddress, 10, //TODO : changer 10 en version
         member.memberId);
 
     let memberWithImage;
@@ -345,6 +345,7 @@ const modifyProfilRender = async () => {
 
     if (memberWithImage !== undefined) {
       image = provImage;
+      document.getElementById("navbar-profil-picture").src = image;
     }
     await profilRender();
 

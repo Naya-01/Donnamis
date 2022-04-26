@@ -19,6 +19,10 @@ public interface InterestDTO {
 
   void setObject(ObjectDTO object);
 
+  Integer getIdObject();
+
+  void setIdObject(int idObject);
+
   Integer getIdMember();
 
   void setIdMember(Integer idMember);

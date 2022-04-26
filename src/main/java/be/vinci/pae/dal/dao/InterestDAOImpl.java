@@ -1,7 +1,6 @@
 package be.vinci.pae.dal.dao;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
-import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.FatalException;
@@ -19,10 +18,6 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private DALBackendService dalBackendService;
-  @Inject
-  private MemberDAO memberDAO;
-  @Inject
-  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -87,12 +82,11 @@ public class InterestDAOImpl implements InterestDAO {
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
       try {
-        interestDTO.setObject(objectDAO.getOne(resultSet.getInt("id_object")));
+        interestDTO.setIdObject(resultSet.getInt("id_object"));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
         interestDTO.setVersion(resultSet.getInt("version"));
       } catch (SQLException e) {
         throw new FatalException(e);
@@ -121,13 +115,11 @@ public class InterestDAOImpl implements InterestDAO {
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        ObjectDTO objectDTO = objectDAO.getOne(resultSet.getInt(1));
-        interestDTO.setObject(objectDTO);
         interestDTO.setIdMember(resultSet.getInt(2));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
         interestDTO.setVersion(resultSet.getInt("version"));
+        interestDTO.setIdObject(resultSet.getInt("id_object"));
 
         interestDTOList.add(interestDTO);
       }
@@ -155,11 +147,11 @@ public class InterestDAOImpl implements InterestDAO {
         + "availability_date, status, send_notification, version";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, item.getObject().getIdObject());
+      preparedStatement.setInt(1, item.getIdObject());
       preparedStatement.setInt(2, item.getIdMember());
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
-      preparedStatement.setBoolean(5, item.getIsNotificated());
+      preparedStatement.setBoolean(5, true);
       preparedStatement.setInt(6, 1);
       return getInterestDTO(preparedStatement);
     } catch (SQLException e) {
@@ -283,9 +275,8 @@ public class InterestDAOImpl implements InterestDAO {
   }
 
   /**
-   * Mark all notifications shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
    *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.
@@ -335,9 +326,8 @@ public class InterestDAOImpl implements InterestDAO {
 
 
   /**
-   * Update the notification field to know if we have to send one.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Update the notification field to know if we have to send one. /!\ There is no version update
+   * because of the non-sensibility of the send_notification field /!\
    *
    * @param interestDTO with the notification attribute.
    * @return the interest updated.
@@ -349,7 +339,7 @@ public class InterestDAOImpl implements InterestDAO {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setBoolean(1, interestDTO.getIsNotificated());
-      preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
+      preparedStatement.setInt(2, interestDTO.getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
 
       return getInterestDTO(preparedStatement);
@@ -375,7 +365,7 @@ public class InterestDAOImpl implements InterestDAO {
 
       preparedStatement.setString(1, interestDTO.getStatus());
       preparedStatement.setInt(2, interestDTO.getVersion() + 1);
-      preparedStatement.setInt(3, interestDTO.getObject().getIdObject());
+      preparedStatement.setInt(3, interestDTO.getIdObject());
       preparedStatement.setInt(4, interestDTO.getIdMember());
 
       return getInterestDTO(preparedStatement);

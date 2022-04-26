@@ -345,7 +345,7 @@ async function addOneInterest(e) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
-          null, numTel, null, idMemberConnected);
+          null, numTel, null, 10, idMemberConnected); //TODO changer le 10 avec la version
       await memberLibrary.updateMember(member);
     }
   }
@@ -606,12 +606,17 @@ async function updateObject(e) {
     }
   }
 
-  if (!versionObject) versionObject = ""
-  if (!versionOffer) versionOffer = ""
+  if (!versionObject) {
+    versionObject = ""
+  }
+  if (!versionOffer) {
+    versionOffer = ""
+  }
 
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject, versionOffer);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
   if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',
