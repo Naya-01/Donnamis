@@ -81,7 +81,7 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
-      if(!memberDTO.getVersion().equals(version)){
+      if (!memberDTO.getVersion().equals(version)) {
         throw new ForbiddenException("Les versions ne correspondent pas.");
       }
 
@@ -245,20 +245,21 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
       // check the version of member
-      if(!memberDTO.getVersion().equals(memberInDB.getVersion())){
-        throw new ForbiddenException("Les versions ne correspondent pas.");
+      if (!memberDTO.getVersion().equals(memberInDB.getVersion())) {
+        throw new ForbiddenException(
+            "Impossibilité de modifier les données du membre");
       }
       MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
-      if(memberDTOWithSameUsername != null &&
-          !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())){
-        throw new ConflictException("Cet username est déjà utilisé.");
+      if (memberDTOWithSameUsername != null &&
+          !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())) {
+        throw new ConflictException("Ce pseudonyme est déjà utilisé.");
       }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         // check the version of address
-        if(!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())){
-          throw new ForbiddenException("Les versions de l'adresse ne correspondent pas.");
+        if (!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())) {
+          throw new ForbiddenException("Impossibilité de modifier les données de l'adresse");
         }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
       }

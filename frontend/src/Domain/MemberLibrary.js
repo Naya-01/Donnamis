@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
 
-const Toast = new Notification().getNotification("bottom");
+const Toast = new Notification().getNotification("top-end");
 
 class MemberLibrary {
   async getUserByHisToken() {
@@ -175,14 +175,20 @@ class MemberLibrary {
         },
       };
       response = await fetch("api/member/update", options);
+      if (response.status === 200) {
+        return await response.json();
+      }
+      response.text().then((msg) => {
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+      return null;
     } catch (err) {
       console.log(err);
       return null;
     }
-    if (response.status === 200) {
-      return await response.json();
-    }
-    return null;
   }
 
   async setImage(formData, version) {
@@ -195,7 +201,8 @@ class MemberLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/member/setPicture?version='+version, options)
+      response = await fetch('api/member/setPicture?version=' + version,
+          options)
     } catch (err) {
       console.log(err);
     }

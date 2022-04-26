@@ -324,7 +324,8 @@ const modifyProfilRender = async () => {
         postcode.value.trim(), commune.value.trim(), member.address.version);
     let newMember = new Member(username.value.split(' ').join(''),
         lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-        nullFields[0] === null ? null : nullFields[0], newAddress, member.version,
+        nullFields[0] === null ? null : nullFields[0], newAddress,
+        member.version,
         member.memberId);
     let memberWithImage;
     if (fileInput.files[0] !== undefined) {
@@ -334,6 +335,9 @@ const modifyProfilRender = async () => {
       newMember.version = newMember.version + 1;
     }
     let memberUpdated = await memberLibrary.updateMember(newMember);
+    if (memberUpdated === null) {
+      return;
+    }
     if (username.value.trim() !== member.username) {
       await Navbar();
     }
