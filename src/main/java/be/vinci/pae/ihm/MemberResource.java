@@ -55,7 +55,8 @@ public class MemberResource {
   @Produces(MediaType.APPLICATION_JSON)
   public MemberDTO setPicture(@Context ContainerRequest request,
       @FormDataParam("file") InputStream file,
-      @FormDataParam("file") FormDataBodyPart fileMime) {
+      @FormDataParam("file") FormDataBodyPart fileMime,
+      @QueryParam("version") int version) {
 
     Logger.getLogger("Log").log(Level.INFO, "MemberResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
@@ -66,8 +67,7 @@ public class MemberResource {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
-    return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId(),
-        memberDTO.getVersion());
+    return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId(), version);
   }
 
   /**
@@ -163,6 +163,6 @@ public class MemberResource {
         || memberDTO.getStatus() != null || memberDTO.getReasonRefusal() != null)) {
       throw new UnauthorizedException();
     }
-    return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO,requestMember.getVersion()), MemberDTO.class);
+    return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);
   }
 }

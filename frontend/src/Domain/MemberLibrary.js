@@ -185,7 +185,7 @@ class MemberLibrary {
     return null;
   }
 
-  async setImage(formData) {
+  async setImage(formData, version) {
     let response = null;
     try {
       let options = {
@@ -195,7 +195,7 @@ class MemberLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/member/setPicture/', options)
+      response = await fetch('api/member/setPicture?version='+version, options)
     } catch (err) {
       console.log(err);
     }

@@ -44,6 +44,7 @@ let idMemberConnected;
 let telNumber;
 let versionObject;
 let versionOffer;
+let versionMemberConnected;
 
 /**
  * Render the page to see an object
@@ -106,6 +107,7 @@ const ObjectDetailsPage = async () => {
   if (telNumber === undefined) {
     telNumber = "";
   }
+  versionMemberConnected = member.version;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
@@ -347,8 +349,9 @@ async function addOneInterest(e) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
-          null, numTel, null, 10, idMemberConnected); //TODO changer le 10 avec la version
+          null, numTel, null, versionMemberConnected, idMemberConnected); //TODO changer le 10 avec la version
       await memberLibrary.updateMember(member);
+      versionMemberConnected += 1;
     }
   }
   numTelInput.classList.remove("border-danger");

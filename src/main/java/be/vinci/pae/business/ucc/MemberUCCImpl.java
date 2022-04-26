@@ -240,10 +240,11 @@ public class MemberUCCImpl implements MemberUCC {
    * @return the modified member
    */
   @Override
-  public MemberDTO updateMember(MemberDTO memberDTO, Integer version) {
+  public MemberDTO updateMember(MemberDTO memberDTO) {
     try {
       dalService.startTransaction();
-      if(!memberDTO.getVersion().equals(version)){
+      MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
+      if(!memberDTO.getVersion().equals(memberInDB.getVersion())){
         throw new ForbiddenException("Les versions ne correspondent pas.");
       }
       AddressDTO addressDTO;

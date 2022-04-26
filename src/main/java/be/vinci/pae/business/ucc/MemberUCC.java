@@ -64,5 +64,5 @@ public interface MemberUCC {
    * @param memberDTO a memberDTO
    * @return the modified member
    */
-  MemberDTO updateMember(MemberDTO memberDTO, Integer version);
+  MemberDTO updateMember(MemberDTO memberDTO);
 }
