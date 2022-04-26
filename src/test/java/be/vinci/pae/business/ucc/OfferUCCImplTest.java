@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.factories.InterestFactory;
+import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
@@ -48,6 +50,7 @@ class OfferUCCImplTest {
   private OfferFactory offerFactory;
   private InterestFactory interestFactory;
   private InterestDAO interestDAO;
+  private MemberFactory memberFactory;
 
 
   private OfferDTO getNewOffer() {
@@ -78,6 +81,7 @@ class OfferUCCImplTest {
     this.offerFactory = locator.getService(OfferFactory.class);
     this.interestFactory = locator.getService(InterestFactory.class);
     this.interestDAO = locator.getService(InterestDAO.class);
+    this.memberFactory = locator.getService(MemberFactory.class);
   }
 
   //  ----------------------------  GET LAST OFFERS UCC  -------------------------------  //
@@ -151,15 +155,18 @@ class OfferUCCImplTest {
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
     OfferDTO offerDTO = getNewOffer();
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoGetOne);
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
     OfferDTO offerStatus = getNewOffer();
+    offerStatus.getObject().setIdOfferor(2);
     offerStatus.setStatus("cancelled");
+    Mockito.when(offerDAO.addOne(offerStatus)).thenReturn(offerDTOFromDAO);
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
         .thenReturn(offerStatus);
-    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals(offerFromAdd, offerDTOFromDAO),
@@ -182,20 +189,23 @@ class OfferUCCImplTest {
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
     OfferDTO offerDTO = getNewOffer();
     offerDTO.getObject().setIdObject(0);
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoGetOne);
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
 
     ObjectDTO objectDTO = Mockito.mock(ObjectDTO.class);
     Mockito.when(objectDAO.addOne(offerDTO.getObject())).thenReturn(objectDTO);
 
     OfferDTO offerStatus = getNewOffer();
     offerStatus.setStatus("cancelled");
+    offerStatus.getObject().setIdOfferor(2);
+    Mockito.when(offerDAO.addOne(offerStatus)).thenReturn(offerDTOFromDAO);
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
         .thenReturn(offerStatus);
-    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals(offerFromAdd, offerDTOFromDAO),
@@ -218,16 +228,19 @@ class OfferUCCImplTest {
     typeDTOFromDaoGetOne.setIsDefault(true);
 
     OfferDTO offerDTO = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
     offerDTO.getObject().getType().setTypeName("");
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
         .thenReturn(typeDTOFromDaoGetOne);
 
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
     OfferDTO offerStatus = getNewOffer();
     offerStatus.setStatus("cancelled");
+    offerStatus.getObject().setIdOfferor(2);
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
         .thenReturn(offerStatus);
-    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+    Mockito.when(offerDAO.addOne(offerStatus)).thenReturn(offerDTOFromDAO);
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals(offerFromAdd, offerDTOFromDAO),
@@ -254,13 +267,15 @@ class OfferUCCImplTest {
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getIdType()))
         .thenReturn(typeDTOFromDaoGetOne);
 
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
-
     OfferDTO offerStatus = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
     offerStatus.setStatus("cancelled");
+    offerStatus.getObject().setIdOfferor(2);
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
         .thenReturn(offerStatus);
-    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+    Mockito.when(offerDAO.addOne(offerStatus)).thenReturn(offerDTOFromDAO);
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals(offerFromAdd, offerDTOFromDAO),
@@ -283,17 +298,20 @@ class OfferUCCImplTest {
     OfferDTO offerDTO = getNewOffer();
     OfferDTO offerDTOFromDAO = getNewOffer();
     offerDTOFromDAO.setIdOffer(5);
-    Mockito.when(offerDAO.addOne(offerDTO)).thenReturn(offerDTOFromDAO);
     Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(null);
     Mockito.when(typeDAO.addOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoAddOne);
 
     OfferDTO offerStatus = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
     offerStatus.setStatus("cancelled");
+    offerStatus.getObject().setIdOfferor(2);
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
         .thenReturn(offerStatus);
-    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO);
+    Mockito.when(offerDAO.addOne(offerStatus)).thenReturn(offerDTOFromDAO);
+    OfferDTO offerFromAdd = offerUCC.addOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals(offerFromAdd, offerDTOFromDAO),
@@ -470,12 +488,19 @@ class OfferUCCImplTest {
   @DisplayName("Test cancelOffer with given status")
   @Test
   public void testCancelOfferWithGivenStatus() {
-    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
-    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(2);
-    Mockito.when(mockOfferDTO.getStatus()).thenReturn("given");
+    OfferDTO mockOfferDTO = getNewOffer();
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+
+    mockOfferDTO.setIdOffer(2);
+    mockOfferDTO.setStatus("given");
+    mockMember.setMemberId(2);
+    mockOfferDTO.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> offerUCC.cancelOffer(mockOfferDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.cancelOffer(mockOfferDTO, mockMember)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -484,12 +509,19 @@ class OfferUCCImplTest {
   @DisplayName("Test cancelOffer with given status")
   @Test
   public void testCancelOfferWithCancelledStatus() {
-    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
-    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(2);
-    Mockito.when(mockOfferDTO.getStatus()).thenReturn("cancelled");
+    OfferDTO mockOfferDTO = getNewOffer();
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+
+    mockOfferDTO.setIdOffer(2);
+    mockOfferDTO.setStatus("cancelled");
+    mockMember.setMemberId(2);
+    mockOfferDTO.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> offerUCC.cancelOffer(mockOfferDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.cancelOffer(mockOfferDTO, mockMember)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -506,13 +538,19 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setStatus("cancelled");
     offerDTOFromDAO.getObject().setStatus("cancelled");
 
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+
+    mockMember.setMemberId(5);
+    offerDTO.getObject().setIdOfferor(5);
+
     Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
         .thenReturn(offerDTOFromDAO.getObject());
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(null);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
 
-    OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO);
+    OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO, mockMember);
     assertAll(
         () -> assertEquals("cancelled", offerDTOUpdated.getStatus()),
         () -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
@@ -533,15 +571,18 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setStatus("cancelled");
     offerDTOFromDAO.getObject().setStatus("cancelled");
 
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+    mockMember.setMemberId(5);
+    offerDTO.getObject().setIdOfferor(5);
     InterestDTO interestDTO = interestFactory.getInterestDTO();
-
     Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
         .thenReturn(offerDTOFromDAO.getObject());
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
 
-    OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO);
+    OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO, mockMember);
     assertAll(
         () -> assertEquals("cancelled", offerDTOUpdated.getStatus()),
         () -> assertEquals("cancelled", offerDTOUpdated.getObject().getStatus()),
@@ -596,14 +637,20 @@ class OfferUCCImplTest {
   @Test
   public void testGiveOfferWithoutHavingAnyInterest() {
     OfferDTO offerDTO = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+
+    memberDTO.setMemberId(2);
     offerDTO.setIdOffer(3);
     offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
 
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(null);
 
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getIdOffer())).thenReturn(offerDTO);
+
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO)),
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -629,14 +676,21 @@ class OfferUCCImplTest {
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    offerDTO.getObject().setIdOfferor(2);
+    memberDTO.setMemberId(2);
+
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
 
     Mockito.when(offerDAO.getLastObjectOffer(objectDTO.getIdObject()))
         .thenReturn(offerDTOFromDAO);
 
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO)),
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -662,6 +716,11 @@ class OfferUCCImplTest {
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTOFromDAO.getObject().setIdOfferor(2);
+    memberDTO.setMemberId(2);
+
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
 
@@ -674,7 +733,7 @@ class OfferUCCImplTest {
     Mockito.when(offerDAO.updateOne(offerDTOFromDAO))
         .thenReturn(offerDTOFromDAO);
 
-    OfferDTO offerDTOUpdated = offerUCC.giveOffer(offerDTO);
+    OfferDTO offerDTOUpdated = offerUCC.giveOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals("received", interestDTO.getStatus()),
@@ -848,14 +907,21 @@ class OfferUCCImplTest {
   @Test
   public void testNotCollectedOfferWithoutHavingAnyInterest() {
     OfferDTO offerDTO = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+
+    memberDTO.setMemberId(2);
     offerDTO.setIdOffer(3);
     offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
 
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(null);
 
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> offerUCC.notCollectedOffer(offerDTO)),
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -881,14 +947,21 @@ class OfferUCCImplTest {
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+    offerDTO.getObject().setIdOfferor(2);
+
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
 
     Mockito.when(offerDAO.getLastObjectOffer(objectDTO.getIdObject()))
         .thenReturn(offerDTOFromDAO);
 
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> offerUCC.notCollectedOffer(offerDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -915,6 +988,10 @@ class OfferUCCImplTest {
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
 
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+    offerDTO.getObject().setIdOfferor(2);
+
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
 
@@ -927,7 +1004,9 @@ class OfferUCCImplTest {
     Mockito.when(offerDAO.updateOne(offerDTOFromDAO))
         .thenReturn(offerDTOFromDAO);
 
-    OfferDTO offerDTOUpdated = offerUCC.notCollectedOffer(offerDTO);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+
+    OfferDTO offerDTOUpdated = offerUCC.notCollectedOffer(offerDTO, memberDTO);
 
     assertAll(
         () -> assertEquals("not_collected", interestDTO.getStatus()),

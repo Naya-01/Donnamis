@@ -50,7 +50,7 @@ class MemberLibrary {
    * Register a quidam
    *
    * @param member member having al data of the member to register
-   * @returns {Promise<void>} nothing
+   * @returns {Promise<boolean>} true if there is no problem in register
    */
   async registerMember(member) {
 
@@ -71,7 +71,9 @@ class MemberLibrary {
             title: msg
           });
         })
+        return false;
       }
+      return true;
     } catch (err) {
       console.log(err);
     }

@@ -186,7 +186,7 @@ public class InterestResource {
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (interestDTO.getIdMember() == null
-        && interestDTO.getIdObject() == null) {
+        || interestDTO.getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
 
@@ -194,9 +194,8 @@ public class InterestResource {
   }
 
   /**
-   * Mark a notification as shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark a notification as shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
    *
    * @param request  data of the member.
    * @param idObject of the interest.
@@ -216,9 +215,8 @@ public class InterestResource {
   }
 
   /**
-   * Mark all notifications shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
    *
    * @return interestDTOs updated.
    */

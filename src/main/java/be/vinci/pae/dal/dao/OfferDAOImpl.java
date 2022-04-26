@@ -105,6 +105,8 @@ public class OfferDAOImpl implements OfferDAO {
         + "donnamis.objects ob, donnamis.types ty WHERE of.id_object = ob.id_object "
         + "AND ty.id_type = ob.id_type AND of.date = (SELECT max(of2.date) "
         + "FROM donnamis.offers of2 WHERE of2.id_object = of.id_object ORDER BY of.date DESC) "
+        + "AND of.status != 'not_collected' "
+        + "AND of.status != 'cancelled' "
         + "ORDER BY of.date DESC LIMIT 6";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {

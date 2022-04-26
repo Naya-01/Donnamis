@@ -69,7 +69,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       if (interestDAO.getOne(item.getIdObject(), item.getIdMember()) != null) {
         //change name exception
-        throw new NotFoundException("An Interest for this Object and Member already exists");
+        throw new ForbiddenException("An Interest for this Object and Member already exists");
       }
       // if there is no interest
       if (interestDAO.getAllCount(item.getIdObject()) == 0) {
@@ -113,7 +113,6 @@ public class InterestUCCImpl implements InterestUCC {
   public InterestDTO assignOffer(InterestDTO interestDTO, MemberDTO owner) {
     try {
       dalService.startTransaction();
-
       interestDTO = interestDAO.getOne(interestDTO.getIdObject(),
           interestDTO.getIdMember());
 
@@ -158,7 +157,6 @@ public class InterestUCCImpl implements InterestUCC {
       offerDTO.setStatus("assigned");
       offerDAO.updateOne(offerDTO);
 
-
       // update interest to assigned
       interestDTO.setStatus("assigned");
       interestDAO.updateStatus(interestDTO);
@@ -177,6 +175,7 @@ public class InterestUCCImpl implements InterestUCC {
 
     return interestDTO;
   }
+
   /**
    * Get notification count.
    *
@@ -322,9 +321,8 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Mark a notification shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
+   * send_notification field /!\
    *
    * @param member   of the member
    * @param idObject to mark as shown.
@@ -359,9 +357,8 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Mark all notifications shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
    *
    * @param member to mark all his notifications showns.
    * @return interestDTOs updated.

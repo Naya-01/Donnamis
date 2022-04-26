@@ -18,6 +18,10 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private DALBackendService dalBackendService;
+  @Inject
+  private MemberDAO memberDAO;
+  @Inject
+  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -30,8 +34,8 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
     String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
-            + "i.version from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
+        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, i.version "
+            + "from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -82,7 +86,7 @@ public class InterestDAOImpl implements InterestDAO {
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
       try {
-        interestDTO.setIdObject(resultSet.getInt("id_object"));
+        interestDTO.setIdObject(resultSet.getInt(("id_object")));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
@@ -115,7 +119,7 @@ public class InterestDAOImpl implements InterestDAO {
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
         InterestDTO interestDTO = interestFactory.getInterestDTO();
-        interestDTO.setIdMember(resultSet.getInt(2));
+        interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate(3).toLocalDate());
         interestDTO.setStatus(resultSet.getString(4));
         interestDTO.setVersion(resultSet.getInt("version"));

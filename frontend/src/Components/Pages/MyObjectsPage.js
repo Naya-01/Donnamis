@@ -71,6 +71,18 @@ const MyObjectsPage = async () => {
     await actualizeCards();
   });
 
+  let cancelled = document.getElementById("btn-status-cancelled");
+  cancelled.addEventListener('click', async () => {
+    status = "cancelled";
+    await actualizeCards();
+  });
+
+  let not_collected = document.getElementById("btn-status-not_collected");
+  not_collected.addEventListener('click', async () => {
+    status = "not_collected";
+    await actualizeCards();
+  });
+
   let all = document.getElementById("btn-status-all");
   all.addEventListener('click', async () => {
     status = "";
@@ -201,7 +213,8 @@ const objectCards = async (searchPattern, type, status) => {
           if (btn) {
             btn.addEventListener("click", async e => {
               await InterestLibrary.prototype.assignOffer(
-                  interest.object.idObject, interest.member.memberId, interest.version);
+                  interest.idObject, interest.idMember,
+                  interest.version);
               Redirect("/myObjectsPage");
             })
           }

@@ -6,7 +6,8 @@ const dictionnary = new Map([
   ['available', 'Disponible'],
   ['assigned', 'En cours de donnation'],
   ['given', 'Donné'],
-  ['cancelled', 'Annulé']
+  ['cancelled', 'Annulé'],
+  ['not_collected', 'Non récupéré']
 ]);
 
 const dictionnaryColorStatus = new Map([
@@ -14,7 +15,8 @@ const dictionnaryColorStatus = new Map([
   ['available', 'greenColor'],
   ['assigned', 'yellowColor'],
   ['given', ''],
-  ['cancelled', 'redColor']
+  ['cancelled', 'redColor'],
+  ['not_collected', 'redColor']
 ]);
 
 const cardList = async (offers) => {

@@ -4,7 +4,6 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.ucc.OfferUCC;
 import be.vinci.pae.exceptions.BadRequestException;
-import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -129,9 +128,8 @@ public class OfferResource {
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
 
-    return offerUcc.addOffer(offerDTO);
+    return offerUcc.addOffer(offerDTO, ownerDTO);
   }
 
   /**
@@ -203,13 +201,7 @@ public class OfferResource {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
 
-    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
-
-    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
-      throw new ForbiddenException("Cet objet ne vous appartient pas");
-    }
-
-    return offerUcc.cancelOffer(offerDTO);
+    return offerUcc.cancelOffer(offerDTO, ownerDTO);
   }
 
 
@@ -231,14 +223,9 @@ public class OfferResource {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
 
-    offerDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
-
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
-      throw new ForbiddenException("Cet objet ne vous appartient pas");
-    }
 
-    return offerUcc.notCollectedOffer(offerDTO);
+    return offerUcc.notCollectedOffer(offerDTO, ownerDTO);
 
   }
 
@@ -254,19 +241,20 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
-  public OfferDTO giveOffer(OfferDTO offerDTO) {
+  public OfferDTO giveOffer(@Context ContainerRequest request, OfferDTO offerDTO) {
 
     Logger.getLogger("Log").log(Level.INFO, "OfferResource giveOffer");
     if (offerDTO.getObject().getIdObject() == null) {
       throw new BadRequestException("id de l'objet null");
     }
 
-    return offerUcc.giveOffer(offerDTO);
+    MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    return offerUcc.giveOffer(offerDTO, ownerDTO);
   }
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th data's.
