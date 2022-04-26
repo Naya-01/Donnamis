@@ -20,6 +20,8 @@ public class AddressImpl implements AddressDTO {
   private String postcode;
   @JsonView(Views.Public.class)
   private String commune;
+  @JsonView(Views.Public.class)
+  private Integer version;
 
 
   @Override
@@ -82,4 +84,13 @@ public class AddressImpl implements AddressDTO {
     this.commune = commune;
   }
 
+  @Override
+  public Integer getVersion() {
+    return this.version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
 }

@@ -35,8 +35,8 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(String username) {
     String query = "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
         + "m.phone_number, m.password, m.refusal_reason, m.image, m.version AS version "
-        + ", a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune "
-        + "FROM donnamis.members m, donnamis.addresses a WHERE m.username = ? AND "
+        + ", a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune, "
+        + "a.version FROM donnamis.members m, donnamis.addresses a WHERE m.username = ? AND "
         + "m.id_member = a.id_member ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -56,10 +56,9 @@ public class MemberDAOImpl implements MemberDAO {
   public MemberDTO getOne(Integer id) {
     String query = "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
         + "m.phone_number, m.password, m.refusal_reason, m.image, m.version AS version "
-        + ", a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune "
-        + "FROM donnamis.members m, donnamis.addresses a WHERE m.id_member = ? AND "
+        + ", a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune, "
+        + "a.version FROM donnamis.members m, donnamis.addresses a WHERE m.id_member = ? AND "
         + "m.id_member = a.id_member ";
-
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, id);
       return getMemberDTOWithAddressDTO(preparedStatement);
@@ -137,7 +136,7 @@ public class MemberDAOImpl implements MemberDAO {
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
             + "m.phone_number, m.password, m.refusal_reason, m.image, m.version as version, a.id_member, a.unit_number, "
-            + "a.building_number, a.street, a.postcode, a.commune "
+            + "a.building_number, a.street, a.postcode, a.commune, a.version "
             + "FROM donnamis.members m, donnamis.addresses a "
             + "WHERE a.id_member = m.id_member ";
 
@@ -298,11 +297,12 @@ public class MemberDAOImpl implements MemberDAO {
     AddressDTO addressDTO = addressFactory.getAddressDTO();
     try{
       addressDTO.setIdMember(resultSet.getInt(12));
-      addressDTO.setStreet(resultSet.getString(13));
-      addressDTO.setPostcode(resultSet.getString(14));
-      addressDTO.setUnitNumber(resultSet.getString(15));
-      addressDTO.setBuildingNumber(resultSet.getString(16));
+      addressDTO.setUnitNumber(resultSet.getString(13));
+      addressDTO.setBuildingNumber(resultSet.getString(14));
+      addressDTO.setStreet(resultSet.getString(15));
+      addressDTO.setPostcode(resultSet.getString(16));
       addressDTO.setCommune(resultSet.getString(17));
+      addressDTO.setVersion(resultSet.getInt(18));
     }catch (SQLException e){
       throw new FatalException(e);
     }

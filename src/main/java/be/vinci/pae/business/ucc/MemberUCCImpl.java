@@ -244,16 +244,18 @@ public class MemberUCCImpl implements MemberUCC {
     try {
       dalService.startTransaction();
       MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
+      // check the version of member
       if(!memberDTO.getVersion().equals(memberInDB.getVersion())){
         throw new ForbiddenException("Les versions ne correspondent pas.");
       }
-      AddressDTO addressDTO;
+      AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
-        //TODO : verifier versions de l'adresse
+        // check the version of address
+        if(!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())){
+          throw new ForbiddenException("Les versions de l'adresse ne correspondent pas.");
+        }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-      } else {
-        addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       }
 
       if (addressDTO == null) {

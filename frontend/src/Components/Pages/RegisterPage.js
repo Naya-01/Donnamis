@@ -217,10 +217,10 @@ const RegisterPage = async () => {
     } else {
       let address = new Address(unitNumber.value.trim(),
           buildingNumber.value.trim(), street.value.trim(),
-          postcode.value.trim(), commune.value.trim());
+          postcode.value.trim(), commune.value.trim(),1);
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-          phoneNumber.value.trim(), address, 10); //TODO : changer 10 en version
+          phoneNumber.value.trim(), address, 1);
       // Requête DB inscription et redirect
       let isRegistered = await memberLibrary.registerMember(member);
       if (isRegistered) {

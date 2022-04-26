@@ -321,8 +321,7 @@ const modifyProfilRender = async () => {
 
     let newAddress = new Address(nullFields[1] === null ? null : nullFields[1],
         buildingNumber.value.trim(), street.value.trim(),
-        postcode.value.trim(), commune.value.trim());
-
+        postcode.value.trim(), commune.value.trim(), member.address.version);
     let newMember = new Member(username.value.split(' ').join(''),
         lastname.value.trim(), firstname.value.trim(), password.value.trim(),
         nullFields[0] === null ? null : nullFields[0], newAddress, member.version,
@@ -352,7 +351,6 @@ const modifyProfilRender = async () => {
 }
 
 const profilRender = async () => {
-  console.log(member.version);
   let page = `
     <div class="container mt-5">
       <div class="text-center">
