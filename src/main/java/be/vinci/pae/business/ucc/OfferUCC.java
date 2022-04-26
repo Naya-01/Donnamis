@@ -1,5 +1,6 @@
 package be.vinci.pae.business.ucc;
 
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,10 @@ public interface OfferUCC {
    * Add an offer for an object.
    *
    * @param offerDTO an offer we want to add
+   * @param ownerDTO member object
    * @return the offerDTO added
    */
-  OfferDTO addOffer(OfferDTO offerDTO);
+  OfferDTO addOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
    * Update the time slot of an offer or an errorcode.
@@ -67,30 +69,33 @@ public interface OfferUCC {
    * Cancel an Object.
    *
    * @param offerDTO object with his id & set the status to 'cancelled'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO cancelOffer(OfferDTO offerDTO);
+  OfferDTO cancelOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
 
   /**
    * Mark an object to 'not collected'.
    *
    * @param offerDTO object with his id & set the status to 'not collected'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO notCollectedOffer(OfferDTO offerDTO);
+  OfferDTO notCollectedOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
    * Give an Object, set the status to 'given'.
    *
    * @param offerDTO : object with his id'
+   * @param ownerDTO member object
    * @return an object
    */
-  OfferDTO giveOffer(OfferDTO offerDTO);
+  OfferDTO giveOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th datas.

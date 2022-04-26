@@ -1,6 +1,7 @@
 package be.vinci.pae.business.ucc;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
+import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
@@ -77,19 +78,29 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
-   * Add an offer in the db with out without an object.
+   * Add an offer in the db without an object.
    *
    * @param offerDTO an offer we want to add in the db
+   * @param ownerDTO member object
    * @return the offerDTO added
    */
   @Override
-  public OfferDTO addOffer(OfferDTO offerDTO) {
+  public OfferDTO addOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
 
-      OfferDTO offer = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
-      if (!offer.getStatus().equals("cancelled") && !offer.getStatus().equals("not_collected")) {
+      if (offerDTO == null) {
+        throw new NotFoundException("cet object n'existe pas");
+      }
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
+
+      if (!offerDTO.getStatus().equals("cancelled") && !offerDTO.getStatus()
+          .equals("not_collected")) {
         throw new ForbiddenException("La dernière offre n'est pas encore terminer vous ne pouvez "
             + "en créer de nouveau");
       }
@@ -216,12 +227,19 @@ public class OfferUCCImpl implements OfferUCC {
    * Cancel an Object.
    *
    * @param offerDTO object with his id & set the status to 'cancelled'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO cancelOffer(OfferDTO offerDTO) {
+  public OfferDTO cancelOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
         throw new ForbiddenException("Impossible d'annuler l'offre");
@@ -258,12 +276,19 @@ public class OfferUCCImpl implements OfferUCC {
    * Mark an object to 'not collected'.
    *
    * @param offerDTO object with his id & set the status to 'not collected'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO notCollectedOffer(OfferDTO offerDTO) {
+  public OfferDTO notCollectedOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
       if (interestDTO == null) {
@@ -304,19 +329,28 @@ public class OfferUCCImpl implements OfferUCC {
    * Give an Object, set the status to 'given'.
    *
    * @param offerDTO : object with his id'
+   * @param ownerDTO member object
    * @return an object
    */
   @Override
-  public OfferDTO giveOffer(OfferDTO offerDTO) {
+  public OfferDTO giveOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
     try {
       dalService.startTransaction();
+
+      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+
+      if (offerDTO == null) {
+        throw new NotFoundException("cet object n'existe pas");
+      }
+
+      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
+      }
 
       InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
       if (interestDTO == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
-
-      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
 
       if (!offerDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException(
