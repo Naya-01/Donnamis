@@ -248,6 +248,11 @@ public class MemberUCCImpl implements MemberUCC {
       if(!memberDTO.getVersion().equals(memberInDB.getVersion())){
         throw new ForbiddenException("Les versions ne correspondent pas.");
       }
+      MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
+      if(memberDTOWithSameUsername != null &&
+          !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())){
+        throw new ConflictException("Cet username est déjà utilisé.");
+      }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
