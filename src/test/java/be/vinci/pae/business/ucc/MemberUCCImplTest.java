@@ -1,4 +1,4 @@
-package be.vinci.pae.business.ucc;
+/*package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -733,4 +733,4 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
-}
+}*/

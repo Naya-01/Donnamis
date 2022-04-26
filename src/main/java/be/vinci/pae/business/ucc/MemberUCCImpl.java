@@ -133,6 +133,12 @@ public class MemberUCCImpl implements MemberUCC {
     try {
       dalService.startTransaction();
 
+      MemberDTO memberInDB = memberDAO.getOne(memberDTO.getUsername());
+
+      if (memberInDB != null) {
+        throw new ConflictException("Ce pseudonyme est déjà utilisé.");
+      }
+
       memberDTO.setUsername(memberDTO.getUsername().replaceAll(" ", ""));
 
       //check if the member already exists
