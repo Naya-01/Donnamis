@@ -64,10 +64,12 @@ class OfferUCCImplTest {
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(3);
     objectDTO.setType(typeDTO);
+    objectDTO.setVersion(1);
 
     OfferDTO offerDTO = offerFactory.getOfferDTO();
     offerDTO.setDate(LocalDate.now());
     offerDTO.setIdOffer(0);
+    offerDTO.setVersion(1);
     offerDTO.setObject(objectDTO);
     return offerDTO;
   }
@@ -302,8 +304,7 @@ class OfferUCCImplTest {
     OfferDTO offerDTO = getNewOffer();
     OfferDTO offerDTOFromDAO = getNewOffer();
     offerDTOFromDAO.setIdOffer(5);
-    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
-        .thenReturn(null);
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName())).thenReturn(null);
     Mockito.when(typeDAO.addOne(offerDTO.getObject().getType().getTypeName()))
         .thenReturn(typeDTOFromDaoAddOne);
 
@@ -474,6 +475,7 @@ class OfferUCCImplTest {
     mockOfferDTOUpdated.setDate(LocalDate.now());
 
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(mockOfferDTOUpdated);
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
 
     OfferDTO offerDTO = offerUCC.updateOffer(mockOfferDTO);
 
@@ -1025,8 +1027,7 @@ class OfferUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
 
-    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer()))
-        .thenReturn(offerDTO);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
 
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
@@ -1041,8 +1042,7 @@ class OfferUCCImplTest {
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
         .thenReturn(offerDTOFromDAO.getObject());
 
-    Mockito.when(offerDAO.updateOne(offerDTOFromDAO))
-        .thenReturn(offerDTOFromDAO);
+    Mockito.when(offerDAO.updateOne(offerDTOFromDAO)).thenReturn(offerDTOFromDAO);
 
     OfferDTO offerDTOUpdated = offerUCC.notCollectedOffer(offerDTO, memberDTO);
 

@@ -135,13 +135,14 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
-      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
-      }
       OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
       if (updatedOffer == null) {
         throw new NotFoundException("Aucune offre");
+      }
+
+      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
       // TODO verifier version objet
@@ -237,7 +238,6 @@ public class OfferUCCImpl implements OfferUCC {
    */
   @Override
   public OfferDTO cancelOffer(OfferDTO offerDTO, MemberDTO ownerDTO) {
-    System.out.println(offerDTO);
     try {
       dalService.startTransaction();
 
