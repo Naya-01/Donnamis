@@ -3,6 +3,8 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import SearchBar from "../Module/SearchBar";
 import managementList from "../Module/ManagementList";
 import autocomplete from "../Module/AutoComplete";
+import Notification from "../Module/Notification";
+const Toast = Notification.prototype.getNotification("bottom");
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';
@@ -10,8 +12,7 @@ const RegistrationManagementPage = async () => {
       "Rechercher une demande d'inscription", false);
 
   // Load base member
-  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("",
-      "waiting");
+  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("","waiting");
   await baseMembersList(members);
 
   // Search members by enter
@@ -72,7 +73,6 @@ const baseMembersList = async (members) => {
         member.firstname + " " + member.lastname + " (" + member.username + ")",
         member.address.buildingNumber + " " + member.address.street + " " +
         member.address.postcode + " " + member.address.commune);
-    console.log(member);
 
     // Show different buttons card depending on status
     if (member.status === "denied") {
@@ -149,6 +149,7 @@ const acceptMember = (idMember, version) => {
   // Confirm accept member
   acceptedButton.addEventListener('click', async () => {
     removeAllListeners(idMember);
+
     document.getElementById("member-card-" + idMember).hidden = true;
 
     // accept member db
@@ -158,6 +159,11 @@ const acceptMember = (idMember, version) => {
     }
 
     await MemberLibrary.prototype.updateStatus("valid", idMember, "", role, version);
+
+    await Toast.fire({
+      icon: 'success',
+      title: 'Le membre a été accepté !'
+    });
 
   });
 }
@@ -198,13 +204,21 @@ const refuseMember = (idMember, version) => {
 
   // Confirm ban
   acceptedButton.addEventListener('click', async () => {
+    // get the refusal reason
+    const refusalReason = document.getElementById("raisonRefus").value;
+
+    if (refusalReason.length === 0) {
+      await Toast.fire({
+        icon: 'error',
+        title: 'Veuillez entrer une raison de refus !'
+      });
+      return;
+    }
+
     removeAllListeners(idMember);
 
     // Hide the card
     document.getElementById("member-card-" + idMember).hidden = true;
-
-    // get the refusal reason
-    const refusalReason = document.getElementById("raisonRefus").value;
 
     // refuse member db
     await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);

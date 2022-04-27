@@ -104,6 +104,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @param objectDTO : object that we want to update.
    * @return object updated
    */
+  @Override
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     ObjectDTO object;
     try {
@@ -142,6 +143,8 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (f.exists()) {
         f.delete();
       }
+
+      // TODO VERSION !!!
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

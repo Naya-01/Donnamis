@@ -1,5 +1,14 @@
-const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText,
-    overlayId = null) => {
+/**
+ *  A module to display list
+ *
+ * @param uniqueId the unique id of the offer
+ * @param mainDiv the div to place this module
+ * @param image the image at the left of the card
+ * @param primaryText the primary text
+ * @param secondaryText the secondary text
+ * @param overlayId if you want to create child management list (adjust the name of the card to difference it from child)
+ */
+const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, overlayId = null) => {
   const buttonCardId = "button-card-" + uniqueId;
 
   let divCardId = "member-card-" + uniqueId;

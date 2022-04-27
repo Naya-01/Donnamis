@@ -122,7 +122,6 @@ const objectCards = async (searchPattern, type, status) => {
       cancelButton.innerText = "Annuler";
       cancelButton.type = "button";
       cancelButton.className = "btn btn-danger mt-3 mx-1";
-      console.log(offer.version);
       cancelButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.cancelObject(
             offer.idOffer,
@@ -217,7 +216,8 @@ const objectCards = async (searchPattern, type, status) => {
             btn.addEventListener("click", async e => {
               await InterestLibrary.prototype.assignOffer(
                   interest.idObject, interest.idMember,
-                  interest.version, );
+                  interest.version, offer.version, offer.object.version
+              );
               Redirect("/myObjectsPage");
             })
           }

@@ -38,4 +38,8 @@ public interface InterestDTO {
   Integer getVersion();
 
   void setVersion(Integer version);
+
+  OfferDTO getOffer();
+
+  void setOffer(OfferDTO offer);
 }

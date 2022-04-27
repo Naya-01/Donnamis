@@ -52,7 +52,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO getOne(int id) {
-    String query = "SELECT id_object, description, status, image, id_offeror "
+    String query = "SELECT id_object, description, status, image, id_offeror, version "
         + "FROM donnamis.objects WHERE id_object = ?";
 
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
@@ -80,7 +80,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public List<ObjectDTO> getAllByStatus(String status) {
-    String query = "SELECT id_object, id_type, description, status, image, id_offeror "
+    String query = "SELECT id_object, id_type, description, status, image, id_offeror, version "
         + "FROM donnamis.objects WHERE status = ?";
 
     List<ObjectDTO> objectDTOList = new ArrayList<>();
@@ -102,7 +102,7 @@ public class ObjectDAOImpl implements ObjectDAO {
   @Override
   public List<ObjectDTO> getAllObjectOfMember(int idMember) {
     PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(
-        "SELECT id_object, id_type, description, status, image, id_offeror "
+        "SELECT id_object, id_type, description, status, image, id_offeror, version "
             + "FROM donnamis.objects WHERE id_offeror = ?");
 
     List<ObjectDTO> objectDTOList = new ArrayList<>();
@@ -126,7 +126,7 @@ public class ObjectDAOImpl implements ObjectDAO {
     String query = "insert into donnamis.objects "
         + "(id_type, description, status, image, id_offeror, version) "
         + "values (?,?,'available',?,?, 1) "
-        + "RETURNING id_object, description, status, image, id_offeror";
+        + "RETURNING id_object, description, status, image, id_offeror, version";
 
     try {
       PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query);
@@ -231,6 +231,7 @@ public class ObjectDAOImpl implements ObjectDAO {
         objectDTO.setImage(Config.getProperty("ImagePath") + resultSet.getString(4));
       }
       objectDTO.setIdOfferor(resultSet.getInt(5));
+      objectDTO.setVersion(resultSet.getInt(6));
     } catch (SQLException e) {
       throw new FatalException(e);
     }

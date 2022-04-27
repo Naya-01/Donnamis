@@ -266,7 +266,6 @@ public class OfferUCCImpl implements OfferUCC {
       OfferDTO updatedOffer = offerDAO.updateOne(offerFromDB);
 
       // Change object from offerDB status, add version to the object and update
-      // TODO -- Check object version
       offerFromDB.getObject().setStatus("cancelled");
       updatedOffer.setObject(objectDAO.updateOne(offerFromDB.getObject()));
 

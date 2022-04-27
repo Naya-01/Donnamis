@@ -79,6 +79,7 @@ public class ObjectResource {
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
       throw new UnauthorizedException("Cette objet ne vous appartient pas");
     }
+
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\",
         objectDTO.getIdObject());
     if (internalPath == null) {

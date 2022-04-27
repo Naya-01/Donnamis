@@ -112,9 +112,7 @@ const ObjectDetailsPage = async () => {
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
       offer.object.idObject);
-  console.log(jsonInterests);
   isInterested = jsonInterests.isUserInterested;
-  console.log(isInterested);
   let nbMembersInterested = jsonInterests.count;
 
   // Construct all the HTML
@@ -224,15 +222,14 @@ const ObjectDetailsPage = async () => {
   // if this is not the object of the member connected
   else {
     // we get the member that gives the object
-    console.log(offer)
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-    if (!isInterested && (english_status === "interested" || english_status
-        === "available")) {
-      displayAddInterest();
+    if (!isInterested && (english_status === "interested" || english_status === "available")) {
+      console.log(offer.object.version, offer.version)
+      displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(idObject);
       if (current_rating === undefined) { // if there is no rating yet
@@ -259,7 +256,7 @@ const ObjectDetailsPage = async () => {
 /**
  * Display HTML elements to add an interest
  */
-function displayAddInterest() {
+function displayAddInterest(versionObject, versionOffer) {
   // date of disponibility
   let labelDate = document.createElement("label");
   labelDate.for = "input_date";
@@ -306,16 +303,18 @@ function displayAddInterest() {
   new_button.value = "Je suis interessé";
   new_button.type = "button";
   new_button.className = "btn btn-primary";
-  new_button.addEventListener("click", addOneInterest);
+  new_button.addEventListener("click", () => {
+    addOneInterest(versionObject, versionOffer);
+  });
   document.getElementById("divB").appendChild(new_button);
 }
 
 /**
  * Add an interest
- * @param {Event} e : evenement
+ * @param versionObject
+ * @param versionOffer
  */
-async function addOneInterest(e) {
-  e.preventDefault();
+async function addOneInterest(versionObject, versionOffer) {
   let input_date = document.getElementById("input_date");
   let new_button = document.getElementById("interestedButton");
   //if there is no date specified
@@ -360,7 +359,7 @@ async function addOneInterest(e) {
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
-      input_date.value, notificationCall);
+      input_date.value, notificationCall, versionObject, versionOffer);
   if (newInterest === undefined) {
     bottomNotification.fire({
       icon: 'error',
