@@ -573,10 +573,13 @@ class MemberUCCImplTest {
     MemberDTO existentMemberInDBUpdated = getMemberNewMember();
     existentMemberInDBUpdated.setMemberId(5);
     existentMemberInDBUpdated.setUsername("username");
-    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB.getAddress());
-    Mockito.when(mockMemberDAO.getOne(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDB.getAddress());
+    Mockito.when(mockMemberDAO.getOne(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDB);
     Mockito.when(mockMemberDAO.getOne(existentMemberInDBUpdated.getUsername())).thenReturn(null);
-    Mockito.when(mockMemberDAO.updateOne(existentMemberInDBUpdated)).thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDBUpdated))
+        .thenReturn(existentMemberInDBUpdated);
     Mockito.when(mockAddressDAO.updateOne(existentMemberInDBUpdated.getAddress()))
         .thenReturn((existentMemberInDB.getAddress()));
 
@@ -657,7 +660,8 @@ class MemberUCCImplTest {
   public void testUpdateMemberNonExistentInDBWithNullAddressFieldDTO() {
     MemberDTO nonExistentMemberInDBWithoutAddress = getMemberNewMember();
     nonExistentMemberInDBWithoutAddress.setAddress(null);
-    Mockito.when(mockMemberDAO.getOne(nonExistentMemberInDBWithoutAddress.getMemberId())).thenReturn(null);
+    Mockito.when(mockMemberDAO.getOne(nonExistentMemberInDBWithoutAddress.getMemberId()))
+        .thenReturn(null);
     Mockito.when(
             mockAddressDAO.getAddressByMemberId(nonExistentMemberInDBWithoutAddress.getMemberId()))
         .thenReturn(null);

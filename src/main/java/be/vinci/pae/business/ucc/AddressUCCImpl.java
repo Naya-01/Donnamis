@@ -26,7 +26,7 @@ public class AddressUCCImpl implements AddressUCC {
     try {
       dalService.startTransaction();
       AddressDTO addressDTOInDB = addressDAO.getAddressByMemberId(addressDTO.getIdMember());
-      if(addressDTOInDB == null){
+      if (addressDTOInDB == null) {
         throw new NotFoundException();
       }
       if (!addressDTO.getVersion().equals(addressDTOInDB.getVersion())) {

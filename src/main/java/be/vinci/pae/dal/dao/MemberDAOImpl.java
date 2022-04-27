@@ -75,7 +75,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   private MemberDTO getMemberDTOWithAddressDTO(PreparedStatement preparedStatement) {
     MemberDTO memberDTO;
-    try{
+    try {
       memberDTO = getMemberByPreparedStatement(preparedStatement);
       ResultSet resultSet = preparedStatement.getResultSet();
       if (memberDTO != null) {
@@ -84,7 +84,7 @@ public class MemberDAOImpl implements MemberDAO {
       }
       preparedStatement.close();
       resultSet.close();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       throw new FatalException(e);
     }
     return memberDTO;
@@ -135,9 +135,9 @@ public class MemberDAOImpl implements MemberDAO {
   public List<MemberDTO> getAll(String search, String status) {
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
-            + "m.phone_number, m.password, m.refusal_reason, m.image, m.version as version, a.id_member, a.unit_number, "
-            + "a.building_number, a.street, a.postcode, a.commune, a.version "
-            + "FROM donnamis.members m, donnamis.addresses a "
+            + "m.phone_number, m.password, m.refusal_reason, m.image, m.version as version, "
+            + "a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune,"
+            + " a.version FROM donnamis.members m, donnamis.addresses a "
             + "WHERE a.id_member = m.id_member ";
 
     if (status != null && status.equals("waiting")) {
@@ -295,7 +295,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   private AddressDTO getAddressDTOByResultSet(ResultSet resultSet) {
     AddressDTO addressDTO = addressFactory.getAddressDTO();
-    try{
+    try {
       addressDTO.setIdMember(resultSet.getInt(12));
       addressDTO.setUnitNumber(resultSet.getString(13));
       addressDTO.setBuildingNumber(resultSet.getString(14));
@@ -303,7 +303,7 @@ public class MemberDAOImpl implements MemberDAO {
       addressDTO.setPostcode(resultSet.getString(16));
       addressDTO.setCommune(resultSet.getString(17));
       addressDTO.setVersion(resultSet.getInt(18));
-    }catch (SQLException e){
+    } catch (SQLException e) {
       throw new FatalException(e);
     }
     return addressDTO;

@@ -33,9 +33,9 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
-    String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, i.version "
-            + "from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
+    String query = "SELECT i.id_object, i.id_member, i.availability_date, i.status, "
+        + "i.send_notification, i.version FROM donnamis.interests i "
+        + "WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
