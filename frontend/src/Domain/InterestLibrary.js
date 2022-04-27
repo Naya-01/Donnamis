@@ -201,7 +201,7 @@ class InterestLibrary {
     return current_interest;
   }
 
-  async addOne(idObject, date, isNotificated) {
+  async addOne(idObject, date, isCalled) {
     let response;
     try {
       let options = {
@@ -211,7 +211,7 @@ class InterestLibrary {
             "idObject": idObject
           },
           "availabilityDate": date,
-          "isNotificated": isNotificated
+          "isCalled": isCalled
         }),
         headers: {
           "Content-Type": "application/json",

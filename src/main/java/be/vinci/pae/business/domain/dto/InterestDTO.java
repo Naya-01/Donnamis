@@ -30,4 +30,8 @@ public interface InterestDTO {
   String getStatus();
 
   void setStatus(String status);
+
+  Boolean getIsCalled();
+
+  void setIsCalled(boolean isCalled);
 }

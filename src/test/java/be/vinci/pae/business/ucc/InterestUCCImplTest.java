@@ -410,12 +410,10 @@ class InterestUCCImplTest {
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(2);
 
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
         .thenReturn(objectDTO);
     Mockito.when(interestDAO.getAllPublished(objectDTO.getIdObject()))
-        .thenReturn(interestDTOList);
+        .thenReturn(null);
 
     assertAll(
         () -> assertThrows(NotFoundException.class,

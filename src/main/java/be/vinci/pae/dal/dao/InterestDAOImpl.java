@@ -35,13 +35,15 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
     String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification "
-            + "from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
+        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
+            + "i.be_called from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setInt(2, idMember);
-      return getInterestDTO(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestDTO(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -58,13 +60,15 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO getAssignedInterest(int idObject) {
     String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification"
-            + " from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
+        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
+            + "i.be_called from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setString(2, "assigned");
-      return getInterestDTO(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestDTO(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -74,13 +78,11 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Make an interestDTO with the result set.
    *
-   * @param preparedStatement : a prepared statement to execute the query.
+   * @param resultSet : contain the result of the query.
    * @return the interest.
    */
-  private InterestDTO getInterestDTO(PreparedStatement preparedStatement) {
+  private InterestDTO getInterestDTO(ResultSet resultSet) {
     try {
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
       if (!resultSet.next()) {
         return null;
       }
@@ -92,13 +94,13 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
+        interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
         interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
       } catch (SQLException e) {
         throw new FatalException(e);
       }
 
       resultSet.close();
-      preparedStatement.close();
 
       return interestDTO;
     } catch (SQLException e) {
@@ -109,13 +111,11 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Get interestDTOs list.
    *
-   * @param preparedStatement with the data.
+   * @param resultSet : contain the result of the query.
    * @return a list of DTOs
    */
-  private List<InterestDTO> getInterestsDTOSList(PreparedStatement preparedStatement) {
+  private List<InterestDTO> getInterestsDTOSList(ResultSet resultSet) {
     try {
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
 
       List<InterestDTO> interestDTOList = new ArrayList<>();
       while (resultSet.next()) {
@@ -149,7 +149,7 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO addOne(InterestDTO item) {
     String query = "INSERT INTO donnamis.interests (id_object, id_member, availability_date, "
-        + "status,send_notification) VALUES (?,?,?,?,?);";
+        + "status,send_notification,be_called) VALUES (?,?,?,?,?,?);";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, item.getObject().getIdObject());
@@ -157,6 +157,7 @@ public class InterestDAOImpl implements InterestDAO {
       preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
       preparedStatement.setString(4, item.getStatus());
       preparedStatement.setBoolean(5, true);
+      preparedStatement.setBoolean(6, item.getIsCalled());
       preparedStatement.execute();
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -219,12 +220,14 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
-    String query = "SELECT id_object, id_member, availability_date, status, send_notification "
-        + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
+    String query = "SELECT id_object, id_member, availability_date, status, send_notification, "
+        + "be_called FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
     List<InterestDTO> allInterests;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
-      allInterests = getInterestsDTOSList(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      allInterests = getInterestsDTOSList(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -269,13 +272,15 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public List<InterestDTO> getAllNotifications(int idMember) {
 
-    String query = "SELECT id_object, id_member, availability_date, status,send_notification "
-        + "FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
+    String query = "SELECT id_object, id_member, availability_date, status,send_notification, "
+        + "be_called FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
       preparedStatement.setBoolean(2, true);
-      return getInterestsDTOSList(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestsDTOSList(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -291,13 +296,14 @@ public class InterestDAOImpl implements InterestDAO {
   public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
     String query = "UPDATE donnamis.interests SET send_notification = ? "
         + "WHERE id_member = ? AND send_notification = true RETURNING id_object, id_member,"
-        + " availability_date, status,send_notification ";
+        + " availability_date, status,send_notification, be_called ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setBoolean(1, false);
       preparedStatement.setInt(2, idMember);
-
-      return getInterestsDTOSList(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestsDTOSList(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -341,14 +347,15 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO updateNotification(InterestDTO interestDTO) {
     String query = "UPDATE donnamis.interests SET send_notification = ? "
         + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
-        + " availability_date, status,send_notification ";
+        + " availability_date, status,send_notification,be_called ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setBoolean(1, interestDTO.getIsNotificated());
       preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
-
-      return getInterestDTO(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestDTO(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }
@@ -365,15 +372,16 @@ public class InterestDAOImpl implements InterestDAO {
 
     String query = "UPDATE donnamis.interests SET status = ? "
         + "WHERE id_object= ? AND id_member = ? RETURNING availability_date, status, id_member"
-        + ", id_object , send_notification";
+        + ", id_object , send_notification, be_called";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setString(1, interestDTO.getStatus());
       preparedStatement.setInt(2, interestDTO.getObject().getIdObject());
       preparedStatement.setInt(3, interestDTO.getIdMember());
-
-      return getInterestDTO(preparedStatement);
+      preparedStatement.executeQuery();
+      ResultSet resultSet = preparedStatement.getResultSet();
+      return getInterestDTO(resultSet);
     } catch (SQLException e) {
       throw new FatalException(e);
     }

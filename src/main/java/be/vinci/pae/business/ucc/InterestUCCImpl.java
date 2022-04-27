@@ -75,7 +75,6 @@ public class InterestUCCImpl implements InterestUCC {
       }
       interestDAO.addOne(item);
 
-
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();
@@ -195,7 +194,7 @@ public class InterestUCCImpl implements InterestUCC {
       }
       interestDTOList = interestDAO.getAllPublished(idObject);
 
-      if (interestDTOList.isEmpty()) {
+      if (interestDTOList == null) {
         throw new NotFoundException("Aucun intérêt trouvé");
       }
       dalService.commitTransaction();
