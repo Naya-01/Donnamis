@@ -27,24 +27,23 @@ const dictionnary = new Map([
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']
 ]);
-let idOffer;
-let idObject;
+// attributes for the object / offer :
+let offer;
 let imageOfObject;
-let english_status;
-let idType;
+let localLinkImage;
 let description;
 let time_slot;
-let form = false;
-let isInterested;
-let localLinkImage;
-let statusObject;
-let note = 1;
-let offer;
-let idMemberConnected;
-let telNumber;
 let versionObject;
 let versionOffer;
+
+//for the member
+let idMemberConnected;
+let telNumber;
 let versionMemberConnected;
+
+
+let form = false;
+let note = 1;
 
 /**
  * Render the page to see an object
@@ -61,7 +60,7 @@ const ObjectDetailsPage = async () => {
   let url = new URL(url_string);
 
   //Check the id of the offer in the url
-  idOffer = url.searchParams.get("idOffer");
+  let idOffer = url.searchParams.get("idOffer");
   if (!idOffer || idOffer <= 0) {
     Redirect("/");
     return;
@@ -74,17 +73,13 @@ const ObjectDetailsPage = async () => {
     return;
   }
   //Set all fields
-  idObject = offer.object.idObject;
   if (offer.object.image) {
-    imageOfObject = "/api/object/getPicture/" + idObject;
+    imageOfObject = "/api/object/getPicture/" + offer.object.idObject;
   } else {
     imageOfObject = noImage;
   }
-  idType = offer.object.type.idType;
   description = offer.object.description;
   time_slot = offer.timeSlot;
-  statusObject = offer.status;
-  statusObject = offer.status;
 
   versionObject = offer.object.version;
   versionOffer = offer.version;
@@ -97,8 +92,7 @@ const ObjectDetailsPage = async () => {
         + "/" + offer.oldDate[0];
   }
   // translate the status to french
-  english_status = offer.status;
-  let french_status = dictionnary.get(english_status);
+  let french_status = dictionnary.get(offer.status);
 
   // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
@@ -113,8 +107,7 @@ const ObjectDetailsPage = async () => {
   let jsonInterests = await interestLibrary.getInterestedCount(
       offer.object.idObject);
   let nbMembersInterested = jsonInterests.count;
-  let  isInterested = await interestLibrary.getOneInterest(offer.object.idObject);
-  if(isInterested!==undefined) isInterested=true;
+  let isInterested = jsonInterests.isUserInterested;
 
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
@@ -216,7 +209,7 @@ const ObjectDetailsPage = async () => {
     new_button.id = "modifyObjectButton";
     new_button.addEventListener("click", changeToForm);
     divB.appendChild(new_button);
-    if (english_status === "given") {
+    if (offer.status === "given") {
       new_button.remove();
     }
   }
@@ -229,13 +222,13 @@ const ObjectDetailsPage = async () => {
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-    if (!isInterested && (english_status === "interested" || english_status
+    if (!isInterested && (offer.status === "interested" || offer.status
         === "available")) {
       displayAddInterest();
-    } else if (english_status === "given") {
-      let current_rating = await ratingLibrary.getOne(idObject);
+    } else if (offer.status === "given") {
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
       if (current_rating === undefined) { // if there is no rating yet
-        let current_interest = await interestLibrary.getOneInterest(idObject);
+        let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -348,7 +341,7 @@ async function addOneInterest(e) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
-          null, numTel, null, versionMemberConnected, idMemberConnected); //TODO changer le 10 avec la version
+          null, numTel, null, versionMemberConnected, idMemberConnected);
       await memberLibrary.updateMember(member);
       versionMemberConnected += 1;
     }
@@ -600,7 +593,7 @@ async function updateObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, idObject);
+    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject);
     if (objectWithImage === undefined) {
       bottomNotification.fire({
         icon: 'error',
@@ -618,8 +611,8 @@ async function updateObject(e) {
   }
 
   // Call the function to update the offer
-  let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject,
+  let newOffer = await offerLibrary.updateOffer(offer.idOffer, new_time_slot,
+      new_description, offer.object.type.idType, offer.status, offer.status, versionObject,
       versionOffer);
   if (newOffer === undefined) {
     bottomNotification.fire({
@@ -627,6 +620,7 @@ async function updateObject(e) {
       title: "L\'offre n'a pas pu être mise à jour."
     })
   }
+  offer = newOffer;
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
@@ -671,7 +665,7 @@ async function ratingPopUp(e) {
         })
         return;
       }
-      let rating = await ratingLibrary.addRating(note, text_rating, idObject);
+      let rating = await ratingLibrary.addRating(note, text_rating, offer.object.idObject);
       if (rating === undefined) {
         bottomNotification.fire({
           icon: 'error',
