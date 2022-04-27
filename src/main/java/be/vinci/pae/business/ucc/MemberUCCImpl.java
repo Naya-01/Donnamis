@@ -81,7 +81,7 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
-      if (!memberDTO.getVersion().equals(version)) {
+      if (version != null && !memberDTO.getVersion().equals(version)) {
         throw new ForbiddenException("Les versions ne correspondent pas.");
       }
 

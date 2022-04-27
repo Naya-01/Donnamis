@@ -111,6 +111,7 @@ class MemberUCCImplTest {
     this.memberValid1.setStatus(statusValid);
     this.memberValid1.setMemberId(2);
     this.memberValid1.setUsername("Michel");
+    this.memberValid1.setVersion(5);
 
   }
 
@@ -255,7 +256,7 @@ class MemberUCCImplTest {
     assertAll(
         () -> assertThrows(NotFoundException.class,
             () -> memberUCC.updateProfilPicture(pathImage, idMember,1)),
-        () -> Mockito.verify(mockMemberDAO).getOne(idMember)
+        () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
 
@@ -311,6 +312,18 @@ class MemberUCCImplTest {
         () -> assertNotEquals(memberDTO.getImage(), memberToTest.getImage()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test updateProfilPicture with versions that don't match")
+  @Test
+  public void testUpdateProfilPictureWithDifferentsVersions() {
+    int idMember = 1;
+    Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> memberUCC.updateProfilPicture(pathImage, idMember,3)),
+        () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
 
