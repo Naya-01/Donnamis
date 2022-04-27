@@ -906,4 +906,19 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  ---------------------------- GET LAST OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test getLastOffer with none offer returned from dao")
+  @Test
+  public void testGetLastOfferWithNoneOfferReturnedFromDao() {
+    int idObject = 3;
+    Mockito.when(offerDAO.getLastObjectOffer(idObject)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getLastOffer(idObject)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
