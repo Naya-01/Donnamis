@@ -576,11 +576,11 @@ class MemberUCCImplTest {
     Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB.getAddress());
     Mockito.when(mockMemberDAO.getOne(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB);
     Mockito.when(mockMemberDAO.getOne("username")).thenReturn(null);
-    Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
-    Mockito.when(mockAddressDAO.updateOne(existentMemberInDB.getAddress()))
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDBUpdated)).thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockAddressDAO.updateOne(existentMemberInDBUpdated.getAddress()))
         .thenReturn((existentMemberInDB.getAddress()));
 
-    MemberDTO memberDTOToTest = memberUCC.updateMember(existentMemberInDB);
+    MemberDTO memberDTOToTest = memberUCC.updateMember(existentMemberInDBUpdated);
 
     assertAll(
         () -> assertEquals(existentMemberInDBUpdated, memberDTOToTest),
