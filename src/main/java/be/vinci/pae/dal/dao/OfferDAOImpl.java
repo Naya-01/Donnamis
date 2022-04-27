@@ -63,9 +63,10 @@ public class OfferDAOImpl implements OfferDAO {
       if (objectStatus.equals("available")) {
         query += "AND (LOWER(of.status) LIKE 'available' OR LOWER(of.status) LIKE 'interested') ";
       } else {
-        query += "AND LOWER(of.status) LIKE ?";
+        query += "AND LOWER(of.status) LIKE ? ";
       }
     }
+    query += " ORDER BY of.date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       int argCounter = 1;
