@@ -20,5 +20,4 @@ class Member {
 
 }
 
-// default export
 export default Member;
