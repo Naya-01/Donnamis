@@ -856,6 +856,27 @@ class OfferUCCImplTest {
 
   //  ---------------------------- NOT COLLECTED OFFER UCC  -------------------------------  //
 
+  @DisplayName("Test notCollectedOffer with null received from dao when get the offer")
+  @Test
+  public void testNotCollectedOfferWithNullReceivedFromDAOByGetOneOffer() {
+    OfferDTO offerDTO = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+
+    memberDTO.setMemberId(2);
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test notCollectedOffer without having interest")
   @Test
   public void testNotCollectedOfferWithoutHavingAnyInterest() {
