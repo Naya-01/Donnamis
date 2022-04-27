@@ -332,6 +332,32 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test cancelOffer with not same id member version")
+  @Test
+  public void testCancelOfferWithNotSameIdMemberVersion() {
+    OfferDTO mockOfferDTO = getNewOffer();
+    mockOfferDTO.setIdOffer(2);
+    mockOfferDTO.setStatus("available");
+    mockOfferDTO.getObject().setIdOfferor(2);
+
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+    mockMember.setMemberId(3);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(2);
+    offerDTOFromDao.setStatus("available");
+    offerDTOFromDao.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.cancelOffer(mockOfferDTO, mockMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test cancelOffer with given status")
   @Test
   public void testCancelOfferWithGivenStatus() {
