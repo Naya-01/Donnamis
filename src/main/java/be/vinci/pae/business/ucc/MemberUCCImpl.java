@@ -141,12 +141,6 @@ public class MemberUCCImpl implements MemberUCC {
 
       memberDTO.setUsername(memberDTO.getUsername().replaceAll(" ", ""));
 
-      //check if the member already exists
-      MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
-      if (memberExistent != null) {
-        throw new ConflictException("Ce membre existe déjà");
-      }
-
       //set the MemberDTO
       Member member = (Member) memberDTO;
       memberDTO.setPassword(
