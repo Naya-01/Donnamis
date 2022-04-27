@@ -469,17 +469,42 @@ class OfferUCCImplTest {
   @Test
   public void testGiveOfferWithNonExistentOfferPublished() {
     OfferDTO offerDTO = getNewOffer();
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-
-    memberDTO.setMemberId(2);
     offerDTO.setIdOffer(3);
     offerDTO.getObject().setIdObject(3);
     offerDTO.getObject().setIdOfferor(2);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
 
     Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject())).thenReturn(null);
 
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test giveOffer with not same version offer in db and front")
+  @Test
+  public void testGiveOfferWithNotSameVersionOfferDbAndFrom() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.setVersion(1);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(2);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
