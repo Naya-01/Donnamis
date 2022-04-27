@@ -72,7 +72,7 @@ POST {{baseUri}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "test",
+  "username": "stefanenculé",
   "lastname": "test",
   "firstname": "test",
   "password": "test123",

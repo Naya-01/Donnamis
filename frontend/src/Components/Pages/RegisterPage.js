@@ -13,7 +13,7 @@ const regNumberPhone =
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification("bottom");
+const toast = new Notification().getNotification("top-end");
 
 const htmlPage = `
           <div class="container mt-5">
@@ -217,15 +217,15 @@ const RegisterPage = async () => {
     } else {
       let address = new Address(unitNumber.value.trim(),
           buildingNumber.value.trim(), street.value.trim(),
-          postcode.value.trim(), commune.value.trim());
+          postcode.value.trim(), commune.value.trim(), 1);
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-          phoneNumber.value.trim(), address);
-      console.log(member);
+          phoneNumber.value.trim(), address, 1);
       // Requête DB inscription et redirect
       let isRegistered = await memberLibrary.registerMember(member);
       if (isRegistered) {
-        toast.fire({
+        let notificationBottom = new Notification().getNotification("bottom");
+        notificationBottom.fire({
           icon: 'success',
           title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`

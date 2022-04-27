@@ -65,6 +65,7 @@ class MemberUCCImplTest {
     newAddress.setStreet("Rue de l'aérosol");
     newAddress.setPostcode("1234");
     newAddress.setCommune("Wolluwe");
+    newAddress.setVersion(1);
 
     MemberDTO newMember = memberFactory.getMemberDTO();
     newMember.setMemberId(0);
@@ -74,6 +75,7 @@ class MemberUCCImplTest {
     newMember.setPhone("0412345678");
     newMember.setPassword("matthieuLeChien");
     newMember.setAddress(newAddress);
+    newMember.setVersion(1);
 
     return newMember;
   }
@@ -252,7 +254,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, 1)),
         () -> Mockito.verify(mockMemberDAO).getOne(idMember)
     );
   }
@@ -263,10 +265,12 @@ class MemberUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
     memberDTO.setImage(pathImage);
+    memberDTO.setVersion(1);
 
     MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
     memberDTOWithNewProfilPic.setMemberId(2);
     memberDTOWithNewProfilPic.setImage(pathImage + "test");
+    memberDTOWithNewProfilPic.setVersion(2);
 
     Mockito.when(mockMemberDAO.getOne(memberDTO.getMemberId())).thenReturn(memberDTO);
 
@@ -275,9 +279,9 @@ class MemberUCCImplTest {
 
     assertAll(
         () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
-            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(), 1)),
         () -> assertNotEquals(memberDTO.getImage(), memberUCC
-            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(), 1).getImage()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
@@ -288,6 +292,7 @@ class MemberUCCImplTest {
   public void testUpdateProfilPictureSuccessAlreadyHavingAProfilPicture() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
+    memberDTO.setVersion(1);
 
     MemberDTO memberDTOWithNewProfilPic = memberFactory.getMemberDTO();
     memberDTOWithNewProfilPic.setMemberId(2);
@@ -298,11 +303,12 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.updateProfilPicture(pathImage + "test", memberDTO.getMemberId()))
         .thenReturn(memberDTOWithNewProfilPic);
 
+    MemberDTO memberToTest = memberUCC
+        .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(), 1);
+
     assertAll(
-        () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
-            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId())),
-        () -> assertNotEquals(memberDTO.getImage(), memberUCC
-            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId()).getImage()),
+        () -> assertEquals(memberDTOWithNewProfilPic, memberToTest),
+        () -> assertNotEquals(memberDTO.getImage(), memberToTest.getImage()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
@@ -566,16 +572,22 @@ class MemberUCCImplTest {
 
     MemberDTO existentMemberInDBUpdated = getMemberNewMember();
     existentMemberInDBUpdated.setMemberId(5);
-    existentMemberInDBUpdated.setUsername("lol");
-
-    Mockito.when(mockMemberDAO.updateOne(existentMemberInDB)).thenReturn(existentMemberInDBUpdated);
-    Mockito.when(mockAddressDAO.updateOne(existentMemberInDB.getAddress()))
+    existentMemberInDBUpdated.setUsername("username");
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDB.getAddress());
+    Mockito.when(mockMemberDAO.getOne(existentMemberInDB.getMemberId()))
+        .thenReturn(existentMemberInDB);
+    Mockito.when(mockMemberDAO.getOne("username")).thenReturn(null);
+    Mockito.when(mockMemberDAO.updateOne(existentMemberInDBUpdated))
+        .thenReturn(existentMemberInDBUpdated);
+    Mockito.when(mockAddressDAO.updateOne(existentMemberInDBUpdated.getAddress()))
         .thenReturn((existentMemberInDB.getAddress()));
+
+    MemberDTO memberDTOToTest = memberUCC.updateMember(existentMemberInDBUpdated);
+
     assertAll(
-        () -> assertEquals(existentMemberInDB.getMemberId(),
-            memberUCC.updateMember(existentMemberInDB).getMemberId()),
-        () -> assertNotEquals(existentMemberInDB.getUsername(),
-            memberUCC.updateMember(existentMemberInDB).getUsername()),
+        () -> assertEquals(existentMemberInDBUpdated, memberDTOToTest),
+        () -> assertNotEquals(existentMemberInDB.getUsername(), memberDTOToTest.getUsername()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
@@ -611,11 +623,19 @@ class MemberUCCImplTest {
 
   @DisplayName("Test updateMember with a member having his fields by default")
   @Test
-  public void testUpdateMemberWithEmptyFieldsMember() {
+  public void testUpdateMemberWithEmptyFieldsMember() { //TODO à vérifier
     MemberDTO existentMember = memberFactory.getMemberDTO();
+    existentMember.setUsername("usernameExistent");
     existentMember.setAddress(getMemberNewMember().getAddress());
     existentMember.getAddress().setIdMember(2);
     existentMember.setMemberId(2);
+    existentMember.setVersion(1);
+    AddressDTO existentAddress = addressFactory.getAddressDTO();
+    existentAddress.setVersion(1);
+    Mockito.when(mockMemberDAO.getOne(existentMember.getMemberId())).thenReturn(existentMember);
+    Mockito.when(mockMemberDAO.getOne(existentMember.getUsername())).thenReturn(existentMember);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMember.getMemberId()))
+        .thenReturn(existentAddress);
     Mockito.when(mockMemberDAO.updateOne(existentMember)).thenReturn(null);
 
     Mockito.when(mockAddressDAO.updateOne(existentMember.getAddress()))
@@ -634,8 +654,9 @@ class MemberUCCImplTest {
   public void testUpdateMemberNonExistentInDB() {
     MemberDTO nonExistentMemberInDB = getMemberNewMember();
     Mockito.when(mockMemberDAO.updateOne(nonExistentMemberInDB)).thenReturn(null);
+    Mockito.when(mockMemberDAO.getOne(nonExistentMemberInDB.getMemberId())).thenReturn(null);
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+        () -> assertThrows(NotFoundException.class, () -> memberUCC
             .updateMember(nonExistentMemberInDB)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
@@ -647,13 +668,14 @@ class MemberUCCImplTest {
   public void testUpdateMemberNonExistentInDBWithNullAddressFieldDTO() {
     MemberDTO nonExistentMemberInDBWithoutAddress = getMemberNewMember();
     nonExistentMemberInDBWithoutAddress.setAddress(null);
-
+    Mockito.when(mockMemberDAO.getOne(nonExistentMemberInDBWithoutAddress.getMemberId()))
+        .thenReturn(null);
     Mockito.when(
             mockAddressDAO.getAddressByMemberId(nonExistentMemberInDBWithoutAddress.getMemberId()))
         .thenReturn(null);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+        () -> assertThrows(NotFoundException.class, () -> memberUCC
             .updateMember(nonExistentMemberInDBWithoutAddress)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()

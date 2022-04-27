@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 
+//TODO : changer tt la doc
 
 public class MemberUCCImpl implements MemberUCC {
 
@@ -38,10 +39,9 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO login(String username, String password) {
-    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
-      memberDTO = memberDAO.getOne(username);
+      MemberDTO memberDTO = memberDAO.getOne(username);
       Member member = (Member) memberDTO;
       if (memberDTO == null) {
         throw new NotFoundException("Membre non trouvé");
@@ -57,11 +57,11 @@ public class MemberUCCImpl implements MemberUCC {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
 
   }
 
@@ -73,13 +73,16 @@ public class MemberUCCImpl implements MemberUCC {
    * @return memberDTO updated
    */
   @Override
-  public MemberDTO updateProfilPicture(String path, int id) {
+  public MemberDTO updateProfilPicture(String path, int id, Integer version) {
     MemberDTO memberDTO;
     try {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
+      }
+      if (!memberDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Les versions ne correspondent pas.");
       }
 
       File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
@@ -89,11 +92,11 @@ public class MemberUCCImpl implements MemberUCC {
 
       memberDTO = memberDAO.updateProfilPicture(path, id);
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
   }
 
   /**
@@ -104,19 +107,18 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public MemberDTO getMember(int id) {
-    MemberDTO memberDTO;
     try {
       dalService.startTransaction();
-      memberDTO = memberDAO.getOne(id);
+      MemberDTO memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
       dalService.commitTransaction();
+      return memberDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTO;
   }
 
   /**
@@ -130,6 +132,12 @@ public class MemberUCCImpl implements MemberUCC {
     MemberDTO memberFromDao;
     try {
       dalService.startTransaction();
+
+      MemberDTO memberInDB = memberDAO.getOne(memberDTO.getUsername());
+
+      if (memberInDB != null) {
+        throw new ConflictException("Ce pseudonyme est déjà utilisé.");
+      }
 
       memberDTO.setUsername(memberDTO.getUsername().replaceAll(" ", ""));
 
@@ -186,19 +194,18 @@ public class MemberUCCImpl implements MemberUCC {
    */
   @Override
   public List<MemberDTO> searchMembers(String search, String status) {
-    List<MemberDTO> memberDTOList;
     try {
       dalService.startTransaction();
-      memberDTOList = memberDAO.getAll(search, status);
+      List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
       if (memberDTOList == null || memberDTOList.isEmpty()) {
         throw new NotFoundException("Aucun membre");
       }
       dalService.commitTransaction();
+      return memberDTOList;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return memberDTOList;
   }
 
 
@@ -210,11 +217,10 @@ public class MemberUCCImpl implements MemberUCC {
    */
   public BufferedImage getPicture(int id) {
     MemberDTO memberDTO;
-    BufferedImage picture = null;
+    BufferedImage picture;
     try {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
-
       if (memberDTO == null) {
         throw new NotFoundException("Membre non trouvé");
       }
@@ -234,7 +240,7 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Update any attribute of a member.
+   * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
    * @return the modified member
@@ -243,12 +249,30 @@ public class MemberUCCImpl implements MemberUCC {
   public MemberDTO updateMember(MemberDTO memberDTO) {
     try {
       dalService.startTransaction();
-      AddressDTO addressDTO;
+      MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
+      if (memberInDB == null) {
+        throw new NotFoundException("Le membre est inexistant.");
+      }
+      // check the version of member
+      if (!memberDTO.getVersion().equals(memberInDB.getVersion())) {
+        throw new ForbiddenException(
+            "Impossibilité de modifier les données du membre");
+      }
+      MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
+      if (memberDTOWithSameUsername != null &&
+          !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())) {
+        System.out.println(memberDTO.getMemberId());
+        System.out.println(memberDTOWithSameUsername.getMemberId());
+        throw new ConflictException("Ce pseudonyme est déjà utilisé.");
+      }
+      AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
+        // check the version of address
+        if (!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())) {
+          throw new ForbiddenException("Impossibilité de modifier les données de l'adresse");
+        }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-      } else {
-        addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
       }
 
       if (addressDTO == null) {

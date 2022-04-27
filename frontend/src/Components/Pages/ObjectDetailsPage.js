@@ -42,6 +42,9 @@ let note = 1;
 let offer;
 let idMemberConnected;
 let telNumber;
+let versionObject;
+let versionOffer;
+let versionMemberConnected;
 
 /**
  * Render the page to see an object
@@ -81,6 +84,11 @@ const ObjectDetailsPage = async () => {
   description = offer.object.description;
   time_slot = offer.timeSlot;
   statusObject = offer.status;
+  statusObject = offer.status;
+
+  versionObject = offer.object.version;
+  versionOffer = offer.version;
+
   let oldDate;
   if (offer.oldDate === undefined) {
     oldDate = "/"
@@ -99,6 +107,7 @@ const ObjectDetailsPage = async () => {
   if (telNumber === undefined) {
     telNumber = "";
   }
+  versionMemberConnected = member.version;
 
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
@@ -340,8 +349,9 @@ async function addOneInterest(e) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let member = new Member(null, null, null,
-          null, numTel, null, idMemberConnected);
+          null, numTel, null, versionMemberConnected, idMemberConnected); //TODO changer le 10 avec la version
       await memberLibrary.updateMember(member);
+      versionMemberConnected += 1;
     }
   }
   numTelInput.classList.remove("border-danger");
@@ -601,9 +611,17 @@ async function updateObject(e) {
     }
   }
 
+  if (!versionObject) {
+    versionObject = ""
+  }
+  if (!versionOffer) {
+    versionOffer = ""
+  }
+
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
   if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',

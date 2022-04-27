@@ -236,6 +236,23 @@ const Navbar = async () => {
         let markAllReadBtn = document.getElementById("allRead");
         markAllReadBtn.addEventListener("click", async e => {
           await InterestLibrary.prototype.markAllNotificationShown();
+          let notification = document.getElementById("dot");
+          notification.id = "";
+          notification.innerText = "";
+          let markAllReadBtn = document.getElementById("allRead")
+          markAllReadBtn.remove();
+          let li = document.createElement("li");
+          li.innerHTML = `
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
+                                <div class="row">
+                                    <div class="fs-5 text-warning">
+                                      <span>Aucune notifications pour le moment...</span>
+                                    </div>
+                                </div>
+                              </div>
+                            `
+          notificationContentUL.appendChild(li);
+          document.getElementById("notificationButton").click();
         });
 
         let notifItems = document.getElementsByClassName("notif-items");

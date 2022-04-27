@@ -321,21 +321,23 @@ const modifyProfilRender = async () => {
 
     let newAddress = new Address(nullFields[1] === null ? null : nullFields[1],
         buildingNumber.value.trim(), street.value.trim(),
-        postcode.value.trim(), commune.value.trim());
-
+        postcode.value.trim(), commune.value.trim(), member.address.version);
     let newMember = new Member(username.value.split(' ').join(''),
         lastname.value.trim(), firstname.value.trim(), password.value.trim(),
         nullFields[0] === null ? null : nullFields[0], newAddress,
+        member.version,
         member.memberId);
-
     let memberWithImage;
     if (fileInput.files[0] !== undefined) {
       let formData = new FormData();
       formData.append('file', fileInput.files[0]);
-      memberWithImage = await memberLibrary.setImage(formData);
+      memberWithImage = await memberLibrary.setImage(formData, member.version);
+      newMember.version = newMember.version + 1;
     }
-
     let memberUpdated = await memberLibrary.updateMember(newMember);
+    if (memberUpdated === null) {
+      return;
+    }
     if (username.value.trim() !== member.username) {
       await Navbar();
     }

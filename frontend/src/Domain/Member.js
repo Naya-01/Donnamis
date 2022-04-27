@@ -2,7 +2,7 @@
 
 class Member {
 
-  constructor(username, lastname, firstname, password, phone, address,
+  constructor(username, lastname, firstname, password, phone, address, version,
       memberId = null) {
     this.memberId = memberId;
     this.username = username;
@@ -15,6 +15,7 @@ class Member {
     this.reasonRefusal = null;
     this.address = address;
     this.image = null;
+    this.version = version;
   }
 
 }

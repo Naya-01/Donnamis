@@ -94,17 +94,16 @@ class InterestLibrary {
     return allInterests;
   }
 
-  async assignOffer(idObject, idMember) {
+  async assignOffer(idObject, idMember, version) {
     let response;
     let toast = Notification.prototype.getNotification("bottom");
     try {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
-          "idMember": idMember
+          "idMember": idMember,
+          "version": version,
+          "idObject": idObject,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -207,9 +206,7 @@ class InterestLibrary {
       let options = {
         method: "POST",
         body: JSON.stringify({
-          "object": {
-            "idObject": idObject
-          },
+          "idObject": idObject,
           "availabilityDate": date,
           "isCalled": isCalled
         }),

@@ -19,9 +19,13 @@ public interface InterestDTO {
 
   void setObject(ObjectDTO object);
 
+  Integer getIdObject();
+
+  void setIdObject(int idObject);
+
   Integer getIdMember();
 
-  void setIdMember(int idMember);
+  void setIdMember(Integer idMember);
 
   LocalDate getAvailabilityDate();
 
@@ -30,6 +34,10 @@ public interface InterestDTO {
   String getStatus();
 
   void setStatus(String status);
+
+  Integer getVersion();
+
+  void setVersion(Integer version);
 
   Boolean getIsCalled();
 

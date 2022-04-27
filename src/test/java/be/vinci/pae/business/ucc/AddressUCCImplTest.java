@@ -24,6 +24,7 @@ class AddressUCCImplTest {
   private AddressUCC addressUCC;
   private AddressDAO mockAddressDAO;
   private AddressDTO addressDTO;
+  private AddressDTO addressDTOUpdated;
   private DALService mockDalService;
 
   @BeforeEach
@@ -34,18 +35,27 @@ class AddressUCCImplTest {
     AddressFactory addressFactory = locator.getService(AddressFactory.class);
     this.addressDTO = addressFactory.getAddressDTO();
     this.addressDTO.setIdMember(1);
+    this.addressDTO.setVersion(1);
+    this.addressDTOUpdated = addressFactory.getAddressDTO();
+    this.addressDTOUpdated.setIdMember(1);
+    this.addressDTOUpdated.setCommune("Brussels");
+    this.addressDTOUpdated.setVersion(1);
+
   }
 
   @DisplayName("test updateOne with an existent address")
   @Test
   public void testUpdateOneWithExistentAddress() {
-    Mockito.when(mockAddressDAO.updateOne(addressDTO)).thenReturn(addressDTO);
+
+    Mockito.when(mockAddressDAO.getAddressByMemberId(addressDTOUpdated.getIdMember()))
+        .thenReturn(addressDTO);
+    Mockito.when(mockAddressDAO.updateOne(addressDTOUpdated)).thenReturn(addressDTOUpdated);
     assertAll(
-        () -> assertEquals(addressDTO, addressUCC.updateOne(addressDTO)),
+        () -> assertEquals(addressDTOUpdated, addressUCC.updateOne(addressDTOUpdated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockAddressDAO, Mockito.atLeast(1))
-            .updateOne(addressDTO),
+            .updateOne(addressDTOUpdated),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .commitTransaction()
     );
@@ -54,13 +64,14 @@ class AddressUCCImplTest {
   @DisplayName("test updateOne with a non-existent address")
   @Test
   public void testUpdateOneWithNonExistentAddress() {
-    Mockito.when(mockAddressDAO.updateOne(addressDTO)).thenReturn(null);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(addressDTO.getIdMember()))
+        .thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> addressUCC.updateOne(addressDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockAddressDAO, Mockito.atLeast(1))
-            .updateOne(addressDTO),
+            .getAddressByMemberId(addressDTO.getIdMember()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
     );

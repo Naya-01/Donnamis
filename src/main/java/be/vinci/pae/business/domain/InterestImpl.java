@@ -18,11 +18,15 @@ public class InterestImpl implements InterestDTO {
   @JsonView(Views.Public.class)
   private Integer idMember;
   @JsonView(Views.Public.class)
+  private Integer idObject;
+  @JsonView(Views.Public.class)
   private LocalDate availabilityDate;
   @JsonView(Views.Public.class)
   private String status;
   @JsonView(Views.Public.class)
   private Boolean isNotificated;
+  @JsonView(Views.Public.class)
+  private Integer version;
   @JsonView(Views.Public.class)
   private Boolean isCalled;
 
@@ -57,12 +61,22 @@ public class InterestImpl implements InterestDTO {
   }
 
   @Override
+  public Integer getIdObject() {
+    return idObject;
+  }
+
+  @Override
+  public void setIdObject(int idObject) {
+    this.idObject = idObject;
+  }
+
+  @Override
   public Integer getIdMember() {
     return idMember;
   }
 
   @Override
-  public void setIdMember(int idMember) {
+  public void setIdMember(Integer idMember) {
     this.idMember = idMember;
   }
 
@@ -87,6 +101,16 @@ public class InterestImpl implements InterestDTO {
   }
 
   @Override
+  public Integer getVersion() {
+    return version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
+  @Override
   public Boolean getIsCalled() {
     return isCalled;
   }
@@ -94,5 +118,18 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setIsCalled(boolean isCalled) {
     this.isCalled = isCalled;
+  }
+
+  @Override
+  public String toString() {
+    return "InterestImpl{" +
+        "member=" + member +
+        ", object=" + object +
+        ", idMember=" + idMember +
+        ", availabilityDate=" + availabilityDate +
+        ", status='" + status + '\'' +
+        ", isNotificated=" + isNotificated +
+        ", version=" + version +
+        '}';
   }
 }

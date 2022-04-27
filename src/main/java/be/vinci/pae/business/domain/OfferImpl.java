@@ -22,6 +22,8 @@ public class OfferImpl implements OfferDTO {
   private String status;
   @JsonView(Views.Public.class)
   private ObjectDTO object;
+  @JsonView(Views.Public.class)
+  private Integer version;
 
   @Override
   public Integer getIdOffer() {
@@ -83,4 +85,26 @@ public class OfferImpl implements OfferDTO {
     this.status = status;
   }
 
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
+  @Override
+  public Integer getVersion() {
+    return version;
+  }
+
+  @Override
+  public String toString() {
+    return "OfferImpl{" +
+        "idOffer=" + idOffer +
+        ", date=" + date +
+        ", oldDate=" + oldDate +
+        ", timeSlot='" + timeSlot + '\'' +
+        ", status='" + status + '\'' +
+        ", object=" + object +
+        ", version=" + version +
+        '}';
+  }
 }
