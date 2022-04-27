@@ -575,7 +575,7 @@ class MemberUCCImplTest {
     existentMemberInDBUpdated.setUsername("username");
     Mockito.when(mockAddressDAO.getAddressByMemberId(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB.getAddress());
     Mockito.when(mockMemberDAO.getOne(existentMemberInDB.getMemberId())).thenReturn(existentMemberInDB);
-    Mockito.when(mockMemberDAO.getOne("username")).thenReturn(null);
+    Mockito.when(mockMemberDAO.getOne(existentMemberInDBUpdated.getUsername())).thenReturn(null);
     Mockito.when(mockMemberDAO.updateOne(existentMemberInDBUpdated)).thenReturn(existentMemberInDBUpdated);
     Mockito.when(mockAddressDAO.updateOne(existentMemberInDBUpdated.getAddress()))
         .thenReturn((existentMemberInDB.getAddress()));
@@ -626,16 +626,9 @@ class MemberUCCImplTest {
     existentMember.setAddress(getMemberNewMember().getAddress());
     existentMember.getAddress().setIdMember(2);
     existentMember.setMemberId(2);
-    existentMember.setVersion(1);
     AddressDTO existentAddress = addressFactory.getAddressDTO();
     existentAddress.setVersion(1);
     Mockito.when(mockMemberDAO.getOne(existentMember.getMemberId())).thenReturn(existentMember);
-    Mockito.when(mockMemberDAO.getOne(existentMember.getUsername())).thenReturn(existentMember);
-    Mockito.when(mockAddressDAO.getAddressByMemberId(existentMember.getMemberId())).thenReturn(existentAddress);
-    Mockito.when(mockMemberDAO.updateOne(existentMember)).thenReturn(null);
-
-    Mockito.when(mockAddressDAO.updateOne(existentMember.getAddress()))
-        .thenReturn((existentMember.getAddress()));
 
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> memberUCC

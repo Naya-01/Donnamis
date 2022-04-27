@@ -254,15 +254,14 @@ public class MemberUCCImpl implements MemberUCC {
         throw new NotFoundException("Le membre est inexistant.");
       }
       // check the version of member
-      if (!memberDTO.getVersion().equals(memberInDB.getVersion())) {
+      if (memberDTO.getVersion() == null ||
+          !memberDTO.getVersion().equals(memberInDB.getVersion())) {
         throw new ForbiddenException(
             "Impossibilité de modifier les données du membre");
       }
       MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
       if (memberDTOWithSameUsername != null &&
           !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())) {
-        System.out.println(memberDTO.getMemberId());
-        System.out.println(memberDTOWithSameUsername.getMemberId());
         throw new ConflictException("Ce pseudonyme est déjà utilisé.");
       }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
