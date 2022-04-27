@@ -106,7 +106,9 @@ class MemberLibrary {
       console.log(err);
     }
     if (userData.status === 200) {
-      Toast.fire({
+
+      const notification = new Notification().getNotification("bottom");
+      notification.fire({
         icon: 'success',
         title: "Bienvenue !"
       })
