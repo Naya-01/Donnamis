@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
@@ -130,7 +131,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @return Object modified.
    */
   @Override
-  public ObjectDTO updateObjectPicture(String internalPath, int id) {
+  public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
     ObjectDTO objectDTO = null;
     try {
       dalService.startTransaction();
@@ -145,6 +146,10 @@ public class ObjectUCCImpl implements ObjectUCC {
       }
 
       // TODO VERSION !!!
+      /*if (!objectDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
+      }*/
+
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

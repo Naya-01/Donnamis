@@ -167,7 +167,7 @@ class ObjectUCCImplTest {
         .thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO,
-            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
+            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(), 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
@@ -186,7 +186,7 @@ class ObjectUCCImplTest {
         .thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO,
-            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject())),
+            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(), 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
@@ -202,7 +202,7 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> objectUCC.updateObjectPicture(pathImage, 1)),
+            () -> objectUCC.updateObjectPicture(pathImage, 1, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),

@@ -50,6 +50,11 @@ const MembersPage = async () => {
   });
 }
 
+/**
+ * Display an HTML member list
+ *
+ * @param members a list of member
+ */
 const baseMembersList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");

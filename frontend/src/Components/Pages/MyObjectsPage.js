@@ -95,6 +95,14 @@ const MyObjectsPage = async () => {
   });
 }
 
+/**
+ * Display all the offers
+ *
+ * @param searchPattern the search pattern for the offers (can be empty)
+ * @param type the type of the offers (can be empty)
+ * @param status the status of the offers (can be empty)
+ * @returns {Promise<void>}
+ */
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
   const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,

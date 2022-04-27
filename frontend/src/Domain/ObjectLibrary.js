@@ -23,7 +23,7 @@ class ObjectLibrary {
 
   }
 
-  async setImage(formData, idObject) {
+  async setImage(formData, idObject, version = 1) {
     let response;
     try {
       let options = {
@@ -34,7 +34,7 @@ class ObjectLibrary {
           "Content-Type": "application/json",
         },
       };
-      response = await fetch('api/object/setPicture/' + idObject, options)
+      response = await fetch('api/object/setPicture/' + idObject + '?version=' + version, options)
     } catch (err) {
       console.log(err);
     }
