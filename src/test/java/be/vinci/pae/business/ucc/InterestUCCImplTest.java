@@ -378,7 +378,8 @@ class InterestUCCImplTest {
     interestDTONotificated.setIsNotificated(true);
     interestDTONotificated.setIdMember(3);
     interestDTONotificated.setIdMember(2);
-    Mockito.when(interestDAO.updateNotification(interestDTONotificated)).thenReturn(interestDTONotificated);
+    Mockito.when(interestDAO.updateNotification(interestDTONotificated))
+        .thenReturn(interestDTONotificated);
 
     assertAll(
         () -> assertFalse(

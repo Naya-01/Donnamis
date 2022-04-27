@@ -18,6 +18,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
+import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -44,6 +45,7 @@ class OfferUCCImplTest {
   private OfferDAO offerDAO;
   private TypeDAO typeDAO;
   private ObjectDAO objectDAO;
+  private MemberDAO memberDAO;
   private OfferUCC offerUCC;
   private TypeFactory typeFactory;
   private ObjectFactory objectFactory;
@@ -75,6 +77,7 @@ class OfferUCCImplTest {
     this.offerDAO = locator.getService(OfferDAO.class);
     this.typeDAO = locator.getService(TypeDAO.class);
     this.objectDAO = locator.getService(ObjectDAO.class);
+    this.memberDAO = locator.getService(MemberDAO.class);
     this.offerUCC = locator.getService(OfferUCC.class);
     this.typeFactory = locator.getService(TypeFactory.class);
     this.objectFactory = locator.getService(ObjectFactory.class);
@@ -460,8 +463,7 @@ class OfferUCCImplTest {
   public void testUpdateOfferSuccess() {
     OfferDTO mockOfferDTO = getNewOffer();
     mockOfferDTO.setIdOffer(15);
-    mockOfferDTO.getObject().setDescription("Très bon jeu");
-    mockOfferDTO.getObject().setStatus("available");
+    mockOfferDTO.setObject(null);
     mockOfferDTO.setDate(LocalDate.now().minusMonths(2));
 
     OfferDTO mockOfferDTOUpdated = getNewOffer();
@@ -533,22 +535,21 @@ class OfferUCCImplTest {
     OfferDTO offerDTO = getNewOffer();
     offerDTO.setStatus("available");
     offerDTO.getObject().setStatus("available");
+    offerDTO.getObject().setIdOfferor(5);
 
     OfferDTO offerDTOFromDAO = getNewOffer();
     offerDTOFromDAO.setStatus("cancelled");
-    offerDTOFromDAO.getObject().setStatus("cancelled");
 
     MemberDTO mockMember = memberFactory.getMemberDTO();
-
     mockMember.setMemberId(5);
-    offerDTO.getObject().setIdOfferor(5);
 
-    Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
-    Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
-        .thenReturn(offerDTOFromDAO.getObject());
-    Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
-        .thenReturn(null);
     Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+    Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
+    Mockito.when(objectDAO.updateOne(offerDTO.getObject()))
+        .thenReturn(offerDTO.getObject());
+    Mockito.when(interestDAO.getAssignedInterest(
+            offerDTOFromDAO.getObject().getIdObject()))
+        .thenReturn(null);
 
     OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO, mockMember);
     assertAll(
@@ -568,6 +569,7 @@ class OfferUCCImplTest {
     offerDTO.getObject().setStatus("available");
 
     OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setObject(offerDTO.getObject());
     offerDTOFromDAO.setStatus("cancelled");
     offerDTOFromDAO.getObject().setStatus("cancelled");
 
@@ -575,12 +577,19 @@ class OfferUCCImplTest {
     mockMember.setMemberId(5);
     offerDTO.getObject().setIdOfferor(5);
     InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIdObject(offerDTOFromDAO.getIdOffer());
+    interestDTO.setIdMember(mockMember.getMemberId());
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
     Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDAO);
-    Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
-        .thenReturn(offerDTOFromDAO.getObject());
+    Mockito.when(objectDAO.updateOne(offerDTO.getObject()))
+        .thenReturn(offerDTO.getObject());
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
-    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
+    Mockito.when(objectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(offerDTOFromDAO.getObject());
+    Mockito.when(memberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(mockMember);
 
     OfferDTO offerDTOUpdated = offerUCC.cancelOffer(offerDTO, mockMember);
     assertAll(
@@ -975,22 +984,28 @@ class OfferUCCImplTest {
     offerDTO.setIdOffer(3);
     offerDTO.getObject().setIdObject(3);
     offerDTO.setStatus("assigned");
+    offerDTO.getObject().setIdOfferor(2);
 
     OfferDTO offerDTOFromDAO = getNewOffer();
     offerDTOFromDAO.setIdOffer(3);
     offerDTOFromDAO.getObject().setIdObject(3);
     offerDTOFromDAO.setStatus("assigned");
+    offerDTOFromDAO.getObject().setIdOfferor(2);
 
     ObjectDTO objectDTO = offerDTO.getObject();
+    offerDTOFromDAO.setObject(objectDTO);
 
     InterestDTO interestDTO = interestFactory.getInterestDTO();
     interestDTO.setIdMember(3);
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
+    interestDTO.setIdObject(objectDTO.getIdObject());
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(2);
-    offerDTO.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer()))
+        .thenReturn(offerDTO);
 
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestDTO);
@@ -998,13 +1013,15 @@ class OfferUCCImplTest {
     Mockito.when(offerDAO.getLastObjectOffer(objectDTO.getIdObject()))
         .thenReturn(offerDTOFromDAO);
 
+    Mockito.when(objectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
+
+    Mockito.when(memberDAO.getOne(interestDTO.getIdMember())).thenReturn(memberDTO);
+
     Mockito.when(objectDAO.updateOne(offerDTOFromDAO.getObject()))
         .thenReturn(offerDTOFromDAO.getObject());
 
     Mockito.when(offerDAO.updateOne(offerDTOFromDAO))
         .thenReturn(offerDTOFromDAO);
-
-    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTO);
 
     OfferDTO offerDTOUpdated = offerUCC.notCollectedOffer(offerDTO, memberDTO);
 
