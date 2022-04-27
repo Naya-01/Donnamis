@@ -327,6 +327,18 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test updateProfilPicture with no version specified")
+  @Test
+  public void testUpdateProfilPictureWithoutVersion() {
+    int idMember = 1;
+    Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> memberUCC.updateProfilPicture(pathImage, idMember,null)),
+        () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
+    );
+  }
+
   //  -----------------------------  REGISTER UCC  ----------------------------------------  //
 
   @DisplayName("Test register success")
