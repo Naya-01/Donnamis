@@ -329,10 +329,26 @@ const modifyProfilRender = async () => {
         member.memberId);
     let memberWithImage;
     if (fileInput.files[0] !== undefined) {
-      let formData = new FormData();
-      formData.append('file', fileInput.files[0]);
-      memberWithImage = await memberLibrary.setImage(formData, member.version);
-      newMember.version = newMember.version + 1;
+      let types = ["image/jpeg", "image/jpg", "image/png"];
+      let canBeUpload = false;
+      for (const type in types) {
+        if (fileInput.files[0].type === types[type]) {
+          canBeUpload = true;
+        }
+      }
+      
+      if (!canBeUpload) {
+        toast.fire({
+          icon: 'error',
+          title: "Nous n'acceptons que des images png, jpeg et jpg."
+        })
+      } else {
+        let formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        memberWithImage = await memberLibrary.setImage(formData,
+            member.version);
+        newMember.version = newMember.version + 1;
+      }
     }
     let memberUpdated = await memberLibrary.updateMember(newMember);
     if (memberUpdated === null) {
