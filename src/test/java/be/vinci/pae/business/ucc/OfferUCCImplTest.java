@@ -463,8 +463,7 @@ class OfferUCCImplTest {
   public void testUpdateOfferSuccess() {
     OfferDTO mockOfferDTO = getNewOffer();
     mockOfferDTO.setIdOffer(15);
-    mockOfferDTO.getObject().setDescription("Très bon jeu");
-    mockOfferDTO.getObject().setStatus("available");
+    mockOfferDTO.setObject(null);
     mockOfferDTO.setDate(LocalDate.now().minusMonths(2));
 
     OfferDTO mockOfferDTOUpdated = getNewOffer();
