@@ -122,6 +122,7 @@ const RegisterPage = async () => {
     const notNullFields = [username, lastname, firstname, password,
       street, postcode, commune];
 
+    //remove all red borders
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
         item.classList.remove("border-danger");
@@ -221,8 +222,9 @@ const RegisterPage = async () => {
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address, 1);
-      // Requête DB inscription et redirect
+      // register request
       let isRegistered = await memberLibrary.registerMember(member);
+      //if the member could be registered
       if (isRegistered) {
         let notificationBottom = new Notification().getNotification("bottom");
         notificationBottom.fire({
