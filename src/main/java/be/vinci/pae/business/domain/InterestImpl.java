@@ -108,4 +108,17 @@ public class InterestImpl implements InterestDTO {
     this.version = version;
   }
 
+  @Override
+  public String toString() {
+    return "InterestImpl{" +
+        "member=" + member +
+        ", object=" + object +
+        ", idMember=" + idMember +
+        ", idObject=" + idObject +
+        ", availabilityDate=" + availabilityDate +
+        ", status='" + status + '\'' +
+        ", isNotificated=" + isNotificated +
+        ", version=" + version +
+        '}';
+  }
 }

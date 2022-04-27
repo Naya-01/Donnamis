@@ -184,8 +184,8 @@ public class OfferDAOImpl implements OfferDAO {
         + "  AND ty.id_type = ob.id_type  "
         + "  AND of.id_object= ? "
         + "  AND of.date = "
-        + "(SELECT max(of2.date) FROM donnamis.offers of2\n"
-        + "WHERE of2.id_object = of.id_object\n"
+        + "(SELECT max(of2.date) FROM donnamis.offers of2 "
+        + "WHERE of2.id_object = of.id_object "
         + "ORDER BY of.date DESC) ;";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
