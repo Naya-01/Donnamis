@@ -29,13 +29,11 @@ public class AddressUCCImpl implements AddressUCC {
       if (addressDTOInDB == null) {
         throw new NotFoundException();
       }
-      if (!addressDTO.getVersion().equals(addressDTOInDB.getVersion())) {
+      if (addressDTO.getVersion() == null
+          || !addressDTO.getVersion().equals(addressDTOInDB.getVersion())) {
         throw new ForbiddenException("Vous ne possédez pas une version à jour d'adresse.");
       }
       addressDTOReturned = addressDAO.updateOne(addressDTO);
-      if (addressDTOReturned == null) {
-        throw new NotFoundException("Adresse non mise à jour.");
-      }
       dalService.commitTransaction();
     } catch (Exception e) {
       dalService.rollBackTransaction();

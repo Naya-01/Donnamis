@@ -9,6 +9,7 @@ import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.factories.AddressFactory;
 import be.vinci.pae.dal.dao.AddressDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
@@ -25,6 +26,7 @@ class AddressUCCImplTest {
   private AddressDAO mockAddressDAO;
   private AddressDTO addressDTO;
   private AddressDTO addressDTOUpdated;
+  private AddressDTO addressDTOInDB;
   private DALService mockDalService;
 
   @BeforeEach
@@ -40,6 +42,9 @@ class AddressUCCImplTest {
     this.addressDTOUpdated.setIdMember(1);
     this.addressDTOUpdated.setCommune("Brussels");
     this.addressDTOUpdated.setVersion(1);
+    this.addressDTOInDB = addressFactory.getAddressDTO();
+    this.addressDTOInDB.setIdMember(1);
+    this.addressDTOInDB.setVersion(222);
 
   }
 
@@ -68,6 +73,22 @@ class AddressUCCImplTest {
         .thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> addressUCC.updateOne(addressDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockAddressDAO, Mockito.atLeast(1))
+            .getAddressByMemberId(addressDTO.getIdMember()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test updateOne with versions that don't match")
+  @Test
+  public void testUpdateOneWithDifferentsVersions() {
+    Mockito.when(mockAddressDAO.getAddressByMemberId(addressDTO.getIdMember()))
+        .thenReturn(addressDTOInDB);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> addressUCC.updateOne(addressDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockAddressDAO, Mockito.atLeast(1))
