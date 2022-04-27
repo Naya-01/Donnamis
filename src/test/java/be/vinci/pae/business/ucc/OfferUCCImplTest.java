@@ -23,6 +23,7 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -908,6 +909,25 @@ class OfferUCCImplTest {
         () -> assertEquals(offerDTO.getObject().getType(), offerFromAdd.getObject().getType()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test addObject receiving fatal exception from DAO")
+  @Test
+  public void testAddObjectFatalExceptionInInsertion() {
+    OfferDTO offerDTO = getNewOffer();
+    OfferDTO offerDTOFromDAO = getNewOffer();
+    offerDTOFromDAO.setIdOffer(5);
+
+    Mockito.when(typeDAO.getOne(offerDTO.getObject().getType().getTypeName()))
+        .thenReturn(null);
+    Mockito.when(typeDAO.addOne(offerDTO.getObject().getType().getTypeName())).thenThrow(
+        FatalException.class);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> offerUCC.addObject(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 
