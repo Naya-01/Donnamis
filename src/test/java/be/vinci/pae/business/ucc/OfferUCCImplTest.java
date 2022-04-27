@@ -921,4 +921,19 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test getLastOffer success")
+  @Test
+  public void testGetLastOfferSuccess() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+
+    assertAll(
+        () -> assertEquals(offerDTO, offerUCC.getLastOffer(offerDTO.getObject().getIdObject())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
