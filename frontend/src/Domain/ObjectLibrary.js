@@ -31,6 +31,7 @@ class ObjectLibrary {
         body: formData,
         headers: {
           "Authorization": getSessionObject("user").accessToken,
+          "Content-Type": "application/json",
         },
       };
       response = await fetch('api/object/setPicture/' + idObject, options)

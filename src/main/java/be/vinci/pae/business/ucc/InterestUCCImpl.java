@@ -81,8 +81,6 @@ public class InterestUCCImpl implements InterestUCC {
           throw new ForbiddenException("Les versions ne correspondent pas");
         }
 
-        // TODO object version
-
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());

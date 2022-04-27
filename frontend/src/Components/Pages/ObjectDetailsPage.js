@@ -69,6 +69,7 @@ const ObjectDetailsPage = async () => {
 
   // GET all informations of the object (and offer)
   offer = await offerLibrary.getOfferById(idOffer);
+  console.log(offer)
   if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
@@ -84,7 +85,7 @@ const ObjectDetailsPage = async () => {
   description = offer.object.description;
   time_slot = offer.timeSlot;
   statusObject = offer.status;
-  statusObject = offer.status;
+  console.log(time_slot)
 
   versionObject = offer.object.version;
   versionOffer = offer.version;
@@ -159,7 +160,7 @@ const ObjectDetailsPage = async () => {
                           Plage horaire
                          </label>
                        </h5>
-                      <p id="time_slot">${time_slot}</p>
+                      <p id="time_slot">${offer.timeSlot}</p>
                     </div>
                 </div>
               <!-- The type -->
