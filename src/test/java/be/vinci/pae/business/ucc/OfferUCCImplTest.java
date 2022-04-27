@@ -311,6 +311,27 @@ class OfferUCCImplTest {
 
   //  ----------------------------  CANCEL OFFER UCC  -------------------------------  //
 
+  @DisplayName("Test cancelOffer with non existent offer")
+  @Test
+  public void testCancelOfferWithNonExistentOffer() {
+    OfferDTO mockOfferDTO = getNewOffer();
+    mockOfferDTO.setIdOffer(2);
+    mockOfferDTO.setStatus("given");
+    mockOfferDTO.getObject().setIdOfferor(2);
+
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+    mockMember.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.cancelOffer(mockOfferDTO, mockMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test cancelOffer with given status")
   @Test
   public void testCancelOfferWithGivenStatus() {
