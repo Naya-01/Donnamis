@@ -12,7 +12,7 @@ const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText,
   divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
 
   const pictureDiv = document.createElement("div");
-  pictureDiv.className = "col-2 m-auto";
+  pictureDiv.className = "col-1 m-auto";
 
   const picture = document.createElement("img");
   picture.className = "img-thumbnail";
@@ -23,7 +23,7 @@ const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText,
   divCard.appendChild(pictureDiv);
 
   const informationDiv = document.createElement("div");
-  informationDiv.className = "col-7 mt-3";
+  informationDiv.className = "col-8 mt-3";
   informationDiv.id = "information-object-" + uniqueId;
 
   const baseInformationSpan = document.createElement("span");
