@@ -259,6 +259,11 @@ public class OfferUCCImpl implements OfferUCC {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
+      }
+
       // Change offerDB status and update
       offerFromDB.setStatus("cancelled");
       OfferDTO updatedOffer = offerDAO.updateOne(offerFromDB);
@@ -314,6 +319,11 @@ public class OfferUCCImpl implements OfferUCC {
       // Check version of the offer
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
         throw new ForbiddenException("Les versions ne correspondent pas");
+      }
+
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
       }
 
       // Check if the object is assigned
@@ -377,7 +387,12 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Check version of the offer
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
+        throw new ForbiddenException("Les versions de l'offre ne correspondent pas");
+      }
+
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
       }
 
       // Check if the offeror don't change the offer of anyone else

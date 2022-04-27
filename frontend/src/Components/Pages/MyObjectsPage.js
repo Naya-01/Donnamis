@@ -126,7 +126,8 @@ const objectCards = async (searchPattern, type, status) => {
       cancelButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.cancelObject(
             offer.idOffer,
-            offer.version
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage")
       });
@@ -263,7 +264,8 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.notCollectedObject(
             offer.idOffer,
-            offer.version
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage");
       });
@@ -275,7 +277,8 @@ const objectCards = async (searchPattern, type, status) => {
       offeredObjectButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.giveObject(
             offer.object.idObject,
-            offer.version
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage");
       });

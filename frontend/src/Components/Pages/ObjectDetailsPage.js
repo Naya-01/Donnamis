@@ -42,8 +42,8 @@ let note = 1;
 let offer;
 let idMemberConnected;
 let telNumber;
-let versionObject;
-let versionOffer;
+let versionObject = 0;
+let versionOffer = 0;
 let versionMemberConnected;
 
 /**
@@ -611,17 +611,12 @@ async function updateObject(e) {
     }
   }
 
-  if (!versionObject) {
-    versionObject = ""
-  }
-  if (!versionOffer) {
-    versionOffer = ""
-  }
+
 
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject,
-      versionOffer);
+      new_description, idType, english_status, statusObject, versionObject++,
+      versionOffer++);
   if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',
