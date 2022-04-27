@@ -147,7 +147,7 @@ public class InterestUCCImpl implements InterestUCC {
       Integer interestVersionDB = interestDAO.getOne(interestDTO.getObject().getIdObject(),
           interestDTO.getIdMember()).getVersion();
       if (!interestVersionDB.equals(interestDTO.getVersion())) {
-        throw new ForbiddenException("Les versions de l'intérêt ne correspondent pas.");
+        throw new ForbiddenException("Vous ne possédez pas une version à jour de l'intérêt.");
       }
 
       // TODO verifier version offre

@@ -80,7 +80,7 @@ public class MemberUCCImpl implements MemberUCC {
         throw new NotFoundException("Member not found");
       }
       if (version == null || !memberDTO.getVersion().equals(version)) {
-        throw new ForbiddenException("Les versions ne correspondent pas.");
+        throw new ForbiddenException("Vous ne possédez pas une version à jour du membre.");
       }
 
       File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
@@ -249,7 +249,7 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getVersion() == null
           || !memberDTO.getVersion().equals(memberInDB.getVersion())) {
         throw new ForbiddenException(
-            "Impossibilité de modifier les données du membre");
+            "Vous ne possédez pas une version à jour du membre.");
       }
       MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
       if (memberDTOWithSameUsername != null
@@ -261,7 +261,7 @@ public class MemberUCCImpl implements MemberUCC {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         // check the version of address
         if (!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())) {
-          throw new ForbiddenException("Impossibilité de modifier les données de l'adresse");
+          throw new ForbiddenException("Vous ne possédez pas une version à jour d'adresse.");
         }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
       }
