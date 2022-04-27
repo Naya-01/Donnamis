@@ -27,6 +27,11 @@ let member = null;
 let image;
 let provImage = null;
 
+/**
+ * Make modify profil page
+ *
+ * @returns {Promise<void>}
+ */
 const modifyProfilRender = async () => {
   let page = `
     <div class="container mt-5">
@@ -130,10 +135,12 @@ const modifyProfilRender = async () => {
   const imageField = document.getElementById("image");
   let fileInput = document.querySelector('input[name=upload]');
 
+  //when click on image
   imageField.onclick = function () {
     fileInput.click();
   }
 
+  //when the image is update in local
   fileInput.onchange = function () {
 
     let reader = new FileReader();
@@ -148,11 +155,13 @@ const modifyProfilRender = async () => {
     }
   }
 
+  //when click on 'annuler' button
   cancelButton.addEventListener("click", e => {
     e.preventDefault();
     profilRender();
   })
 
+  //when click on 'modifier' button
   validModifyButton.addEventListener("click", async e => {
     e.preventDefault();
 
@@ -328,6 +337,8 @@ const modifyProfilRender = async () => {
         member.version,
         member.memberId);
     let memberWithImage;
+
+    //if the image has been modified
     if (fileInput.files[0] !== undefined) {
       let types = ["image/jpeg", "image/jpg", "image/png"];
       let canBeUpload = false;
@@ -350,10 +361,13 @@ const modifyProfilRender = async () => {
         newMember.version = newMember.version + 1;
       }
     }
+
     let memberUpdated = await memberLibrary.updateMember(newMember);
+    //if the update throws an error
     if (memberUpdated === null) {
       return;
     }
+    //if the username has been modified
     if (username.value.trim() !== member.username) {
       await Navbar();
     }
@@ -361,6 +375,7 @@ const modifyProfilRender = async () => {
       member = memberUpdated;
     }
 
+    //re-render the image on the navbar and profil
     if (memberWithImage !== undefined) {
       image = provImage;
       document.getElementById("navbar-profil-picture").src = image;
@@ -370,6 +385,11 @@ const modifyProfilRender = async () => {
   });
 }
 
+/**
+ * Make the profil page
+ *
+ * @returns {Promise<void>}
+ */
 const profilRender = async () => {
   let page = `
     <div class="container mt-5">
@@ -453,6 +473,7 @@ const profilRender = async () => {
 
   const modifyButton = document.querySelector("#submit_modify");
 
+  //click on the 'modifier' button
   modifyButton.addEventListener("click", async e => {
     e.preventDefault();
 
@@ -461,6 +482,12 @@ const profilRender = async () => {
 
 }
 
+/**
+ * Prepare the profil pages
+ *
+ * @returns {Promise<void>}
+ * @constructor
+ */
 const ProfilPage = async () => {
   if (!getSessionObject("user")) {
     Redirect("/");
