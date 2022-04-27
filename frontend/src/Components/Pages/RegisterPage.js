@@ -224,7 +224,8 @@ const RegisterPage = async () => {
       // Requête DB inscription et redirect
       let isRegistered = await memberLibrary.registerMember(member);
       if (isRegistered) {
-        toast.fire({
+        let notificationBottom = new Notification().getNotification("bottom");
+        notificationBottom.fire({
           icon: 'success',
           title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`
