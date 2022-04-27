@@ -28,8 +28,6 @@ public class OfferUCCImpl implements OfferUCC {
   @Inject
   private InterestDAO interestDAO;
   @Inject
-  private MemberDAO memberDAO;
-  @Inject
   private TypeDAO typeDAO;
 
   /**
