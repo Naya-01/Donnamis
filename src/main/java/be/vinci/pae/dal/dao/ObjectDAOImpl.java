@@ -16,7 +16,7 @@ import java.util.Deque;
 import java.util.List;
 
 public class ObjectDAOImpl implements ObjectDAO {
-  
+
   @Inject
   private DALBackendService dalBackendService;
   @Inject
@@ -138,9 +138,6 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return null;
-      }
 
       setObject(objectDTO, resultSet);
       preparedStatement.close();
@@ -258,7 +255,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    * @param description the description of the object
    * @param status      the status of the object
    * @param image       the image of the object
-   * @param idOfferor     the id of the offeror
+   * @param idOfferor   the id of the offeror
    * @return an objectDTO filled of attributes
    */
   @Override
