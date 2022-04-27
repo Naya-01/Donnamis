@@ -903,6 +903,34 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test notCollectedOffer with not same version offer param and of the db")
+  @Test
+  public void testNotCollectedOfferWithNotSameVersionOfferParamAndOfDB() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.setVersion(6);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(3);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test notCollectedOffer without having interest")
   @Test
   public void testNotCollectedOfferWithoutHavingAnyInterest() {
