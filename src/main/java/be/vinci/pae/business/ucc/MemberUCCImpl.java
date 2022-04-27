@@ -245,9 +245,12 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberInDB == null) {
         throw new NotFoundException("Le membre est inexistant.");
       }
+
       // check the version of member
       if (memberDTO.getVersion() == null
           || !memberDTO.getVersion().equals(memberInDB.getVersion())) {
+        System.out.println(memberDTO.getVersion());
+        System.out.println(memberInDB.getVersion());
         throw new ForbiddenException(
             "Vous ne possédez pas une version à jour du membre.");
       }

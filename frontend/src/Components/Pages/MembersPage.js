@@ -186,7 +186,7 @@ const baseMembersList = async (members) => {
     if (promoteMemberButton) {
       promoteMemberButton.addEventListener('click', async () => {
         await MemberLibrary.prototype.updateStatus("", member.memberId, "",
-            "administrator");
+            "administrator", member.version);
         Notification.prototype.getNotification().fire({
           icon: 'success',
           title: "Utilisateur promu !"

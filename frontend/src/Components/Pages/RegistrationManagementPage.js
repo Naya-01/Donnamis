@@ -72,17 +72,18 @@ const baseMembersList = async (members) => {
         member.firstname + " " + member.lastname + " (" + member.username + ")",
         member.address.buildingNumber + " " + member.address.street + " " +
         member.address.postcode + " " + member.address.commune);
+    console.log(member);
 
     // Show different buttons card depending on status
     if (member.status === "denied") {
-      deniedMemberButtons(member.memberId);
+      deniedMemberButtons(member.memberId, member.version);
     } else {
-      normalMemberButtons(member.memberId);
+      normalMemberButtons(member.memberId, member.version);
     }
   }
 }
 
-const normalMemberButtons = (idMember) => {
+const normalMemberButtons = (idMember, version) => {
   // Hide potential card textarea
   const cardForm = document.getElementById("card-form-" + idMember);
   cardForm.innerHTML = ``;
@@ -101,18 +102,18 @@ const normalMemberButtons = (idMember) => {
   const acceptedButton = document.getElementById(acceptedButtonId);
   refusedButton.addEventListener('click', () => {
     removeAllListeners(idMember);
-    refuseMember(idMember);
+    refuseMember(idMember, version);
   });
 
   // Accept member button
   acceptedButton.addEventListener('click', () => {
     removeAllListeners(idMember);
-    acceptMember(idMember);
+    acceptMember(idMember, version);
   });
 
 };
 
-const acceptMember = (idMember) => {
+const acceptMember = (idMember, version) => {
   // Change value of buttons
   const refusedButton = document.getElementById("refused-button-" + idMember);
   refusedButton.innerText = "Annuler";
@@ -156,12 +157,12 @@ const acceptMember = (idMember) => {
       role = "administrator";
     }
 
-    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role);
+    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role, version);
 
   });
 }
 
-const refuseMember = (idMember) => {
+const refuseMember = (idMember, version) => {
   // Change value of buttons
   const refusedButton = document.getElementById("refused-button-" + idMember);
   refusedButton.innerText = "Annuler";
@@ -206,12 +207,12 @@ const refuseMember = (idMember) => {
     const refusalReason = document.getElementById("raisonRefus").value;
 
     // refuse member db
-    await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "");
+    await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);
   });
 
 };
 
-const deniedMemberButtons = (idMember) => {
+const deniedMemberButtons = (idMember, version) => {
   // Hide potential card textarea
   const cardForm = document.getElementById("card-form-" + idMember);
   cardForm.innerHTML = ``;
@@ -230,7 +231,7 @@ const deniedMemberButtons = (idMember) => {
     document.getElementById("member-card-" + idMember).hidden = true;
 
     // set member valid
-    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "");
+    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "", version);
 
     let pendingButton = document.getElementById("btn-radio-pending");
     pendingButton.click();

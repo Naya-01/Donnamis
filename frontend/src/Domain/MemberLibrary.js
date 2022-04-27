@@ -136,7 +136,7 @@ class MemberLibrary {
     return user;
   }
 
-  async updateStatus(status, memberId, reasonRefusal, role) {
+  async updateStatus(status, memberId, reasonRefusal, role, version) {
     let response;
     try {
       let options = {
@@ -146,6 +146,7 @@ class MemberLibrary {
           "reasonRefusal": reasonRefusal,
           "memberId": memberId,
           "role": role,
+          "version": version,
         }),
         headers: {
           "Content-Type": "application/json",
