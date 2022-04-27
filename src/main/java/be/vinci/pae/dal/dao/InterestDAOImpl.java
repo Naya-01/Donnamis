@@ -18,10 +18,6 @@ public class InterestDAOImpl implements InterestDAO {
   private InterestFactory interestFactory;
   @Inject
   private DALBackendService dalBackendService;
-  @Inject
-  private MemberDAO memberDAO;
-  @Inject
-  private ObjectDAO objectDAO;
 
   /**
    * Get an interest we want to retrieve by the id of the interested member and the id of the
@@ -86,7 +82,7 @@ public class InterestDAOImpl implements InterestDAO {
       // Create the interestDTO if we have a result
       InterestDTO interestDTO = interestFactory.getInterestDTO();
       try {
-        interestDTO.setIdObject(resultSet.getInt(("id_object")));
+        interestDTO.setIdObject(resultSet.getInt("id_object"));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
         interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
