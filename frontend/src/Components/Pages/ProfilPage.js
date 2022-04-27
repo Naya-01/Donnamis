@@ -115,8 +115,8 @@ const modifyProfilRender = async () => {
             
             <!-- LAST LINE-->
             <div class="col-12">
-              <button type="submit" class="btn btn-primary" id="submit_cancel_modify">Annuler</button>
               <button type="submit" class="btn btn-primary" id="submit_valid_modify">Confirmer</button>
+              <button type="submit" class="btn btn-primary" id="submit_cancel_modify">Annuler</button>
             </div>
           </form>
         </div> 
@@ -336,7 +336,7 @@ const modifyProfilRender = async () => {
           canBeUpload = true;
         }
       }
-      
+
       if (!canBeUpload) {
         toast.fire({
           icon: 'error',
