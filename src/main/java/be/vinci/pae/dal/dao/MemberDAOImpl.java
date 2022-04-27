@@ -75,7 +75,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   private MemberDTO getMemberDTOWithAddressDTO(PreparedStatement preparedStatement) {
     MemberDTO memberDTO;
-    try{
+    try {
       memberDTO = getMemberByPreparedStatement(preparedStatement);
       ResultSet resultSet = preparedStatement.getResultSet();
       if (memberDTO != null) {
@@ -84,7 +84,7 @@ public class MemberDAOImpl implements MemberDAO {
       }
       preparedStatement.close();
       resultSet.close();
-    }catch (SQLException e){
+    } catch (SQLException e) {
       throw new FatalException(e);
     }
     return memberDTO;
@@ -113,7 +113,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
       preparedStatement.setString(9, member.getImage());
-      MemberDTO memberDTO =  getMemberByPreparedStatement(preparedStatement);
+      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       preparedStatement.getResultSet().close();
       return memberDTO;
     } catch (SQLException e) {
@@ -295,7 +295,7 @@ public class MemberDAOImpl implements MemberDAO {
    */
   private AddressDTO getAddressDTOByResultSet(ResultSet resultSet) {
     AddressDTO addressDTO = addressFactory.getAddressDTO();
-    try{
+    try {
       addressDTO.setIdMember(resultSet.getInt(12));
       addressDTO.setUnitNumber(resultSet.getString(13));
       addressDTO.setBuildingNumber(resultSet.getString(14));
@@ -303,7 +303,7 @@ public class MemberDAOImpl implements MemberDAO {
       addressDTO.setPostcode(resultSet.getString(16));
       addressDTO.setCommune(resultSet.getString(17));
       addressDTO.setVersion(resultSet.getInt(18));
-    }catch (SQLException e){
+    } catch (SQLException e) {
       throw new FatalException(e);
     }
     return addressDTO;

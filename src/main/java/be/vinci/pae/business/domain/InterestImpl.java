@@ -120,16 +120,4 @@ public class InterestImpl implements InterestDTO {
     this.isCalled = isCalled;
   }
 
-  @Override
-  public String toString() {
-    return "InterestImpl{" +
-        "member=" + member +
-        ", object=" + object +
-        ", idMember=" + idMember +
-        ", availabilityDate=" + availabilityDate +
-        ", status='" + status + '\'' +
-        ", isNotificated=" + isNotificated +
-        ", version=" + version +
-        '}';
-  }
 }

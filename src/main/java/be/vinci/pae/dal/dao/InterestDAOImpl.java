@@ -35,7 +35,8 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO getOne(int idObject, int idMember) {
     String query =
         "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
-            + "i.version, i.be_called from donnamis.interests i WHERE i.id_object=? AND i.id_member=?";
+            + "i.version, i.be_called from donnamis.interests i "
+            + "WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -90,7 +91,8 @@ public class InterestDAOImpl implements InterestDAO {
       try {
         interestDTO.setIdObject(resultSet.getInt(("id_object")));
         interestDTO.setIdMember(resultSet.getInt("id_member"));
-        interestDTO.setAvailabilityDate(resultSet.getDate("availability_date").toLocalDate());
+        interestDTO.setAvailabilityDate(
+            resultSet.getDate("availability_date").toLocalDate());
         interestDTO.setStatus(resultSet.getString("status"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
         interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
@@ -273,7 +275,8 @@ public class InterestDAOImpl implements InterestDAO {
   public List<InterestDTO> getAllNotifications(int idMember) {
 
     String query = "SELECT id_object, id_member, availability_date, status,send_notification, "
-        + "version, be_called FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
+        + "version, be_called FROM donnamis.interests"
+        + " WHERE id_member = ? AND send_notification = ? ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
