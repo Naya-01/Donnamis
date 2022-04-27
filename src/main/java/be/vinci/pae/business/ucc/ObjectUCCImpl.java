@@ -3,7 +3,6 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
-import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
