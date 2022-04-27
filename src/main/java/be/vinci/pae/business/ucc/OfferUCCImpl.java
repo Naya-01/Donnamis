@@ -361,7 +361,6 @@ public class OfferUCCImpl implements OfferUCC {
       }
 
       offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
-      System.out.println(offerDTO);
       if (!offerDTO.getStatus().equals("assigned")) {
         throw new ForbiddenException(
             "aucune offre attribuée n'existe pour que l'objet puisse être donné");

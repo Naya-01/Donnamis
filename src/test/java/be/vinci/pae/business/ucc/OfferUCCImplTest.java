@@ -721,6 +721,7 @@ class OfferUCCImplTest {
     ObjectDTO objectDTO = offerDTO.getObject();
 
     InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIdObject(objectDTO.getIdObject());
     interestDTO.setIdMember(3);
     interestDTO.setObject(objectDTO);
     interestDTO.setStatus("published");
