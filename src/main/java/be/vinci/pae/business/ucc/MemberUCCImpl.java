@@ -250,6 +250,9 @@ public class MemberUCCImpl implements MemberUCC {
     try {
       dalService.startTransaction();
       MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
+      if (memberInDB == null) {
+        throw new NotFoundException("Le membre est inexistant.");
+      }
       // check the version of member
       if (!memberDTO.getVersion().equals(memberInDB.getVersion())) {
         throw new ForbiddenException(
@@ -258,6 +261,8 @@ public class MemberUCCImpl implements MemberUCC {
       MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
       if (memberDTOWithSameUsername != null &&
           !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())) {
+        System.out.println(memberDTO.getMemberId());
+        System.out.println(memberDTOWithSameUsername.getMemberId());
         throw new ConflictException("Ce pseudonyme est déjà utilisé.");
       }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
