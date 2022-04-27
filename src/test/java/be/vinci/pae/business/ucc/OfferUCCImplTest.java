@@ -538,6 +538,34 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test giveOffer with not same member id in param and id offer of object")
+  @Test
+  public void testGiveOfferWithNotSameMemberIdParamAndIdOfferor() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.getObject().setVersion(5);
+    offerDTO.setVersion(2);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(7);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(13);
+    offerDTOFromDao.setVersion(2);
+    offerDTOFromDao.getObject().setVersion(5);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test giveOffer without having interest")
   @Test
   public void testGiveOfferWithoutHavingAnyInterest() {
