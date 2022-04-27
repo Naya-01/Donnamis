@@ -94,17 +94,4 @@ public class OfferImpl implements OfferDTO {
   public Integer getVersion() {
     return version;
   }
-
-  @Override
-  public String toString() {
-    return "OfferImpl{" +
-        "idOffer=" + idOffer +
-        ", date=" + date +
-        ", oldDate=" + oldDate +
-        ", timeSlot='" + timeSlot + '\'' +
-        ", status='" + status + '\'' +
-        ", object=" + object +
-        ", version=" + version +
-        '}';
-  }
 }

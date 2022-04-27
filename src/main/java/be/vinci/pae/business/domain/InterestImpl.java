@@ -120,19 +120,4 @@ public class InterestImpl implements InterestDTO {
   public void setOffer(OfferDTO offer) {
     this.offer = offer;
   }
-
-  @Override
-  public String toString() {
-    return "InterestImpl{" +
-        "member=" + member +
-        ", object=" + object +
-        ", offer=" + offer +
-        ", idMember=" + idMember +
-        ", idObject=" + idObject +
-        ", availabilityDate=" + availabilityDate +
-        ", status='" + status + '\'' +
-        ", isNotificated=" + isNotificated +
-        ", version=" + version +
-        '}';
-  }
 }
