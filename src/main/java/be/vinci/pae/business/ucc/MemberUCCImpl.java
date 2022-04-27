@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-//TODO : changer tt la doc
-
 public class MemberUCCImpl implements MemberUCC {
 
   @Inject

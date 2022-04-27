@@ -648,7 +648,7 @@ class MemberUCCImplTest {
 
   @DisplayName("Test updateMember with a member having his fields by default")
   @Test
-  public void testUpdateMemberWithEmptyFieldsMember() { //TODO à vérifier
+  public void testUpdateMemberWithEmptyFieldsMember() {
     MemberDTO existentMember = memberFactory.getMemberDTO();
     existentMember.setUsername("usernameExistent");
     existentMember.setAddress(getMemberNewMember().getAddress());
@@ -694,6 +694,22 @@ class MemberUCCImplTest {
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> memberUCC
             .updateMember(nonExistentMemberInDBWithoutAddress)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember with differents versions")
+  @Test
+  public void testUpdateMemberWithDifferentsVersions() {
+    MemberDTO memberValidInDB = getMemberNewMember();
+    memberValidInDB.setMemberId(2);
+    memberValidInDB.setVersion(7);
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getMemberId()))
+        .thenReturn(memberValidInDB);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
+            .updateMember(memberValid1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
