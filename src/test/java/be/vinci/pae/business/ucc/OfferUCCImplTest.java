@@ -259,7 +259,10 @@ class OfferUCCImplTest {
   @Test
   public void testUpdateOfferWithEmptyFields() {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
+    mockOfferDTO.setIdOffer(1);
+    mockOfferDTO.setVersion(1);
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
@@ -271,9 +274,12 @@ class OfferUCCImplTest {
   @Test
   public void testUpdateOfferNotExistentIdOffer() {
     OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
+    mockOfferDTO.setIdOffer(1);
+    mockOfferDTO.setVersion(1);
     Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(0);
 
     Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
