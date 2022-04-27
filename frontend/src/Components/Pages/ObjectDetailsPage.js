@@ -112,10 +112,9 @@ const ObjectDetailsPage = async () => {
   // GET all interests
   let jsonInterests = await interestLibrary.getInterestedCount(
       offer.object.idObject);
-  console.log(jsonInterests);
-  isInterested = jsonInterests.isUserInterested;
-  console.log(isInterested);
   let nbMembersInterested = jsonInterests.count;
+  let  isInterested = await interestLibrary.getOneInterest(offer.object.idObject);
+  if(isInterested!==undefined) isInterested=true;
 
   // Construct all the HTML
   const pageDiv = document.querySelector("#page");
