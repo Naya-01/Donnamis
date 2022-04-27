@@ -24,6 +24,8 @@ import org.mockito.Mockito;
 
 class ObjectUCCImplTest {
 
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
+
   private ObjectUCC objectUCC;
   private ObjectDAO mockObjectDAO;
   private DALService mockDalService;
@@ -35,7 +37,6 @@ class ObjectUCCImplTest {
 
   @BeforeEach
   void initAll() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.objectUCC = locator.getService(ObjectUCC.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
