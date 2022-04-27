@@ -1,7 +1,7 @@
 "use strict";
 
 class Address {
-  // constructor for register
+
   constructor(unitNumber, buildingNumber, street, postcode, commune, version) {
     this.idMember = null;
     this.unitNumber = unitNumber;
@@ -14,5 +14,4 @@ class Address {
 
 }
 
-// default export
 export default Address;

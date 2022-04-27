@@ -240,6 +240,9 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Retrieve offer from the DB
       OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (offerFromDB == null) {
+        throw new NotFoundException("Cette offre n'existe pas");
+      }
 
       // Check if the offeror don't change the offer of anyone else
       if (!ownerDTO.getMemberId().equals(offerFromDB.getObject().getIdOfferor())) {
@@ -306,6 +309,10 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Retrieve offer from the DB
       OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+
+      if (offerFromDB == null) {
+        throw new NotFoundException("L'offre n'existe pas");
+      }
 
       // Check if the offeror don't change the offer of anyone else
       if (!ownerDTO.getMemberId().equals(offerFromDB.getObject().getIdOfferor())) {

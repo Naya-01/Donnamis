@@ -311,6 +311,27 @@ class OfferUCCImplTest {
 
   //  ----------------------------  CANCEL OFFER UCC  -------------------------------  //
 
+  @DisplayName("Test cancelOffer with non existent offer")
+  @Test
+  public void testCancelOfferWithNonExistentOffer() {
+    OfferDTO mockOfferDTO = getNewOffer();
+    mockOfferDTO.setIdOffer(2);
+    mockOfferDTO.setStatus("given");
+    mockOfferDTO.getObject().setIdOfferor(2);
+
+    MemberDTO mockMember = memberFactory.getMemberDTO();
+    mockMember.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.cancelOffer(mockOfferDTO, mockMember)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test cancelOffer with given status")
   @Test
   public void testCancelOfferWithGivenStatus() {
@@ -465,6 +486,106 @@ class OfferUCCImplTest {
   }
 
   //  ---------------------------- GIVE OFFER UCC  -------------------------------  //
+  @DisplayName("Test giveOffer with non existent offer published")
+  @Test
+  public void testGiveOfferWithNonExistentOfferPublished() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test giveOffer with not same version offer in db and front")
+  @Test
+  public void testGiveOfferWithNotSameVersionOfferDbAndFrom() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.setVersion(1);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(2);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test giveOffer with not same version object in db and front")
+  @Test
+  public void testGiveOfferWithNotSameVersionObjectDbAndFrom() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.getObject().setVersion(2);
+    offerDTO.setVersion(2);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(2);
+    offerDTOFromDao.getObject().setVersion(5);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test giveOffer with not same member id in param and id offer of object")
+  @Test
+  public void testGiveOfferWithNotSameMemberIdParamAndIdOfferor() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.getObject().setVersion(5);
+    offerDTO.setVersion(2);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(7);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(13);
+    offerDTOFromDao.setVersion(2);
+    offerDTOFromDao.getObject().setVersion(5);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 
   @DisplayName("Test giveOffer without having interest")
   @Test
@@ -756,6 +877,111 @@ class OfferUCCImplTest {
 
   //  ---------------------------- NOT COLLECTED OFFER UCC  -------------------------------  //
 
+  @DisplayName("Test notCollectedOffer with null received from dao when get the offer")
+  @Test
+  public void testNotCollectedOfferWithNullReceivedFromDAOByGetOneOffer() {
+    OfferDTO offerDTO = getNewOffer();
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+
+    memberDTO.setMemberId(2);
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test notCollectedOffer with not same member id param and if offeror of object")
+  @Test
+  public void testNotCollectedOfferWithNotSameMemberIdParamAndIdOfferorOfOffer() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(5);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test notCollectedOffer with not same version offer param and of the db")
+  @Test
+  public void testNotCollectedOfferWithNotSameVersionOfferParamAndOfDB() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.setVersion(6);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(3);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test notCollectedOffer with not same version object of offer param and of the db")
+  @Test
+  public void testNotCollectedOfferWithNotSameVersionObjectOfferParamAndOfDB() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(3);
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(2);
+    offerDTO.setVersion(3);
+    offerDTO.getObject().setVersion(4);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(3);
+    offerDTOFromDao.getObject().setIdObject(3);
+    offerDTOFromDao.getObject().setIdOfferor(2);
+    offerDTOFromDao.setVersion(3);
+    offerDTOFromDao.getObject().setVersion(9);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> offerUCC.notCollectedOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test notCollectedOffer without having interest")
   @Test
   public void testNotCollectedOfferWithoutHavingAnyInterest() {
@@ -902,6 +1128,36 @@ class OfferUCCImplTest {
 
     assertAll(
         () -> assertEquals(map, offerUCC.getOffersCount(3)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  //  ---------------------------- GET LAST OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test getLastOffer with none offer returned from dao")
+  @Test
+  public void testGetLastOfferWithNoneOfferReturnedFromDao() {
+    int idObject = 3;
+    Mockito.when(offerDAO.getLastObjectOffer(idObject)).thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.getLastOffer(idObject)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test getLastOffer success")
+  @Test
+  public void testGetLastOfferSuccess() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+
+    assertAll(
+        () -> assertEquals(offerDTO, offerUCC.getLastOffer(offerDTO.getObject().getIdObject())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
