@@ -39,6 +39,10 @@ public interface InterestDTO {
 
   void setVersion(Integer version);
 
+  Boolean getIsCalled();
+
+  void setIsCalled(boolean isCalled);
+  
   OfferDTO getOffer();
 
   void setOffer(OfferDTO offer);

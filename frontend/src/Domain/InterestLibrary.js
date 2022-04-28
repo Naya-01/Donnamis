@@ -206,7 +206,7 @@ class InterestLibrary {
     return current_interest;
   }
 
-  async addOne(idObject, date, be_called, versionObject, versionOffer) {
+  async addOne(idObject, date, isCalled, versionObject, versionOffer) {
     let response;
     try {
       let options = {
@@ -214,6 +214,7 @@ class InterestLibrary {
         body: JSON.stringify({
           "idObject": idObject,
           "availabilityDate": date,
+          "isCalled": isCalled,
           "object": {
             "version": versionObject
           },
@@ -236,6 +237,7 @@ class InterestLibrary {
     }
     return newInterest;
   }
+
 }
 
 export default InterestLibrary;

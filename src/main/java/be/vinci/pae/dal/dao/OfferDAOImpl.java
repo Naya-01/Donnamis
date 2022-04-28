@@ -64,9 +64,10 @@ public class OfferDAOImpl implements OfferDAO {
       if (objectStatus.equals("available")) {
         query += "AND (LOWER(of.status) LIKE 'available' OR LOWER(of.status) LIKE 'interested') ";
       } else {
-        query += "AND LOWER(of.status) LIKE ?";
+        query += "AND LOWER(of.status) LIKE ? ";
       }
     }
+    query += " ORDER BY of.date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       int argCounter = 1;
@@ -220,6 +221,10 @@ public class OfferDAOImpl implements OfferDAO {
       preparedStatement.setString(3, offerDTO.getStatus());
 
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (!resultSet.next()) {
+          return null;
+        }
+
         offerDTO.setIdOffer(resultSet.getInt(1));
         offerDTO.setDate(resultSet.getDate(2).toLocalDate());
         offerDTO.setTimeSlot(resultSet.getString(3));
@@ -255,7 +260,9 @@ public class OfferDAOImpl implements OfferDAO {
       preparedStatement.setString(2, offerDTO.getStatus());
       preparedStatement.setInt(3, offerDTO.getIdOffer());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
-
+        if (!resultSet.next()) {
+          return null;
+        }
         OfferDTO offerDTOUpdated = offerFactory.getOfferDTO();
         offerDTOUpdated.setIdOffer(resultSet.getInt(1));
         offerDTOUpdated.setDate(resultSet.getDate(2).toLocalDate());

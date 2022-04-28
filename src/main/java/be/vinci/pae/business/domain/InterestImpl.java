@@ -30,6 +30,8 @@ public class InterestImpl implements InterestDTO {
   private Boolean isNotificated;
   @JsonView(Views.Public.class)
   private Integer version;
+  @JsonView(Views.Public.class)
+  private Boolean isCalled;
 
   @Override
   public MemberDTO getMember() {
@@ -109,6 +111,16 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setVersion(Integer version) {
     this.version = version;
+  }
+
+  @Override
+  public Boolean getIsCalled() {
+    return isCalled;
+  }
+
+  @Override
+  public void setIsCalled(boolean isCalled) {
+    this.isCalled = isCalled;
   }
 
   @Override
