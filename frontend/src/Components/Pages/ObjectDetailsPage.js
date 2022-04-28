@@ -188,8 +188,8 @@ const ObjectDetailsPage = async () => {
               <div class="row p-2">
                 <!-- number of interested people -->
                 <div id="nbMembersInterested" class="text-center p-2">
-                  <p>${nbMembersInterested} personne(s) intéressée(s) par 
-                    cet objet</p>
+                  <span id="InterestCount">${nbMembersInterested}</span><span> personne(s) intéressée(s) par 
+                    cet objet</span>
                 </div>
               </div>
               <div class="row p-2">
@@ -375,6 +375,8 @@ async function addOneInterest(versionObject, versionOffer) {
     icon: 'success',
     title: 'Votre intérêt a bien été pris en compte.'
   })
+  let countInterest = document.getElementById("InterestCount");
+  countInterest.innerHTML=parseInt(++countInterest.innerHTML);
 }
 
 /**
