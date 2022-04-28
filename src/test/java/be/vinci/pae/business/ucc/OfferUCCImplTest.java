@@ -365,67 +365,6 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
-  /*
-
-  @DisplayName("Test updateOffer with the fields of the offers empty")
-  @Test
-  public void testUpdateOfferWithEmptyFields() {
-    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
-    mockOfferDTO.setIdOffer(1);
-    mockOfferDTO.setVersion(1);
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
-    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
-    assertAll(
-        () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  @DisplayName("Test updateOffer with a non existent id offer")
-  @Test
-  public void testUpdateOfferNotExistentIdOffer() {
-    OfferDTO mockOfferDTO = Mockito.mock(OfferDTO.class);
-    mockOfferDTO.setIdOffer(1);
-    mockOfferDTO.setVersion(1);
-    Mockito.when(mockOfferDTO.getIdOffer()).thenReturn(0);
-
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(null);
-    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
-    assertAll(
-        () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(mockOfferDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  @DisplayName("Test updateOffer success")
-  @Test
-  public void testUpdateOfferSuccess() {
-    OfferDTO mockOfferDTO = getNewOffer();
-    mockOfferDTO.setIdOffer(15);
-    mockOfferDTO.setObject(null);
-    mockOfferDTO.setDate(LocalDate.now().minusMonths(2));
-
-    OfferDTO mockOfferDTOUpdated = getNewOffer();
-    mockOfferDTOUpdated.setIdOffer(15);
-    mockOfferDTOUpdated.getObject().setDescription("Très bon jeu");
-    mockOfferDTOUpdated.getObject().setStatus("available");
-    mockOfferDTOUpdated.setDate(LocalDate.now());
-
-    Mockito.when(offerDAO.updateOne(mockOfferDTO)).thenReturn(mockOfferDTOUpdated);
-    Mockito.when(offerDAO.getOne(mockOfferDTO.getIdOffer())).thenReturn(mockOfferDTO);
-
-    OfferDTO offerDTO = offerUCC.updateOffer(mockOfferDTO);
-
-    assertAll(
-        () -> assertNotEquals(mockOfferDTO, offerDTO),
-        () -> assertNotEquals(mockOfferDTO.getDate(), offerDTO.getDate()),
-        () -> assertEquals(mockOfferDTO.getIdOffer(), offerDTO.getIdOffer()),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }*/
 
   //  ----------------------------  CANCEL OFFER UCC  -------------------------------  //
 
@@ -1364,4 +1303,23 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  ---------------------------- ADD OFFER UCC  -------------------------------  //
+
+  @DisplayName("Test addOffer with no one existing offer")
+  @Test
+  public void testAddOfferWithNoOneExistingOffer() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> offerUCC.addOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 }
