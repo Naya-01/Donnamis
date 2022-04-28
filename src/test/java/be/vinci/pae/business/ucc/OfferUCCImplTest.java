@@ -1359,4 +1359,32 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test addOffer with none interests")
+  @Test
+  public void testAddOfferSuccessWithNoneInterests() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(13);
+    offerDTO.setStatus("cancelled");
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+    Mockito.when(interestDAO.getAllCount(offerDTO.getObject().getIdObject()))
+        .thenReturn(0);
+    Mockito.when(offerDAO.addOne(offerDTO))
+        .thenReturn(offerDTO);
+
+    OfferDTO offerDTOAdded = offerUCC.addOffer(offerDTO, memberDTO);
+
+    assertAll(
+        () -> assertEquals("available",
+            offerDTOAdded.getObject().getStatus()),
+        () -> assertEquals("available",
+            offerDTOAdded.getStatus()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
 }
