@@ -280,7 +280,7 @@ public class InterestUCCImpl implements InterestUCC {
       count = interestDAO.getAllPublishedCount(idObject);
 
       InterestDTO interestDTO = interestDAO.getOne(idObject, memberDTO.getMemberId());
-      userInterested = (interestDTO != null);
+      userInterested = interestDTO != null;
 
       dalService.commitTransaction();
     } catch (Exception e) {

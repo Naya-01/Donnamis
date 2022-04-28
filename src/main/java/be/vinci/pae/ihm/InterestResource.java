@@ -32,7 +32,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 @Path("/interest")
 public class InterestResource {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
   @Inject
   private InterestUCC interestUCC;
 
