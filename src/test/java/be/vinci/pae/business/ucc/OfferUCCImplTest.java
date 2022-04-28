@@ -1322,4 +1322,21 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test addOffer with not same id member of object and id offeror")
+  @Test
+  public void testAddOfferWithNotSameIdMemberAndIfOfferor() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(15);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.addOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
