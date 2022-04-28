@@ -27,17 +27,16 @@ const dictionnary = new Map([
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']
 ]);
-// attributes for the object / offer :
-let offer;
+
+let idOffer;
+let idObject;
 let imageOfObject;
-let localLinkImage;
+let english_status;
+let idType;
 let description;
 let time_slot;
-
-//for the member
-let idMemberConnected;
-let telNumber;
 let form = false;
+let isInterested;
 let localLinkImage;
 let statusObject;
 let note = 1;
@@ -48,9 +47,6 @@ let versionObject = 0;
 let versionOffer = 0;
 let versionMemberConnected;
 
-
-let form = false;
-let note = 1;
 
 /**
  * Render the page to see an object
@@ -102,7 +98,8 @@ const ObjectDetailsPage = async () => {
         + "/" + offer.oldDate[0];
   }
   // translate the status to french
-  let french_status = dictionnary.get(offer.status);
+  english_status = offer.status;
+  let french_status = dictionnary.get(english_status);
 
   // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
@@ -219,7 +216,7 @@ const ObjectDetailsPage = async () => {
     new_button.id = "modifyObjectButton";
     new_button.addEventListener("click", changeToForm);
     divB.appendChild(new_button);
-    if (offer.status === "given") {
+    if (english_status === "given") {
       new_button.remove();
     }
   }
