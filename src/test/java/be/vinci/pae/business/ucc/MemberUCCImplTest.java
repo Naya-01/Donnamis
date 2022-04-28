@@ -715,6 +715,25 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test updateMember with username already taken")
+  @Test
+  public void testUpdateMemberWithUsernameAlreadyTaken() {
+    MemberDTO memberValidInDB = getMemberNewMember();
+    memberValidInDB.setMemberId(250);
+    memberValidInDB.setVersion(5);
+    memberValidInDB.setUsername(memberValid1.getUsername());
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getUsername())).thenReturn(memberValidInDB);
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getMemberId()))
+        .thenReturn(memberValid1);
+    assertAll(
+        () -> assertThrows(ConflictException.class, () -> memberUCC
+            .updateMember(memberValid1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
   @DisplayName("Test getMember success")
