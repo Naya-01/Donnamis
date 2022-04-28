@@ -42,15 +42,6 @@ public interface InterestUCC {
   Integer getNotificationCount(MemberDTO member);
 
   /**
-   * Check if a member is interested by an object.
-   *
-   * @param idMember the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  boolean isUserInterested(int idMember, int idObject);
-
-  /**
    * Get the number of all interests.
    *
    * @param idObject the object we want to retrieve the interests

@@ -57,7 +57,8 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO getAssignedInterest(int idObject) {
     String query =
         "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
-            + "i.be_called, i.version from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
+            + "i.be_called, i.version "
+            + "from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -221,7 +222,8 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
     String query = "SELECT id_object, id_member, availability_date, status, send_notification, "
-        + "version, be_called FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
+        + "version, be_called "
+        + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();
@@ -230,35 +232,6 @@ public class InterestDAOImpl implements InterestDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-  }
-
-  /**
-   * Check if a member is interested by an object.
-   *
-   * @param idMember the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  @Override
-  public boolean isUserInterested(int idMember, int idObject) {
-    String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
-        + "WHERE i.id_object = ? AND i.status = 'published' AND i.id_member = ?";
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, idObject);
-      preparedStatement.setInt(2, idMember);
-
-      preparedStatement.executeQuery();
-      ResultSet resultSet = preparedStatement.getResultSet();
-      if (!resultSet.next()) {
-        return false;
-      }
-      if (resultSet.getInt("nb") == 1) {
-        return true;
-      }
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    return false;
   }
 
   /**

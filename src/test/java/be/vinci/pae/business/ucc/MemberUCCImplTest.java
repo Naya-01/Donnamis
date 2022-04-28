@@ -808,7 +808,7 @@ class MemberUCCImplTest {
 
   //  -----------------------------  GET PICTURE UCC  -----------------------------------  //
 
-  @DisplayName("Test getPicture without image")
+  @DisplayName("Test getPicture with image")
   @Test
   public void testGetPictureWithImage() {
     MemberDTO memberExistent = getMemberNewMember();

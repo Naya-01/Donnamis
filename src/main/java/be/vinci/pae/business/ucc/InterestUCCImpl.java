@@ -250,30 +250,6 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Check if a member is interested by an object.
-   *
-   * @param idMember the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  @Override
-  public boolean isUserInterested(int idMember, int idObject) {
-    InterestDTO userInterested;
-    try {
-      dalService.startTransaction();
-      userInterested = interestDAO.getOne(idObject, idMember);
-      dalService.commitTransaction();
-      if (userInterested == null) {
-        return false;
-      }
-    } catch (Exception e) {
-      dalService.rollBackTransaction();
-      throw e;
-    }
-    return true;
-  }
-
-  /**
    * Get the count of interested people of an object.
    *
    * @param idObject  the object we want to retrieve the interest count.
