@@ -139,10 +139,7 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject,
         authenticatedUser);
-    for (InterestDTO interestDTO : interestDTOList) {
-      interestDTO.setMember(
-          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
-    }
+    filterMember(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
@@ -162,10 +159,7 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getNotifications(
         authenticatedUser);
-    for (InterestDTO interestDTO : interestDTOList) {
-      interestDTO.setMember(
-          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
-    }
+    filterMember(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
@@ -191,6 +185,7 @@ public class InterestResource {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
     InterestDTO interest = interestUCC.assignOffer(interestDTO, ownerDTO);
+    interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
     interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
     return interest;
   }
@@ -214,6 +209,7 @@ public class InterestResource {
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO);
+    interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
     interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
     return interest;
   }
@@ -233,13 +229,21 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
-    for (InterestDTO interestDTO : interestDTOList) {
-      interestDTO.setMember(
-          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
-    }
+    filterMember(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
 
+  /**
+   * Filter the member object in each object interest
+   *
+   * @param interestDTOList the list we want to filter
+   */
+  private void filterMember(List<InterestDTO> interestDTOList) {
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+  }
 
 }
