@@ -162,6 +162,7 @@ class ObjectUCCImplTest {
   @DisplayName("test updateObjectPicture with existent object that has no image")
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasNoImage() {
+    objectDTO.setVersion(1);
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
         .thenReturn(objectDTO);
@@ -181,6 +182,7 @@ class ObjectUCCImplTest {
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasAnImage() {
     objectDTO.setImage("C:/img2");
+    objectDTO.setVersion(1);
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateObjectPicture(pathImage, objectDTO.getIdObject()))
         .thenReturn(objectDTO);
