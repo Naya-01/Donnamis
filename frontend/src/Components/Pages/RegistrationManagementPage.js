@@ -206,7 +206,7 @@ const refuseMember = (idMember, version) => {
   // Confirm ban
   acceptedButton.addEventListener('click', async () => {
     // get the refusal reason
-    const refusalReason = document.getElementById("raisonRefus").value;
+    let refusalReason = document.getElementById("raisonRefus").value;
 
     if (refusalReason.length === 0) {
       await Toast.fire({
@@ -225,7 +225,6 @@ const refuseMember = (idMember, version) => {
         null, null, null, version, null, refusalReason, "denied", idMember);
 
     // refuse member db
-    //await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);
     await MemberLibrary.prototype.updateMember(memberToUpdate);
   });
 
@@ -253,7 +252,6 @@ const deniedMemberButtons = (idMember, version) => {
         null, null, null, version, null, null, "pending", idMember);
     await MemberLibrary.prototype.updateMember(memberToUpdate);
     // set member valid
-    //await MemberLibrary.prototype.updateStatus("pending", idMember, "", "", version);
 
     let pendingButton = document.getElementById("btn-radio-pending");
     pendingButton.click();

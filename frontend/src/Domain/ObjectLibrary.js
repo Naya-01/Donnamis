@@ -1,4 +1,6 @@
 import {getSessionObject} from "../utils/session";
+import Swal from "sweetalert2";
+import toast from "sweetalert2";
 
 class ObjectLibrary {
 
@@ -44,7 +46,6 @@ class ObjectLibrary {
         body: formData,
         headers: {
           "Authorization": getSessionObject("user").accessToken,
-          "Content-Type": "application/json",
         },
       };
       response = await fetch(
@@ -52,11 +53,18 @@ class ObjectLibrary {
     } catch (err) {
       console.log(err);
     }
-    let newInterest;
-    if (response.status === 200) {
-      newInterest = await response.json();
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
     }
-    return newInterest;
+    if (response.status === 200) {
+      return await response.json();
+    }
   }
 
 }

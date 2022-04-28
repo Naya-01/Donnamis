@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
@@ -139,15 +140,16 @@ public class ObjectUCCImpl implements ObjectUCC {
         throw new NotFoundException("Objet non trouvé");
       }
 
+      if (!objectDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
+      }
+
       File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
       if (f.exists()) {
         f.delete();
       }
 
-      // TODO VERSION !!!
-      /*if (!objectDTO.getVersion().equals(version)) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
-      }*/
+
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

@@ -147,7 +147,7 @@ public class OfferResource {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource updateOffer");
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
 
-    if (offerDTO.getIdOffer() == 0) {
+    if (offerDTO.getIdOffer() == null) {
       throw new BadRequestException("Aucun id de l'offre");
     }
 

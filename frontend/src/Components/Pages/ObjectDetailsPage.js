@@ -63,7 +63,7 @@ const ObjectDetailsPage = async () => {
   let url = new URL(url_string);
 
   //Check the id of the offer in the url
-  let idOffer = url.searchParams.get("idOffer");
+  idOffer = url.searchParams.get("idOffer");
   if (!idOffer || idOffer <= 0) {
     Redirect("/");
     return;
@@ -603,20 +603,14 @@ async function updateObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject);
-    if (objectWithImage === undefined) {
-      bottomNotification.fire({
-        icon: 'error',
-        title: 'L\'image entrée n\'est pas du bon format.'
-      })
-      return;
-    }
+    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
+
   }
 
 
 
   // Call the function to update the offer
-
+  console.log("idoff"+idOffer);
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
       new_description, idType, english_status, statusObject, versionObject++,
       versionOffer++);
@@ -626,7 +620,6 @@ async function updateObject(e) {
       title: "L\'offre n'a pas pu être mise à jour."
     })
   }
-  offer = newOffer;
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
