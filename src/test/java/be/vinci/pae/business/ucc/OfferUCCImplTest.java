@@ -312,6 +312,31 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  @DisplayName("Test updateOffer with not same object offer version")
+  @Test
+  public void testUpdateOfferWithNotSameObjectOfferVersion() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(1);
+    offerDTO.setVersion(1);
+    offerDTO.setVersion(13);
+    offerDTO.getObject().setVersion(15);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(1);
+    offerDTOFromDao.setVersion(1);
+    offerDTOFromDao.setVersion(13);
+    offerDTOFromDao.getObject().setVersion(17);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+    Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDao);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.updateOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
   /*
 
   @DisplayName("Test updateOffer with the fields of the offers empty")
