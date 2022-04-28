@@ -97,6 +97,11 @@ public class TypeDAOImpl implements TypeDAO {
     }
   }
 
+  /**
+   * Build a TypeDTO on base of a preparedStatement.
+   * @param preparedStatement the ps that will be executed to have information of the type
+   * @return the TypeDTO
+   */
   private TypeDTO getTypeDTO(PreparedStatement preparedStatement) {
     try {
       preparedStatement.executeQuery();
