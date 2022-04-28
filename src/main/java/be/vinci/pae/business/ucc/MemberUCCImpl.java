@@ -260,6 +260,9 @@ public class MemberUCCImpl implements MemberUCC {
         throw new ConflictException("Ce pseudonyme est déjà utilisé.");
       }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
+      if (addressDTO == null) {
+        throw new NotFoundException("Adresse non trouvée");
+      }
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         // check the version of address
@@ -267,10 +270,6 @@ public class MemberUCCImpl implements MemberUCC {
           throw new ForbiddenException("Vous ne possédez pas une version à jour d'adresse.");
         }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-      }
-
-      if (addressDTO == null) {
-        throw new ForbiddenException("Problem with updating address");
       }
 
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);

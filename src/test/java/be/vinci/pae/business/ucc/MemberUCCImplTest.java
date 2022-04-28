@@ -733,6 +733,27 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test updateMember with no address")
+  @Test
+  public void testUpdateMemberWithNoAddress() {
+    MemberDTO memberValidInDB = getMemberNewMember();
+    memberValidInDB.setMemberId(250);
+    memberValidInDB.setVersion(5);
+    memberValid1.setVersion(5);
+    memberValidInDB.setUsername(memberValid1.getUsername());
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getMemberId()))
+        .thenReturn(memberValidInDB);
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getUsername())).thenReturn(memberValid1);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(memberValid1.getMemberId()))
+        .thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> memberUCC
+            .updateMember(memberValid1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
