@@ -7,7 +7,6 @@ import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
