@@ -737,9 +737,8 @@ class MemberUCCImplTest {
   @Test
   public void testUpdateMemberWithNoAddress() {
     MemberDTO memberValidInDB = getMemberNewMember();
-    memberValidInDB.setMemberId(250);
+    memberValidInDB.setMemberId(2);
     memberValidInDB.setVersion(5);
-    memberValid1.setVersion(5);
     memberValidInDB.setUsername(memberValid1.getUsername());
     Mockito.when(mockMemberDAO.getOne(memberValid1.getMemberId()))
         .thenReturn(memberValidInDB);
@@ -748,6 +747,32 @@ class MemberUCCImplTest {
         .thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> memberUCC
+            .updateMember(memberValid1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test updateMember with differents versions for address")
+  @Test
+  public void testUpdateMemberWithDifferentsVersionsForAddress() {
+    MemberDTO memberValidInDB = getMemberNewMember();
+    memberValidInDB.setMemberId(2);
+    memberValidInDB.setVersion(5);
+
+    AddressDTO addressInDB = addressFactory.getAddressDTO();
+    addressInDB.setIdMember(0);
+    addressInDB.setCommune("Texas");
+    addressInDB.setVersion(2);
+
+    memberValidInDB.setUsername(memberValid1.getUsername());
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getMemberId()))
+        .thenReturn(memberValidInDB);
+    Mockito.when(mockMemberDAO.getOne(memberValid1.getUsername())).thenReturn(memberValid1);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(memberValid1.getMemberId()))
+        .thenReturn(addressInDB);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> memberUCC
             .updateMember(memberValid1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()

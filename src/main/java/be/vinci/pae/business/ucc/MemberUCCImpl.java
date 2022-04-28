@@ -249,8 +249,6 @@ public class MemberUCCImpl implements MemberUCC {
       // check the version of member
       if (memberDTO.getVersion() == null
           || !memberDTO.getVersion().equals(memberInDB.getVersion())) {
-        System.out.println(memberDTO.getVersion());
-        System.out.println(memberInDB.getVersion());
         throw new ForbiddenException(
             "Vous ne possédez pas une version à jour du membre.");
       }
@@ -273,9 +271,6 @@ public class MemberUCCImpl implements MemberUCC {
       }
 
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);
-      if (modifierMemberDTO == null) {
-        throw new ForbiddenException("Problem with updating member");
-      }
       modifierMemberDTO.setAddress(addressDTO);
       dalService.commitTransaction();
       return modifierMemberDTO;
