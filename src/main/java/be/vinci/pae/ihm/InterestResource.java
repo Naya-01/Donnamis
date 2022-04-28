@@ -70,6 +70,7 @@ public class InterestResource {
 
     InterestDTO interestDTO = interestUCC.getInterest(idObject, authenticatedUser.getMemberId());
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    interestDTO = JsonViews.filterPublicJsonView(interestDTO,InterestDTO.class);
     return interestDTO;
   }
 
@@ -99,6 +100,7 @@ public class InterestResource {
 
     InterestDTO interestDTO = interestUCC.addOne(interest);
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    interestDTO = JsonViews.filterPublicJsonView(interestDTO,InterestDTO.class);
     return interestDTO;
   }
 
@@ -141,6 +143,7 @@ public class InterestResource {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     }
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList,InterestDTO.class);
     return interestDTOList;
   }
 
@@ -163,6 +166,7 @@ public class InterestResource {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     }
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList,InterestDTO.class);
     return interestDTOList;
   }
 
@@ -186,8 +190,9 @@ public class InterestResource {
     if (interestDTO.getIdMember() == null || interestDTO.getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
-
-    return interestUCC.assignOffer(interestDTO, ownerDTO);
+    InterestDTO interest = interestUCC.assignOffer(interestDTO, ownerDTO);
+    interest = JsonViews.filterPublicJsonView(interest,InterestDTO.class);
+    return interest;
   }
 
   /**
@@ -208,7 +213,9 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markNotificationShown(idObject, memberDTO);
+    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO);
+    interest = JsonViews.filterPublicJsonView(interest,InterestDTO.class);
+    return interest;
   }
 
   /**
@@ -225,7 +232,13 @@ public class InterestResource {
   public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markAllNotificationsShown(memberDTO);
+    List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList,InterestDTO.class);
+    return interestDTOList;
   }
 
 
