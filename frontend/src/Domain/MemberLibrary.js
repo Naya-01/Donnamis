@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
 
-const Toast = new Notification().getNotification("top-end");
+const Toast = new Notification().getNotification("bottom");
 
 class MemberLibrary {
 
