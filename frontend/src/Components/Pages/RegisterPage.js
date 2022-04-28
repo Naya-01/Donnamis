@@ -13,7 +13,7 @@ const regNumberPhone =
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification("top-end");
+const toast = new Notification().getNotification("bottom");
 
 const htmlPage = `
           <div class="container mt-5">
@@ -122,6 +122,7 @@ const RegisterPage = async () => {
     const notNullFields = [username, lastname, firstname, password,
       street, postcode, commune];
 
+    //remove all red borders
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
         item.classList.remove("border-danger");
@@ -221,8 +222,9 @@ const RegisterPage = async () => {
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
           phoneNumber.value.trim(), address, 1);
-      // Requête DB inscription et redirect
+      // register request
       let isRegistered = await memberLibrary.registerMember(member);
+      //if the member could be registered
       if (isRegistered) {
         let notificationBottom = new Notification().getNotification("bottom");
         notificationBottom.fire({

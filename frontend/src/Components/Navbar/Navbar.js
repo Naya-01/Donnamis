@@ -7,6 +7,7 @@ import InterestLibrary from "../../Domain/InterestLibrary";
 import {RedirectWithParamsInUrl} from "../Router/Router";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
+// Notification dictionnary to know which text show.
 const notificationDictionnary = new Map([
   ['assigned', "Vous avez été selectionné !"],
   ['received', "Merci d'avoir récupérer l'objet !"],
@@ -15,6 +16,7 @@ const notificationDictionnary = new Map([
   ['published', "Vous avez marquer un interet pour cette offre."],
 ]);
 
+// Color dictionnary for notification states.
 const colorDictionnary = new Map([
   ['assigned', 'text-success'],
   ['received', 'text-success'],
@@ -41,7 +43,7 @@ const Navbar = async () => {
       image = "/api/member/getPicture/" + user.memberId
     }
   }
-  if (username === undefined) {
+  if (username === undefined) { // Navbar for the quidams
     navbar = `
           <nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
             <div class="container-fluid">
@@ -73,7 +75,7 @@ const Navbar = async () => {
           </nav>
      `
     navbarWrapper.innerHTML = navbar;
-  } else {
+  } else { // Navbar for the members connected
     navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
     <div class="container-fluid">
         <a class="navbar-brand fs-1" href="#" data-uri="/">DONNAMIS</a>
@@ -97,6 +99,7 @@ const Navbar = async () => {
                 <li class="nav-item">
                     <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes offres</a>
                 </li>`
+    // If the member is admin
     if (user_role === "administrator") {
       navbar += `<li class="nav-item">
                     <a class="nav-link fs-5" data-uri="/registrationManagement" href="#">Inscriptions</a>
@@ -133,7 +136,7 @@ const Navbar = async () => {
              <li class="nav-item dropdown mx-5">
                         <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
                            <div id="button-dot">
-                            <img class="" id="navbar-notification-picture" alt="profil" src="${notificationImage}">
+                            <img  id="navbar-notification-picture" alt="profil" src="${notificationImage}">
                             <span id="dot">${notificationCount}</span>
                            </div>
                         </a>
@@ -144,6 +147,7 @@ const Navbar = async () => {
     `
     }
 
+    // Profil navbar
     navbar += `<li class="nav-item m-auto">
                         <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
                     </li>
@@ -175,9 +179,12 @@ const Navbar = async () => {
 
     navbarWrapper.innerHTML = navbar;
 
+    // We get the different element to add content and event listeners.
+
     let notificationButton = document.getElementById("notificationButton");
     let notificationContentUL = document.getElementById("notificationContent");
 
+    // We fetch the notifications only when we click on the notification button.
     notificationButton.addEventListener("click", async e => {
       let notifications = ``;
 
@@ -188,6 +195,7 @@ const Navbar = async () => {
           let objectId = interest.object.idObject;
           let description = interest.object.description;
           let notificationPicture;
+          // If there is an object picture, then we show it, otherwise we show the default picture.
           if (interest.object.image) {
             notificationPicture = "/api/object/getPicture/"
                 + interest.object.idObject
@@ -195,6 +203,7 @@ const Navbar = async () => {
             notificationPicture = noImage;
           }
 
+          // A notification HTML code
           notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
                                 <div class="row">
@@ -221,6 +230,7 @@ const Navbar = async () => {
                             `;
         }
 
+        // HTML code to show all notification shown
         notifications += `<li>
                         <div class="dropdown-item fs-5" href="#">
                           <div class="row">
@@ -233,6 +243,7 @@ const Navbar = async () => {
 
         notificationContentUL.innerHTML = notifications;
 
+        // Mark all the notifications shown and close the notification menu.
         let markAllReadBtn = document.getElementById("allRead");
         markAllReadBtn.addEventListener("click", async e => {
           await InterestLibrary.prototype.markAllNotificationShown();
@@ -241,20 +252,10 @@ const Navbar = async () => {
           notification.innerText = "";
           let markAllReadBtn = document.getElementById("allRead")
           markAllReadBtn.remove();
-          let li = document.createElement("li");
-          li.innerHTML = `
-                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
-                                <div class="row">
-                                    <div class="fs-5 text-warning">
-                                      <span>Aucune notifications pour le moment...</span>
-                                    </div>
-                                </div>
-                              </div>
-                            `
-          notificationContentUL.appendChild(li);
           document.getElementById("notificationButton").click();
         });
 
+        // Disable the default behavior of a dropdown (disappear when we click on the div)
         let notifItems = document.getElementsByClassName("notif-items");
         for (const item of notifItems) {
           item.addEventListener("click", e => {
@@ -262,6 +263,7 @@ const Navbar = async () => {
           });
         }
 
+        // Foreach notification we will add the eventListeners
         for (const interest of allNotificationsFetch) {
           let divNotification = document.getElementById(
               "notification-" + interest.member.memberId + "-"
@@ -271,6 +273,10 @@ const Navbar = async () => {
               "shown-" + interest.member.memberId + "-"
               + interest.object.idObject);
 
+          /**
+           * Remove the notification and mark it as shown.
+           * When there is no notification left, we update the complete innerHTML.
+           */
           btnShown.addEventListener("click", async e => {
             divNotification.remove();
             notificationCount--;
@@ -302,6 +308,7 @@ const Navbar = async () => {
               "goto-" + interest.member.memberId + "-"
               + interest.object.idObject);
 
+          //Redirect to the offer page
           btnGoto.addEventListener("click", async e => {
             let lastOffer = await OfferLibrary.prototype.getLastOfferById(
                 interest.object.idObject);
@@ -312,6 +319,7 @@ const Navbar = async () => {
 
         }
       } else {
+        // If there is no notification to show
         notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items" href="#">
                                 <div class="row">

@@ -135,10 +135,9 @@ public class MemberDAOImpl implements MemberDAO {
   public List<MemberDTO> getAll(String search, String status) {
     String query =
         "SELECT m.id_member, m.username, m.lastname, m.firstname, m.status, m.role, "
-            + "m.phone_number, m.password, m.refusal_reason, m.image, m.version as version,"
-            + " a.id_member, a.unit_number, "
-            + "a.building_number, a.street, a.postcode, a.commune, a.version "
-            + "FROM donnamis.members m, donnamis.addresses a "
+            + "m.phone_number, m.password, m.refusal_reason, m.image, m.version as version, "
+            + "a.id_member, a.unit_number, a.building_number, a.street, a.postcode, a.commune,"
+            + " a.version FROM donnamis.members m, donnamis.addresses a "
             + "WHERE a.id_member = m.id_member ";
 
     if (status != null && status.equals("waiting")) {

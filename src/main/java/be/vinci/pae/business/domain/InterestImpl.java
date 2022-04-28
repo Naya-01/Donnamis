@@ -3,6 +3,7 @@ package be.vinci.pae.business.domain;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -15,6 +16,8 @@ public class InterestImpl implements InterestDTO {
   private MemberDTO member;
   @JsonView(Views.Public.class)
   private ObjectDTO object;
+  @JsonView(Views.Public.class)
+  private OfferDTO offer;
   @JsonView(Views.Public.class)
   private Integer idMember;
   @JsonView(Views.Public.class)
@@ -120,4 +123,13 @@ public class InterestImpl implements InterestDTO {
     this.isCalled = isCalled;
   }
 
+  @Override
+  public OfferDTO getOffer() {
+    return offer;
+  }
+
+  @Override
+  public void setOffer(OfferDTO offer) {
+    this.offer = offer;
+  }
 }

@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-//TODO : changer tt la doc
-
 public class MemberUCCImpl implements MemberUCC {
 
   @Inject
@@ -81,8 +79,8 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO == null) {
         throw new NotFoundException("Member not found");
       }
-      if (!memberDTO.getVersion().equals(version)) {
-        throw new ForbiddenException("Les versions ne correspondent pas.");
+      if (version == null || !memberDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Vous ne possédez pas une version à jour du membre.");
       }
 
       File f = new File(Config.getProperty("ImagePath") + memberDTO.getImage());
@@ -140,12 +138,6 @@ public class MemberUCCImpl implements MemberUCC {
       }
 
       memberDTO.setUsername(memberDTO.getUsername().replaceAll(" ", ""));
-
-      //check if the member already exists
-      MemberDTO memberExistent = memberDAO.getOne(memberDTO.getUsername());
-      if (memberExistent != null) {
-        throw new ConflictException("Ce membre existe déjà");
-      }
 
       //set the MemberDTO
       Member member = (Member) memberDTO;
@@ -253,30 +245,31 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberInDB == null) {
         throw new NotFoundException("Le membre est inexistant.");
       }
+
       // check the version of member
-      if (!memberDTO.getVersion().equals(memberInDB.getVersion())) {
+      if (memberDTO.getVersion() == null
+          || !memberDTO.getVersion().equals(memberInDB.getVersion())) {
+        System.out.println(memberDTO.getVersion());
+        System.out.println(memberInDB.getVersion());
         throw new ForbiddenException(
-            "Impossibilité de modifier les données du membre");
+            "Vous ne possédez pas une version à jour du membre.");
       }
       MemberDTO memberDTOWithSameUsername = memberDAO.getOne(memberDTO.getUsername());
       if (memberDTOWithSameUsername != null
           && !memberDTO.getMemberId().equals(memberDTOWithSameUsername.getMemberId())) {
-        System.out.println(memberDTO.getMemberId());
-        System.out.println(memberDTOWithSameUsername.getMemberId());
         throw new ConflictException("Ce pseudonyme est déjà utilisé.");
       }
       AddressDTO addressDTO = addressDAO.getAddressByMemberId(memberDTO.getMemberId());
+      if (addressDTO == null) {
+        throw new NotFoundException("Adresse non trouvée");
+      }
       if (memberDTO.getAddress() != null) {
         memberDTO.getAddress().setIdMember(memberDTO.getMemberId());
         // check the version of address
         if (!memberDTO.getAddress().getVersion().equals(addressDTO.getVersion())) {
-          throw new ForbiddenException("Impossibilité de modifier les données de l'adresse");
+          throw new ForbiddenException("Vous ne possédez pas une version à jour d'adresse.");
         }
         addressDTO = addressDAO.updateOne(memberDTO.getAddress());
-      }
-
-      if (addressDTO == null) {
-        throw new ForbiddenException("Problem with updating address");
       }
 
       MemberDTO modifierMemberDTO = memberDAO.updateOne(memberDTO);

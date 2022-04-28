@@ -17,6 +17,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -70,7 +71,9 @@ public class ObjectResource {
   public ObjectDTO setPicture(@PathParam("id") int id,
       @Context ContainerRequest request,
       @FormDataParam("file") InputStream file,
-      @FormDataParam("file") FormDataBodyPart fileMime) {
+      @FormDataParam("file") FormDataBodyPart fileMime,
+      @QueryParam("version") int version) {
+    System.out.println(version);
 
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
@@ -79,6 +82,7 @@ public class ObjectResource {
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
       throw new UnauthorizedException("Cette objet ne vous appartient pas");
     }
+
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\",
         objectDTO.getIdObject());
     if (internalPath == null) {
@@ -86,7 +90,7 @@ public class ObjectResource {
           + "\nVeuillez soumettre une image");
     }
 
-    return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject());
+    return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject(), version);
   }
 
   /**

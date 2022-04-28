@@ -27,10 +27,10 @@ class TypeUCCImplTest {
   private TypeDTO realType;
   private DALService mockDalService;
   private List<TypeDTO> allDefaultTypesMock;
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
   @BeforeEach
   void initAll() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.typeUCC = locator.getService(TypeUCC.class);
     this.mockTypeDAO = locator.getService(TypeDAO.class);
     this.mockDalService = locator.getService(DALService.class);

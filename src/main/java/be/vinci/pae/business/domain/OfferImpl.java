@@ -94,5 +94,4 @@ public class OfferImpl implements OfferDTO {
   public Integer getVersion() {
     return version;
   }
-
 }

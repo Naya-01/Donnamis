@@ -1,9 +1,14 @@
 import {getSessionObject} from "../utils/session";
 import Notification from "../Components/Module/Notification";
 
-const Toast = new Notification().getNotification("top-end");
+const Toast = new Notification().getNotification("bottom");
 
 class MemberLibrary {
+
+  /**
+   * Get user by his token.
+   * @returns {Promise<*>} the member in json.
+   */
   async getUserByHisToken() {
     let response;
     try {
@@ -25,6 +30,10 @@ class MemberLibrary {
     return user;
   }
 
+  /**
+   * Get user by his id.
+   * @returns {Promise<*>} the member in json.
+   */
   async getUserByHisId(id) {
     let response;
     try {
@@ -79,6 +88,13 @@ class MemberLibrary {
     }
   }
 
+  /**
+   * Login a quidam as a member or administrator.
+   * @param username of the member.
+   * @param password of the member.
+   * @param remember if he want to be remembered longer.
+   * @returns {Promise<*>} refresh and access token in json if he can connect.
+   */
   async login(username, password, remember) {
     let userData;
     try {
@@ -106,7 +122,9 @@ class MemberLibrary {
       console.log(err);
     }
     if (userData.status === 200) {
-      Toast.fire({
+
+      const notification = new Notification().getNotification("bottom");
+      notification.fire({
         icon: 'success',
         title: "Bienvenue !"
       })
@@ -114,6 +132,12 @@ class MemberLibrary {
     }
   }
 
+  /**
+   * Filter members by status and the search.
+   * @param search filter.
+   * @param status filter.
+   * @returns {Promise<{}>} a list of member.
+   */
   async getMemberBySearchAndStatus(search, status) {
     let response;
     try {
@@ -136,7 +160,16 @@ class MemberLibrary {
     return user;
   }
 
-  async updateStatus(status, memberId, reasonRefusal, role) {
+  /**
+   * Update a user with his arguments.
+   * @param status of the member.
+   * @param memberId id of the member.
+   * @param reasonRefusal reason of the refusal.
+   * @param role of the member.
+   * @param version of the update.
+   * @returns {Promise<null|any>} the member updated in json.
+   */
+  async updateStatus(status, memberId, reasonRefusal, role, version) {
     let response;
     try {
       let options = {
@@ -146,6 +179,7 @@ class MemberLibrary {
           "reasonRefusal": reasonRefusal,
           "memberId": memberId,
           "role": role,
+          "version": version,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -163,6 +197,11 @@ class MemberLibrary {
     return null;
   }
 
+  /**
+   * Update the member by his data.
+   * @param member datas to update.
+   * @returns {Promise<null|any>} the member updated in json
+   */
   async updateMember(member) {
     let response;
     try {
@@ -191,6 +230,12 @@ class MemberLibrary {
     }
   }
 
+  /**
+   * Set a profil picture to the member who call the function.
+   * @param formData is the picture data.
+   * @param version of the update.
+   * @returns {Promise<*>} the member updated in json.
+   */
   async setImage(formData, version) {
     let response = null;
     try {

@@ -14,7 +14,7 @@ const translationRoles = new Map([
 ]);
 
 const memberLibrary = new MemberLibrary();
-const toast = new Notification().getNotification("top-end");
+const toast = new Notification().getNotification("bottom");
 
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
 const regNumberPhone =
@@ -27,11 +27,16 @@ let member = null;
 let image;
 let provImage = null;
 
+/**
+ * Make modify profil page
+ *
+ * @returns {Promise<void>}
+ */
 const modifyProfilRender = async () => {
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle clickable" width="15%" alt="profil image" id="image">
+        <img src="${image}" class="profil-picture img-thumbnail rounded-circle clickable" alt="profil image" id="image">
         <input type="file" id="upload" style="display:none" name="upload">
         <p>${translationRoles.get(member.role)}</p>
         
@@ -115,8 +120,8 @@ const modifyProfilRender = async () => {
             
             <!-- LAST LINE-->
             <div class="col-12">
-              <button type="submit" class="btn btn-primary" id="submit_cancel_modify">Annuler</button>
               <button type="submit" class="btn btn-primary" id="submit_valid_modify">Confirmer</button>
+              <button type="submit" class="btn btn-primary" id="submit_cancel_modify">Annuler</button>
             </div>
           </form>
         </div> 
@@ -130,10 +135,12 @@ const modifyProfilRender = async () => {
   const imageField = document.getElementById("image");
   let fileInput = document.querySelector('input[name=upload]');
 
+  //when click on image
   imageField.onclick = function () {
     fileInput.click();
   }
 
+  //when the image is update in local
   fileInput.onchange = function () {
 
     let reader = new FileReader();
@@ -148,11 +155,13 @@ const modifyProfilRender = async () => {
     }
   }
 
+  //when click on 'annuler' button
   cancelButton.addEventListener("click", e => {
     e.preventDefault();
     profilRender();
   })
 
+  //when click on 'modifier' button
   validModifyButton.addEventListener("click", async e => {
     e.preventDefault();
 
@@ -328,16 +337,37 @@ const modifyProfilRender = async () => {
         member.version,
         member.memberId);
     let memberWithImage;
+
+    //if the image has been modified
     if (fileInput.files[0] !== undefined) {
-      let formData = new FormData();
-      formData.append('file', fileInput.files[0]);
-      memberWithImage = await memberLibrary.setImage(formData, member.version);
-      newMember.version = newMember.version + 1;
+      let types = ["image/jpeg", "image/jpg", "image/png"];
+      let canBeUpload = false;
+      for (const type in types) {
+        if (fileInput.files[0].type === types[type]) {
+          canBeUpload = true;
+        }
+      }
+
+      if (!canBeUpload) {
+        toast.fire({
+          icon: 'error',
+          title: "Nous n'acceptons que des images png, jpeg et jpg."
+        })
+      } else {
+        let formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        memberWithImage = await memberLibrary.setImage(formData,
+            member.version);
+        newMember.version = newMember.version + 1;
+      }
     }
+
     let memberUpdated = await memberLibrary.updateMember(newMember);
+    //if the update throws an error
     if (memberUpdated === null) {
       return;
     }
+    //if the username has been modified
     if (username.value.trim() !== member.username) {
       await Navbar();
     }
@@ -345,6 +375,7 @@ const modifyProfilRender = async () => {
       member = memberUpdated;
     }
 
+    //re-render the image on the navbar and profil
     if (memberWithImage !== undefined) {
       image = provImage;
       document.getElementById("navbar-profil-picture").src = image;
@@ -354,11 +385,16 @@ const modifyProfilRender = async () => {
   });
 }
 
+/**
+ * Make the profil page
+ *
+ * @returns {Promise<void>}
+ */
 const profilRender = async () => {
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle" width="15%" alt="profil image">
+        <img src="${image}" class="profil-picture rounded-circle img-thumbnail" alt="profil image">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -437,6 +473,7 @@ const profilRender = async () => {
 
   const modifyButton = document.querySelector("#submit_modify");
 
+  //click on the 'modifier' button
   modifyButton.addEventListener("click", async e => {
     e.preventDefault();
 
@@ -445,6 +482,12 @@ const profilRender = async () => {
 
 }
 
+/**
+ * Prepare the profil pages
+ *
+ * @returns {Promise<void>}
+ * @constructor
+ */
 const ProfilPage = async () => {
   if (!getSessionObject("user")) {
     Redirect("/");

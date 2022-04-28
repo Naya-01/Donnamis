@@ -94,7 +94,7 @@ class InterestLibrary {
     return allInterests;
   }
 
-  async assignOffer(idObject, idMember, version) {
+  async assignOffer(idObject, idMember, version, versionOffer, versionObject) {
     let response;
     let toast = Notification.prototype.getNotification("bottom");
     try {
@@ -104,6 +104,12 @@ class InterestLibrary {
           "idMember": idMember,
           "version": version,
           "idObject": idObject,
+          "object": {
+            "version": versionObject
+          },
+          "offer": {
+            "version": versionOffer
+          }
         }),
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +206,7 @@ class InterestLibrary {
     return current_interest;
   }
 
-  async addOne(idObject, date, isCalled) {
+  async addOne(idObject, date, isCalled, versionObject, versionOffer {
     let response;
     try {
       let options = {
@@ -208,7 +214,13 @@ class InterestLibrary {
         body: JSON.stringify({
           "idObject": idObject,
           "availabilityDate": date,
-          "isCalled": isCalled
+          "isCalled": isCalled,
+          "object": {
+            "version": versionObject
+          },
+          "offer": {
+            "version": versionOffer
+          }
         }),
         headers: {
           "Content-Type": "application/json",
@@ -225,6 +237,7 @@ class InterestLibrary {
     }
     return newInterest;
   }
+  
 }
 
 export default InterestLibrary;

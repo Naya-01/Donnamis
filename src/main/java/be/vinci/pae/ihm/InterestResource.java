@@ -183,8 +183,7 @@ public class InterestResource {
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
-    if (interestDTO.getIdMember() == null
-        || interestDTO.getIdObject() == null) {
+    if (interestDTO.getIdMember() == null || interestDTO.getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
 

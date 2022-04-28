@@ -6,7 +6,6 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.dal.dao.InterestDAO;
-import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.dao.TypeDAO;
@@ -27,8 +26,6 @@ public class OfferUCCImpl implements OfferUCC {
   private ObjectDAO objectDAO;
   @Inject
   private InterestDAO interestDAO;
-  @Inject
-  private MemberDAO memberDAO;
   @Inject
   private TypeDAO typeDAO;
 
@@ -134,21 +131,27 @@ public class OfferUCCImpl implements OfferUCC {
   public OfferDTO updateOffer(OfferDTO offerDTO) {
     try {
       dalService.startTransaction();
-      // TODO verifier version objet
 
-      OfferDTO offer = offerDAO.updateOne(offerDTO);
-      if (offer == null) {
+      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (offerFromDB == null) {
         throw new NotFoundException("Aucune offre");
       }
 
+      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
+      }
+
+      OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
       if (offerDTO.getObject() != null) {
-        ObjectDTO objectFromDB = offerDAO.getOne(offerDTO.getIdOffer()).getObject();
-        offerDTO.getObject().setIdObject(objectFromDB.getIdObject());
-        offer.setObject(objectDAO.updateOne(offerDTO.getObject()));
+        if (!offerDTO.getObject().getVersion().equals(offerFromDB.getObject().getVersion())) {
+          throw new ForbiddenException("Les versions ne correspondent pas");
+        }
+        offerDTO.getObject().setIdObject(offerFromDB.getObject().getIdObject());
+        updatedOffer.setObject(objectDAO.updateOne(offerDTO.getObject()));
       }
 
       dalService.commitTransaction();
-      return offer;
+      return updatedOffer;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
@@ -237,37 +240,52 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+      // Retrieve offer from the DB
+      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (offerFromDB == null) {
+        throw new NotFoundException("Cette offre n'existe pas");
+      }
 
-      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      // Check if the offeror don't change the offer of anyone else
+      if (!ownerDTO.getMemberId().equals(offerFromDB.getObject().getIdOfferor())) {
         throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
-      if (offerDTO.getStatus().equals("given") || offerDTO.getStatus().equals("cancelled")) {
+      // Check if the offer has the correct status
+      if (offerFromDB.getStatus().equals("given") || offerFromDB.getStatus().equals("cancelled")) {
         throw new ForbiddenException("Impossible d'annuler l'offre");
       }
 
-      offerDTO.setStatus("cancelled");
-      offerDTO.getObject().setStatus("cancelled");
-
-      OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
-      if (offerDTO.getObject() != null) {
-        offerDTO.getObject().setIdObject(offerDTO.getObject().getIdObject());
-        updatedOffer.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      // Check the version of the offer
+      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(
-          updatedOffer.getObject().getIdObject());
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
+      }
+
+      // Change offerDB status and update
+      offerFromDB.setStatus("cancelled");
+      OfferDTO updatedOffer = offerDAO.updateOne(offerFromDB);
+
+      // Change object from offerDB status, add version to the object and update
+      offerFromDB.getObject().setStatus("cancelled");
+      updatedOffer.setObject(objectDAO.updateOne(offerFromDB.getObject()));
+
+      // Retrieve assigned interest for the object
+      InterestDTO interestDTO
+          = interestDAO.getAssignedInterest(offerFromDB.getObject().getIdObject());
+
       if (interestDTO != null) {
-        //Send notification
+        // Update notification of the interest
         interestDTO.setIsNotificated(true);
         interestDAO.updateNotification(interestDTO);
 
+        // Update status of the interest
         interestDTO.setStatus("published");
         interestDAO.updateStatus(interestDTO);
-        interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
-        interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
-
       }
 
       dalService.commitTransaction();
@@ -291,41 +309,62 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      offerDTO = offerDAO.getOne(offerDTO.getIdOffer());
+      // Retrieve offer from the DB
+      OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
 
-      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      if (offerFromDB == null) {
+        throw new NotFoundException("L'offre n'existe pas");
+      }
+
+      // Check if the offeror don't change the offer of anyone else
+      if (!ownerDTO.getMemberId().equals(offerFromDB.getObject().getIdOfferor())) {
         throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      // Check version of the offer
+      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
+      }
+
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
+      }
+
+      // Check if the object is assigned
+      InterestDTO interestDTO =
+          interestDAO.getAssignedInterest(offerFromDB.getObject().getIdObject());
       if (interestDTO == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+      // Retrieve the last offer of an object
+      offerFromDB = offerDAO.getLastObjectOffer(offerFromDB.getObject().getIdObject());
 
-      if (!offerDTO.getStatus().equals("assigned")) {
+      // Check if the offer is assigned
+      if (!offerFromDB.getStatus().equals("assigned")) {
         throw new ForbiddenException(
             "aucune offre attribuée n'existe pour que l'objet puisse être non collecté");
       }
 
-      //Send notification
+      // update the notification of the interest
       interestDTO.setIsNotificated(true);
       interestDAO.updateNotification(interestDTO);
 
+      // Update status of the interest
       interestDTO.setStatus("not_collected");
       interestDAO.updateStatus(interestDTO);
-      interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
-      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
-      offerDTO.setStatus("not_collected");
-      offerDTO.getObject().setStatus("not_collected");
+      // Update the status of the offer
+      offerFromDB.setStatus("not_collected");
+      OfferDTO updatedOffer = offerDAO.updateOne(offerFromDB);
 
-      offerDTO = offerDAO.updateOne(offerDTO);
-      offerDTO.setObject(objectDAO.updateOne(offerDTO.getObject()));
+      // Update the status of the object
+      offerFromDB.getObject().setStatus("not_collected");
+      updatedOffer.setObject(objectDAO.updateOne(offerFromDB.getObject()));
 
       dalService.commitTransaction();
-      return offerDTO;
+      return updatedOffer;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
@@ -345,49 +384,59 @@ public class OfferUCCImpl implements OfferUCC {
     try {
       dalService.startTransaction();
 
-      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
-
-      if (offerDTO == null) {
-        throw new NotFoundException("cet object n'existe pas");
+      // Get offer from db
+      OfferDTO offerFromDB = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
+      if (offerFromDB == null) {
+        throw new NotFoundException("Cette offre n'existe pas");
       }
 
-      if (!ownerDTO.getMemberId().equals(offerDTO.getObject().getIdOfferor())) {
+      // Check version of the offer
+      if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
+        throw new ForbiddenException("Les versions de l'offre ne correspondent pas");
+      }
+
+      // Check version of the object
+      if (!offerFromDB.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
+      }
+
+      // Check if the offeror don't change the offer of anyone else
+      if (!ownerDTO.getMemberId().equals(offerFromDB.getObject().getIdOfferor())) {
         throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
-      InterestDTO interestDTO = interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject());
+      // Get the assigned interest
+      InterestDTO interestDTO =
+          interestDAO.getAssignedInterest(offerFromDB.getObject().getIdObject());
       if (interestDTO == null) {
         throw new NotFoundException("aucun membre n'a été assigner");
       }
 
-      offerDTO = offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject());
-      System.out.println(offerDTO);
-      if (!offerDTO.getStatus().equals("assigned")) {
+      // Get offer from db
+      offerFromDB = offerDAO.getLastObjectOffer(offerFromDB.getObject().getIdObject());
+      if (!offerFromDB.getStatus().equals("assigned")) {
         throw new ForbiddenException(
             "aucune offre attribuée n'existe pour que l'objet puisse être donné");
       }
 
-      //Send notification
+      // Update interest notification
       interestDTO.setIsNotificated(true);
       interestDAO.updateNotification(interestDTO);
 
+      // Update interest status
       interestDTO.setStatus("received");
       interestDAO.updateStatus(interestDTO);
 
-      interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
-      interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
+      // Update offer
+      offerFromDB.setStatus("given");
+      OfferDTO updatedOffer = offerDAO.updateOne(offerFromDB);
 
-      offerDTO.getObject().setStatus("given");
-      offerDTO.setStatus("given");
-
-      ObjectDTO objectDTO = objectDAO.updateOne(offerDTO.getObject());
-
-      offerDTO = offerDAO.updateOne(offerDTO);
-
-      offerDTO.setObject(objectDTO);
+      // Update object
+      offerFromDB.getObject().setStatus("given");
+      updatedOffer.setObject(objectDAO.updateOne(offerFromDB.getObject()));
 
       dalService.commitTransaction();
-      return offerDTO;
+      return updatedOffer;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;

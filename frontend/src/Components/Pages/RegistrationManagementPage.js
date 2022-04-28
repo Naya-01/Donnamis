@@ -3,6 +3,8 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import SearchBar from "../Module/SearchBar";
 import managementList from "../Module/ManagementList";
 import autocomplete from "../Module/AutoComplete";
+import Notification from "../Module/Notification";
+const Toast = Notification.prototype.getNotification("bottom");
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';
@@ -10,8 +12,7 @@ const RegistrationManagementPage = async () => {
       "Rechercher une demande d'inscription", false);
 
   // Load base member
-  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("",
-      "waiting");
+  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("","waiting");
   await baseMembersList(members);
 
   // Search members by enter
@@ -75,14 +76,14 @@ const baseMembersList = async (members) => {
 
     // Show different buttons card depending on status
     if (member.status === "denied") {
-      deniedMemberButtons(member.memberId);
+      deniedMemberButtons(member.memberId, member.version);
     } else {
-      normalMemberButtons(member.memberId);
+      normalMemberButtons(member.memberId, member.version);
     }
   }
 }
 
-const normalMemberButtons = (idMember) => {
+const normalMemberButtons = (idMember, version) => {
   // Hide potential card textarea
   const cardForm = document.getElementById("card-form-" + idMember);
   cardForm.innerHTML = ``;
@@ -101,18 +102,18 @@ const normalMemberButtons = (idMember) => {
   const acceptedButton = document.getElementById(acceptedButtonId);
   refusedButton.addEventListener('click', () => {
     removeAllListeners(idMember);
-    refuseMember(idMember);
+    refuseMember(idMember, version);
   });
 
   // Accept member button
   acceptedButton.addEventListener('click', () => {
     removeAllListeners(idMember);
-    acceptMember(idMember);
+    acceptMember(idMember, version);
   });
 
 };
 
-const acceptMember = (idMember) => {
+const acceptMember = (idMember, version) => {
   // Change value of buttons
   const refusedButton = document.getElementById("refused-button-" + idMember);
   refusedButton.innerText = "Annuler";
@@ -148,6 +149,7 @@ const acceptMember = (idMember) => {
   // Confirm accept member
   acceptedButton.addEventListener('click', async () => {
     removeAllListeners(idMember);
+
     document.getElementById("member-card-" + idMember).hidden = true;
 
     // accept member db
@@ -156,12 +158,17 @@ const acceptMember = (idMember) => {
       role = "administrator";
     }
 
-    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role);
+    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role, version);
+
+    await Toast.fire({
+      icon: 'success',
+      title: 'Le membre a été accepté !'
+    });
 
   });
 }
 
-const refuseMember = (idMember) => {
+const refuseMember = (idMember, version) => {
   // Change value of buttons
   const refusedButton = document.getElementById("refused-button-" + idMember);
   refusedButton.innerText = "Annuler";
@@ -197,21 +204,29 @@ const refuseMember = (idMember) => {
 
   // Confirm ban
   acceptedButton.addEventListener('click', async () => {
+    // get the refusal reason
+    const refusalReason = document.getElementById("raisonRefus").value;
+
+    if (refusalReason.length === 0) {
+      await Toast.fire({
+        icon: 'error',
+        title: 'Veuillez entrer une raison de refus !'
+      });
+      return;
+    }
+
     removeAllListeners(idMember);
 
     // Hide the card
     document.getElementById("member-card-" + idMember).hidden = true;
 
-    // get the refusal reason
-    const refusalReason = document.getElementById("raisonRefus").value;
-
     // refuse member db
-    await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "");
+    await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);
   });
 
 };
 
-const deniedMemberButtons = (idMember) => {
+const deniedMemberButtons = (idMember, version) => {
   // Hide potential card textarea
   const cardForm = document.getElementById("card-form-" + idMember);
   cardForm.innerHTML = ``;
@@ -230,7 +245,7 @@ const deniedMemberButtons = (idMember) => {
     document.getElementById("member-card-" + idMember).hidden = true;
 
     // set member valid
-    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "");
+    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "", version);
 
     let pendingButton = document.getElementById("btn-radio-pending");
     pendingButton.click();

@@ -33,12 +33,19 @@ let imageOfObject;
 let localLinkImage;
 let description;
 let time_slot;
-let versionObject;
-let versionOffer;
 
 //for the member
 let idMemberConnected;
 let telNumber;
+let form = false;
+let localLinkImage;
+let statusObject;
+let note = 1;
+let offer;
+let idMemberConnected;
+let telNumber;
+let versionObject = 0;
+let versionOffer = 0;
 let versionMemberConnected;
 
 
@@ -68,6 +75,7 @@ const ObjectDetailsPage = async () => {
 
   // GET all informations of the object (and offer)
   offer = await offerLibrary.getOfferById(idOffer);
+  console.log(offer)
   if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
@@ -80,6 +88,8 @@ const ObjectDetailsPage = async () => {
   }
   description = offer.object.description;
   time_slot = offer.timeSlot;
+  statusObject = offer.status;
+  console.log(time_slot)
 
   versionObject = offer.object.version;
   versionOffer = offer.version;
@@ -153,7 +163,7 @@ const ObjectDetailsPage = async () => {
                           Plage horaire
                          </label>
                        </h5>
-                      <p id="time_slot">${time_slot}</p>
+                      <p id="time_slot">${offer.timeSlot}</p>
                     </div>
                 </div>
               <!-- The type -->
@@ -216,17 +226,17 @@ const ObjectDetailsPage = async () => {
   // if this is not the object of the member connected
   else {
     // we get the member that gives the object
-    console.log(offer)
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
-    if (!isInterested && (offer.status === "interested" || offer.status
-        === "available")) {
-      displayAddInterest();
-    } else if (offer.status === "given") {
-      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
+
+    if (!isInterested && (english_status === "interested" || english_status === "available")) {
+      console.log(offer.object.version, offer.version)
+      displayAddInterest(offer.object.version, offer.version);
+    } else if (english_status === "given") {
+      let current_rating = await ratingLibrary.getOne(idObject);
       if (current_rating === undefined) { // if there is no rating yet
         let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
@@ -251,7 +261,7 @@ const ObjectDetailsPage = async () => {
 /**
  * Display HTML elements to add an interest
  */
-function displayAddInterest() {
+function displayAddInterest(versionObject, versionOffer) {
   // date of disponibility
   let labelDate = document.createElement("label");
   labelDate.for = "input_date";
@@ -298,16 +308,18 @@ function displayAddInterest() {
   new_button.value = "Je suis interessé";
   new_button.type = "button";
   new_button.className = "btn btn-primary";
-  new_button.addEventListener("click", addOneInterest);
+  new_button.addEventListener("click", () => {
+    addOneInterest(versionObject, versionOffer);
+  });
   document.getElementById("divB").appendChild(new_button);
 }
 
 /**
  * Add an interest
- * @param {Event} e : evenement
+ * @param versionObject
+ * @param versionOffer
  */
-async function addOneInterest(e) {
-  e.preventDefault();
+async function addOneInterest(versionObject, versionOffer) {
   let input_date = document.getElementById("input_date");
   let new_button = document.getElementById("interestedButton");
   //if there is no date specified
@@ -352,7 +364,7 @@ async function addOneInterest(e) {
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
-      input_date.value, notificationCall);
+      input_date.value, notificationCall, versionObject, versionOffer);
   if (newInterest === undefined) {
     bottomNotification.fire({
       icon: 'error',
@@ -603,17 +615,13 @@ async function updateObject(e) {
     }
   }
 
-  if (!versionObject) {
-    versionObject = ""
-  }
-  if (!versionOffer) {
-    versionOffer = ""
-  }
+
 
   // Call the function to update the offer
-  let newOffer = await offerLibrary.updateOffer(offer.idOffer, new_time_slot,
-      new_description, offer.object.type.idType, offer.status, offer.status, versionObject,
-      versionOffer);
+
+  let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
+      new_description, idType, english_status, statusObject, versionObject++,
+      versionOffer++);
   if (newOffer === undefined) {
     bottomNotification.fire({
       icon: 'error',

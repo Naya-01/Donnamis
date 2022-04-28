@@ -95,6 +95,14 @@ const MyObjectsPage = async () => {
   });
 }
 
+/**
+ * Display all the offers
+ *
+ * @param searchPattern the search pattern for the offers (can be empty)
+ * @param type the type of the offers (can be empty)
+ * @param status the status of the offers (can be empty)
+ * @returns {Promise<void>}
+ */
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
   const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,
@@ -124,7 +132,9 @@ const objectCards = async (searchPattern, type, status) => {
       cancelButton.className = "btn btn-danger mt-3 mx-1";
       cancelButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.cancelObject(
-            offer.idOffer
+            offer.idOffer,
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage")
       });
@@ -214,7 +224,8 @@ const objectCards = async (searchPattern, type, status) => {
             btn.addEventListener("click", async e => {
               await InterestLibrary.prototype.assignOffer(
                   interest.idObject, interest.idMember,
-                  interest.version);
+                  interest.version, offer.version, offer.object.version
+              );
               Redirect("/myObjectsPage");
             })
           }
@@ -261,6 +272,8 @@ const objectCards = async (searchPattern, type, status) => {
       nonRealisedOfferButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.notCollectedObject(
             offer.idOffer,
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage");
       });
@@ -272,6 +285,8 @@ const objectCards = async (searchPattern, type, status) => {
       offeredObjectButton.addEventListener("click", async () => {
         await OfferLibrary.prototype.giveObject(
             offer.object.idObject,
+            offer.version,
+            offer.object.version
         );
         Redirect("/myObjectsPage");
       });

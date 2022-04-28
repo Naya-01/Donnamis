@@ -248,13 +248,15 @@ class OfferLibrary {
     }
   }
 
-  async giveObject(idObject) {
+  async giveObject(idObject, versionOffer, versionObject) {
     try {
       let options = {
         method: 'POST',
         body: JSON.stringify({
+          "version": versionOffer,
           "object": {
-            "idObject": idObject
+            "idObject": idObject,
+            "version": versionObject
           },
         }),
         headers: {
@@ -268,12 +270,16 @@ class OfferLibrary {
     }
   }
 
-  async cancelObject(idOffer) {
+  async cancelObject(idOffer, versionOffer, versionObject) {
     try {
       let options = {
         method: 'POST',
         body: JSON.stringify({
           "idOffer": idOffer,
+          "version": versionOffer,
+          "object": {
+            "version": versionObject
+          }
         }),
         headers: {
           "Content-Type": "application/json",
@@ -287,12 +293,16 @@ class OfferLibrary {
 
   }
 
-  async notCollectedObject(idOffer) {
+  async notCollectedObject(idOffer, versionOffer, versionObject) {
     try {
       let options = {
         method: 'POST',
         body: JSON.stringify({
           "idOffer": idOffer,
+          "version": versionOffer,
+          "object": {
+            "version": versionObject
+          }
         }),
         headers: {
           "Content-Type": "application/json",

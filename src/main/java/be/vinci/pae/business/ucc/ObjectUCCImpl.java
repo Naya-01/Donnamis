@@ -104,13 +104,14 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @param objectDTO : object that we want to update.
    * @return object updated
    */
+  @Override
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     ObjectDTO object;
     try {
       dalService.startTransaction();
       object = objectDAO.getOne(objectDTO.getIdObject());
       if (object == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
       }
       object = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();
@@ -129,19 +130,24 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @return Object modified.
    */
   @Override
-  public ObjectDTO updateObjectPicture(String internalPath, int id) {
+  public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
     ObjectDTO objectDTO = null;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
       }
 
       File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
       if (f.exists()) {
         f.delete();
       }
+
+      // TODO VERSION !!!
+      /*if (!objectDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
+      }*/
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();
