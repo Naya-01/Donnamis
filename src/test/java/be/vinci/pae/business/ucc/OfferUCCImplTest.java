@@ -337,6 +337,34 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test updateOffer success with object updated")
+  @Test
+  public void testUpdateOfferSuccessWithObjectUpdated() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(1);
+    offerDTO.setVersion(1);
+    offerDTO.setVersion(13);
+    offerDTO.getObject().setIdObject(11);
+
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(1);
+    offerDTOFromDao.setVersion(1);
+    offerDTOFromDao.setVersion(13);
+    offerDTOFromDao.getObject().setIdObject(12);
+
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+    Mockito.when(offerDAO.updateOne(offerDTO)).thenReturn(offerDTOFromDao);
+    Mockito.when(objectDAO.updateOne(offerDTO.getObject())).thenReturn(offerDTOFromDao.getObject());
+
+    assertAll(
+        () -> assertEquals(offerDTOFromDao, offerUCC.updateOffer(offerDTO)),
+        () -> assertEquals(offerDTO.getObject().getIdObject(),
+            offerUCC.updateOffer(offerDTO).getObject().getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
   /*
 
   @DisplayName("Test updateOffer with the fields of the offers empty")
