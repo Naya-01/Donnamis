@@ -13,7 +13,7 @@ const regNumberPhone =
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification("top-end");
+const toast = new Notification().getNotification("bottom");
 
 const htmlPage = `
           <div class="container mt-5">
