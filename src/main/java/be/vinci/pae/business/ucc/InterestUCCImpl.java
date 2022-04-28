@@ -43,7 +43,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       InterestDTO interestDTO = interestDAO.getOne(idObject, idMember);
       if (interestDTO == null) {
-        throw new NotFoundException("Interest not found");
+        throw new NotFoundException("Intérêt non trouvé");
       }
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
@@ -69,13 +69,13 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       if (interestDAO.getOne(item.getIdObject(), item.getIdMember()) != null) {
         //change name exception
-        throw new ForbiddenException("An Interest for this Object and Member already exists");
+        throw new ForbiddenException("Un intérêt pour cet objet et ce membre existe déjà !");
       }
       // if there is no interest
       if (interestDAO.getAllCount(item.getIdObject()) == 0) {
         ObjectDTO objectDTO = objectDAO.getOne(item.getIdObject());
         if (objectDTO == null) {
-          throw new NotFoundException("Object not found");
+          throw new NotFoundException("Objet non trouvé !");
         }
         if (!objectDTO.getVersion().equals(item.getObject().getVersion())) {
           throw new ForbiddenException("Les versions ne correspondent pas");
@@ -223,7 +223,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       ObjectDTO objectDTO = objectDAO.getOne(idObject);
       if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé !");
       }
 
       if (!offeror.getMemberId().equals(objectDTO.getIdOfferor())) {
@@ -288,7 +288,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       ObjectDTO objectDTO = objectDAO.getOne(idObject);
       if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé !");
       }
       count = interestDAO.getAllPublishedCount(idObject);
 

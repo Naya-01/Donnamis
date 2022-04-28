@@ -111,7 +111,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       dalService.startTransaction();
       object = objectDAO.getOne(objectDTO.getIdObject());
       if (object == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
       }
       object = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();
@@ -136,7 +136,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
       }
 
       File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
@@ -148,7 +148,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       /*if (!objectDTO.getVersion().equals(version)) {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }*/
-
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();
