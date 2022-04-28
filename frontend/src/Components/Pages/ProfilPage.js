@@ -334,7 +334,7 @@ const modifyProfilRender = async () => {
     let newMember = new Member(username.value.split(' ').join(''),
         lastname.value.trim(), firstname.value.trim(), password.value.trim(),
         nullFields[0] === null ? null : nullFields[0], newAddress,
-        member.version,
+        member.version, null, null, null,
         member.memberId);
     let memberWithImage;
 

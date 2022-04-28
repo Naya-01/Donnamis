@@ -161,43 +161,6 @@ class MemberLibrary {
   }
 
   /**
-   * Update a user with his arguments.
-   * @param status of the member.
-   * @param memberId id of the member.
-   * @param reasonRefusal reason of the refusal.
-   * @param role of the member.
-   * @param version of the update.
-   * @returns {Promise<null|any>} the member updated in json.
-   */
-  async updateStatus(status, memberId, reasonRefusal, role, version) {
-    let response;
-    try {
-      let options = {
-        method: "PUT",
-        body: JSON.stringify({
-          "status": status,
-          "reasonRefusal": reasonRefusal,
-          "memberId": memberId,
-          "role": role,
-          "version": version,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      response = await fetch("api/member/update", options);
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-    if (response.status === 200) {
-      return await response.json();
-    }
-    return null;
-  }
-
-  /**
    * Update the member by his data.
    * @param member datas to update.
    * @returns {Promise<null|any>} the member updated in json

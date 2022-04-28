@@ -4,6 +4,7 @@ import SearchBar from "../Module/SearchBar";
 import managementList from "../Module/ManagementList";
 import autocomplete from "../Module/AutoComplete";
 import Notification from "../Module/Notification";
+import Member from "../../Domain/Member";
 const Toast = Notification.prototype.getNotification("bottom");
 
 const RegistrationManagementPage = async () => {
@@ -157,9 +158,9 @@ const acceptMember = (idMember, version) => {
     if (document.getElementById("flexCheckDefault").checked) {
       role = "administrator";
     }
-
-    await MemberLibrary.prototype.updateStatus("valid", idMember, "", role, version);
-
+    let memberToUpdate = new Member(null, null, null,
+        null, null, null, version, role, null, "valid", idMember);
+    await MemberLibrary.prototype.updateMember(memberToUpdate);
     await Toast.fire({
       icon: 'success',
       title: 'Le membre a été accepté !'
@@ -220,8 +221,12 @@ const refuseMember = (idMember, version) => {
     // Hide the card
     document.getElementById("member-card-" + idMember).hidden = true;
 
+    let memberToUpdate = new Member(null, null, null,
+        null, null, null, version, null, refusalReason, "denied", idMember);
+
     // refuse member db
-    await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);
+    //await MemberLibrary.prototype.updateStatus("denied", idMember, refusalReason, "", version);
+    await MemberLibrary.prototype.updateMember(memberToUpdate);
   });
 
 };
@@ -244,8 +249,11 @@ const deniedMemberButtons = (idMember, version) => {
     // Hide the member card
     document.getElementById("member-card-" + idMember).hidden = true;
 
+    let memberToUpdate = new Member(null, null, null,
+        null, null, null, version, null, null, "pending", idMember);
+    await MemberLibrary.prototype.updateMember(memberToUpdate);
     // set member valid
-    await MemberLibrary.prototype.updateStatus("pending", idMember, "", "", version);
+    //await MemberLibrary.prototype.updateStatus("pending", idMember, "", "", version);
 
     let pendingButton = document.getElementById("btn-radio-pending");
     pendingButton.click();

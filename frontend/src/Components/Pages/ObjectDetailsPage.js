@@ -349,9 +349,10 @@ async function addOneInterest(versionObject, versionOffer) {
       return;
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
-      let member = new Member(null, null, null,
-          null, numTel, null, versionMemberConnected, idMemberConnected);
-      await memberLibrary.updateMember(member);
+      let memberToUpdate = new Member(null, null, null,
+          null, numTel, null, versionMemberConnected,null,
+          null,null, idMemberConnected);
+      await memberLibrary.updateMember(memberToUpdate);
       versionMemberConnected += 1;
     }
   }

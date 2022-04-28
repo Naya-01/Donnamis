@@ -7,6 +7,7 @@ import {RedirectWithParamsInUrl} from "../Router/Router";
 import Notification from "../Module/Notification";
 import autocomplete from "../Module/AutoComplete";
 import noImage from "../../img/noImage.png";
+import Member from "../../Domain/Member";
 
 /**
  * Render the Members page
@@ -190,8 +191,10 @@ const baseMembersList = async (members) => {
         "promote-" + member.memberId);
     if (promoteMemberButton) {
       promoteMemberButton.addEventListener('click', async () => {
-        await MemberLibrary.prototype.updateStatus("", member.memberId, "",
-            "administrator", member.version);
+        let memberToUpdate = new Member(null, null, null,
+            null, null, null, member.version,
+            "administrator", null, null, member.memberId);
+        await MemberLibrary.prototype.updateMember(memberToUpdate);
         Notification.prototype.getNotification().fire({
           icon: 'success',
           title: "Utilisateur promu !"

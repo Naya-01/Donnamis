@@ -221,7 +221,7 @@ const RegisterPage = async () => {
           postcode.value.trim(), commune.value.trim(), 1);
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-          phoneNumber.value.trim(), address, 1);
+          phoneNumber.value.trim(), address, 1, null, null, null);
       // register request
       let isRegistered = await memberLibrary.registerMember(member);
       //if the member could be registered
