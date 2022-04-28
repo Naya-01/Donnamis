@@ -8,6 +8,7 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
+import be.vinci.pae.utils.JsonViews;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -51,7 +52,9 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO getObject(@PathParam("id") int id) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource getObject");
-    return objectUCC.getObject(id);
+    ObjectDTO objectDTO = objectUCC.getObject(id);
+    objectDTO = JsonViews.filterPublicJsonView(objectDTO, ObjectDTO.class);
+    return objectDTO;
   }
 
   /**
@@ -89,8 +92,10 @@ public class ObjectResource {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
-
-    return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject(), version);
+    ObjectDTO object = objectUCC.updateObjectPicture(
+        internalPath, objectDTO.getIdObject(), version);
+    object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
+    return object;
   }
 
   /**
@@ -125,7 +130,9 @@ public class ObjectResource {
   @Authorize
   public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource getAllObjectMember");
-    return objectUCC.getAllObjectMember(idMember);
+    List<ObjectDTO> objectDTOList = objectUCC.getAllObjectMember(idMember);
+    objectDTOList = JsonViews.filterPublicJsonViewAsList(objectDTOList, ObjectDTO.class);
+    return objectDTOList;
   }
 
   /**
@@ -141,7 +148,9 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource updateOne");
-    return objectUCC.updateOne(objectDTO);
+    ObjectDTO object = objectUCC.updateOne(objectDTO);
+    object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
+    return object;
   }
 
 
