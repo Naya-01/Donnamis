@@ -282,7 +282,7 @@ class MemberUCCImplTest {
         () -> assertEquals(memberDTOWithNewProfilPic, memberUCC
             .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(), 1)),
         () -> assertNotEquals(memberDTO.getImage(), memberUCC
-            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(),1).getImage()),
+            .updateProfilPicture(pathImage + "test", memberDTO.getMemberId(), 1).getImage()),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );

@@ -113,7 +113,7 @@ public class MemberDAOImpl implements MemberDAO {
       preparedStatement.setString(7, member.getPassword());
       preparedStatement.setString(8, member.getReasonRefusal());
       preparedStatement.setString(9, member.getImage());
-      MemberDTO memberDTO =  getMemberByPreparedStatement(preparedStatement);
+      MemberDTO memberDTO = getMemberByPreparedStatement(preparedStatement);
       preparedStatement.getResultSet().close();
       return memberDTO;
     } catch (SQLException e) {

@@ -839,6 +839,7 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
   //  ---------------------------- ADD OBJECT UCC  -------------------------------  //
 
 
