@@ -133,15 +133,15 @@ public class OfferUCCImpl implements OfferUCC {
       dalService.startTransaction();
 
       OfferDTO offerFromDB = offerDAO.getOne(offerDTO.getIdOffer());
+      if (offerFromDB == null) {
+        throw new NotFoundException("Aucune offre");
+      }
+
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
       OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
-      if (updatedOffer == null) {
-        throw new NotFoundException("Aucune offre");
-      }
-
       if (offerDTO.getObject() != null) {
         if (!offerDTO.getObject().getVersion().equals(offerFromDB.getObject().getVersion())) {
           throw new ForbiddenException("Les versions ne correspondent pas");
