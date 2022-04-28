@@ -132,7 +132,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    */
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
-    ObjectDTO objectDTO = null;
+    ObjectDTO objectDTO;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);

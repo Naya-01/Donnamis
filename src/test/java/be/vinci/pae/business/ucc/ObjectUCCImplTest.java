@@ -11,6 +11,7 @@ import be.vinci.pae.business.factories.ObjectFactory;
 import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import java.util.ArrayList;
@@ -204,6 +205,22 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
+            () -> objectUCC.updateObjectPicture(pathImage, 1, 1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
+            .getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test updateObjectPicture with differents versions")
+  @Test
+  public void testUpdateObjectPictureWithDifferentsVersions() {
+    objectDTO.setVersion(1);
+    objectDTOUpdated.setVersion(2);
+    Mockito.when(mockObjectDAO.getOne(1)).thenReturn(objectDTOUpdated);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
             () -> objectUCC.updateObjectPicture(pathImage, 1, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
