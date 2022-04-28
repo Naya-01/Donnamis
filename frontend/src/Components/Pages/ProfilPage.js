@@ -14,7 +14,7 @@ const translationRoles = new Map([
 ]);
 
 const memberLibrary = new MemberLibrary();
-const toast = new Notification().getNotification("top-end");
+const toast = new Notification().getNotification("bottom");
 
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
 const regNumberPhone =
@@ -36,7 +36,7 @@ const modifyProfilRender = async () => {
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle clickable" width="15%" alt="profil image" id="image">
+        <img src="${image}" class="profil-picture img-thumbnail rounded-circle clickable" alt="profil image" id="image">
         <input type="file" id="upload" style="display:none" name="upload">
         <p>${translationRoles.get(member.role)}</p>
         
@@ -394,7 +394,7 @@ const profilRender = async () => {
   let page = `
     <div class="container mt-5">
       <div class="text-center">
-        <img src="${image}" class="rounded-circle" width="15%" alt="profil image">
+        <img src="${image}" class="profil-picture rounded-circle img-thumbnail" alt="profil image">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">

@@ -93,6 +93,7 @@
   position: relative;
   display: inline-block;
 }
+
 /*input {*/
 /*  border: 1px solid transparent;*/
 /*  background-color: #f1f1f1;*/
@@ -107,6 +108,7 @@ input[type=submit] {
   background-color: DodgerBlue;
   color: #fff;
 }
+
 .autocomplete-items {
   position: absolute;
   border: 1px solid #d4d4d4;
@@ -118,18 +120,26 @@ input[type=submit] {
   left: 0;
   right: 0;
 }
+
 .autocomplete-items div {
   padding: 10px;
   cursor: pointer;
   background-color: #fff;
   border-bottom: 1px solid #d4d4d4;
 }
+
 .autocomplete-items div:hover {
   /*when hovering an item:*/
   background-color: #e9e9e9;
 }
+
 .autocomplete-active {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+
+.profil-picture {
+  width: 250px;
+  height: 250px;
 }
