@@ -138,7 +138,9 @@ public class ObjectDAOImpl implements ObjectDAO {
       preparedStatement.executeQuery();
 
       ResultSet resultSet = preparedStatement.getResultSet();
-
+      if (!resultSet.next()) {
+        return null;
+      }
       setObject(objectDTO, resultSet);
       preparedStatement.close();
       resultSet.close();
