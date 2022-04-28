@@ -246,10 +246,6 @@ public class MemberUCCImpl implements MemberUCC {
         throw new NotFoundException("Le membre est inexistant.");
       }
 
-      if (memberDAO.getOne(memberDTO.getUsername()) != null) {
-        throw new ForbiddenException("Ce nom d'utilisateur est déjà utilisé !");
-      }
-
       // check the version of member
       if (memberDTO.getVersion() == null
           || !memberDTO.getVersion().equals(memberInDB.getVersion())) {
