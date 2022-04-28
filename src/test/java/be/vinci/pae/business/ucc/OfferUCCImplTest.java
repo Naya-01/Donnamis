@@ -1339,4 +1339,23 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test addOffer with already an existing offer that is not cancelled/not collected")
+  @Test
+  public void testAddOfferWithAlreadyAnExistingOfferThatIsNotCancelledNorNotCollected() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(13);
+    offerDTO.setStatus("available");
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.addOffer(offerDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
