@@ -258,12 +258,31 @@ class OfferUCCImplTest {
   @DisplayName("Test updateOffer with getOneOffer returning null from dao")
   @Test
   public void testUpdateOfferWithGetOneReturningNullFromDAO() {
-    OfferDTO offerDTO = Mockito.mock(OfferDTO.class);
+    OfferDTO offerDTO = getNewOffer();
     offerDTO.setIdOffer(1);
     offerDTO.setVersion(1);
     Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.updateOffer(offerDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test updateOffer with not same version offer")
+  @Test
+  public void testUpdateOfferWithNotSameVersionOffer() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.setIdOffer(1);
+    offerDTO.setVersion(1);
+    offerDTO.setVersion(11);
+    OfferDTO offerDTOFromDao = getNewOffer();
+    offerDTOFromDao.setIdOffer(1);
+    offerDTOFromDao.setVersion(1);
+    offerDTOFromDao.setVersion(13);
+    Mockito.when(offerDAO.getOne(offerDTO.getIdOffer())).thenReturn(offerDTOFromDao);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> offerUCC.updateOffer(offerDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
