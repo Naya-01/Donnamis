@@ -642,6 +642,33 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test getNotifications with 1 notification interest")
+  @Test
+  public void testGetNotificationsWith1NotificationInterest() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
+    interestDTONotificated.setIsNotificated(true);
+    interestDTONotificated.setIdMember(memberDTO.getMemberId());
+    interestDTONotificated.setIdObject(2);
+
+    List<InterestDTO> interestDTOList = new ArrayList<>();
+    interestDTOList.add(interestDTONotificated);
+
+    Mockito.when(mockInterestDAO.getAllNotifications(memberDTO.getMemberId()))
+        .thenReturn(interestDTOList);
+
+    List<InterestDTO> listOfNotifications = interestUCC.getNotifications(memberDTO);
+
+    assertAll(
+        () -> assertEquals(listOfNotifications, interestDTOList),
+        () -> assertTrue(listOfNotifications.contains(interestDTONotificated)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
