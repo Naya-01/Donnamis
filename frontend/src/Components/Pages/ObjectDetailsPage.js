@@ -20,8 +20,8 @@ const interestLibrary = new InterestLibrary();
 const ratingLibrary = new RatingLibrary();
 const bottomNotification = new Notification().getNotification();
 const dictionnary = new Map([
-  ['interested', 'Disponible'],
-  ['available', 'Disponible'],
+  ['interested', 'Intéressé'],
+  ['available', 'Publié'],
   ['assigned', 'En cours de donnation'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
