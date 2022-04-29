@@ -741,6 +741,28 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test markNotificationShown with an interest already shown")
+  @Test
+  public void testMarkNotificationShownWithAnInterestAlreadyShown() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIsNotificated(false);
+    interestDTO.setIdObject(12);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
