@@ -160,9 +160,9 @@ class InterestUCCImplTest {
   }
 
   //------------------------------- ADD ONE InterestUCC---------------------------------------
-  @DisplayName("test addOne with already an existing interest")
+  @DisplayName("test addOne with already an existent interest")
   @Test
-  public void testAddOneWithAlreadyAnExistingInterest() {
+  public void testAddOneWithAlreadyAnExistentInterest() {
     objectDTO.setIdObject(12);
     interestDTO.setObject(objectDTO);
     interestDTO.setIdMember(1);
@@ -178,9 +178,9 @@ class InterestUCCImplTest {
     );
   }
 
-  @DisplayName("test addOne with non existing object")
+  @DisplayName("test addOne with non existent object")
   @Test
-  public void testAddOneWithNonExistingObject() {
+  public void testAddOneWithNonExistentObject() {
     objectDTO.setIdObject(12);
     interestDTO.setObject(objectDTO);
     interestDTO.setIdMember(1);
@@ -189,8 +189,6 @@ class InterestUCCImplTest {
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(null);
-    Mockito.when(interestDAO.getAllCount(interestDTO.getIdObject()))
-        .thenReturn(0);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -200,23 +198,18 @@ class InterestUCCImplTest {
     );
   }
 
-  @DisplayName("test addOne with object of interest not same version")
+  @DisplayName("test addOne with object of interest having status neither interested nor available")
   @Test
-  public void testAddOneWithObjectInterestNotSameVersion() {
+  public void testAddOneWithObjectInterestCancelStatus() {
     objectDTO.setIdObject(12);
-    objectDTO.setVersion(15);
+    objectDTO.setStatus("given");
     interestDTO.setObject(objectDTO);
     interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
-    ObjectDTO objectDTO = objectFactory.getObjectDTO();
-    objectDTO.setVersion(13);
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(objectDTO);
-    Mockito.when(interestDAO.getAllCount(interestDTO.getIdObject()))
-        .thenReturn(0);
-
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
