@@ -2,6 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -140,6 +141,7 @@ public class InterestResource {
     List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject,
         authenticatedUser);
     filterMember(interestDTOList);
+    filterObject(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
@@ -160,6 +162,7 @@ public class InterestResource {
     List<InterestDTO> interestDTOList = interestUCC.getNotifications(
         authenticatedUser);
     filterMember(interestDTOList);
+    filterObject(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
@@ -230,6 +233,7 @@ public class InterestResource {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
     filterMember(interestDTOList);
+    filterObject(interestDTOList);
     interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
@@ -243,6 +247,19 @@ public class InterestResource {
     for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setMember(
           JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+  }
+
+  /**
+   * Filter the Object in each object interest.
+   *
+   * @param interestDTOList the list we want to filter
+   */
+  private void filterObject(List<InterestDTO> interestDTOList){
+    for(InterestDTO interestDTO : interestDTOList ){
+      interestDTO.setObject(
+          JsonViews.filterPublicJsonView(interestDTO.getObject(), ObjectDTO.class)
+      );
     }
   }
 
