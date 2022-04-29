@@ -11,9 +11,11 @@ import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
+import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -34,7 +36,7 @@ class InterestUCCImplTest {
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
   private MemberDAO mockMemberDAO;
-  private InterestDAO interestDAO;
+  private OfferDAO mockOfferDAO;
   private DALService mockDalService;
   private ObjectDTO objectDTO;
   private InterestDTO interestDTO;
@@ -42,6 +44,7 @@ class InterestUCCImplTest {
   private int nonExistentId = 1000;
   private ObjectFactory objectFactory;
   private InterestFactory interestFactory;
+  private OfferFactory offerFactory;
   private MemberFactory memberFactory;
 
   @BeforeEach
@@ -49,7 +52,7 @@ class InterestUCCImplTest {
     this.interestUCC = locator.getService(InterestUCC.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
-    this.interestDAO = locator.getService(InterestDAO.class);
+    this.mockOfferDAO = locator.getService(OfferDAO.class);
     this.mockMemberDAO = locator.getService(MemberDAO.class);
     this.mockDalService = locator.getService(DALService.class);
     ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
@@ -65,6 +68,7 @@ class InterestUCCImplTest {
     this.interestDTO.setIdObject(objectDTO.getIdObject());
     this.newInterestDTO = interestFactory.getInterestDTO();
     this.objectFactory = locator.getService(ObjectFactory.class);
+    this.offerFactory = locator.getService(OfferFactory.class);
     this.interestFactory = locator.getService(InterestFactory.class);
     this.memberFactory = locator.getService(MemberFactory.class);
   }
@@ -212,6 +216,31 @@ class InterestUCCImplTest {
         .thenReturn(objectDTO);
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test addOne with non existent offer interest")
+  @Test
+  public void testAddOneWithNonExistentOfferInterest() {
+    objectDTO.setIdObject(12);
+    objectDTO.setStatus("available");
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(objectDTO.getIdObject()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))

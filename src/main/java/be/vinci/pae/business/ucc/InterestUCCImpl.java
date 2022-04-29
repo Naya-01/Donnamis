@@ -82,7 +82,7 @@ public class InterestUCCImpl implements InterestUCC {
       }
       OfferDTO offerDTO = offerDAO.getLastObjectOffer(objectDTO.getIdObject());
       if (offerDTO == null) {
-        throw new NotFoundException("Objet non trouvé !");
+        throw new NotFoundException("Offre non trouvée !");
       }
       if (!offerDTO.getStatus().equals("interested") && !offerDTO.getStatus().equals("available")) {
         throw new ForbiddenException("L'objet doit être disponible pour marquer son intérêt.");
