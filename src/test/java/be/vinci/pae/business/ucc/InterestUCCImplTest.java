@@ -8,15 +8,12 @@ import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
-import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
-import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
-import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
@@ -201,19 +198,23 @@ class InterestUCCImplTest {
     );
   }
 
-  @DisplayName("test addOne with non existent object in db")
+  @DisplayName("test addOne with object of interest not same version")
   @Test
-  public void testAddOneWithNonExistingInterestForTheObjectNonExistentObjectInDb() {
+  public void testAddOneWithObjectInterestNotSameVersion() {
     objectDTO.setIdObject(12);
+    objectDTO.setVersion(15);
     interestDTO.setObject(objectDTO);
     interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setVersion(13);
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
         .thenReturn(null);
-    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getIdObject()))
-        .thenReturn(0);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
     assertAll(
-        () -> assertThrows(ConflictException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -221,7 +222,8 @@ class InterestUCCImplTest {
     );
   }
 
-
+  //----------------------
+  /*
   @DisplayName("test addOne with a good interest")
   @Test
   public void testAddOneWithAGoodInterest() {
@@ -297,6 +299,9 @@ class InterestUCCImplTest {
             .commitTransaction()
     );
   }
+
+
+   */
 
 /*
   @DisplayName("test getInterestedCount with non-existent object")

@@ -77,11 +77,11 @@ public class InterestUCCImpl implements InterestUCC {
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé !");
       }
+      if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
+        throw new ForbiddenException("Les versions ne correspondent pas");
+      }
 
       if (interestDAO.getAllCount(interest.getIdObject()) == 0) {
-        if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
-          throw new ForbiddenException("Les versions ne correspondent pas");
-        }
 
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
