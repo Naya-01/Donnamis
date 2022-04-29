@@ -840,6 +840,29 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test getInterestedCount success but the member is interested in the object")
+  @Test
+  public void testGetInterestedCountSuccessWithIsUserInterested() {
+    objectDTO.setIdObject(15);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getAllPublishedCount(objectDTO.getIdObject()))
+        .thenReturn(3);
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestFactory.getInterestDTO());
+
+    JsonNode result = interestUCC.getInterestedCount(objectDTO.getIdObject(), memberDTO);
+    assertAll(
+        () -> assertEquals(3, Integer.parseInt(result.get("count").toString())),
+        () -> assertTrue(Boolean.parseBoolean(result.get("isUserInterested").toString())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
