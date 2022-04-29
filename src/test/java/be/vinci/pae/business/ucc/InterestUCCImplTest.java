@@ -797,6 +797,25 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ----------------------------GET INTERESTED COUNT UCC  -------------------------------  //
+
+  @DisplayName("Test getInterestedCount with non existent object")
+  @Test
+  public void testGetInterestedCountWithNonExistentObject() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockObjectDAO.getOne(nonExistentId))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.getInterestedCount(nonExistentId, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
