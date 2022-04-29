@@ -8,7 +8,7 @@ public interface TypeDTO {
 
   Integer getIdType();
 
-  void setId(int idType);
+  void setIdType(int idType);
 
   String getTypeName();
 

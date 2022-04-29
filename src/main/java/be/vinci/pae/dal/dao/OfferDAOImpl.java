@@ -371,7 +371,7 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.setVersion(resultSet.getInt(13));
 
       TypeDTO typeDTO = typeFactory.getTypeDTO();
-      typeDTO.setId(resultSet.getInt(5));
+      typeDTO.setIdType(resultSet.getInt(5));
       typeDTO.setTypeName(resultSet.getString(10));
       typeDTO.setIsDefault(resultSet.getBoolean(11));
 

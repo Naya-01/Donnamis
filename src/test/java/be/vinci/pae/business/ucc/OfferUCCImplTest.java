@@ -59,7 +59,7 @@ class OfferUCCImplTest {
   private OfferDTO getNewOffer() {
     TypeDTO typeDTO = typeFactory.getTypeDTO();
     typeDTO.setTypeName("Jouets");
-    typeDTO.setId(1);
+    typeDTO.setIdType(1);
 
     ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(3);
@@ -848,7 +848,7 @@ class OfferUCCImplTest {
   @Test
   public void testAddObjectSuccessWithExistentType() {
     TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setIdType(5);
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
@@ -883,7 +883,7 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setIdOffer(5);
 
     TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setIdType(5);
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
@@ -914,7 +914,7 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setIdOffer(5);
 
     TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setIdType(5);
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
@@ -945,7 +945,7 @@ class OfferUCCImplTest {
     offerDTOFromDAO.setIdOffer(5);
 
     TypeDTO typeDTOFromDaoGetOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoGetOne.setId(5);
+    typeDTOFromDaoGetOne.setIdType(5);
     typeDTOFromDaoGetOne.setTypeName("Jouets");
     typeDTOFromDaoGetOne.setIsDefault(true);
 
@@ -973,7 +973,7 @@ class OfferUCCImplTest {
   public void testAddObjectWithNonExistentTypeAndAddOneTypeReturnsANewType() {
 
     TypeDTO typeDTOFromDaoAddOne = typeFactory.getTypeDTO();
-    typeDTOFromDaoAddOne.setId(5);
+    typeDTOFromDaoAddOne.setIdType(5);
     typeDTOFromDaoAddOne.setTypeName("Jouets");
     typeDTOFromDaoAddOne.setIsDefault(true);
 
