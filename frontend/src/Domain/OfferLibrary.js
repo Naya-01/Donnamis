@@ -1,4 +1,6 @@
 import {getSessionObject} from "../utils/session";
+import Swal from "sweetalert2";
+import Notification from "../Components/Module/Notification";
 
 class OfferLibrary {
 
@@ -81,6 +83,22 @@ class OfferLibrary {
         },
       };
       response = await fetch("api/offers/newOffer", options);
+      let toast = Notification.prototype.getNotification("bottom");
+      if (!response.ok) {
+        response.text().then((msg) => {
+          Swal.close();
+          toast.fire({
+            icon: 'error',
+            title: msg
+          });
+        })
+      } else {
+        Swal.close();
+        toast.fire({
+          icon: 'success',
+          title: "L'objet est de nouveau disponible"
+        })
+      }
     } catch (err) {
       console.log(err);
     }
@@ -313,7 +331,24 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      await fetch('api/offers/give', options)
+      const response = await fetch('api/offers/give', options);
+      let toast = Notification.prototype.getNotification("bottom");
+      if (!response.ok) {
+        response.text().then((msg) => {
+          Swal.close();
+          toast.fire({
+            icon: 'error',
+            title: msg
+          });
+        })
+      } else {
+        Swal.close();
+        toast.fire({
+          icon: 'success',
+          title: "L'objet a été donné"
+        })
+      }
+      return response;
     } catch (err) {
       console.log(err);
     }
@@ -343,7 +378,24 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      await fetch('api/offers/cancelOffer/', options)
+      const response = await fetch('api/offers/cancelOffer/', options);
+      let toast = Notification.prototype.getNotification("bottom");
+      if (!response.ok) {
+        response.text().then((msg) => {
+          Swal.close();
+          toast.fire({
+            icon: 'error',
+            title: msg
+          });
+        })
+      } else {
+        Swal.close();
+        toast.fire({
+          icon: 'success',
+          title: "L'objet a été annulé"
+        })
+      }
+      return response;
     } catch (err) {
       console.log(err);
     }
@@ -374,7 +426,24 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      await fetch('api/offers/notCollected/', options)
+      const response = await fetch('api/offers/notCollected/', options);
+      let toast = Notification.prototype.getNotification("bottom");
+      if (!response.ok) {
+        response.text().then((msg) => {
+          Swal.close();
+          toast.fire({
+            icon: 'error',
+            title: msg
+          });
+        })
+      } else {
+        Swal.close();
+        toast.fire({
+          icon: 'success',
+          title: "L'objet a été signalé comme non collecté"
+        })
+      }
+      return response;
     } catch (err) {
       console.log(err);
     }
