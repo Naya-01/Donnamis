@@ -73,16 +73,14 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
       }
       // if there is no interest
-      ObjectDTO objectDTO = objectDAO.getOne(interest.getIdObject());
-      if (objectDTO == null) {
-        throw new NotFoundException("Objet non trouvé !");
-      }
-      if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
-      }
-
       if (interestDAO.getAllCount(interest.getIdObject()) == 0) {
-
+        ObjectDTO objectDTO = objectDAO.getOne(interest.getIdObject());
+        if (objectDTO == null) {
+          throw new NotFoundException("Objet non trouvé !");
+        }
+        if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
+          throw new ForbiddenException("Les versions ne correspondent pas");
+        }
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
