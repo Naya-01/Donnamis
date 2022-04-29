@@ -61,11 +61,7 @@ public class OfferDAOImpl implements OfferDAO {
       query += "AND ob.id_offeror = ? ";
     }
     if (objectStatus != null && !objectStatus.isEmpty()) {
-      if (objectStatus.equals("available")) {
-        query += "AND (LOWER(of.status) LIKE 'available' OR LOWER(of.status) LIKE 'interested') ";
-      } else {
-        query += "AND LOWER(of.status) LIKE ? ";
-      }
+      query += "AND LOWER(of.status) LIKE ? ";
     }
     query += " ORDER BY of.date DESC";
 
@@ -84,7 +80,7 @@ public class OfferDAOImpl implements OfferDAO {
         preparedStatement.setInt(argCounter, idMember);
         argCounter++;
       }
-      if (objectStatus != null && !objectStatus.isEmpty() && !objectStatus.equals("available")) {
+      if (objectStatus != null && !objectStatus.isEmpty()) {
         preparedStatement.setString(argCounter, objectStatus);
       }
       return getOffersWithResultSet(preparedStatement.executeQuery());
