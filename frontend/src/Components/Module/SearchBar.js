@@ -62,16 +62,19 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
               
             </div>`;
     }
+
     if (hasType) {
       searchBarHtml +=
-          `<select  id="default-type-list" class="input-group-text form-select">
-  <option value="Tout" selected>Tout les types</option>`
+          `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                 Type
+               </button>
+               <select id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <option class="dropdown-item" value="Tout" href="#"> Tout </option>`;
       const types = await TypeLibrary.prototype.getAllDefaultTypes();
       for (const type of types.type) {
         searchBarHtml += `<option class="dropdown-item" value="${type.typeName}" href="#"> ${type.typeName} </option>`;
       }
-      searchBarHtml += `</select>`
-
+      searchBarHtml += `</select>`;
     }
 
     searchBarHtml +=
