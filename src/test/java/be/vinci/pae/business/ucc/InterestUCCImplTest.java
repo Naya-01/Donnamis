@@ -8,6 +8,7 @@ import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
@@ -248,6 +249,33 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test addOne with existent cancelled offer interest")
+  @Test
+  public void testAddOneWithExistentCancelledOfferInterest() {
+    objectDTO.setIdObject(12);
+    objectDTO.setStatus("available");
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setStatus("cancelled");
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(objectDTO.getIdObject()))
+        .thenReturn(offerDTO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
