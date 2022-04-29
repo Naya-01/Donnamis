@@ -24,6 +24,7 @@ import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -813,6 +814,29 @@ class InterestUCCImplTest {
             () -> interestUCC.getInterestedCount(nonExistentId, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test getInterestedCount success but the member is not interested in the object")
+  @Test
+  public void testGetInterestedCountSuccessWithoutIsUserInterested() {
+    objectDTO.setIdObject(15);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getAllPublishedCount(objectDTO.getIdObject()))
+        .thenReturn(3);
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(null);
+
+    JsonNode result = interestUCC.getInterestedCount(objectDTO.getIdObject(), memberDTO);
+    assertAll(
+        () -> assertEquals(3, Integer.parseInt(result.get("count").toString())),
+        () -> assertFalse(Boolean.parseBoolean(result.get("isUserInterested").toString())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 
