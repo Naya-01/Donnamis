@@ -165,7 +165,7 @@ const objectCards = async (searchPattern, type, status) => {
 
           let phone;
 
-          if (interest.member.phone) {// TODO ajouter l'attribut be_called à true
+          if (interest.isCalled) {
             phone = "(Appelez moi :  "
                 + interest.member.phone
                 + ")";

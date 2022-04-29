@@ -123,6 +123,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setStatus(resultSet.getString(4));
         interestDTO.setVersion(resultSet.getInt("version"));
         interestDTO.setIdObject(resultSet.getInt("id_object"));
+        interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
 
         interestDTOList.add(interestDTO);
       }
