@@ -670,6 +670,26 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ------------------------ MARK ALL NOTIFICATIONS SHOWN UCC  ---------------------------  //
+
+  @DisplayName("Test markAllNotificationsShown with null list of interests returned from dao")
+  @Test
+  public void testMarkAllNotificationsShownWithNullListOfInterestsReturnedFromDao() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockInterestDAO.markAllNotificationsShown(memberDTO.getMemberId()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markAllNotificationsShown(memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
