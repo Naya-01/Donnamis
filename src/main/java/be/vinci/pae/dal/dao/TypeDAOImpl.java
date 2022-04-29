@@ -67,7 +67,7 @@ public class TypeDAOImpl implements TypeDAO {
       List<TypeDTO> listTypeDTO = new ArrayList<>();
       while (resultSet.next()) {
         TypeDTO typeDTO = typeFactory.getTypeDTO();
-        typeDTO.setId(resultSet.getInt(1));
+        typeDTO.setIdType(resultSet.getInt(1));
         typeDTO.setTypeName(resultSet.getString(2));
         typeDTO.setIsDefault(resultSet.getBoolean(3));
         listTypeDTO.add(typeDTO);
@@ -110,7 +110,7 @@ public class TypeDAOImpl implements TypeDAO {
         return null;
       }
       TypeDTO typeDTO = typeFactory.getTypeDTO();
-      typeDTO.setId(resultSet.getInt(1));
+      typeDTO.setIdType(resultSet.getInt(1));
       typeDTO.setTypeName(resultSet.getString(2));
       typeDTO.setIsDefault(resultSet.getBoolean(3));
 

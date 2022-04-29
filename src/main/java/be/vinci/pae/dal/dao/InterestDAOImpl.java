@@ -123,6 +123,7 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setStatus(resultSet.getString(4));
         interestDTO.setVersion(resultSet.getInt("version"));
         interestDTO.setIdObject(resultSet.getInt("id_object"));
+        interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
 
         interestDTOList.add(interestDTO);
       }
@@ -243,13 +244,15 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public List<InterestDTO> getAllNotifications(int idMember) {
 
-    String query = "SELECT id_object, id_member, availability_date, status,send_notification, "
-        + "version, be_called FROM donnamis.interests"
-        + " WHERE id_member = ? AND send_notification = ? ";
+    String query =
+        "SELECT DISTINCT i.id_member, i.id_object, i.availability_date, i.status, i.version ,i.send_notification,i.be_called "
+            + "FROM donnamis.interests i , donnamis.objects o "
+            + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' AND i.send_notification = true) "
+            + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published')";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
-      preparedStatement.setBoolean(2, true);
+      preparedStatement.setInt(2, idMember);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       return getInterestsDTOSList(resultSet);
@@ -291,12 +294,14 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
 
   public Integer getNotificationCount(Integer idMember) {
-    String query = "SELECT count(id_member) "
-        + "FROM donnamis.interests WHERE id_member = ? AND send_notification = ? ";
+    String query = "SELECT count(DISTINCT i.*) "
+        + "FROM donnamis.interests i , donnamis.objects o "
+        + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' AND i.send_notification = true) "
+        + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published')";
     Integer notificationCount = null;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
-      preparedStatement.setBoolean(2, true);
+      preparedStatement.setInt(2, idMember);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       if (resultSet.next()) {

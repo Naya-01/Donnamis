@@ -7,6 +7,7 @@ import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Admin;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -46,7 +47,9 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public OfferDTO getLastOffer(@PathParam("idObject") Integer idObject) {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getLastOffer");
-    return offerUcc.getLastOffer(idObject);
+    OfferDTO offerDTO = offerUcc.getLastOffer(idObject);
+    offerDTO = JsonViews.filterPublicJsonView(offerDTO, OfferDTO.class);
+    return offerDTO;
   }
 
   /**
@@ -77,7 +80,8 @@ public class OfferResource {
         idOfferor = Integer.parseInt(offeror);
       } catch (Exception ignored) { /* ignore this exception */ }
     }
-    return offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
+    List<OfferDTO> offerDTOList = offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
+    return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 
   /**
@@ -90,7 +94,8 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public List<OfferDTO> getLastOffers() {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getLastOffers");
-    return offerUcc.getLastOffers();
+    List<OfferDTO> offerDTOList = offerUcc.getLastOffers();
+    return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 
   /**
@@ -105,7 +110,8 @@ public class OfferResource {
   @Produces(MediaType.APPLICATION_JSON)
   public OfferDTO getOfferById(@PathParam("idOffer") int idOffer) {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getOfferById");
-    return offerUcc.getOfferById(idOffer);
+    OfferDTO offerDTO = offerUcc.getOfferById(idOffer);
+    return JsonViews.filterPublicJsonView(offerDTO, OfferDTO.class);
   }
 
   /**
@@ -128,8 +134,9 @@ public class OfferResource {
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
+    OfferDTO offer = offerUcc.addOffer(offerDTO, ownerDTO);
 
-    return offerUcc.addOffer(offerDTO, ownerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
   }
 
   /**
@@ -156,7 +163,8 @@ public class OfferResource {
     if (initialOfferDTO.getObject().getIdOfferor() != memberRequest.getMemberId()) {
       throw new UnauthorizedException("Vous n'avez pas créé cet offre.");
     }
-    return offerUcc.updateOffer(offerDTO);
+    OfferDTO offer = offerUcc.updateOffer(offerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
   }
 
   /**
@@ -178,7 +186,8 @@ public class OfferResource {
         && memberRequest.getMemberId() != idReceiver) {
       throw new UnauthorizedException("Vous ne pouvez pas voir ces offres");
     }
-    return offerUcc.getGivenOffers(idReceiver);
+    List<OfferDTO> offerDTOList = offerUcc.getGivenOffers(idReceiver);
+    return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 
   /**
@@ -201,7 +210,8 @@ public class OfferResource {
       throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
     }
 
-    return offerUcc.cancelOffer(offerDTO, ownerDTO);
+    OfferDTO offer = offerUcc.cancelOffer(offerDTO, ownerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
   }
 
 
@@ -224,8 +234,8 @@ public class OfferResource {
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-
-    return offerUcc.notCollectedOffer(offerDTO, ownerDTO);
+    OfferDTO offer = offerUcc.notCollectedOffer(offerDTO, ownerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
 
   }
 
@@ -249,7 +259,8 @@ public class OfferResource {
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
-    return offerUcc.giveOffer(offerDTO, ownerDTO);
+    OfferDTO offer = offerUcc.giveOffer(offerDTO, ownerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
   }
 
   /**
@@ -297,8 +308,8 @@ public class OfferResource {
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     offerDTO.getObject().setIdOfferor(ownerDTO.getMemberId());
-
-    return offerUcc.addObject(offerDTO);
+    OfferDTO offer = offerUcc.addObject(offerDTO);
+    return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
   }
 
 }

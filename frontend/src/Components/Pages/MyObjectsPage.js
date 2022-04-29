@@ -252,14 +252,14 @@ const interestedButton = async (buttonCard, offer) => {
 
       let phone;
 
-      if (interest.member.phone) {// TODO ajouter l'attribut be_called à true
-        phone = "(Appelez moi :  "
-            + interest.member.phone
-            + ")";
-      } else {
-        phone = "";
-      }
-      let username = interest.member.username;
+          if (interest.isCalled) {
+            phone = "(Appelez moi :  "
+                + interest.member.phone
+                + ")";
+          } else {
+            phone = "";
+          }
+          let username = interest.member.username;
 
       let availabilityDate = "Horaire : " + interest.availabilityDate[2]
           + "/" + interest.availabilityDate[1] + "/"

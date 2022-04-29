@@ -5,6 +5,7 @@ import be.vinci.pae.business.domain.dto.RatingDTO;
 import be.vinci.pae.business.ucc.RatingUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -38,7 +39,11 @@ public class RatingResource {
   @Authorize
   public RatingDTO getOne(@PathParam("id") int idObject) {
     Logger.getLogger("Log").log(Level.INFO, "RatingResource getOne");
-    return ratingUCC.getOne(idObject);
+    RatingDTO ratingDTO = ratingUCC.getOne(idObject);
+    ratingDTO.setMemberRater(JsonViews.
+        filterPublicJsonView(ratingDTO.getMemberRater(),MemberDTO.class));
+    ratingDTO = JsonViews.filterPublicJsonView(ratingDTO,RatingDTO.class);
+    return ratingDTO;
   }
 
   /**
@@ -60,6 +65,11 @@ public class RatingResource {
     }
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     ratingDTO.setIdMember(ownerDTO.getMemberId());
-    return ratingUCC.addRating(ratingDTO);
+    RatingDTO rating = ratingUCC.addRating(ratingDTO);
+
+    rating.setMemberRater(JsonViews.
+        filterPublicJsonView(rating.getMemberRater(),MemberDTO.class));
+    rating = JsonViews.filterPublicJsonView(rating,RatingDTO.class);
+    return rating;
   }
 }

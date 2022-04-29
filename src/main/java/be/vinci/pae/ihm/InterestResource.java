@@ -2,6 +2,7 @@ package be.vinci.pae.ihm;
 
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
+import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.InterestUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -70,6 +71,7 @@ public class InterestResource {
 
     InterestDTO interestDTO = interestUCC.getInterest(idObject, authenticatedUser.getMemberId());
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    interestDTO = JsonViews.filterPublicJsonView(interestDTO, InterestDTO.class);
     return interestDTO;
   }
 
@@ -99,6 +101,7 @@ public class InterestResource {
 
     InterestDTO interestDTO = interestUCC.addOne(interest);
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    interestDTO = JsonViews.filterPublicJsonView(interestDTO, InterestDTO.class);
     return interestDTO;
   }
 
@@ -137,10 +140,9 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getAllInterests(idObject,
         authenticatedUser);
-    for (InterestDTO interestDTO : interestDTOList) {
-      interestDTO.setMember(
-          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
-    }
+    filterMember(interestDTOList);
+    filterObject(interestDTOList);
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
 
@@ -159,10 +161,9 @@ public class InterestResource {
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     List<InterestDTO> interestDTOList = interestUCC.getNotifications(
         authenticatedUser);
-    for (InterestDTO interestDTO : interestDTOList) {
-      interestDTO.setMember(
-          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
-    }
+    filterMember(interestDTOList);
+    filterObject(interestDTOList);
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
     return interestDTOList;
   }
 
@@ -186,8 +187,10 @@ public class InterestResource {
     if (interestDTO.getIdMember() == null || interestDTO.getIdObject() == null) {
       throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
     }
-
-    return interestUCC.assignOffer(interestDTO, ownerDTO);
+    InterestDTO interest = interestUCC.assignOffer(interestDTO, ownerDTO);
+    interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
+    interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
+    return interest;
   }
 
   /**
@@ -208,7 +211,10 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
 
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markNotificationShown(idObject, memberDTO);
+    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO);
+    interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
+    interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
+    return interest;
   }
 
   /**
@@ -225,8 +231,36 @@ public class InterestResource {
   public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    return interestUCC.markAllNotificationsShown(memberDTO);
+    List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
+    filterMember(interestDTOList);
+    filterObject(interestDTOList);
+    interestDTOList = JsonViews.filterPublicJsonViewAsList(interestDTOList, InterestDTO.class);
+    return interestDTOList;
   }
 
+  /**
+   * Filter the member object in each object interest.
+   *
+   * @param interestDTOList the list we want to filter
+   */
+  private void filterMember(List<InterestDTO> interestDTOList) {
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setMember(
+          JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
+    }
+  }
+
+  /**
+   * Filter the Object in each object interest.
+   *
+   * @param interestDTOList the list we want to filter
+   */
+  private void filterObject(List<InterestDTO> interestDTOList) {
+    for (InterestDTO interestDTO : interestDTOList) {
+      interestDTO.setObject(
+          JsonViews.filterPublicJsonView(interestDTO.getObject(), ObjectDTO.class)
+      );
+    }
+  }
 
 }

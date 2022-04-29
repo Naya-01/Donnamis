@@ -36,7 +36,7 @@ class TypeUCCImplTest {
     this.mockDalService = locator.getService(DALService.class);
     TypeFactory typeFactory = locator.getService(TypeFactory.class);
     this.realType = typeFactory.getTypeDTO();
-    this.realType.setId(1);
+    this.realType.setIdType(1);
     this.realType.setTypeName("Bon type");
     this.allDefaultTypesMock = new ArrayList<>();
     this.allDefaultTypesMock.add(realType);

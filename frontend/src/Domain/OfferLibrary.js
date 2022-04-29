@@ -59,6 +59,13 @@ class OfferLibrary {
     return current_offer;
   }
 
+  /**
+   * Make an offer for an Object.
+   *
+   * @param timeSlot the time slot of the new offer
+   * @param idObject the object that will receive a new offer
+   * @returns {Promise<*>} the offer in json and the status
+   */
   async addOffer(timeSlot, idObject) {
     let response;
     try {
@@ -103,6 +110,14 @@ class OfferLibrary {
     return current_offer;
   }
 
+  /**
+   * Make an Object with his offer.
+   *
+   * @param timeSlot the time slot of the new offer
+   * @param description the object description
+   * @param typeName the object type
+   * @returns {Promise<*>} the offer in json and the status
+   */
   async addFirstOffer(timeSlot, description, typeName) {
     let response;
     try {
@@ -182,6 +197,11 @@ class OfferLibrary {
     return current_offer;
   }
 
+  /**
+   * Get the last 6 offers with a different status of cancelled & not collected.
+   *
+   * @returns {Promise<*>} an list offer in the json format
+   */
   async getAllLastOffers() {
     let response;
     try {
@@ -203,6 +223,12 @@ class OfferLibrary {
     return allLastOffers;
   }
 
+  /**
+   * Count the offers of a member.
+   *
+   * @param idMember the id member
+   * @returns {Promise<null|any>}
+   */
   async getCountOffers(idMember) {
     let response;
     try {
@@ -222,6 +248,15 @@ class OfferLibrary {
     return null;
   }
 
+  /**
+   * Search the offers with different option search.
+   *
+   * @param searchPattern it's the username, city, postCode
+   * @param self true if he wants to search for himself
+   * @param type the object type
+   * @param objStatus the object status
+   * @returns {Promise<boolean|any>}  an list offer in the json format or nothing
+   */
   async getOffers(searchPattern, self, type, objStatus) {
     try {
       let options = {
@@ -246,6 +281,12 @@ class OfferLibrary {
     }
   }
 
+  /**
+   * Get Object received by à member.
+   *
+   * @param idReceiver id of the member
+   * @returns {Promise<boolean|any>} an list offer in the json format or nothing
+   */
   async getGivenOffers(idReceiver) {
     try {
       let options = {
@@ -266,6 +307,14 @@ class OfferLibrary {
     }
   }
 
+  /**
+   * Give an Object to  a member.
+   *
+   * @param idObject the id object
+   * @param versionOffer the offer version that we need to send to the back to compare
+   * @param versionObject the object version that we need to send to the back to compare
+   * @returns {Promise<void>} the object that we gave in json format
+   */
   async giveObject(idObject, versionOffer, versionObject) {
     try {
       let options = {
@@ -305,6 +354,14 @@ class OfferLibrary {
     }
   }
 
+  /**
+   * Mark an Object to 'cancelled'.
+   *
+   * @param idOffer the if offer
+   * @param versionOffer the offer version that we need to send to the back to compare
+   * @param versionObject the object version that we need to send to the back to compare
+   * @returns {Promise<void>} the offer cancelled in json format
+   */
   async cancelObject(idOffer, versionOffer, versionObject) {
     try {
       let options = {
@@ -345,6 +402,14 @@ class OfferLibrary {
 
   }
 
+  /**
+   * Mark an Object to 'not_collected'.
+   *
+   * @param idOffer the id offer
+   * @param versionOffer the offer version that we need to send to the back to compare
+   * @param versionObject the object version that we need to send to the back to compare
+   * @returns {Promise<void>} the offer not_collected in json format
+   */
   async notCollectedObject(idOffer, versionOffer, versionObject) {
     try {
       let options = {

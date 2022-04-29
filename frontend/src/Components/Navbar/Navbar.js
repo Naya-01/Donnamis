@@ -13,7 +13,7 @@ const notificationDictionnary = new Map([
   ['received', "Merci d'avoir récupérer l'objet !"],
   ['cancelled', "L'offre a été annulée"],
   ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
-  ['published', "Vous avez marquer un interet pour cette offre."],
+  ['published', "a marquer un interet pour votre offre."],
 ]);
 
 // Color dictionnary for notification states.
@@ -204,7 +204,8 @@ const Navbar = async () => {
           }
 
           // A notification HTML code
-          notifications += `<li>
+          if (interest.status === 'published') {
+            notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
                                 <div class="row">
                                     <div class="fs-5">
@@ -212,10 +213,10 @@ const Navbar = async () => {
                                       <span>${description}</span>
                                     </div>
                                     <div class="fs-5 text-end fw-bolder ${colorDictionnary.get(
-              interest.status)}">
+                interest.status)}">
                                       <span>
-                                        ${notificationDictionnary.get(
-              interest.status)}
+                                        ${interest.member.username + " "
+            + notificationDictionnary.get(interest.status)}
                                       </span>
                                       <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
                                         Marquer comme lu
@@ -228,6 +229,33 @@ const Navbar = async () => {
                               </div>
                             </li>
                             `;
+          } else {
+            notifications += `<li>
+                              <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
+                                <div class="row">
+                                    <div class="fs-5">
+                                      <img src="${notificationPicture}" class="notificationPicture" alt="objectPicture">
+                                      <span>${description}</span>
+                                    </div>
+                                    <div class="fs-5 text-end fw-bolder ${colorDictionnary.get(
+                interest.status)}">
+                                      <span>
+                                        ${notificationDictionnary.get(
+                interest.status)}
+                                      </span>
+                                      <button class="mx-2 btn btn-secondary" id="shown-${memberId}-${objectId}">
+                                        Marquer comme lu
+                                      </button>
+                                      <button class="btn btn-warning" id="goto-${memberId}-${objectId}">
+                                        Voir l'offre
+                                      </button>
+                                    </div>
+                                </div>
+                              </div>
+                            </li>
+                            `;
+          }
+
         }
 
         // HTML code to show all notification shown

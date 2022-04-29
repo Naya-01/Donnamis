@@ -9,6 +9,7 @@ import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -59,32 +60,31 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Add one interest.
    *
-   * @param item : interestDTO object.
-   * @return item.
+   * @param interest : interestDTO object.
+   * @return interest added.
    */
   @Override
-  public InterestDTO addOne(InterestDTO item) {
+  public InterestDTO addOne(InterestDTO interest) {
     InterestDTO interestDTO;
     try {
       dalService.startTransaction();
-      if (interestDAO.getOne(item.getIdObject(), item.getIdMember()) != null) {
+      if (interestDAO.getOne(interest.getIdObject(), interest.getIdMember()) != null) {
         //change name exception
-        throw new ForbiddenException("Un intérêt pour cet objet et ce membre existe déjà !");
+        throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
       }
       // if there is no interest
-      if (interestDAO.getAllCount(item.getIdObject()) == 0) {
-        ObjectDTO objectDTO = objectDAO.getOne(item.getIdObject());
+      if (interestDAO.getAllCount(interest.getIdObject()) == 0) {
+        ObjectDTO objectDTO = objectDAO.getOne(interest.getIdObject());
         if (objectDTO == null) {
           throw new NotFoundException("Objet non trouvé !");
         }
-        if (!objectDTO.getVersion().equals(item.getObject().getVersion())) {
+        if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
           throw new ForbiddenException("Les versions ne correspondent pas");
         }
-
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
         OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
-        if (!offerDTO.getVersion().equals(item.getOffer().getVersion())) {
+        if (!offerDTO.getVersion().equals(interest.getOffer().getVersion())) {
           throw new ForbiddenException("Les versions ne correspondent pas");
         }
         offerDTO.setStatus("interested");
@@ -92,7 +92,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       }
 
-      interestDTO = interestDAO.addOne(item);
+      interestDTO = interestDAO.addOne(interest);
 
       // Send Notification
       interestDTO.setIsNotificated(true);

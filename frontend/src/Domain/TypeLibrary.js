@@ -1,6 +1,12 @@
 import {getSessionObject} from "../utils/session";
 
 class TypeLibrary {
+
+  /**
+   * Get all Default type.
+   *
+   * @returns {Promise<*>} list of the different object type
+   */
   async getAllDefaultTypes() {
     let response;
     try {
