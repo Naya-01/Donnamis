@@ -4,6 +4,11 @@ import Swal from "sweetalert2";
 
 class InterestLibrary {
 
+  /**
+   * Get count of notifications.
+   *
+   * @returns notification count
+   */
   async getInterestCount() {
     let response;
     try {
@@ -26,6 +31,13 @@ class InterestLibrary {
     return notificationCount;
   }
 
+  /**
+   * Mark a notification as shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
+   *
+   * @param idObject of the interest.
+   * @returns interest updated.
+   */
   async markNotificationShown(idObject) {
     let response;
     try {
@@ -48,6 +60,12 @@ class InterestLibrary {
     return allInterests;
   }
 
+  /**
+   * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
+   *
+   * @returns list of interest updated.
+   */
   async markAllNotificationShown() {
     let response;
     try {
@@ -70,6 +88,11 @@ class InterestLibrary {
     return allInterests;
   }
 
+  /**
+   * Get all the notification of a member by his token.
+   *
+   * @returns  interest List filtered with notifications
+   */
   async getAllNotifications() {
     let response;
     try {
@@ -94,6 +117,16 @@ class InterestLibrary {
     return allInterests;
   }
 
+  /**
+   * Assign an object to a member interested.
+   *
+   * @param idObject the object given
+   * @param idMember the id member that will receive the object
+   * @param version the interest version that we need to send to the back to compare
+   * @param versionOffer the offer version that we need to send to the back to compare
+   * @param versionObject the object version that we need to send to the back to compare
+   * @returns object updated.
+   */
   async assignOffer(idObject, idMember, version, versionOffer, versionObject) {
     let response;
     let toast = Notification.prototype.getNotification("bottom");
@@ -142,6 +175,12 @@ class InterestLibrary {
     return newInterest;
   }
 
+  /**
+   * Get the count of interested people of an object.
+   *
+   * @param idObject the object we want to retrieve the interest count
+   * @returns  count of interests and a boolean if the user is one of the interested
+   */
   async getInterestedCount(idObject) {
     let response;
     try {
@@ -163,6 +202,12 @@ class InterestLibrary {
     return allInterests;
   }
 
+  /**
+   * Get all the interests of an object.
+   *
+   * @param idObject of the object.
+   * @returns interestDTO List
+   */
   async getAllInterests(idObject) {
     let response;
     try {
@@ -185,6 +230,12 @@ class InterestLibrary {
     return allInterests;
   }
 
+  /**
+   * Get an interest, by the id of the interested member and the id of the object.
+   *
+   * @param idObject  id object of the interest.
+   * @returns a json of the interest.
+   */
   async getOneInterest(idObject) {
     let response;
     try {
@@ -206,6 +257,16 @@ class InterestLibrary {
     return current_interest;
   }
 
+  /**
+   * Add one interest.
+   *
+   * @param idObject the object will receive the interest.
+   * @param date the date when the interest was added.
+   * @param isCalled if the member want to be called
+   * @param versionOffer the offer version that we need to send to the back to compare
+   * @param versionObject the object version that we need to send to the back to compare
+   * @returns a json of the interest with the Member who is interested in.
+   */
   async addOne(idObject, date, isCalled, versionObject, versionOffer) {
     let response;
     try {
