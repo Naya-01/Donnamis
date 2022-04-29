@@ -17,6 +17,7 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
+  <!--<div class="mt-5 mx-lg-5"> a tester pour modifier la largeur de la searchbar-->
     <div class="container mt-5">
       <h1 class="fs-1">${pageName}</h1>`;
   if (hasNav) {
