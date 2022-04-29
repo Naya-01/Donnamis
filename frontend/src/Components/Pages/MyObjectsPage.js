@@ -11,8 +11,8 @@ import Swal from "sweetalert2";
 const dictionary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
-  ['assigned', 'Attribué à xxxxx'],
-  ['given', 'Donné à xxxx'],
+  ['assigned', 'Attribué'],
+  ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Le receveur n\'est pas venu']
 ]);
@@ -205,7 +205,7 @@ const assignedButtons = (buttonCard, offer) => {
         offer.object.version++
     ))) return;
     buttonCard.innerHTML = ``;
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné à xxxx';
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné';
   });
   buttonCard.appendChild(nonRealisedOfferButton);
   buttonCard.appendChild(offeredObjectButton);

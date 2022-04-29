@@ -41,7 +41,7 @@ CREATE TABLE donnamis.objects
     id_object   SERIAL PRIMARY KEY,
     id_type     INTEGER REFERENCES donnamis.types (id_type)     NOT NULL,
     description VARCHAR(100)                                    NOT NULL,
-    status      VARCHAR(10)                                     NOT NULL,
+    status      VARCHAR(50)                                     NOT NULL,
     image       VARCHAR(100)                                    NULL,
     id_offeror  INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     version     INTEGER                                         NULL
@@ -63,7 +63,7 @@ CREATE TABLE donnamis.interests
     id_member         INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object         INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     send_notification BOOLEAN                                         NOT NULL,
-    be_called         BOOLEAN                                         NULL, -- change
+    be_called         BOOLEAN                                         NULL,
     version           INTEGER                                         NULL,
     PRIMARY KEY (id_object, id_member)
 );
@@ -73,12 +73,7 @@ CREATE TABLE donnamis.offers
     id_offer  SERIAL PRIMARY KEY,
     date      TIMESTAMP                                       NOT NULL,
     time_slot VARCHAR(200)                                    NOT NULL,
+    status    VARCHAR(200)                                    NOT NULL,
     id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     version   INTEGER                                         NULL
 );
-
-
--- TEMP
-ALTER TABLE donnamis.interests
-ADD be_called BOOLEAN NULL;
-UPDATE donnamis.interests SET be_called = FALSE
