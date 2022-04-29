@@ -151,11 +151,11 @@ public class MemberDAOImpl implements MemberDAO {
     }
     if (search != null && !search.isEmpty()) {
       query += "AND (lower(a.postcode) LIKE ? OR lower(a.commune) LIKE ? "
-          + "OR lower(m.username) LIKE ?)";
+          + "OR lower(m.username) LIKE ? OR lower(m.lastname) LIKE ?)";
     }
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       if (search != null && !search.isEmpty()) {
-        for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 4; i++) {
           preparedStatement.setString(i, "%" + search.toLowerCase() + "%");
         }
       }

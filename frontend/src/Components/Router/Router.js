@@ -23,7 +23,7 @@ const routes = {
   "/": HomePage,
   "/addNewObjectPage": AddNewObjectPage,
   "/registrationManagement": RegistrationManagementPage,
-  "/objects": AllObjectsPage,
+  "/offers": AllObjectsPage,
   "/login": LoginPage,
   "/logout": Logout,
   "/register": RegisterPage,

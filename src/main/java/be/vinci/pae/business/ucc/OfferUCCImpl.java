@@ -227,6 +227,29 @@ public class OfferUCCImpl implements OfferUCC {
     }
   }
 
+  /**
+   * Get all offers received by a member.
+   *
+   * @param receiver member
+   * @return a list of offerDTO
+   */
+  @Override
+  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver) {
+    try {
+      dalService.startTransaction();
+      List<OfferDTO> givenOffers = offerDAO.getAllGivenAndAssignedOffers(
+          receiver.getMemberId());
+      if (givenOffers.isEmpty()) {
+        throw new NotFoundException("Aucune offre");
+      }
+      dalService.commitTransaction();
+      return givenOffers;
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+  }
+
 
   /**
    * Cancel an Object.

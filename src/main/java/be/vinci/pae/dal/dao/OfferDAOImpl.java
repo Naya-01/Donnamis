@@ -61,11 +61,7 @@ public class OfferDAOImpl implements OfferDAO {
       query += "AND ob.id_offeror = ? ";
     }
     if (objectStatus != null && !objectStatus.isEmpty()) {
-      if (objectStatus.equals("available")) {
-        query += "AND (LOWER(of.status) LIKE 'available' OR LOWER(of.status) LIKE 'interested') ";
-      } else {
-        query += "AND LOWER(of.status) LIKE ? ";
-      }
+      query += "AND LOWER(of.status) LIKE ? ";
     }
     query += " ORDER BY of.date DESC";
 
@@ -84,7 +80,7 @@ public class OfferDAOImpl implements OfferDAO {
         preparedStatement.setInt(argCounter, idMember);
         argCounter++;
       }
-      if (objectStatus != null && !objectStatus.isEmpty() && !objectStatus.equals("available")) {
+      if (objectStatus != null && !objectStatus.isEmpty()) {
         preparedStatement.setString(argCounter, objectStatus);
       }
       return getOffersWithResultSet(preparedStatement.executeQuery());
@@ -301,6 +297,33 @@ public class OfferDAOImpl implements OfferDAO {
       throw new FatalException(e);
     }
   }
+
+  /**
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  @Override
+  public List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver) {
+    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
+        + "ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default, "
+        + "of.status, of.version, ob.version, MAX(of.date) as \"date_premiere_offre\" "
+        + "FROM donnamis.objects ob, donnamis.types ty, donnamis.offers of, donnamis.interests it "
+        + "WHERE ob.id_object = of.id_object AND ob.id_type = ty.id_type "
+        + "AND it.id_object = ob.id_object AND (it.status = 'received' or it.status = 'assigned') AND it.id_member = ? "
+        + "AND (of.status = 'given' OR of.status = 'assigned') "
+        + "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, ob.description, "
+        + "of.version, ob.version, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
+        + "ORDER BY date_premiere_offre DESC";
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+      preparedStatement.setInt(1, idReceiver);
+      return getOffersWithResultSet(preparedStatement.executeQuery());
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+  }
+
 
   /**
    * Get a map of data about a member (nb of received object, nb of not colected objects, nb of

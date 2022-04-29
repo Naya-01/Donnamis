@@ -26,7 +26,7 @@ public interface OfferDAO {
   /**
    * Get the offer with a specific id.
    *
-   * @param idOffer       the id of the offer
+   * @param idOffer the id of the offer
    * @return an offer that match with the idOffer or null
    */
   OfferDTO getOne(int idOffer);
@@ -73,8 +73,16 @@ public interface OfferDAO {
   List<OfferDTO> getAllGivenOffers(int idReceiver);
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects,
-   * nb of given objects and nb of total offers).
+   * Get all offers received by a member.
+   *
+   * @param idReceiver the id of the receiver
+   * @return a list of offerDTO
+   */
+  List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver);
+
+  /**
+   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member
    * @return a map with all th datas.
