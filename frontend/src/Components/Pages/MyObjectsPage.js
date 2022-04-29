@@ -9,7 +9,7 @@ import InterestLibrary from "../../Domain/InterestLibrary";
 import Swal from "sweetalert2";
 
 const dictionary = new Map([
-  ['interested', 'Interessé'],
+  ['interested', 'Intéressé'],
   ['available', 'Publié'],
   ['assigned', 'Attribué'],
   ['given', 'Donné'],
@@ -56,12 +56,6 @@ const MyObjectsPage = async () => {
   let available = document.getElementById("btn-status-available");
   available.addEventListener('click', async () => {
     status = "available";
-    await actualizeCards();
-  });
-
-  let interested = document.getElementById("btn-status-interested");
-  interested.addEventListener('click', async () => {
-    status = "interested";
     await actualizeCards();
   });
 
