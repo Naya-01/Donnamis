@@ -589,6 +589,23 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ---------------------------- GET NOTIFICATION COUNT UCC  -------------------------------  //
+
+  @DisplayName("Test getNotificationCount success")
+  @Test
+  public void testGetNotificationCountSuccess() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(mockInterestDAO.getNotificationCount(memberDTO.getMemberId())).thenReturn(5);
+
+    assertAll(
+        () -> assertEquals(5, interestUCC.getNotificationCount(memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
