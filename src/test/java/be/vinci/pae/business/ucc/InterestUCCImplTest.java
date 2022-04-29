@@ -523,6 +523,24 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test getAllInterests with not same id member and id offeror")
+  @Test
+  public void testGetAllInterestsWithNotSameIdMemberAndIdOfferor() {
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    objectDTO.setIdOfferor(13);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(12);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
