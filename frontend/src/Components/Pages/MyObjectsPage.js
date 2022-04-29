@@ -9,8 +9,8 @@ import InterestLibrary from "../../Domain/InterestLibrary";
 import Swal from "sweetalert2";
 
 const dictionary = new Map([
-  ['interested', 'Disponible'],
-  ['available', 'Disponible'],
+  ['interested', 'Interessé'],
+  ['available', 'Publié'],
   ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
@@ -56,6 +56,12 @@ const MyObjectsPage = async () => {
   let available = document.getElementById("btn-status-available");
   available.addEventListener('click', async () => {
     status = "available";
+    await actualizeCards();
+  });
+
+  let interested = document.getElementById("btn-status-interested");
+  interested.addEventListener('click', async () => {
+    status = "interested";
     await actualizeCards();
   });
 
@@ -205,7 +211,7 @@ const assignedButtons = (buttonCard, offer) => {
         offer.object.version++
     ))) return;
     buttonCard.innerHTML = ``;
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné';
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné à xxxx';
   });
   buttonCard.appendChild(nonRealisedOfferButton);
   buttonCard.appendChild(offeredObjectButton);

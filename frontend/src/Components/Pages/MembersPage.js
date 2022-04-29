@@ -30,6 +30,7 @@ const MembersPage = async () => {
     Array.prototype.push.apply(finalArray, members.map(m => m.username));
     Array.prototype.push.apply(finalArray, members.map(m => m.address.commune));
     Array.prototype.push.apply(finalArray, members.map(m => m.address.postcode));
+    Array.prototype.push.apply(finalArray, members.map(m => m.lastname));
     autocomplete(searchBar, [...new Set(finalArray)]);
   });
 
