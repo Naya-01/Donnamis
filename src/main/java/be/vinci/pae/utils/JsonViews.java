@@ -13,6 +13,9 @@ public class JsonViews<T> {
       .findAndAddModules()
       .build();
 
+  /**
+   * Disable the unknown properties because they can make error if they stay enabled.
+   */
   static {
     jsonMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   }

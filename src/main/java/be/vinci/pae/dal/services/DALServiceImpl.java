@@ -46,7 +46,7 @@ public class DALServiceImpl implements DALBackendService, DALService {
 
 
   /**
-   * Start a transaction. Get a connection from the DataSource & set it the ThreadLocal.
+   * Start a transaction. Get a connection from the BasicDataSource & set it the ThreadLocal.
    */
   @Override
   public void startTransaction() {
