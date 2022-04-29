@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
@@ -352,6 +353,64 @@ class InterestUCCImplTest {
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test addOne success with none interest existent for the object")
+  @Test
+  public void testAddOneSuccessWithNoneInterestExistentForTheObject() {
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setStatus("available");
+    offerDTO.setVersion(17);
+
+    objectDTO.setIdObject(12);
+    objectDTO.setStatus("available");
+    objectDTO.setVersion(14);
+
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+    interestDTO.setOffer(offerDTO);
+
+    OfferDTO offerDTOFromGetLast = offerFactory.getOfferDTO();
+    offerDTOFromGetLast.setStatus("available");
+    offerDTOFromGetLast.setVersion(17);
+
+    ObjectDTO objectDTOFromGetOne = objectFactory.getObjectDTO();
+    objectDTOFromGetOne.setStatus("available");
+    objectDTOFromGetOne.setVersion(14);
+    objectDTOFromGetOne.setIdObject(12);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(1);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTOFromGetOne);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(objectDTOFromGetOne.getIdObject()))
+        .thenReturn(offerDTOFromGetLast);
+    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getIdObject()))
+        .thenReturn(0);
+    Mockito.when(mockInterestDAO.addOne(interestDTO))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTOFromGetOne);
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+
+    InterestDTO interestDTOAdded = interestUCC.addOne(interestDTO);
+
+    assertAll(
+        () -> assertEquals("interested", objectDTOFromGetOne.getStatus()),
+        () -> assertEquals("interested", offerDTOFromGetLast.getStatus()),
+        () -> assertTrue(interestDTOAdded.getIsNotificated()),
+        () -> assertEquals(memberDTO, interestDTOAdded.getMember()),
+        () -> assertEquals(objectDTOFromGetOne, interestDTOAdded.getObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
   //----------------------
