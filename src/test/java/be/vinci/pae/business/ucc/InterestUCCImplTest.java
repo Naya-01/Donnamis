@@ -189,6 +189,8 @@ class InterestUCCImplTest {
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(null);
+    Mockito.when(interestDAO.getAllCount(interestDTO.getIdObject()))
+        .thenReturn(0);
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -212,6 +214,8 @@ class InterestUCCImplTest {
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(objectDTO);
+    Mockito.when(interestDAO.getAllCount(interestDTO.getIdObject()))
+        .thenReturn(0);
 
     assertAll(
         () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
