@@ -206,7 +206,7 @@ class InterestUCCImplTest {
 
   @DisplayName("test addOne with object of interest having status neither interested nor available")
   @Test
-  public void testAddOneWithObjectInterestCancelStatus() {
+  public void testAddOneWithObjectInterestGivenStatus() {
     objectDTO.setIdObject(12);
     objectDTO.setStatus("given");
     interestDTO.setObject(objectDTO);
@@ -292,6 +292,41 @@ class InterestUCCImplTest {
     offerDTO.setStatus("available");
     ObjectDTO objectDTOFromGetOne = objectFactory.getObjectDTO();
     objectDTOFromGetOne.setStatus("available");
+    objectDTOFromGetOne.setVersion(14);
+    objectDTOFromGetOne.setIdObject(12);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTOFromGetOne);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(objectDTOFromGetOne.getIdObject()))
+        .thenReturn(offerDTO);
+    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getIdObject()))
+        .thenReturn(0);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test addOne with none interest, not same version, and interested status")
+  @Test
+  public void testAddOneWithNoneInterestExistentAndObjectNotSameVersionAndInterestedStatus() {
+    objectDTO.setIdObject(12);
+    objectDTO.setStatus("interested");
+    objectDTO.setVersion(13);
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setStatus("interested");
+    ObjectDTO objectDTOFromGetOne = objectFactory.getObjectDTO();
+    objectDTOFromGetOne.setStatus("interested");
     objectDTOFromGetOne.setVersion(14);
     objectDTOFromGetOne.setIdObject(12);
 
