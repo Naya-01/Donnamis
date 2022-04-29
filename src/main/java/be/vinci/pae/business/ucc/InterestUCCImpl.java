@@ -72,24 +72,34 @@ public class InterestUCCImpl implements InterestUCC {
         //change name exception
         throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
       }
+      ObjectDTO objectDTO = objectDAO.getOne(interest.getIdObject());
+      if (objectDTO == null) {
+        throw new NotFoundException("Objet non trouvé !");
+      }
+      if (!objectDTO.getStatus().equals("interested") && !objectDTO.getStatus()
+          .equals("available")) {
+        throw new ForbiddenException("L'objet doit être disponible pour marquer son intérêt.");
+      }
+      OfferDTO offerDTO = offerDAO.getLastObjectOffer(objectDTO.getIdObject());
+      if (offerDTO == null) {
+        throw new NotFoundException("Objet non trouvé !");
+      }
+      if (!offerDTO.getStatus().equals("interested") && !offerDTO.getStatus().equals("available")) {
+        throw new ForbiddenException("L'objet doit être disponible pour marquer son intérêt.");
+      }
+
       // if there is no interest
       if (interestDAO.getAllCount(interest.getIdObject()) == 0) {
-        ObjectDTO objectDTO = objectDAO.getOne(interest.getIdObject());
-        if (objectDTO == null) {
-          throw new NotFoundException("Objet non trouvé !");
-        }
         if (!objectDTO.getVersion().equals(interest.getObject().getVersion())) {
+          throw new ForbiddenException("Les versions ne correspondent pas");
+        }
+        if (!offerDTO.getVersion().equals(interest.getOffer().getVersion())) {
           throw new ForbiddenException("Les versions ne correspondent pas");
         }
         objectDTO.setStatus("interested");
         objectDAO.updateOne(objectDTO);
-        OfferDTO offerDTO = offerDAO.getOneByObject(objectDTO.getIdObject());
-        if (!offerDTO.getVersion().equals(interest.getOffer().getVersion())) {
-          throw new ForbiddenException("Les versions ne correspondent pas");
-        }
         offerDTO.setStatus("interested");
         offerDAO.updateOne(offerDTO);
-
       }
 
       interestDTO = interestDAO.addOne(interest);
