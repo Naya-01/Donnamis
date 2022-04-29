@@ -276,6 +276,41 @@ class InterestUCCImplTest {
             .rollBackTransaction()
     );
   }
+
+  @DisplayName("test addOne with none interest and object have not same version")
+  @Test
+  public void testAddOneWithNoneInterestExistentAndObjectNotSameVersion() {
+    objectDTO.setIdObject(12);
+    objectDTO.setStatus("available");
+    objectDTO.setVersion(13);
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setStatus("available");
+    ObjectDTO objectDTOFromGetOne = objectFactory.getObjectDTO();
+    objectDTOFromGetOne.setStatus("available");
+    objectDTOFromGetOne.setVersion(14);
+    objectDTOFromGetOne.setIdObject(12);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(null);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTOFromGetOne);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(objectDTOFromGetOne.getIdObject()))
+        .thenReturn(offerDTO);
+    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getIdObject()))
+        .thenReturn(0);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
