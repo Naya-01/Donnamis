@@ -239,7 +239,7 @@ public class InterestResource {
   }
 
   /**
-   * Filter the member object in each object interest
+   * Filter the member object in each object interest.
    *
    * @param interestDTOList the list we want to filter
    */
@@ -255,8 +255,8 @@ public class InterestResource {
    *
    * @param interestDTOList the list we want to filter
    */
-  private void filterObject(List<InterestDTO> interestDTOList){
-    for(InterestDTO interestDTO : interestDTOList ){
+  private void filterObject(List<InterestDTO> interestDTOList) {
+    for (InterestDTO interestDTO : interestDTOList) {
       interestDTO.setObject(
           JsonViews.filterPublicJsonView(interestDTO.getObject(), ObjectDTO.class)
       );
