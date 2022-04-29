@@ -8,8 +8,8 @@ class Member {
     this.username = username;
     this.lastname = lastname;
     this.firstname = firstname;
-    this.status = null;
-    this.role = null;
+    this.status = status;
+    this.role = role;
     this.phone = phone;
     this.password = password;
     this.reasonRefusal = reasonRefusal;
