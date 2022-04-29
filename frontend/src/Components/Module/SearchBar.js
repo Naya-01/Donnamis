@@ -42,7 +42,10 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
               <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
+              <label class="btn btn-outline-dark" for="btn-status-available">Publié</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-interested" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-interested">Intéressé</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
               <label class="btn btn-outline-dark" for="btn-status-assigned">Attribué</label>
