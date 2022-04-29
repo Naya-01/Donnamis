@@ -742,7 +742,8 @@ class OfferUCCImplTest {
     Mockito.when(interestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(null);
 
-    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getIdOffer())).thenReturn(offerDTO);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
 
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC.giveOffer(offerDTO, memberDTO)),
