@@ -40,6 +40,6 @@ public interface ObjectUCC {
    * @param id           of the object.
    * @return Object modified.
    */
-  ObjectDTO updateObjectPicture(String internalPath, int id);
+  ObjectDTO updateObjectPicture(String internalPath, int id, int version);
 
 }

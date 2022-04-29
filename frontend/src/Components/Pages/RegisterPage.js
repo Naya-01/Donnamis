@@ -122,6 +122,7 @@ const RegisterPage = async () => {
     const notNullFields = [username, lastname, firstname, password,
       street, postcode, commune];
 
+    //remove all red borders
     notNullFields.forEach(function (item) {
       if (item.classList.contains("border-danger")) {
         item.classList.remove("border-danger");
@@ -217,15 +218,16 @@ const RegisterPage = async () => {
     } else {
       let address = new Address(unitNumber.value.trim(),
           buildingNumber.value.trim(), street.value.trim(),
-          postcode.value.trim(), commune.value.trim());
+          postcode.value.trim(), commune.value.trim(), 1);
       let member = new Member(username.value.split(' ').join(''),
           lastname.value.trim(), firstname.value.trim(), password.value.trim(),
-          phoneNumber.value.trim(), address);
-      console.log(member);
-      // Requête DB inscription et redirect
+          phoneNumber.value.trim(), address, 1, null, null, null);
+      // register request
       let isRegistered = await memberLibrary.registerMember(member);
+      //if the member could be registered
       if (isRegistered) {
-        toast.fire({
+        let notificationBottom = new Notification().getNotification("bottom");
+        notificationBottom.fire({
           icon: 'success',
           title: `Vous êtes désormais dans l'attente de la validation d'un 
           administrateur de votre profil`

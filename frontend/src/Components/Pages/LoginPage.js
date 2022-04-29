@@ -33,7 +33,16 @@ const htmlPage = `
             </div>
                   `;
 
+/**
+ * Connect the member
+ *
+ * @param username username of the member
+ * @param password password of the member
+ * @param remember boolean field if we want to remember our data
+ * @returns {Promise<void>}
+ */
 const connectClientAndRedirect = async (username, password, remember) => {
+  //login the member with the api
   let userData = await MemberLibrary.prototype.login(username, password,
       remember)
 
@@ -47,6 +56,11 @@ const connectClientAndRedirect = async (username, password, remember) => {
   Redirect("/");
 }
 
+/**
+ * Make the Login page
+ *
+ * @constructor
+ */
 const LoginPage = () => {
   if (getSessionObject("user")) {
     Redirect("/");
@@ -58,6 +72,7 @@ const LoginPage = () => {
 
   let btnSubmit = document.getElementById("submitConnect");
 
+  //if click on submit button for login
   btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
     let username = document.getElementById("username");
@@ -69,6 +84,7 @@ const LoginPage = () => {
       password.classList.remove("border-danger");
     }
     let remember = document.getElementById("rememberMe").checked;
+    //check fields
     if (username.value.length === 0 || password.value.length === 0) {
       await Toast.fire({
         icon: 'error',
@@ -84,6 +100,7 @@ const LoginPage = () => {
       }
 
     } else {
+      // connect the member
       await connectClientAndRedirect(username.value, password.value, remember);
     }
   })

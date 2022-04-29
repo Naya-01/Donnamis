@@ -1,7 +1,18 @@
 import TypeLibrary from "../../Domain/TypeLibrary";
 
-const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
-    hasNewObjectButton, hasStatus) => {
+/**
+ * A module to display a search page
+ *
+ * @param pageName the name of the page (display it h1)
+ * @param hasNav if you want a searchbar
+ * @param hasFilter boolean if there is filter for member status
+ * @param hasType if has type dropdown selector
+ * @param placeholder the bar search placeholder
+ * @param hasNewObjectButton if you want a button next to the navbar
+ * @param hasStatus boolean if there is filter for offer status
+ * @returns {Promise<void>}
+ */
+const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasNewObjectButton, hasStatus) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `

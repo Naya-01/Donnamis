@@ -2,7 +2,7 @@
 
 class Member {
 
-  constructor(username, lastname, firstname, password, phone, address,
+  constructor(username, lastname, firstname, password, phone, address, version, role, reasonRefusal, status,
       memberId = null) {
     this.memberId = memberId;
     this.username = username;
@@ -12,12 +12,13 @@ class Member {
     this.role = null;
     this.phone = phone;
     this.password = password;
-    this.reasonRefusal = null;
+    this.reasonRefusal = reasonRefusal;
     this.address = address;
     this.image = null;
+    this.version = version;
+    this.role = role;
   }
 
 }
 
-// default export
 export default Member;

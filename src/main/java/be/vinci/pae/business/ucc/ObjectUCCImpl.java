@@ -3,6 +3,7 @@ package be.vinci.pae.business.ucc;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
@@ -104,13 +105,14 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @param objectDTO : object that we want to update.
    * @return object updated
    */
+  @Override
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     ObjectDTO object;
     try {
       dalService.startTransaction();
       object = objectDAO.getOne(objectDTO.getIdObject());
       if (object == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
       }
       object = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();
@@ -129,19 +131,25 @@ public class ObjectUCCImpl implements ObjectUCC {
    * @return Object modified.
    */
   @Override
-  public ObjectDTO updateObjectPicture(String internalPath, int id) {
-    ObjectDTO objectDTO = null;
+  public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
+    ObjectDTO objectDTO;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
-        throw new NotFoundException("Object not found");
+        throw new NotFoundException("Objet non trouvé");
+      }
+
+      if (!objectDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
       }
 
       File f = new File(Config.getProperty("ImagePath") + objectDTO.getImage());
       if (f.exists()) {
         f.delete();
       }
+
+
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

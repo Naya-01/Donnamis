@@ -15,6 +15,8 @@ public interface InterestDAO {
 
   /**
    * Mark all notifications shown.
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
    *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.
@@ -41,6 +43,8 @@ public interface InterestDAO {
 
   /**
    * Update the notification field to know if we have to send one.
+   * /!\ There is no version update because of
+   * the non-sensibility of the send_notification field /!\
    *
    * @param interestDTO with the notification attribute.
    * @return the interest updated.
@@ -78,15 +82,6 @@ public interface InterestDAO {
    * @return a list of interest, by an id object
    */
   List<InterestDTO> getAllPublished(int idObject);
-
-  /**
-   * Check if a member is interested by an object.
-   *
-   * @param idMember the id of the member
-   * @param idObject the id of the object
-   * @return true if he's interested false if he's not
-   */
-  boolean isUserInterested(int idMember, int idObject);
 
   /**
    * Get a count of interest in an id object.

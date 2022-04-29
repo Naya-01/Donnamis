@@ -31,6 +31,8 @@ public class MemberImpl implements Member {
   private AddressDTO address;
   @JsonView(Views.Public.class)
   private String image;
+  @JsonView(Views.Public.class)
+  private Integer version;
 
   @Override
   public Integer getMemberId() {
@@ -140,6 +142,16 @@ public class MemberImpl implements Member {
   @Override
   public void setImage(String image) {
     this.image = image;
+  }
+
+  @Override
+  public Integer getVersion() {
+    return this.version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 
   /**

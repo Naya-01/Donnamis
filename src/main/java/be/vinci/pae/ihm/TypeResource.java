@@ -3,6 +3,7 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.TypeDTO;
 import be.vinci.pae.business.ucc.TypeUCC;
 import be.vinci.pae.ihm.filters.Authorize;
+import be.vinci.pae.utils.JsonViews;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -38,6 +39,7 @@ public class TypeResource {
   public ObjectNode getType(@PathParam("id") int id) {
     Logger.getLogger("Log").log(Level.INFO, "TypeResource getType by id");
     TypeDTO typeDTO = typeUCC.getType(id);
+    typeDTO = JsonViews.filterPublicJsonView(typeDTO,TypeDTO.class);
     return jsonMapper.createObjectNode().putPOJO("type", typeDTO);
   }
 
@@ -55,6 +57,7 @@ public class TypeResource {
     Logger.getLogger("Log").log(Level.INFO, "TypeResource getType by name");
 
     TypeDTO typeDTO = typeUCC.getType(typeName);
+    typeDTO = JsonViews.filterPublicJsonView(typeDTO,TypeDTO.class);
     return jsonMapper.createObjectNode().putPOJO("type", typeDTO);
   }
 

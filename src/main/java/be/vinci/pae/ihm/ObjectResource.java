@@ -8,6 +8,7 @@ import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
+import be.vinci.pae.utils.JsonViews;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -50,7 +52,9 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO getObject(@PathParam("id") int id) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource getObject");
-    return objectUCC.getObject(id);
+    ObjectDTO objectDTO = objectUCC.getObject(id);
+    objectDTO = JsonViews.filterPublicJsonView(objectDTO, ObjectDTO.class);
+    return objectDTO;
   }
 
   /**
@@ -70,7 +74,9 @@ public class ObjectResource {
   public ObjectDTO setPicture(@PathParam("id") int id,
       @Context ContainerRequest request,
       @FormDataParam("file") InputStream file,
-      @FormDataParam("file") FormDataBodyPart fileMime) {
+      @FormDataParam("file") FormDataBodyPart fileMime,
+      @QueryParam("version") int version) {
+    System.out.println(version);
 
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
@@ -79,14 +85,17 @@ public class ObjectResource {
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
       throw new UnauthorizedException("Cette objet ne vous appartient pas");
     }
+
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\",
         objectDTO.getIdObject());
     if (internalPath == null) {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
-
-    return objectUCC.updateObjectPicture(internalPath, objectDTO.getIdObject());
+    ObjectDTO object = objectUCC.updateObjectPicture(
+        internalPath, objectDTO.getIdObject(), version);
+    object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
+    return object;
   }
 
   /**
@@ -121,7 +130,9 @@ public class ObjectResource {
   @Authorize
   public List<ObjectDTO> getAllObjectMember(@PathParam("id") int idMember) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource getAllObjectMember");
-    return objectUCC.getAllObjectMember(idMember);
+    List<ObjectDTO> objectDTOList = objectUCC.getAllObjectMember(idMember);
+    objectDTOList = JsonViews.filterPublicJsonViewAsList(objectDTOList, ObjectDTO.class);
+    return objectDTOList;
   }
 
   /**
@@ -137,7 +148,9 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource updateOne");
-    return objectUCC.updateOne(objectDTO);
+    ObjectDTO object = objectUCC.updateOne(objectDTO);
+    object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
+    return object;
   }
 
 

@@ -29,4 +29,8 @@ public interface ObjectDTO {
   Integer getIdOfferor();
 
   void setIdOfferor(int idOfferor);
+
+  Integer getVersion();
+
+  void setVersion(Integer version);
 }

@@ -30,10 +30,10 @@ class RatingUCCImplTest {
   private InterestDTO interestDTO;
   private DALService mockDalService;
   private final int nonExistingId = 1000;
+  private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
 
   @BeforeEach
   void initAll() {
-    ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
     this.ratingUCC = locator.getService(RatingUCC.class);
     this.mockRatingDAO = locator.getService(RatingDAO.class);
     this.mockInterestDAO = locator.getService(InterestDAO.class);

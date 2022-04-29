@@ -10,9 +10,12 @@ const offerLibrary = new OfferLibrary();
  */
 const HomePage = async () => {
   const pageDiv = document.querySelector("#page");
+  //create the search bar
   await searchBar("Accueil", false, false, false, false, "");
+  //make the html page
   pageDiv.innerHTML += await cardList(await offerLibrary.getAllLastOffers());
 
+  //add event listener to each card offer
   for (const offer of pageDiv.querySelectorAll(".clickable")) {
     offer.addEventListener("click", async (e) => {
       e.preventDefault();

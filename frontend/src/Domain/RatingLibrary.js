@@ -1,6 +1,14 @@
 import {getSessionObject} from "../utils/session";
 
 class RatingLibrary {
+
+  /**
+   * Add a rating on the API.
+   * @param rating from 0 to 5.
+   * @param comment of the rating.
+   * @param idObject of the critic.
+   * @returns {Promise<*>} the new rating in json.
+   */
   async addRating(rating, comment, idObject) {
     let response;
     try {
@@ -28,6 +36,11 @@ class RatingLibrary {
     return current_rating;
   }
 
+  /**
+   * Get a rating by an id object.
+   * @param idObject of the object.
+   * @returns {Promise<*>} the rating in json.
+   */
   async getOne(idObject) {
     let response;
     try {

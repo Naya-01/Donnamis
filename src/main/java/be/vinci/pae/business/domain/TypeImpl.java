@@ -13,7 +13,7 @@ public class TypeImpl implements TypeDTO {
   @JsonView(Views.Public.class)
   private String typeName;
   @JsonView(Views.Public.class)
-  private boolean isDefault;
+  private Boolean isDefault;
 
   @Override
   public Integer getIdType() {
@@ -21,7 +21,7 @@ public class TypeImpl implements TypeDTO {
   }
 
   @Override
-  public void setId(int idType) {
+  public void setIdType(int idType) {
     this.idType = idType;
   }
 

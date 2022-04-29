@@ -4,6 +4,11 @@ import Notification from "../Components/Module/Notification";
 const Toast = new Notification().getNotification("bottom");
 
 class MemberLibrary {
+
+  /**
+   * Get user by his token.
+   * @returns {Promise<*>} the member in json.
+   */
   async getUserByHisToken() {
     let response;
     try {
@@ -25,6 +30,10 @@ class MemberLibrary {
     return user;
   }
 
+  /**
+   * Get user by his id.
+   * @returns {Promise<*>} the member in json.
+   */
   async getUserByHisId(id) {
     let response;
     try {
@@ -79,6 +88,13 @@ class MemberLibrary {
     }
   }
 
+  /**
+   * Login a quidam as a member or administrator.
+   * @param username of the member.
+   * @param password of the member.
+   * @param remember if he want to be remembered longer.
+   * @returns {Promise<*>} refresh and access token in json if he can connect.
+   */
   async login(username, password, remember) {
     let userData;
     try {
@@ -106,7 +122,9 @@ class MemberLibrary {
       console.log(err);
     }
     if (userData.status === 200) {
-      Toast.fire({
+
+      const notification = new Notification().getNotification("bottom");
+      notification.fire({
         icon: 'success',
         title: "Bienvenue !"
       })
@@ -114,6 +132,12 @@ class MemberLibrary {
     }
   }
 
+  /**
+   * Filter members by status and the search.
+   * @param search filter.
+   * @param status filter.
+   * @returns {Promise<{}>} a list of member.
+   */
   async getMemberBySearchAndStatus(search, status) {
     let response;
     try {
@@ -136,33 +160,11 @@ class MemberLibrary {
     return user;
   }
 
-  async updateStatus(status, memberId, reasonRefusal, role) {
-    let response;
-    try {
-      let options = {
-        method: "PUT",
-        body: JSON.stringify({
-          "status": status,
-          "reasonRefusal": reasonRefusal,
-          "memberId": memberId,
-          "role": role,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").accessToken,
-        },
-      };
-      response = await fetch("api/member/update", options);
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-    if (response.status === 200) {
-      return await response.json();
-    }
-    return null;
-  }
-
+  /**
+   * Update the member by his data.
+   * @param member datas to update.
+   * @returns {Promise<null|any>} the member updated in json
+   */
   async updateMember(member) {
     let response;
     try {
@@ -175,17 +177,29 @@ class MemberLibrary {
         },
       };
       response = await fetch("api/member/update", options);
+      if (response.status === 200) {
+        return await response.json();
+      }
+      response.text().then((msg) => {
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+      return null;
     } catch (err) {
       console.log(err);
       return null;
     }
-    if (response.status === 200) {
-      return await response.json();
-    }
-    return null;
   }
 
-  async setImage(formData) {
+  /**
+   * Set a profil picture to the member who call the function.
+   * @param formData is the picture data.
+   * @param version of the update.
+   * @returns {Promise<*>} the member updated in json.
+   */
+  async setImage(formData, version) {
     let response = null;
     try {
       let options = {
@@ -195,7 +209,8 @@ class MemberLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/member/setPicture/', options)
+      response = await fetch('api/member/setPicture?version=' + version,
+          options)
     } catch (err) {
       console.log(err);
     }

@@ -1,6 +1,14 @@
 import {getSessionObject} from "../utils/session";
+import Swal from "sweetalert2";
+import toast from "sweetalert2";
 
 class ObjectLibrary {
+
+  /**
+   * Get the object by his id.
+   * @param id of the object.
+   * @returns {Promise<*>} the object in json.
+   */
   async getObject(id) {
     let response;
     try {
@@ -23,7 +31,14 @@ class ObjectLibrary {
 
   }
 
-  async setImage(formData, idObject) {
+  /**
+   * Set a picture for the object.
+   * @param formData is the picture data.
+   * @param id of the object.
+   * @param version of the update.
+   * @returns {Promise<*>} the object in json.
+   */
+  async setImage(formData, id, version = 1) {
     let response;
     try {
       let options = {
@@ -33,15 +48,23 @@ class ObjectLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch('api/object/setPicture/' + idObject, options)
+      response = await fetch(
+          'api/object/setPicture/' + id + '?version=' + version, options)
     } catch (err) {
       console.log(err);
     }
-    let newInterest;
-    if (response.status === 200) {
-      newInterest = await response.json();
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
     }
-    return newInterest;
+    if (response.status === 200) {
+      return await response.json();
+    }
   }
 
 }
