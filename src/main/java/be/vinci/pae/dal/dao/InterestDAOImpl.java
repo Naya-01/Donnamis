@@ -245,9 +245,11 @@ public class InterestDAOImpl implements InterestDAO {
   public List<InterestDTO> getAllNotifications(int idMember) {
 
     String query =
-        "SELECT DISTINCT i.id_member, i.id_object, i.availability_date, i.status, i.version ,i.send_notification,i.be_called "
+        "SELECT DISTINCT i.id_member, i.id_object, i.availability_date, i.status, i.version "
+            + ",i.send_notification,i.be_called "
             + "FROM donnamis.interests i , donnamis.objects o "
-            + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' AND i.send_notification = true) "
+            + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' "
+            + "AND i.send_notification = true) "
             + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published') "
             + "ORDER BY i.availability_date DESC";
 
@@ -297,7 +299,8 @@ public class InterestDAOImpl implements InterestDAO {
   public Integer getNotificationCount(Integer idMember) {
     String query = "SELECT count(DISTINCT i.*) "
         + "FROM donnamis.interests i , donnamis.objects o "
-        + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' AND i.send_notification = true) "
+        + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' "
+        + "AND i.send_notification = true) "
         + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published')";
     Integer notificationCount = null;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {

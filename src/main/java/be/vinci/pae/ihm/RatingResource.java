@@ -40,8 +40,8 @@ public class RatingResource {
   public RatingDTO getOne(@PathParam("id") int idObject) {
     Logger.getLogger("Log").log(Level.INFO, "RatingResource getOne");
     RatingDTO ratingDTO = ratingUCC.getOne(idObject);
-    ratingDTO.setMemberRater(JsonViews.
-        filterPublicJsonView(ratingDTO.getMemberRater(),MemberDTO.class));
+    ratingDTO.setMemberRater(JsonViews
+        .filterPublicJsonView(ratingDTO.getMemberRater(),MemberDTO.class));
     ratingDTO = JsonViews.filterPublicJsonView(ratingDTO,RatingDTO.class);
     return ratingDTO;
   }
@@ -67,8 +67,8 @@ public class RatingResource {
     ratingDTO.setIdMember(ownerDTO.getMemberId());
     RatingDTO rating = ratingUCC.addRating(ratingDTO);
 
-    rating.setMemberRater(JsonViews.
-        filterPublicJsonView(rating.getMemberRater(),MemberDTO.class));
+    rating.setMemberRater(JsonViews
+        .filterPublicJsonView(rating.getMemberRater(),MemberDTO.class));
     rating = JsonViews.filterPublicJsonView(rating,RatingDTO.class);
     return rating;
   }
