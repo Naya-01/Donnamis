@@ -9,12 +9,13 @@ import {RedirectWithParamsInUrl} from "../Router/Router";
  */
 const AssignedObjectsPage = async () => {
   const user = await MemberLibrary.prototype.getUserByHisToken()
-  await SearchBar("Objets attribués", true, false, true, "Rechercher un objet", false, false);
+  await SearchBar("Objets attribués", true, false, true, "Rechercher un objet",
+      false, false);
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML += `<div id="card-list-div"></div>`
 
   const cardListDiv = document.getElementById("card-list-div");
-  const offers = await OfferLibrary.prototype.getGivenOffers(user.memberId);
+  const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers();
   cardListDiv.innerHTML = await CardList(offers);
 
   for (const offer of pageDiv.querySelectorAll(".clickable")) {

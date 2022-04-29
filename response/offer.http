@@ -20,6 +20,19 @@ client.global.set("access", response.body.access_token);
 client.global.set("refresh", response.body.refresh_token);
 %}
 
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+%}
+
 ###
 GET {{baseUri}}/offers?search-pattern=bu&self=false
 Authorization: {{refresh}}
@@ -71,6 +84,10 @@ Authorization: {{refresh}}
 ### get all offer
 GET {{baseUri}}/offers?search-pattern=samEdi&self=true
 Authorization: {{refresh}}
+
+### Get given and assigned offers
+GET {{baseUri}}/offers/givenAndAssignedOffers/
+Authorization: {{access}}
 
 ###
 PUT {{baseUri}}/offers/
