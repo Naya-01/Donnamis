@@ -23,6 +23,8 @@ import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
@@ -558,6 +560,32 @@ class InterestUCCImplTest {
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test getAllInterests success")
+  @Test
+  public void testGetAllInterestsSuccess() {
+    newInterestDTO.setIdObject(4);
+    List<InterestDTO> listOfInterests = new ArrayList<>();
+    listOfInterests.add(newInterestDTO);
+    objectDTO.setIdOfferor(13);
+    objectDTO.setIdObject(4);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getAllPublished(objectDTO.getIdObject()))
+        .thenReturn(listOfInterests);
+
+    List<InterestDTO> listFromUcc = interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO);
+    assertAll(
+        () -> assertEquals(listOfInterests, listFromUcc),
+        () -> assertTrue(listFromUcc.contains(newInterestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .commitTransaction()
     );
   }
 
