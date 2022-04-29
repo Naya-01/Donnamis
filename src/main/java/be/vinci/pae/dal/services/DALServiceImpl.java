@@ -44,6 +44,10 @@ public class DALServiceImpl implements DALBackendService, DALService {
     }
   }
 
+
+  /**
+   * Start a transaction. Get a connection from the DataSource & set it the ThreadLocal.
+   */
   @Override
   public void startTransaction() {
     try {
@@ -54,10 +58,14 @@ public class DALServiceImpl implements DALBackendService, DALService {
       conn.setAutoCommit(false);
       connection.set(conn);
     } catch (SQLException e) {
-      throw new FatalException(e); // impossible de joindre le serveur
+      throw new FatalException(e);
     }
   }
 
+
+  /**
+   * Commit the transaction, close the connection & remove the connection in the ThreadLocal.
+   */
   @Override
   public void commitTransaction() {
     Connection conn = connection.get();
@@ -71,13 +79,15 @@ public class DALServiceImpl implements DALBackendService, DALService {
     }
   }
 
+  /**
+   * RollBack the transaction, close the connection & remove the connection in the ThreadLocal.
+   */
   @Override
   public void rollBackTransaction() {
     Connection conn = connection.get();
     try {
       conn.rollback();
       conn.close();
-      connection.remove();
     } catch (SQLException e) {
       throw new FatalException(e);
     } finally {
