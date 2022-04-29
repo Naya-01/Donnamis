@@ -20,6 +20,7 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.FatalException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
@@ -603,6 +604,22 @@ class InterestUCCImplTest {
         () -> assertEquals(5, interestUCC.getNotificationCount(memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
+  @DisplayName("Test getNotificationCount with fatal exception from dao")
+  @Test
+  public void testGetNotificationCountThrowFatalException() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    Mockito.when(mockInterestDAO.getNotificationCount(memberDTO.getMemberId())).thenThrow(
+        FatalException.class);
+
+    assertAll(
+        () -> assertThrows(FatalException.class, () -> interestUCC.getNotificationCount(memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
 
