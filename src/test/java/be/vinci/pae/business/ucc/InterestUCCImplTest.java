@@ -2,6 +2,7 @@ package be.vinci.pae.business.ucc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -760,6 +761,39 @@ class InterestUCCImplTest {
             () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown success")
+  @Test
+  public void testMarkNotificationShownSuccess() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    objectDTO.setIdObject(12);
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIsNotificated(true);
+    interestDTO.setIdObject(objectDTO.getIdObject());
+    interestDTO.setIdMember(memberDTO.getMemberId());
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+
+    InterestDTO interestDTOShown = interestUCC.markNotificationShown(interestDTO.getIdObject(),
+        memberDTO);
+
+    assertAll(
+        () -> assertEquals(objectDTO, interestDTOShown.getObject()),
+        () -> assertEquals(memberDTO, interestDTOShown.getMember()),
+        () -> assertFalse(interestDTOShown.getIsNotificated()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 
