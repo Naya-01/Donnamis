@@ -504,6 +504,25 @@ class InterestUCCImplTest {
             .commitTransaction()
     );
   }
+
+  //  ---------------------------- GET ALL INTERESTS UCC  -------------------------------  //
+
+  @DisplayName("test getAllInterests with non existent object")
+  @Test
+  public void testGetAllInterestsWithNonExistentObject() {
+    Mockito.when(mockObjectDAO.getOne(nonExistentId))
+        .thenReturn(null);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.getAllInterests(nonExistentId, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
