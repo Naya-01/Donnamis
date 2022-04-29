@@ -541,6 +541,26 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("test getAllInterests with null list of published interests")
+  @Test
+  public void testGetAllInterestsWithNullListInterestPublishedFromDao() {
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getAllPublished(objectDTO.getIdObject()))
+        .thenReturn(null);
+    objectDTO.setIdOfferor(13);
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
