@@ -248,7 +248,8 @@ public class InterestDAOImpl implements InterestDAO {
         "SELECT DISTINCT i.id_member, i.id_object, i.availability_date, i.status, i.version ,i.send_notification,i.be_called "
             + "FROM donnamis.interests i , donnamis.objects o "
             + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND i.status = 'published' AND i.send_notification = true) "
-            + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published')";
+            + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published') "
+            + "ORDER BY i.availability_date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
