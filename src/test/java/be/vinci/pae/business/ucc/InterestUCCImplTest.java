@@ -8,13 +8,18 @@ import be.vinci.pae.TestBinder;
 import be.vinci.pae.business.domain.dto.InterestDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
+import be.vinci.pae.business.domain.dto.OfferDTO;
 import be.vinci.pae.business.factories.InterestFactory;
 import be.vinci.pae.business.factories.MemberFactory;
 import be.vinci.pae.business.factories.ObjectFactory;
+import be.vinci.pae.business.factories.OfferFactory;
 import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
+import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ConflictException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import java.time.LocalDate;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -67,6 +72,7 @@ class InterestUCCImplTest {
     this.memberFactory = locator.getService(MemberFactory.class);
   }
 
+  //------------------------------- GET INTEREST InterestUCC---------------------------------------
   @DisplayName("test getInterest with a non existent object and an existent member")
   @Test
   public void testGetInterestWithNonExistentObjectAndExistentMember() {
@@ -156,7 +162,26 @@ class InterestUCCImplTest {
     );
   }
 
-  /*
+  //------------------------------- ADD ONE InterestUCC---------------------------------------
+  @DisplayName("test addOne with already an existing interest")
+  @Test
+  public void testAddOneWithAlreadyAnExistingInterest() {
+    objectDTO.setIdObject(12);
+    interestDTO.setObject(objectDTO);
+    interestDTO.setIdMember(1);
+    interestDTO.setAvailabilityDate(LocalDate.now());
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
+        .thenReturn(interestDTO);
+    assertAll(
+        () -> assertThrows(ConflictException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
+            .rollBackTransaction()
+    );
+  }
+
+
   @DisplayName("test addOne with a good interest")
   @Test
   public void testAddOneWithAGoodInterest() {
@@ -183,6 +208,7 @@ class InterestUCCImplTest {
             .commitTransaction()
     );
   }
+
 
   @DisplayName("test addOne with a non existent object")
   @Test
@@ -232,7 +258,7 @@ class InterestUCCImplTest {
     );
   }
 
-
+/*
   @DisplayName("test getInterestedCount with non-existent object")
   @Test
   public void testGetInterestedCountWithNonExistentObject() {

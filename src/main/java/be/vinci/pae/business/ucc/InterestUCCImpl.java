@@ -9,6 +9,7 @@ import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.dao.OfferDAO;
 import be.vinci.pae.dal.services.DALService;
+import be.vinci.pae.exceptions.ConflictException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,7 +70,7 @@ public class InterestUCCImpl implements InterestUCC {
       dalService.startTransaction();
       if (interestDAO.getOne(item.getIdObject(), item.getIdMember()) != null) {
         //change name exception
-        throw new ForbiddenException("Un intérêt pour cet objet et ce membre existe déjà !");
+        throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
       }
       // if there is no interest
       if (interestDAO.getAllCount(item.getIdObject()) == 0) {
