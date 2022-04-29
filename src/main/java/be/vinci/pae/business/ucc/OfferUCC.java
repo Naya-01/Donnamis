@@ -66,6 +66,14 @@ public interface OfferUCC {
   List<OfferDTO> getGivenOffers(int idReceiver);
 
   /**
+   * Get all offers received by a member.
+   *
+   * @param receiver member
+   * @return a list of offerDTO
+   */
+  List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver);
+
+  /**
    * Cancel an Object.
    *
    * @param offerDTO object with his id & set the status to 'cancelled'
