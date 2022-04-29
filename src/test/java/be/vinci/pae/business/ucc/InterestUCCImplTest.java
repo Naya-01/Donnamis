@@ -722,6 +722,25 @@ class InterestUCCImplTest {
     );
   }
 
+  //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
+  @DisplayName("Test markNotificationShown with non existent interest in db")
+  @Test
+  public void testMarkNotificationShownWithNonExistentInterestInDb() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockInterestDAO.getOne(nonExistentId, memberDTO.getMemberId()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   //----------------------
   /*
   @DisplayName("test addOne with a good interest")
