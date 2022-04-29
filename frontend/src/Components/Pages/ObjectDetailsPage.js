@@ -71,7 +71,6 @@ const ObjectDetailsPage = async () => {
 
   // GET all informations of the object (and offer)
   offer = await offerLibrary.getOfferById(idOffer);
-  console.log(offer)
   if (offer === undefined) { // if we didn't found the offer
     Redirect("/");
     return;
@@ -85,7 +84,6 @@ const ObjectDetailsPage = async () => {
   description = offer.object.description;
   time_slot = offer.timeSlot;
   statusObject = offer.status;
-  console.log(time_slot)
 
   versionObject = offer.object.version;
   versionOffer = offer.version;
@@ -230,7 +228,6 @@ const ObjectDetailsPage = async () => {
         + memberGiver.username;
 
     if (!isInterested && (english_status === "interested" || english_status === "available")) {
-      console.log(offer.object.version, offer.version)
       displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(idObject);
@@ -612,7 +609,6 @@ async function updateObject(e) {
 
 
   // Call the function to update the offer
-  console.log("idoff"+idOffer);
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
       new_description, idType, english_status, statusObject, versionObject++,
       versionOffer++);

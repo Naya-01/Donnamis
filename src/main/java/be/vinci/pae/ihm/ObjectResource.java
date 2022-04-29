@@ -76,7 +76,6 @@ public class ObjectResource {
       @FormDataParam("file") InputStream file,
       @FormDataParam("file") FormDataBodyPart fileMime,
       @QueryParam("version") int version) {
-    System.out.println(version);
 
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");

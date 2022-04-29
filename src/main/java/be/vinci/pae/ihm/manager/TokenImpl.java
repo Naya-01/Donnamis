@@ -31,7 +31,7 @@ public class TokenImpl implements Token {
           .sign(this.jwtAlgorithm);
 
     } catch (Exception e) {
-      System.out.println("Unable to create token");
+      throw new TokenDecodingException("Unable to create token");
     }
     return token;
   }
