@@ -33,6 +33,10 @@ let provImage = null;
  * @returns {Promise<void>}
  */
 const modifyProfilRender = async () => {
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
   let page = `
     <div class="container mt-5">
       <div class="text-center">

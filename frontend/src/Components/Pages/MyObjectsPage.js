@@ -166,7 +166,7 @@ const reofferButton = async (buttonCard, offer) => {
     ))) return;
     offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
     buttonCard.innerHTML = ``;
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Disponible';
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = dictionary.get(offer.status);
     cancelButton(buttonCard, offer);
     await interestedButton(buttonCard, offer);
   });
@@ -210,7 +210,7 @@ const assignedButtons = (buttonCard, offer) => {
         offer.object.version++
     ))) return;
     buttonCard.innerHTML = ``;
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné à xxxx';
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné';
   });
   buttonCard.appendChild(nonRealisedOfferButton);
   buttonCard.appendChild(offeredObjectButton);
@@ -228,7 +228,7 @@ const cancelButton = (buttonCard, offer) => {
         offer.object.version
     ))) return;
     offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Annulée';
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Annulé';
     buttonCard.innerHTML = ``;
     await interestedButton(buttonCard, offer);
     await reofferButton(buttonCard, offer);
