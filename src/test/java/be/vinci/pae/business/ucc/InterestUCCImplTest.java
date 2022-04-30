@@ -64,6 +64,7 @@ class InterestUCCImplTest {
     ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
     this.objectDTO.setIdObject(10);
+    this.objectDTO.setIdOfferor(35);
 
     InterestFactory interestFactory = locator.getService(InterestFactory.class);
     this.interestDTO = interestFactory.getInterestDTO();
@@ -878,6 +879,29 @@ class InterestUCCImplTest {
 
     assertAll(
         () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.assignOffer(interestDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test assignOffer with not same id member and id offeror")
+  @Test
+  public void testAssignOfferWithNotSameIdMemberAndIdOfferor() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    interestDTO.setIdMember(memberDTO.getMemberId());
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(interestDTO.getObject());
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
             () -> interestUCC.assignOffer(interestDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
