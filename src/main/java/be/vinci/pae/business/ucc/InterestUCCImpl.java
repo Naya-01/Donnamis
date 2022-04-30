@@ -82,7 +82,7 @@ public class InterestUCCImpl implements InterestUCC {
       }
       OfferDTO offerDTO = offerDAO.getLastObjectOffer(objectDTO.getIdObject());
       if (offerDTO == null) {
-        throw new NotFoundException("Objet non trouvé !");
+        throw new NotFoundException("Offre non trouvée !");
       }
       if (!offerDTO.getStatus().equals("interested") && !offerDTO.getStatus().equals("available")) {
         throw new ForbiddenException("L'objet doit être disponible pour marquer son intérêt.");
@@ -153,10 +153,8 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
-      if ((!offerDTO.getStatus().equals("interested") || !interestDTOFromDB.getObject().getStatus()
-          .equals("interested")) && (!offerDTO.getStatus().equals("not_collected")
-          || !interestDTOFromDB.getObject().getStatus()
-          .equals("not_collected"))) {
+      if (!offerDTO.getStatus().equals("interested")
+          && !offerDTO.getStatus().equals("not_collected")) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 
@@ -168,9 +166,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
-      Integer interestVersionDB = interestDAO.getOne(interestDTOFromDB.getObject().getIdObject(),
-          interestDTOFromDB.getIdMember()).getVersion();
-      if (!interestVersionDB.equals(interestDTOFromDB.getVersion())) {
+      if (!interestDTO.getVersion().equals(interestDTOFromDB.getVersion())) {
         throw new ForbiddenException("Vous ne possédez pas une version à jour de l'intérêt.");
       }
 
@@ -191,12 +187,11 @@ public class InterestUCCImpl implements InterestUCC {
       interestDTOFromDB.setMember(memberDAO.getOne(interestDTOFromDB.getIdMember()));
 
       dalService.commitTransaction();
+      return interestDTOFromDB;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return interestDTO;
   }
 
   /**
