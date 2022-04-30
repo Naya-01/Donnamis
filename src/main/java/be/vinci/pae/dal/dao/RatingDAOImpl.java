@@ -61,7 +61,9 @@ public class RatingDAOImpl implements RatingDAO {
       preparedStatement.setInt(4, ratingDTO.getRating());
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
-
+      if (!resultSet.next()) {
+        return null;
+      }
       this.setRating(ratingDTO, resultSet);
       preparedStatement.close();
 
