@@ -131,7 +131,7 @@ class OfferLibrary {
               "typeName": typeName,
             },
             "description": description,
-            "image": null, //TODO : change the image
+            "image": null,
           }
         }),
         headers: {
