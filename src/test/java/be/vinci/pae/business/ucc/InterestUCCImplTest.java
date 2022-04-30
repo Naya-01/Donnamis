@@ -1198,5 +1198,69 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test assignOffer success")
+  @Test
+  public void testAssignOfferSuccess() {
+
+    ObjectDTO newObject = objectFactory.getObjectDTO();
+    newObject.setIdObject(objectDTO.getIdObject());
+    newObject.setVersion(26);
+    newObject.setStatus("not_collected");
+
+    objectDTO.setVersion(26);
+    objectDTO.setStatus("not_collected");
+
+    OfferDTO offerDTOFromGetLastOne = offerFactory.getOfferDTO();
+    offerDTOFromGetLastOne.setObject(newObject);
+    offerDTOFromGetLastOne.setIdOffer(18);
+    offerDTOFromGetLastOne.setVersion(14);
+    offerDTOFromGetLastOne.setStatus("not_collected");
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setObject(interestDTO.getObject());
+    offerDTO.setIdOffer(18);
+    offerDTO.setVersion(14);
+    offerDTO.setStatus("not_collected");
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    interestDTO.setIdMember(memberDTO.getMemberId());
+    interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
+    interestDTO.setOffer(offerDTO);
+    interestDTO.setStatus("published");
+    interestDTO.setVersion(12);
+
+    InterestDTO interestDTOInParam = interestFactory.getInterestDTO();
+    interestDTOInParam.setVersion(interestDTO.getVersion());
+    interestDTOInParam.setIdObject(interestDTO.getIdObject());
+    interestDTOInParam.setIdMember(interestDTO.getIdMember());
+    interestDTOInParam.setOffer(interestDTO.getOffer());
+    interestDTOInParam.setMember(interestDTOInParam.getMember());
+    interestDTOInParam.setObject(interestDTO.getObject());
+
+    Mockito.when(mockInterestDAO.getOne(interestDTOInParam.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(interestDTO.getObject());
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(interestDTO.getIdObject()))
+        .thenReturn(offerDTOFromGetLastOne);
+    Mockito.when(mockInterestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(null);
+
+    InterestDTO interestDTOAssigned = interestUCC.assignOffer(interestDTOInParam, memberDTO);
+
+    assertAll(
+        () -> assertTrue(interestDTOAssigned.getIsNotificated()),
+        () -> assertEquals("assigned", interestDTOAssigned.getStatus()),
+        () -> assertEquals("assigned", offerDTOFromGetLastOne.getStatus()),
+        () -> assertEquals("assigned", newObject.getStatus()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }
 

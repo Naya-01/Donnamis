@@ -189,12 +189,11 @@ public class InterestUCCImpl implements InterestUCC {
       interestDTOFromDB.setMember(memberDAO.getOne(interestDTOFromDB.getIdMember()));
 
       dalService.commitTransaction();
+      return interestDTOFromDB;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-
-    return interestDTO;
   }
 
   /**
