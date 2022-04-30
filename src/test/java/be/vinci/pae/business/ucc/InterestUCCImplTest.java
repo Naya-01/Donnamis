@@ -1039,7 +1039,6 @@ class InterestUCCImplTest {
   @DisplayName("Test assignOffer with already an assigned interest")
   @Test
   public void testAssignOfferWithAlreadyAnAssignedInterest() {
-    InterestDTO interestFromGetAssigned = interestFactory.getInterestDTO();
 
     ObjectDTO newObject = objectFactory.getObjectDTO();
     newObject.setIdObject(objectDTO.getIdObject());
@@ -1076,6 +1075,7 @@ class InterestUCCImplTest {
         .thenReturn(memberDTO);
     Mockito.when(mockOfferDAO.getLastObjectOffer(interestDTO.getIdObject()))
         .thenReturn(offerDTOFromGetLastOne);
+    InterestDTO interestFromGetAssigned = interestFactory.getInterestDTO();
     Mockito.when(mockInterestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestFromGetAssigned);
 
@@ -1090,7 +1090,6 @@ class InterestUCCImplTest {
   @DisplayName("Test assignOffer with already an assigned interest v2")
   @Test
   public void testAssignOfferWithAlreadyAnAssignedInterestV2() {
-    InterestDTO interestFromGetAssigned = interestFactory.getInterestDTO();
 
     ObjectDTO newObject = objectFactory.getObjectDTO();
     newObject.setIdObject(objectDTO.getIdObject());
@@ -1127,6 +1126,7 @@ class InterestUCCImplTest {
         .thenReturn(memberDTO);
     Mockito.when(mockOfferDAO.getLastObjectOffer(interestDTO.getIdObject()))
         .thenReturn(offerDTOFromGetLastOne);
+    InterestDTO interestFromGetAssigned = interestFactory.getInterestDTO();
     Mockito.when(mockInterestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
         .thenReturn(interestFromGetAssigned);
 
