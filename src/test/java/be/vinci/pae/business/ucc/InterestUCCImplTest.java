@@ -1087,6 +1087,57 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test assignOffer with already an assigned interest v2")
+  @Test
+  public void testAssignOfferWithAlreadyAnAssignedInterestV2() {
+    InterestDTO interestFromGetAssigned = interestFactory.getInterestDTO();
+
+    ObjectDTO newObject = objectFactory.getObjectDTO();
+    newObject.setIdObject(objectDTO.getIdObject());
+    newObject.setVersion(26);
+    newObject.setStatus("interested");
+
+    objectDTO.setVersion(26);
+    objectDTO.setStatus("interested");
+
+    OfferDTO offerDTOFromGetLastOne = offerFactory.getOfferDTO();
+    offerDTOFromGetLastOne.setObject(newObject);
+    offerDTOFromGetLastOne.setIdOffer(18);
+    offerDTOFromGetLastOne.setVersion(14);
+    offerDTOFromGetLastOne.setStatus("interested");
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setObject(interestDTO.getObject());
+    offerDTO.setIdOffer(18);
+    offerDTO.setVersion(14);
+    offerDTO.setStatus("interested");
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    interestDTO.setIdMember(memberDTO.getMemberId());
+    interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
+    interestDTO.setOffer(offerDTO);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(interestDTO.getObject());
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(interestDTO.getIdObject()))
+        .thenReturn(offerDTOFromGetLastOne);
+    Mockito.when(mockInterestDAO.getAssignedInterest(offerDTO.getObject().getIdObject()))
+        .thenReturn(interestFromGetAssigned);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.assignOffer(interestDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test assignOffer with assigned interest status")
   @Test
   public void testAssignOfferWithAssignedInterestStatus() {
