@@ -3,16 +3,27 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import ManagementList from "../Module/ManagementList";
 import profileImage from "../../img/profil.png"
 import OfferLibrary from "../../Domain/OfferLibrary";
-import {RedirectWithParamsInUrl} from "../Router/Router";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import NotificationSA from "../Module/NotificationSA";
 import autocomplete from "../Module/AutoComplete";
 import noImage from "../../img/noImage.png";
 import Member from "../../Domain/Member";
+import {getSessionObject} from "../../utils/session";
 
+const memberLibrary = new MemberLibrary();
 /**
  * Render the Members page
  */
 const MembersPage = async () => {
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
+  let member = await memberLibrary.getUserByHisToken();
+  if(member.role !== "administrator"){
+    Redirect("/");
+    return;
+  }
   await SearchBar("Membres", true, false, false, "Rechercher un membre", false,
       false);
 

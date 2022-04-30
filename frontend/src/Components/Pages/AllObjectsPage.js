@@ -2,12 +2,17 @@ import searchBar from "../Module/SearchBar";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import cardList from "../Module/CardList";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
+import {getSessionObject} from "../../utils/session";
 
 /**
  * Render the Objects page
  */
 
 const AllObjectsPage = async () => {
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
   await searchBar("Toutes les offres", true, false, true, "Recherche une offre",
       true, true);
 

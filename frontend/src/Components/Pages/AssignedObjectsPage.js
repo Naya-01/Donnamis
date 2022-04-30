@@ -2,13 +2,17 @@ import SearchBar from "../Module/SearchBar";
 import CardList from "../Module/CardList";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
-import {RedirectWithParamsInUrl} from "../Router/Router";
+import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
+import {getSessionObject} from "../../utils/session";
 
 /**
  * Render the Assigned objects page
  */
 const AssignedObjectsPage = async () => {
-  const user = await MemberLibrary.prototype.getUserByHisToken()
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
   await SearchBar("Objets attribués", true, false, true, "Rechercher un objet",
       false, false);
   const pageDiv = document.querySelector("#page");

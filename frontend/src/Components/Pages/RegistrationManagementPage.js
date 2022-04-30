@@ -5,9 +5,21 @@ import managementList from "../Module/ManagementList";
 import autocomplete from "../Module/AutoComplete";
 import NotificationSA from "../Module/NotificationSA";
 import Member from "../../Domain/Member";
+import {getSessionObject} from "../../utils/session";
+import {Redirect} from "../Router/Router";
 const Toast = NotificationSA.prototype.getNotification("bottom");
+const memberLibrary = new MemberLibrary();
 
 const RegistrationManagementPage = async () => {
+  if (!getSessionObject("user")) {
+    Redirect("/");
+    return;
+  }
+  let member = await memberLibrary.getUserByHisToken();
+  if(member.role !== "administrator"){
+    Redirect("/");
+    return;
+  }
   let actualStatus = 'waiting';
   await SearchBar("Inscriptions", true, true, false,
       "Rechercher une demande d'inscription", false);
