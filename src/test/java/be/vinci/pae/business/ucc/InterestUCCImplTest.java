@@ -38,7 +38,7 @@ import org.mockito.Mockito;
 class InterestUCCImplTest {
 
   private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
-
+  private final int nonExistentId = 1000;
   private InterestUCC interestUCC;
   private InterestDAO mockInterestDAO;
   private ObjectDAO mockObjectDAO;
@@ -48,7 +48,6 @@ class InterestUCCImplTest {
   private ObjectDTO objectDTO;
   private InterestDTO interestDTO;
   private InterestDTO newInterestDTO;
-  private int nonExistentId = 1000;
   private ObjectFactory objectFactory;
   private InterestFactory interestFactory;
   private OfferFactory offerFactory;
@@ -863,368 +862,26 @@ class InterestUCCImplTest {
     );
   }
 
-  //----------------------
-  /*
-  @DisplayName("test addOne with a good interest")
+  //  ----------------------------ASSIGN Offer UCC  -------------------------------  //
+
+
+  @DisplayName("Test assignOffer with non existent interest")
   @Test
-  public void testAddOneWithAGoodInterest() {
-    newInterestDTO.setObject(objectDTO);
-    newInterestDTO.setIdMember(1);
-    newInterestDTO.setAvailabilityDate(LocalDate.now());
-    OfferFactory offerFactory = locator.getService(OfferFactory.class);
-    OfferDTO offerDTO = offerFactory.getOfferDTO();
-    ObjectDTO objectDTO = objectFactory.getObjectDTO();
-    objectDTO.setIdObject(10);
-    offerDTO.setObject(objectDTO);
-    OfferDAO mockOfferDAO = locator.getService(OfferDAO.class);
-    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
-    Mockito.when(mockInterestDAO.addOne(newInterestDTO)).thenReturn(newInterestDTO);
-    Mockito.when(mockOfferDAO.getOneByObject(objectDTO.getIdObject())).thenReturn(offerDTO);
-
-    assertAll(
-        () -> assertEquals(newInterestDTO, interestUCC.addOne(newInterestDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .addOne(newInterestDTO),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .commitTransaction()
-    );
-  }
-
-
-  @DisplayName("test addOne with a non existent object")
-  @Test
-  public void testAddOneWithANonExistentObject() {
-    objectDTO.setIdObject(nonExistentId);
-    newInterestDTO.setObject(objectDTO);
-    newInterestDTO.setIdMember(1);
-    newInterestDTO.setAvailabilityDate(LocalDate.now());
-    Mockito.when(mockObjectDAO.getOne(nonExistentId)).thenReturn(null);
-    assertAll(
-        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(newInterestDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .rollBackTransaction()
-    );
-  }
-
-  @DisplayName("test addOne with an interest that already exists")
-  @Test
-  public void testAddOneWithAnAlreadyExistentInterest() {
-    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
-        interestDTO.getIdMember())).thenReturn(interestDTO);
-    assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .rollBackTransaction()
-    );
-  }
-
-  @DisplayName("test addOne with existing interests for an object")
-  @Test
-  public void testAddOneWithANonExistentInterestAndAlreadyExistingInterestsForObject() {
-    Mockito.when(mockInterestDAO.getOne(interestDTO.getObject().getIdObject(),
-        interestDTO.getIdMember())).thenReturn(null);
-    Mockito.when(mockInterestDAO.getAllCount(interestDTO.getObject().getIdObject()))
-        .thenReturn(5);
-    Mockito.when(mockInterestDAO.addOne(interestDTO)).thenReturn(interestDTO);
-    assertAll(
-        () -> assertEquals(interestDTO, interestUCC.addOne(interestDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .commitTransaction()
-    );
-  }
-
-
-   */
-
-/*
-  @DisplayName("test getInterestedCount with non-existent object")
-  @Test
-  public void testGetInterestedCountWithNonExistentObject() {
-    Mockito.when(mockObjectDAO.getOne(nonExistentId)).thenReturn(null);
+  public void testAssignOfferWithNonExistentInterest() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
-    assertAll(
-        () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.getInterestedCount(nonExistentId, memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(nonExistentId),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .rollBackTransaction()
-    );
-  }
+    memberDTO.setMemberId(nonExistentId);
 
-  @DisplayName("test getInterestedCount with existent object")
-  @Test
-  public void testGetInterestedCountWithExistentObject() {
-    ObjectDTO object = this.objectFactory.getObjectDTO();
-    Mockito.when(mockObjectDAO.getOne(1)).thenReturn(object);
-    Mockito.when(mockInterestDAO.getAllPublishedCount(1)).thenReturn(300); //TODO
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(15);
-    assertAll(
-        () -> assertEquals(300, interestUCC.getInterestedCount(1, memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .startTransaction(),
-        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
-            .getOne(1),
-        () -> Mockito.verify(mockInterestDAO, Mockito.atLeast(1))
-            .getAllPublishedCount(1),
-        () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
-            .commitTransaction()
-    );
-  }
+    interestDTO.setIdMember(memberDTO.getMemberId());
 
-  //  ---------------------------- GET NOTIFICATION UCC  -------------------------------  //
-
-  @DisplayName("Test getNotification with 1 notification interest")
-  @Test
-  public void testGetNotificationsWith1NotificationInterest() {
-    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
-    interestDTONotificated.setIsNotificated(true);
-    interestDTONotificated.setIdMember(3);
-
-    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
-    interestDTONotNotificated.setIsNotificated(false);
-    interestDTONotNotificated.setIdMember(2);
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-    interestDTOList.add(interestDTONotificated);
-
-    Mockito.when(interestDAO.getAllNotifications(3))
-        .thenReturn(interestDTOList);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(3);
-
-    assertAll(
-        () -> assertEquals(1, interestUCC.getNotifications(memberDTO).size()),
-        () -> assertTrue(interestUCC.getNotifications(memberDTO).contains(interestDTONotificated)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }
-
-  @DisplayName("Test getNotification with an empty list of notification interest")
-  @Test
-  public void testGetNotificationsWithAnEmptyListNotificationInterest() {
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-
-    Mockito.when(interestDAO.getAllNotifications(3))
-        .thenReturn(interestDTOList);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(3);
-
-    assertAll(
-        () -> assertThrows(NotFoundException.class, () -> interestUCC.getNotifications(memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  //  ------------------------ MARK ALL NOTIFICATIONS SHOWN UCC  ---------------------------  //
-
-
-  @DisplayName("Test markAllNotificationShown with 1 notification interest")
-  @Test
-  public void testMarkAllNotificationsShownWith1NotificationInterest() {
-
-    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
-    interestDTONotNotificated.setIsNotificated(false);
-    interestDTONotNotificated.setIdMember(3);
-    interestDTONotNotificated.setIdMember(2);
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-    interestDTOList.add(interestDTONotNotificated);
-
-    Mockito.when(interestDAO.markAllNotificationsShown(3))
-        .thenReturn(interestDTOList);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(3);
-
-    assertAll(
-        () -> assertEquals(1, interestUCC.markAllNotificationsShown(memberDTO).size()),
-        () -> assertTrue(
-            interestUCC.markAllNotificationsShown(memberDTO).contains(interestDTONotNotificated)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }
-
-  @DisplayName("Test markAllNotificationShown with an empty list of notification interest")
-  @Test
-  public void testMarkAllNotificationsShownWithAnEmptyListNotificationInterest() {
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-
-    Mockito.when(interestDAO.markAllNotificationsShown(3))
-        .thenReturn(interestDTOList);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(3);
-
-    assertAll(
-        () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.markAllNotificationsShown(memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
-
-  @DisplayName("Test mark notification shown success")
-  @Test
-  public void testMarkNotificationShownSuccess() {
-    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
-    interestDTONotificated.setIsNotificated(true);
-    interestDTONotificated.setIdMember(2);
-    Mockito.when(interestDAO.updateNotification(interestDTONotificated))
-        .thenReturn(interestDTONotificated);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(2);
-
-    assertAll(
-        () -> assertFalse(
-            interestUCC.markNotificationShown(interestDTONotificated.getObject().getIdObject(),
-                memberDTO).getIsNotificated()),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }
-
-  @DisplayName("Test markNotificationShown with field isNotificated already false")
-  @Test
-  public void testMarkNotificationShownWithFieldIsNotificatedAlreadyFalse() {
-    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
-    interestDTONotNotificated.setIsNotificated(false);
-    interestDTONotNotificated.setIdMember(2);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(2);
-
-    assertAll(
-        () -> assertThrows(ForbiddenException.class,
-            () -> interestUCC.markNotificationShown(
-                interestDTONotNotificated.getObject().getIdObject(),
-                memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  //  ---------------------------- GET ALL INTERESTS UCC  -------------------------------  //
-
-
-  @DisplayName("Test getAllInterests with an empty list of interests")
-  @Test
-  public void testGetAllInterestsWithAnEmptyListOfInterests() {
-
-    ObjectDTO objectDTO = objectFactory.getObjectDTO();
-    objectDTO.setIdObject(2);
-
-    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
-        .thenReturn(objectDTO);
-    Mockito.when(interestDAO.getAllPublished(objectDTO.getIdObject()))
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(null);
 
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(objectDTO.getIdOfferor());
-
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO)),
+            () -> interestUCC.assignOffer(interestDTO, memberDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
-
-  @DisplayName("Test getAllInterests with 1 interest of 1 offeror")
-  @Test
-  public void testGetAllInterestsWith1InterestOf1Offeror() {
-    objectDTO.setIdOfferor(2);
-
-    InterestDTO interestDTONotificated = interestFactory.getInterestDTO();
-    interestDTONotificated.setIsNotificated(true);
-    interestDTONotificated.setStatus("published");
-    interestDTONotificated.setIdMember(3);
-    interestDTONotificated.setIdMember(3);
-    interestDTONotificated.setObject(objectDTO);
-
-    InterestDTO interestDTONotNotificated = interestFactory.getInterestDTO();
-    interestDTONotNotificated.setIsNotificated(false);
-    interestDTONotNotificated.setIdMember(3);
-    interestDTONotNotificated.setIdMember(2);
-    interestDTONotificated.setStatus("not_collected");
-
-    List<InterestDTO> interestDTOList = new ArrayList<>();
-    interestDTOList.add(interestDTONotificated);
-
-    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
-        .thenReturn(objectDTO);
-    Mockito.when(interestDAO.getAllPublished(objectDTO.getIdObject()))
-        .thenReturn(interestDTOList);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(objectDTO.getIdOfferor());
-
-    assertAll(
-        () -> assertEquals(1,
-            interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO).size()),
-        () -> assertTrue(
-            interestUCC.getAllInterests(objectDTO.getIdObject(), memberDTO)
-                .contains(interestDTONotificated)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }
-
-  @DisplayName("Test getAllInterests with non existent object")
-  @Test
-  public void testGetAllInterestsWithNonExistentObject() {
-
-    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
-        .thenReturn(null);
-
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(0);
-
-    assertAll(
-        () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.getAllInterests(0, memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
-    );
-  }
-
-  //  ---------------------------- GET NOTIFICATION COUNT UCC  -------------------------------  //
-
-  @DisplayName("Test getNotificationCount success")
-  @Test
-  public void testGetNotificationCountSuccess() {
-    MemberDTO memberDTO = memberFactory.getMemberDTO();
-    memberDTO.setMemberId(2);
-
-    Mockito.when(interestDAO.getNotificationCount(memberDTO.getMemberId())).thenReturn(5);
-
-    assertAll(
-        () -> assertEquals(5, interestUCC.getNotificationCount(memberDTO)),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
-        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
-    );
-  }
-  */
-
 }
 
