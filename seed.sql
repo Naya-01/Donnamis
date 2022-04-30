@@ -152,7 +152,7 @@ VALUES ('2022-05-17', 'published', 3, 3, 1, true);
 
 -- 4
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
-VALUES (7, 'rouette à deux roues à l’avant. Améliore la stabilité et ne fatigue pas le dos',
+VALUES (7, 'brouette à deux roues à l’avant. Améliore la stabilité et ne fatigue pas le dos',
         'interested', 5, 1, 'img\objects\4.jpg');
 INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-03-28 04:00:00', 'Tous les matins avant 11h30', 4, 1, 'interested');
