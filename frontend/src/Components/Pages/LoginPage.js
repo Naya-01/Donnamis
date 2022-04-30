@@ -1,12 +1,16 @@
 import {getSessionObject, setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
+import MemberLibrary from "../../Domain/MemberLibrary";
+import NotificationSA from "../Module/NotificationSA";
+
+const Toast = NotificationSA.prototype.getNotification("bottom")
 
 const htmlPage = `
             <div class="container mt-5">
               <div class="border border-5 border-dark p-5">
                 <div class="row mx-5">
-                  <span class="px-5 vertical-text fs-1">Se connecter</span>
+                  <div class="fs-1 text-center mb-2">Connexion</div>
                 </div>
                 <div class="mx-5">
                   <form>
@@ -26,81 +30,73 @@ const htmlPage = `
                   </form>
                 </div>
               </div>
-              <div class="" id="notif">
-              </div>
             </div>
                   `;
 
+/**
+ * Connect the member
+ *
+ * @param username username of the member
+ * @param password password of the member
+ * @param remember boolean field if we want to remember our data
+ * @returns {Promise<void>}
+ */
 const connectClientAndRedirect = async (username, password, remember) => {
-  let userData;
+  //login the member with the api
+  let userData = await MemberLibrary.prototype.login(username, password,
+      remember)
 
-  try {
-    let options = {
-      method: "POST",
-      body: JSON.stringify({
-        "username": username,
-        "password": password,
-        "rememberMe": remember,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    userData = await fetch("/api/auth/login/", options);
-    if (!userData.ok) {
-      userData.text().then((msg) => {
-        let notif = document.getElementById("notif");
-        notif.className = "alert alert-warning fs-3 text-center";
-        notif.innerHTML = msg;
-      })
-    }
-  } catch (err) {
-    console.log(err);
+  let userLocalStorage = {
+    refreshToken: userData.refresh_token,
+    accessToken: userData.access_token,
   }
-  if (userData.status === 200) {
-    userData = await userData.json();
 
-    let userLocalStorage = {
-      refreshToken: userData.refresh_token,
-      accessToken: userData.access_token,
-    }
-
-    setSessionObject("user", userLocalStorage);
-    await Navbar();
-    Redirect("/");
-  }
+  setSessionObject("user", userLocalStorage);
+  await Navbar();
+  Redirect("/");
 }
 
+/**
+ * Make the Login page
+ *
+ * @constructor
+ */
 const LoginPage = () => {
-  if (getSessionObject("user")) {
-    Redirect("/");
-    return;
-  }
-
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = htmlPage;
 
   let btnSubmit = document.getElementById("submitConnect");
 
-  btnSubmit.addEventListener("click", e => {
+  //if click on submit button for login
+  btnSubmit.addEventListener("click", async e => {
     e.preventDefault();
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    let username = document.getElementById("username");
+    let password = document.getElementById("password");
+    if (username.classList.contains("border-danger")) {
+      username.classList.remove("border-danger");
+    }
+    if (password.classList.contains("border-danger")) {
+      password.classList.remove("border-danger");
+    }
     let remember = document.getElementById("rememberMe").checked;
-    let notif = document.getElementById("notif");
-    notif.className = "";
-    notif.innerHTML = "";
-    if (username.length === 0 && password.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un pseudonyme et un mot de passe";
-    } else if (username.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un pseudonyme";
-    } else if (password.length === 0) {
-      notif.className = "alert alert-warning fs-3 text-center";
-      notif.innerHTML = "Veuillez introduire un mot de passe";
+    //check fields
+    if (username.value.length === 0 || password.value.length === 0) {
+      await Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir les champs obligatoires !'
+      })
+
+      if (password.value.length === 0) {
+        password.classList.add("border-danger");
+      }
+
+      if (username.value.length === 0) {
+        username.classList.add("border-danger");
+      }
+
     } else {
-      connectClientAndRedirect(username, password, remember);
+      // connect the member
+      await connectClientAndRedirect(username.value, password.value, remember);
     }
   })
 

@@ -1,0 +1,83 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "mehdi",
+  "password": "123",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+
+### markNotificationShown
+PUT {{baseUri}}/interest/notificationShown/2
+Authorization: {{access}}
+
+### markAllNotificationsShown
+PUT {{baseUri}}/interest/allNotificationShown
+Authorization: {{access}}
+
+### GetNotificationCount
+GET {{baseUri}}/interest/notificationCount
+Authorization: {{access}}
+
+### Get Own interest
+GET {{baseUri}}/interest?idObject=2
+Authorization: {{access}}
+
+### Get all notifications
+GET {{baseUri}}/interest/getAllNotifications
+Authorization: {{access}}
+
+### Get all interests
+GET {{baseUri}}/interest/getAllInterests/2
+Authorization: {{access}}
+
+
+### Add One interest
+POST {{baseUri}}/interest
+Content-Type: application/json
+Authorization: {{refresh}}
+
+{
+  "idObject": 2,
+  "availabilityDate": "2017-01-13"
+}
+
+### Get interest count
+GET {{baseUri}}/interest/count/4
+Authorization: {{refresh}}
+
+### Assign an object
+POST {{baseUri}}/interest/assignOffer
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "idMember": 4,
+  "idObject": 2,
+  "version": 1
+}
+
+
+
+### /interest/interestedCount/{idObject} → retourne le nombre d'intéressé + si l'user est lui même interessé
+### /interest/getAllInterested/{idObject} → retourne tous les membres interressé (request ok si le membre a posté l'objet)

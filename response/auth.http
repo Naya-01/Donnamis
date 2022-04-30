@@ -11,8 +11,8 @@ POST {{baseUri}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "AlbertDeBucarest",
-  "password": "albertLePoulet",
+  "username": "bazz",
+  "password": "Mdpuser.1",
   "rememberMe": true
 }
 > {%
@@ -62,7 +62,30 @@ Authorization: {{refresh}}
 client.global.set("access", response.body.access_token);
 %}
 
-
 ### Get user by his token
-POST {{baseUri}}/auth/getuserbytoken
+GET {{baseUri}}/member/getMemberByToken
 Authorization: {{access}}
+
+
+### register valid
+POST {{baseUri}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "stefanenculé",
+  "lastname": "test",
+  "firstname": "test",
+  "password": "test123",
+  "phone": "0498989898",
+  "address": {
+    "buildingNumber": "14",
+    "street": "Rue du cheval",
+    "postcode": "1140",
+    "commune": "Evere"
+  }
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+

@@ -1,0 +1,159 @@
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+%}
+
+###
+GET {{baseUri}}/offers?search-pattern=bu&self=false
+Authorization: {{refresh}}
+
+
+### GET type object
+GET {{baseUri}}/offers?self=false&type=Décoration
+Authorization: {{refresh}}
+
+### GET object by status
+GET {{baseUri}}/offers?status=assigned
+Authorization: {{refresh}}
+
+###
+GET {{baseUri}}/offers/lasts
+
+### make a offer
+POST {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "timeSlot": "time slot test",
+  "object": {
+    "idObject": 1
+  }
+}
+
+### make a offer
+POST {{baseUri}}/offers/newOffer
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "timeSlot": "tous les mois de janvier",
+  "object": {
+    "idObject": 46
+  }
+}
+
+### Get offer by id
+GET {{baseUri}}/offers/getById/5
+Authorization: {{refresh}}
+
+### Get last offer with idObject
+GET {{baseUri}}/offers/last/21
+Authorization: {{refresh}}
+
+### get all offer
+GET {{baseUri}}/offers?search-pattern=samEdi&self=true
+Authorization: {{refresh}}
+
+### Get given and assigned offers
+GET {{baseUri}}/offers/givenAndAssignedOffers/
+Authorization: {{access}}
+
+###
+PUT {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 7,
+  "timeSlot": "uoi",
+  "status": "available",
+  "object": {
+    "type": {
+      "typeName": "Vélo, trottinette"
+    },
+    "description": "je suis une offre",
+    "status": "inconnu",
+    "image": null,
+    "idOfferor": 4
+  }
+}
+
+###
+PUT {{baseUri}}/offers/
+Authorization: {{refresh}}
+Content-Type: application/json
+
+{
+  "idOffer": 81,
+  "timeSlot": "en fevrier",
+  "version": 6,
+  "status": "available"
+}
+
+### Search given member
+GET {{baseUri}}/offers/givenOffers/3
+Authorization: {{access}}
+
+### Cancel offer
+POST {{baseUri}}/offers/cancelOffer
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "idOffer": 68
+}
+
+### Mark offer to not collected
+POST {{baseUri}}/offers/notCollected
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "idOffer": 9
+}
+
+### give an object
+POST {{baseUri}}/offers/give
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "object": {
+    "idObject": 15
+  }
+}
+
+### get count offers of a member
+GET {{baseUri}}/offers/countOffers/4
+Authorization: {{access}}

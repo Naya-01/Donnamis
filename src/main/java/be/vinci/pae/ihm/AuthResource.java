@@ -1,7 +1,12 @@
+// source regex phone number : https://ihateregex.io/expr/phone/
+
 package be.vinci.pae.ihm;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.ucc.MemberUCC;
+import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Token;
 import be.vinci.pae.utils.JsonViews;
@@ -15,10 +20,12 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.glassfish.jersey.server.ContainerRequest;
 
 @Singleton
@@ -43,17 +50,15 @@ public class AuthResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public ObjectNode login(JsonNode json) {
-
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource Login");
     if (!json.hasNonNull("username") || !json.hasNonNull("password")) {
-      throw new WebApplicationException("Pseudonyme ou mot de passe requis",
-          Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Pseudonyme ou mot de passe requis");
     }
     String username = json.get("username").asText();
     String password = json.get("password").asText();
     MemberDTO memberDTO = memberUCC.login(username, password);
     if (memberDTO == null) {
-      throw new WebApplicationException("Pseudonyme ou mot de passe incorrect",
-          Response.Status.NOT_FOUND);
+      throw new NotFoundException("Pseudonyme ou mot de passe incorrect");
     }
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     String refreshToken;
@@ -80,6 +85,7 @@ public class AuthResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Authorize
   public ObjectNode refreshToken(@Context ContainerRequest request) {
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource refreshToken");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
@@ -88,18 +94,117 @@ public class AuthResource {
   }
 
   /**
-   * Get a user by his token.
+   * Register a quidam.
    *
-   * @param request to get information request
-   * @return return the linked user to his token
+   * @param member : all information of the quidam.
+   * @return a json object that contains the token.
    */
   @POST
-  @Path("/getuserbytoken")
-  @Authorize
+  @Path("register")
+  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public ObjectNode getUserByToken(@Context ContainerRequest request) {
-    MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+  public ObjectNode register(MemberDTO member) {
+    Logger.getLogger("Log").log(Level.INFO, "AuthResource register");
+    //ALL REGEX FOR FIELDS
+    Pattern regOnlyNumbersAndDash = Pattern.compile("^[0-9-]+$");
+    Pattern regNumberPhone =
+        Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
+    //starting with numbers
+    Pattern regOnlyLettersAndNumbers = Pattern.compile("^[0-9]+[a-zA-Z]?$");
+    //starting with numbers
+    Pattern regOnlyLettersAndNumbersOrNothing = Pattern.compile("^([0-9]+[a-zA-Z]?)*$");
+    Pattern regOnlyLettersAndDash = Pattern.compile("^[a-zA-Z éàùöèê\'ûî-]+$");
+
+    // Check if there is a member, and then if there is an address
+    if (member == null || member.getAddress() == null) {
+      throw new BadRequestException("Manque d'informations obligatoires");
+    }
+
+    // Check is Not Null fields are not null nor blank
+    if (member.getUsername() == null || member.getUsername().isBlank()
+        || member.getPassword() == null || member.getPassword().isBlank()
+        || member.getFirstname() == null || member.getFirstname().isBlank()
+        || member.getLastname() == null || member.getLastname().isBlank()
+        || member.getAddress().getBuildingNumber() == null
+        || member.getAddress().getBuildingNumber().isBlank()
+        || member.getAddress().getStreet() == null || member.getAddress().getStreet().isBlank()
+        || member.getAddress().getPostcode() == null || member.getAddress().getPostcode().isBlank()
+        || member.getAddress().getCommune() == null || member.getAddress().getCommune().isBlank()
+    ) {
+      throw new BadRequestException("Veuillez remplir tous les champs obligatoires");
+    }
+
+    // Check length of Username, Lastname and Firstname fields (member)
+    if (member.getUsername().length() > 50) {
+      throw new BadRequestException("Le pseudonyme est trop grand");
+    }
+    if (member.getLastname().length() > 50) {
+      Matcher matcher = regOnlyLettersAndDash.matcher(member.getLastname());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le nom est trop grand ou est invalide");
+      }
+    }
+    if (member.getFirstname().length() > 50) {
+      Matcher matcher = regOnlyLettersAndDash.matcher(member.getFirstname());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le prénom est trop grand ou est invalide");
+      }
+    }
+
+    // Check the number phone if is valid
+    if (member.getPhone() != null && !member.getPhone().isBlank()) {
+      Matcher matcher = regNumberPhone.matcher(member.getPhone());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le numéro de téléphone est invalide");
+      }
+    }
+
+    // Check length of address fields
+    AddressDTO addressOfMember = member.getAddress();
+
+    if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().length() > 15) {
+      Matcher matcher = regOnlyLettersAndNumbersOrNothing.matcher(addressOfMember.getUnitNumber());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le numéro de boite est trop grand ou est invalide");
+      }
+    }
+
+    if (addressOfMember.getBuildingNumber().length() > 8) {
+      Matcher matcher = regOnlyLettersAndNumbers.matcher(addressOfMember.getBuildingNumber());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le numéro de maison est trop grand ou est invalide");
+      }
+    }
+
+    if (addressOfMember.getStreet().length() > 50) {
+      Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getStreet());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le nom de rue est trop grand ou est invalide");
+      }
+    }
+
+    if (addressOfMember.getPostcode().length() > 15) {
+      Matcher matcher = regOnlyNumbersAndDash.matcher(addressOfMember.getPostcode());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le numéro de code postal est trop grand ou est invalide");
+      }
+    }
+
+    if (addressOfMember.getCommune().length() > 50) {
+      Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getCommune());
+      if (!matcher.find()) {
+        throw new BadRequestException("Le nom de commune est trop grand ou est invalide");
+      }
+    }
+
+    // Register the member
+    MemberDTO memberDTO = memberUCC.register(member);
+    String accessToken = tokenManager.withoutRememberMe(memberDTO);
     return jsonMapper.createObjectNode()
-        .putPOJO("user", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+        .put("access_token", accessToken)
+        .put("refresh_token", accessToken)
+        .putPOJO("member", JsonViews.filterPublicJsonView(memberDTO, MemberDTO.class));
+
   }
+
 }

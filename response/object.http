@@ -1,0 +1,72 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
+
+### login valid bazz
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("token", response.body.access_token);
+%}
+
+### GET an object
+GET {{baseUri}}/object/30
+Authorization: {{token}}
+
+
+### GET an object
+GET {{baseUri}}/object/member/10
+Authorization: {{token}}
+
+
+### update an object
+PUT {{baseUri}}/object/update
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 2,
+  "type": {
+    "idType": 3
+  },
+  "description": "Cadre représentant un chien noir sur un fond noir.",
+  "status": "available",
+  "idOfferor": 3
+}
+
+
+### cancel object
+POST {{baseUri}}/object/cancel
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 2
+}
+
+### mark object to not collected
+POST {{baseUri}}/object/notCollected
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "idObject": 5
+}
+
+

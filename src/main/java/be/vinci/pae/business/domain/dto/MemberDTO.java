@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = MemberImpl.class)
 public interface MemberDTO {
 
-  int getMemberId();
+  Integer getMemberId();
 
   void setMemberId(int memberId);
 
@@ -34,10 +34,6 @@ public interface MemberDTO {
 
   void setPhone(String phone);
 
-  int getAddress();
-
-  void setAddress(int address);
-
   String getReasonRefusal();
 
   void setReasonRefusal(String reasonRefusal);
@@ -46,5 +42,16 @@ public interface MemberDTO {
 
   void setPassword(String password);
 
+  AddressDTO getAddress();
+
+  void setAddress(AddressDTO address);
+
+  String getImage();
+
+  void setImage(String image);
+
+  Integer getVersion();
+
+  void setVersion(Integer version);
 
 }

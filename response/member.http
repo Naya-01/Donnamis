@@ -1,0 +1,92 @@
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### login valid admin
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bri",
+  "password": "Rad;293",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### Get user by his token
+GET {{baseUri}}/member/getMemberByToken
+Authorization: {{access}}
+
+### Get a member by his id
+GET {{baseUri}}/member/id/2
+Authorization: {{access}}
+
+### Search 'alb' pattern member
+GET {{baseUri}}/member/search?search=tef
+Authorization: {{access}}
+
+### Search wating member
+GET {{baseUri}}/member/search?search=&status=waiting
+Authorization: {{access}}
+
+### Search pending member
+GET {{baseUri}}/member/search?search=&status=pending
+Authorization: {{access}}
+
+### Search denied member
+GET {{baseUri}}/member/search?search=&status=denied
+Authorization: {{access}}
+
+### Search valid member
+GET {{baseUri}}/member/search?search=&status=valid
+Authorization: {{access}}
+
+### Search all member
+GET {{baseUri}}/member/search?search=&status=
+Authorization: {{access}}
+
+### Change member status
+PUT {{baseUri}}/member/update
+Content-Type: application/json
+Authorization: {{access}}
+
+{
+  "memberId": 3,
+  "lastname": "salut",
+  "address": {
+    "unitNumber": "B2",
+    "street": "je bjr rue"
+  }
+}
+
+### Upload picture
+
+POST {{baseUri}}/member/setPicture HTTP/1.1
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: {{access}}
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="ipl_logo.jpg"
+
+< C:\Users\Mehdi\Pictures\ipl_logo.jpg

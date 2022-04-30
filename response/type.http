@@ -1,0 +1,36 @@
+
+### disconnect
+GET {{baseUri}}/falseroute
+Content-Type: application/json
+
+> {%
+client.global.clearAll()
+%}
+
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+
+
+###
+GET {{baseUri}}/type/id/4
+Authorization: {{refresh}}
+
+###
+GET {{baseUri}}/type/type_name/Jouets
+Authorization: {{refresh}}
+
+###
+GET {{baseUri}}/type/allDefault
+Authorization: {{refresh}}

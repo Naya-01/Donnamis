@@ -1,18 +1,37 @@
 import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import Logout from "../Logout/Logout";
+import AddNewObjectPage from "../Pages/AddNewObjectPage";
+import Navbar from "../Navbar/Navbar";
+import ObjectDetailsPage from "../Pages/ObjectDetailsPage";
+import RegistrationManagementPage from "../Pages/RegistrationManagementPage";
+import AllObjectsPage from "../Pages/AllObjectsPage";
+import RegisterPage from "../Pages/RegisterPage";
+import MyObjectsPage from "../Pages/MyObjectsPage";
+import MembersPage from "../Pages/MembersPage";
+import AssignedObjectsPage from "../Pages/AssignedObjectsPage";
+import ProfilPage from "../Pages/ProfilPage";
+
 import {
   getSessionObject,
   removeSessionObject,
   setSessionObject
 } from "../../utils/session";
-import Navbar from "../Navbar/Navbar";
 
 // Configure your routes here
 const routes = {
   "/": HomePage,
-  "/connexion": LoginPage,
-  "/deconnexion": Logout,
+  "/addNewObjectPage": AddNewObjectPage,
+  "/registrationManagement": RegistrationManagementPage,
+  "/offers": AllObjectsPage,
+  "/login": LoginPage,
+  "/logout": Logout,
+  "/register": RegisterPage,
+  "/objectDetails": ObjectDetailsPage,
+  "/myObjectsPage": MyObjectsPage,
+  "/members": MembersPage,
+  "/assignedObjects": AssignedObjectsPage,
+  "/profil": ProfilPage
 };
 
 const refreshToken = async () => {
@@ -46,15 +65,16 @@ const refreshToken = async () => {
   } else {
     removeSessionObject("user");
     await Navbar();
-    Redirect("/connexion");
+    Redirect("/login");
     return false;
   }
 }
 
 /**
- * Deal with call and auto-render of Functional Components following click events
- * on Navbar, Load / Refresh operations, Browser history operation (back or next) or redirections.
- * A Functional Component is responsible to auto-render itself : Pages, Header...
+ * Deal with call and auto-render of Functional Components following click
+ * events on Navbar, Load / Refresh operations, Browser history operation
+ * (back or next) or redirections.
+ * A Functional Component is responsible to auto-render itself : Pages, ...
  */
 
 const Router = () => {
@@ -105,11 +125,13 @@ const Router = () => {
 
 /**
  * Call and auto-render of Functional Components associated to the given URL
- * @param {*} uri - Provides an URL that is associated to a functional component in the
+ * @param {*} uri - Provides an URL that is associated to a functional component
+ * in the
  * routes array of the Router
  */
 const Redirect = (uri) => {
-  // use Web History API to add current page URL to the user's navigation history & set right URL in the browser (instead of "#")
+  // use Web History API to add current page URL to the user's navigation
+  // history & set right URL in the browser (instead of "#")
   window.history.pushState({}, uri, window.location.origin + uri);
   // render the requested component
   const componentToRender = routes[uri];
@@ -120,4 +142,22 @@ const Redirect = (uri) => {
   }
 };
 
-export {Router, Redirect, refreshToken};
+/**
+ * Redirect to another page adding information in URL.
+ *
+ * @param page path to destination (.e.g /registerPage)
+ * @param action information to add (.e.g ?id=5)
+ * @constructor
+ */
+const RedirectWithParamsInUrl = (page, action) => {
+  window.history.pushState({}, page, window.location.origin + page
+      + action);
+  const componentToRender = routes[page];
+  if (routes[page]) {
+    componentToRender();
+  } else {
+    throw Error("La " + page + " n'existe pas");
+  }
+};
+
+export {Router, Redirect, refreshToken, RedirectWithParamsInUrl};

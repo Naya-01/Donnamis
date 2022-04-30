@@ -1,5 +1,6 @@
 package be.vinci.pae.business.domain;
 
+import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.utils.Views;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -9,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class MemberImpl implements Member {
 
   @JsonView(Views.Public.class)
-  private int memberId;
+  private Integer memberId;
   @JsonView(Views.Public.class)
   private String username;
   @JsonView(Views.Public.class)
@@ -23,15 +24,18 @@ public class MemberImpl implements Member {
   @JsonView(Views.Public.class)
   private String phone;
   @JsonView(Views.Public.class)
-  private int address;
-  @JsonView(Views.Public.class)
   private String reasonRefusal;
   @JsonView(Views.Internal.class)
   private String password;
-
+  @JsonView(Views.Public.class)
+  private AddressDTO address;
+  @JsonView(Views.Public.class)
+  private String image;
+  @JsonView(Views.Public.class)
+  private Integer version;
 
   @Override
-  public int getMemberId() {
+  public Integer getMemberId() {
     return memberId;
   }
 
@@ -101,16 +105,6 @@ public class MemberImpl implements Member {
   }
 
   @Override
-  public int getAddress() {
-    return address;
-  }
-
-  @Override
-  public void setAddress(int address) {
-    this.address = address;
-  }
-
-  @Override
   public String getReasonRefusal() {
     return reasonRefusal;
   }
@@ -128,6 +122,36 @@ public class MemberImpl implements Member {
   @Override
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  @Override
+  public AddressDTO getAddress() {
+    return address;
+  }
+
+  @Override
+  public void setAddress(AddressDTO address) {
+    this.address = address;
+  }
+
+  @Override
+  public String getImage() {
+    return this.image;
+  }
+
+  @Override
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  @Override
+  public Integer getVersion() {
+    return this.version;
+  }
+
+  @Override
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 
   /**

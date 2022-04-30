@@ -1,0 +1,27 @@
+### login valid
+POST {{baseUri}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "bazz",
+  "password": "Mdpuser.1",
+  "rememberMe": true
+}
+> {%
+client.global.set("access", response.body.access_token);
+client.global.set("refresh", response.body.refresh_token);
+%}
+
+### update any part of an address
+PUT {{baseUri}}/address/update
+Authorization: {{access}}
+Content-Type: application/json
+
+{
+  "idMember": 3,
+  "unitNumber": "",
+  "buildingNumber": "96",
+  "street": "chaussée de Waterloo",
+  "postcode": "1410",
+  "commune": "Waterloo"
+}

@@ -1,13 +1,22 @@
 package be.vinci.pae.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.List;
 
 public class JsonViews<T> {
 
-  private static final ObjectMapper jsonMapper = new ObjectMapper();
+  private static final ObjectMapper jsonMapper = JsonMapper.builder()
+      .findAndAddModules()
+      .build();
+
+   //Disable the unknown properties because they can make error if they stay enabled.
+  static {
+    jsonMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  }
 
 
   /**
