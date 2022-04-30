@@ -27,7 +27,8 @@ const RegistrationManagementPage = async () => {
     Array.prototype.push.apply(finalArray, members.map(m => m.username));
     Array.prototype.push.apply(finalArray, members.map(m => m.address.commune));
     Array.prototype.push.apply(finalArray, members.map(m => m.address.postcode));
-    autocomplete(searchBar, finalArray);
+    Array.prototype.push.apply(finalArray, members.map(m => m.lastname));
+    autocomplete(searchBar, [...new Set(finalArray)]);
   });
 
   // Search members by click

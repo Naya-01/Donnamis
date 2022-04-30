@@ -12,10 +12,12 @@ import TypeLibrary from "../../Domain/TypeLibrary";
  * @param hasStatus boolean if there is filter for offer status
  * @returns {Promise<void>}
  */
-const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasNewObjectButton, hasStatus) => {
+const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
+    hasNewObjectButton, hasStatus) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
+  <!--<div class="mt-5 mx-lg-5"> a tester pour modifier la largeur de la searchbar-->
     <div class="container mt-5">
       <h1 class="fs-1">${pageName}</h1>`;
   if (hasNav) {
@@ -42,7 +44,10 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
               <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-available">Disponible</label>
+              <label class="btn btn-outline-dark" for="btn-status-available">Publié</label>
+              
+              <input type="radio" class="btn-check" name="btnradio" id="btn-status-interested" autocomplete="off">
+              <label class="btn btn-outline-dark" for="btn-status-interested">Intéressé</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
               <label class="btn btn-outline-dark" for="btn-status-assigned">Attribué</label>
@@ -58,6 +63,7 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
               
             </div>`;
     }
+
     if (hasType) {
       searchBarHtml +=
           `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -71,6 +77,7 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
       }
       searchBarHtml += `</select>`;
     }
+
     searchBarHtml +=
         `<input type="text" class="form-control fs-4" id="searchBar" placeholder="${placeholder}">
             <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>`

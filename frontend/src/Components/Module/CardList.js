@@ -3,9 +3,9 @@ import noImage from "../../img/noImage.png";
 
 //translation map depending on the offer status
 const dictionary = new Map([
-  ['interested', 'Disponible'],
-  ['available', 'Disponible'],
-  ['assigned', 'En cours de donnation'],
+  ['interested', 'Intéressé'],
+  ['available', 'Publié'],
+  ['assigned', 'En cours de donation'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']

@@ -277,7 +277,7 @@ class OfferLibrary {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").refreshToken
+          "Authorization": getSessionObject("user").accessToken
         },
       };
       let query = "/api/offers?search-pattern=" + searchPattern + "&type="
@@ -307,10 +307,35 @@ class OfferLibrary {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": getSessionObject("user").refreshToken
+          "Authorization": getSessionObject("user").accessToken
         },
       };
       let query = "/api/offers/givenOffers/" + idReceiver;
+      let userData = await fetch(query, options);
+      if (!userData.ok) {
+        return false;
+      }
+      return await userData.json();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  /**
+   * Get Object received and assigned to a member.
+   *
+   * @returns {Promise<boolean|any>} an list offer in the json format or nothing
+   */
+  async getGivenAndAssignedOffers() {
+    try {
+      let options = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken
+        },
+      };
+      let query = "/api/offers/givenAndAssignedOffers/";
       let userData = await fetch(query, options);
       if (!userData.ok) {
         return false;

@@ -191,6 +191,24 @@ public class OfferResource {
   }
 
   /**
+   * Get all offers received by a member.
+   *
+   * @param request data of the member connected
+   * @return a list of offerDTO
+   */
+  @GET
+  @Authorize
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/givenAndAssignedOffers/")
+  public List<OfferDTO> getGivenAndAssigned(@Context ContainerRequest request) {
+
+    Logger.getLogger("Log").log(Level.INFO, "OfferResource getGivenOffers");
+    MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
+    List<OfferDTO> offerDTOList = offerUcc.getGivenAndAssignedOffers(memberRequest);
+    return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
+  }
+
+  /**
    * Cancel an Offer, set the status to 'cancelled'.
    *
    * @param offerDTO offer object with his id

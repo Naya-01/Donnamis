@@ -73,7 +73,7 @@ const Navbar = async () => {
               </div>
             </div>
           </nav>
-     `
+     `;
     navbarWrapper.innerHTML = navbar;
   } else { // Navbar for the members connected
     navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
@@ -91,13 +91,13 @@ const Navbar = async () => {
                     <a class="nav-link fs-5" href="#" data-uri="/">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-5 " data-uri="/objects" href="#">Offres</a>
+                    <a class="nav-link fs-5 " data-uri="/offers" href="#">Offres</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-5" data-uri="/assignedObjects" href="#">Objets attribués</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes offres</a>
+                    <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes objets</a>
                 </li>`
     // If the member is admin
     if (user_role === "administrator") {

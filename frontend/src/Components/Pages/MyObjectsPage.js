@@ -9,10 +9,10 @@ import InterestLibrary from "../../Domain/InterestLibrary";
 import Swal from "sweetalert2";
 
 const dictionary = new Map([
-  ['interested', 'Disponible'],
-  ['available', 'Disponible'],
-  ['assigned', 'Attribué à xxxxx'],
-  ['given', 'Donné à xxxx'],
+  ['interested', 'Intéressé'],
+  ['available', 'Publié'],
+  ['assigned', 'Attribué'],
+  ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Le receveur n\'est pas venu']
 ]);
