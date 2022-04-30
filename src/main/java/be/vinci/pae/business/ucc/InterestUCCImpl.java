@@ -168,9 +168,7 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Le membre n'est pas éligible à l'assignement");
       }
 
-      Integer interestVersionDB = interestDAO.getOne(interestDTOFromDB.getObject().getIdObject(),
-          interestDTOFromDB.getIdMember()).getVersion();
-      if (!interestVersionDB.equals(interestDTOFromDB.getVersion())) {
+      if (!interestDTO.getVersion().equals(interestDTOFromDB.getVersion())) {
         throw new ForbiddenException("Vous ne possédez pas une version à jour de l'intérêt.");
       }
 
