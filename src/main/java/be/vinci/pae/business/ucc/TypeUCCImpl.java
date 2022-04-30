@@ -27,7 +27,7 @@ public class TypeUCCImpl implements TypeUCC {
       dalService.startTransaction();
       typeDTO = typeDAO.getOne(id);
       if (typeDTO == null) {
-        throw new NotFoundException("Type not found");
+        throw new NotFoundException("Type non trouvé");
       }
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -45,19 +45,18 @@ public class TypeUCCImpl implements TypeUCC {
    */
   @Override
   public TypeDTO getType(String typeName) {
-    TypeDTO typeDTO;
     try {
       dalService.startTransaction();
-      typeDTO = typeDAO.getOne(typeName);
+      TypeDTO typeDTO = typeDAO.getOne(typeName);
       if (typeDTO == null) {
-        throw new NotFoundException("Type not found");
+        throw new NotFoundException("Type non trouvé");
       }
       dalService.commitTransaction();
+      return typeDTO;
     } catch (Exception e) {
       dalService.rollBackTransaction();
       throw e;
     }
-    return typeDTO;
   }
 
   /**
@@ -72,7 +71,7 @@ public class TypeUCCImpl implements TypeUCC {
       dalService.startTransaction();
       typeDTO = typeDAO.getAllDefaultTypes();
       if (typeDTO.isEmpty()) {
-        throw new NotFoundException("No default types found");
+        throw new NotFoundException("Pas de types par défaut trouvé");
       }
       dalService.commitTransaction();
     } catch (Exception e) {

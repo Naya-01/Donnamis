@@ -77,7 +77,7 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
-        throw new NotFoundException("Member not found");
+        throw new NotFoundException("Member non trouvé");
       }
       if (version == null || !memberDTO.getVersion().equals(version)) {
         throw new ForbiddenException("Vous ne possédez pas une version à jour du membre.");
@@ -109,7 +109,7 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       MemberDTO memberDTO = memberDAO.getOne(id);
       if (memberDTO == null) {
-        throw new NotFoundException("Member not found");
+        throw new NotFoundException("Member non trouvé");
       }
       dalService.commitTransaction();
       return memberDTO;
@@ -190,7 +190,7 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       List<MemberDTO> memberDTOList = memberDAO.getAll(search, status);
       if (memberDTOList == null || memberDTOList.isEmpty()) {
-        throw new NotFoundException("Aucun membre");
+        throw new NotFoundException("Aucun membre trouvé");
       }
       dalService.commitTransaction();
       return memberDTOList;
@@ -243,7 +243,7 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.startTransaction();
       MemberDTO memberInDB = memberDAO.getOne(memberDTO.getMemberId());
       if (memberInDB == null) {
-        throw new NotFoundException("Le membre est inexistant.");
+        throw new NotFoundException("Membre non trouvé");
       }
 
       // check the version of member
