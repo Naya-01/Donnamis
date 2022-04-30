@@ -153,10 +153,8 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
-      if ((!offerDTO.getStatus().equals("interested")
-            || !interestDTOFromDB.getObject().getStatus().equals("interested"))
-          && (!offerDTO.getStatus().equals("not_collected")
-            || !interestDTOFromDB.getObject().getStatus().equals("not_collected"))) {
+      if (!offerDTO.getStatus().equals("interested")
+          && !offerDTO.getStatus().equals("not_collected")) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 
