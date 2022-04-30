@@ -1416,4 +1416,22 @@ class OfferUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
+
+  //  ---------------------- GET Given AND ASSIGNED Offers UCC  --------------------------  //
+
+  @DisplayName("Test getGivenAndAssignedOffers with empty list")
+  @Test
+  public void testGetGivenAndAssignedOffersWithAnEmptyList() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(offerDAO.getAllGivenAndAssignedOffers(memberDTO.getMemberId()))
+        .thenReturn(new ArrayList<>());
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> offerUCC.getGivenAndAssignedOffers(memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
 }
