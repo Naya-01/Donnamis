@@ -3,9 +3,9 @@ import MemberLibrary from "../../Domain/MemberLibrary";
 import SearchBar from "../Module/SearchBar";
 import managementList from "../Module/ManagementList";
 import autocomplete from "../Module/AutoComplete";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 import Member from "../../Domain/Member";
-const Toast = Notification.prototype.getNotification("bottom");
+const Toast = NotificationSA.prototype.getNotification("bottom");
 
 const RegistrationManagementPage = async () => {
   let actualStatus = 'waiting';

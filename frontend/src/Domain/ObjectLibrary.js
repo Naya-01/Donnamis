@@ -1,6 +1,6 @@
 import {getSessionObject} from "../utils/session";
 import Swal from "sweetalert2";
-import toast from "sweetalert2";
+import NotificationSA from "../Components/Module/NotificationSA";
 
 class ObjectLibrary {
 
@@ -53,6 +53,10 @@ class ObjectLibrary {
     } catch (err) {
       console.log(err);
     }
+    let toast = NotificationSA.prototype.getNotification("bottom");
+    if (response.status === 200) {
+      return await response.json();
+    }
     if (!response.ok) {
       response.text().then((msg) => {
         Swal.close();
@@ -62,9 +66,7 @@ class ObjectLibrary {
         });
       })
     }
-    if (response.status === 200) {
-      return await response.json();
-    }
+
   }
 
 }

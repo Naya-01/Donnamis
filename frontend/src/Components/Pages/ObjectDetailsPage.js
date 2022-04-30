@@ -3,7 +3,7 @@ import {Redirect} from "../Router/Router";
 import noImage from "../../img/noImage.png";
 import noImageProfile from "../../img/profil.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import InterestLibrary from "../../Domain/InterestLibrary";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
@@ -18,7 +18,7 @@ const offerLibrary = new OfferLibrary();
 const objectLibrary = new ObjectLibrary();
 const interestLibrary = new InterestLibrary();
 const ratingLibrary = new RatingLibrary();
-const bottomNotification = new Notification().getNotification();
+const bottomNotification = new NotificationSA().getNotification();
 const dictionnary = new Map([
   ['interested', 'Disponible'],
   ['available', 'Disponible'],
@@ -360,20 +360,16 @@ async function addOneInterest(versionObject, versionOffer) {
   callMeCheckbox.disabled = true;
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
-  if (newInterest === undefined) {
-    bottomNotification.fire({
-      icon: 'error',
-      title: 'Une erreur est survenue lors de l\'insertion de votre intérêt'
-    })
-    return;
-  }
   // the notification to show that the interest is send
-  bottomNotification.fire({
-    icon: 'success',
-    title: 'Votre intérêt a bien été pris en compte.'
-  })
-  let countInterest = document.getElementById("InterestCount");
-  countInterest.innerHTML=parseInt(++countInterest.innerHTML);
+  if(newInterest !== undefined){
+    bottomNotification.fire({
+      icon: 'success',
+      title: 'Votre intérêt a bien été pris en compte.'
+    })
+    // increment the number of people interested
+    let countInterest = document.getElementById("InterestCount");
+    countInterest.innerHTML=parseInt(++countInterest.innerHTML);
+  }
 }
 
 /**
@@ -382,13 +378,16 @@ async function addOneInterest(versionObject, versionOffer) {
  */
 function displayRating(current_rating) {
   let ratingDiv = document.getElementById("ratingDiv");
+  // if the object doesn't have a rating yet
   if (current_rating == null || current_rating.rating == null
       || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
-  } else {
+  }
+  // if the object already has a rating
+  else {
     let displayRatingDiv = document.getElementById("displayRating");
     let profilPicture;
     if (current_rating.memberRater.image === undefined) {
@@ -403,23 +402,21 @@ function displayRating(current_rating) {
         <p class="card-text">
           <div class="row">
             <div class="col-4 mx-auto">
+              <!-- Profil picture of the rater -->
               <img id="image" alt="no image" width="75%" src="${profilPicture}"/>
+              <!-- Show stars that represents the rating -->
               <p>${create5StarsHTMLCode(current_rating.rating)}</p>
-              
             </div>
             <div class="col-8">
             <h3 class="card-title mb-3">La note de ${current_rating.memberRater.username} pour cet objet</h3>
+              <!-- the comment of the rating -->
               <h5>Commentaire :</h5>
               <p>${current_rating.comment}</p>
             </div>
           </div>
         </p>
       </div>
-    </div>
-
-
-`
-
+    </div>`;
   }
 }
 
@@ -603,7 +600,6 @@ async function updateObject(e) {
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
     objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
-
   }
 
 
@@ -612,19 +608,16 @@ async function updateObject(e) {
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
       new_description, idType, english_status, statusObject, versionObject++,
       versionOffer++);
-  if (newOffer === undefined) {
+  if (newOffer !== undefined) {
     bottomNotification.fire({
-      icon: 'error',
-      title: "L\'offre n'a pas pu être mise à jour."
+      icon: 'success',
+      title: 'Votre objet a bien été mis à jour.'
     })
   }
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-  bottomNotification.fire({
-    icon: 'success',
-    title: 'Votre objet a bien été mis à jour.'
-  })
+
 
   if (objectWithImage !== undefined) { // if there is an image
     if (localLinkImage !== undefined) {
@@ -663,12 +656,7 @@ async function ratingPopUp(e) {
         return;
       }
       let rating = await ratingLibrary.addRating(note, text_rating, offer.object.idObject);
-      if (rating === undefined) {
-        bottomNotification.fire({
-          icon: 'error',
-          title: 'Un problème est survenu lors de la création de la note.'
-        })
-      } else {
+      if (rating !== undefined) {
         bottomNotification.fire({
           icon: 'success',
           title: 'Votre note a bien été prise en compte.'

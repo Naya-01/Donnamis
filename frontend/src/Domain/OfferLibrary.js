@@ -1,6 +1,6 @@
 import {getSessionObject} from "../utils/session";
 import Swal from "sweetalert2";
-import Notification from "../Components/Module/Notification";
+import NotificationSA from "../Components/Module/NotificationSA";
 
 class OfferLibrary {
 
@@ -83,7 +83,7 @@ class OfferLibrary {
         },
       };
       response = await fetch("api/offers/newOffer", options);
-      let toast = Notification.prototype.getNotification("bottom");
+      let toast = NotificationSA.prototype.getNotification("bottom");
       if (!response.ok) {
         response.text().then((msg) => {
           Swal.close();
@@ -140,15 +140,22 @@ class OfferLibrary {
         },
       };
       response = await fetch("api/offers", options);
+      if (response.status === 200) {
+        return await response.json();
+      }
     } catch (err) {
       console.log(err);
     }
-    let current_offer;
-    if (response.status === 200) {
-      current_offer = await response.json();
+    let toast = NotificationSA.prototype.getNotification("bottom");
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
     }
-
-    return current_offer;
   }
 
   /**
@@ -189,12 +196,19 @@ class OfferLibrary {
     } catch (err) {
       console.log(err);
     }
-    let current_offer;
+    let toast = NotificationSA.prototype.getNotification("bottom");
     if (response.status === 200) {
-      current_offer = await response.json();
+      return await response.json();
     }
-
-    return current_offer;
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+    }
   }
 
   /**
@@ -332,7 +346,7 @@ class OfferLibrary {
         },
       };
       const response = await fetch('api/offers/give', options);
-      let toast = Notification.prototype.getNotification("bottom");
+      let toast = NotificationSA.prototype.getNotification("bottom");
       if (!response.ok) {
         response.text().then((msg) => {
           Swal.close();
@@ -379,7 +393,7 @@ class OfferLibrary {
         },
       };
       const response = await fetch('api/offers/cancelOffer/', options);
-      let toast = Notification.prototype.getNotification("bottom");
+      let toast = NotificationSA.prototype.getNotification("bottom");
       if (!response.ok) {
         response.text().then((msg) => {
           Swal.close();
@@ -427,7 +441,7 @@ class OfferLibrary {
         },
       };
       const response = await fetch('api/offers/notCollected/', options);
-      let toast = Notification.prototype.getNotification("bottom");
+      let toast = NotificationSA.prototype.getNotification("bottom");
       if (!response.ok) {
         response.text().then((msg) => {
           Swal.close();

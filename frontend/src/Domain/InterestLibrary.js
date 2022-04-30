@@ -1,6 +1,7 @@
 import {getSessionObject} from "../utils/session";
-import Notification from "../Components/Module/Notification";
+import NotificationSA from "../Components/Module/NotificationSA";
 import Swal from "sweetalert2";
+import toast from "sweetalert2";
 
 class InterestLibrary {
 
@@ -129,7 +130,7 @@ class InterestLibrary {
    */
   async assignOffer(idObject, idMember, version, versionOffer, versionObject) {
     let response;
-    let toast = Notification.prototype.getNotification("bottom");
+    let toast = NotificationSA.prototype.getNotification("bottom");
     try {
       let options = {
         method: "POST",
@@ -292,11 +293,19 @@ class InterestLibrary {
     } catch (err) {
       console.log(err);
     }
-    let newInterest;
-    if (response.status === 200) {
-      newInterest = await response.json();
+    let toast = NotificationSA.prototype.getNotification("bottom");
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
     }
-    return newInterest;
+    if (response.status === 200) {
+      return await response.json();
+    }
   }
 
 }

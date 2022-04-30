@@ -3,14 +3,14 @@ import {getSessionObject} from "../../utils/session";
 import noImage from "../../img/noImage.png";
 import TypeLibrary from "../../Domain/TypeLibrary";
 import MemberLibrary from "../../Domain/MemberLibrary";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 import ObjectLibrary from "../../Domain/ObjectLibrary";
 import OfferLibrary from "../../Domain/OfferLibrary";
 
 const typeLibrary = new TypeLibrary();
 const memberLibrary = new MemberLibrary();
 const objectLibrary = new ObjectLibrary();
-const bottomNotification = new Notification().getNotification();
+const bottomNotification = new NotificationSA().getNotification();
 const offerLibrary = new OfferLibrary();
 let idOfferor;
 
@@ -23,14 +23,14 @@ const AddNewObjectPage = async () => {
     Redirect("/");
     return;
   }
-  // Get the id of the member
+  // Get the id of the member connected
   let member = await memberLibrary.getUserByHisToken();
   idOfferor = member.memberId;
 
-  // Get all types from the backend
+  // Get all types
   let allDefaultTypes = await typeLibrary.getAllDefaultTypes();
 
-  // Create an HTML list of proposition for Types
+  // Create an HTML list of options for Types
   let allDefaultTypesHtml = "";
   for (let i = 0; i < allDefaultTypes.type.length; i++) {
     allDefaultTypesHtml += `<option value=\"`;
@@ -101,8 +101,10 @@ const AddNewObjectPage = async () => {
         </div>
       </div>
     </div>`;
+
   document.querySelector("#addObjectButton").addEventListener("click", addObject);
   let input_file = document.getElementById("file_input");
+  // display the image if the user upload a file
   input_file.onchange = () => {
     const [file] = input_file.files
     if (file) {
@@ -160,29 +162,16 @@ async function addObject(e) {
 
   // Call the backend to add the offer
   let newOffer = await offerLibrary.addFirstOffer(timeSlot, description, typeName);
-  if(newOffer === undefined){
-    bottomNotification.fire({
-      icon: 'error',
-      title: 'Un problème est survenu lors de l\'ajout'
-    })
-    return;
-  }
   let idObject = newOffer.object.idObject;
   let fileInput = document.getElementById("file_input");
-  if (fileInput.files[0] !== undefined) { // if there is an image
+  // if there is an image
+  if (fileInput.files[0] !== undefined) {
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    let newImage = await objectLibrary.setImage(formData, idObject);
-    if(newImage === undefined){
-      bottomNotification.fire({
-        icon: 'error',
-        title: 'Un problème est survenu lors de l\'ajout de l\'image'
-      })
-      return;
-    }
+    await objectLibrary.setImage(formData, idObject);
   }
   Redirect("/");
-  let notif = new Notification().getNotification("top-end");
+  let notif = new NotificationSA().getNotification("top-end");
   notif.fire({
     icon: 'success',
     title: 'Votre objet a bien été publié !'

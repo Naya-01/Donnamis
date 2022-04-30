@@ -2,7 +2,7 @@
 
 import Member from "../../Domain/Member";
 import Address from "../../Domain/Address";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import {Redirect} from "../Router/Router";
 
@@ -13,7 +13,7 @@ const regNumberPhone =
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
 const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
-const toast = new Notification().getNotification("bottom");
+const toast = new NotificationSA().getNotification("bottom");
 
 const htmlPage = `
           <div class="container mt-5">
@@ -226,7 +226,7 @@ const RegisterPage = async () => {
       let isRegistered = await memberLibrary.registerMember(member);
       //if the member could be registered
       if (isRegistered) {
-        let notificationBottom = new Notification().getNotification("bottom");
+        let notificationBottom = new NotificationSA().getNotification("bottom");
         notificationBottom.fire({
           icon: 'success',
           title: `Vous êtes désormais dans l'attente de la validation d'un 

@@ -1,6 +1,6 @@
 const Swal = require('sweetalert2')
 
-class Notification {
+class NotificationSA {
   getNotification(position = "bottom") {
     return Swal.mixin({
       toast: true,
@@ -16,4 +16,4 @@ class Notification {
   }
 }
 
-export default Notification;
+export default NotificationSA;

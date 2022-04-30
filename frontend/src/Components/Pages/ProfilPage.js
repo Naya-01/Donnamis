@@ -2,7 +2,7 @@ import noImage from "../../img/noImage.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import Address from "../../Domain/Address";
 import Member from "../../Domain/Member";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 import Navbar from "../Navbar/Navbar";
 import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
@@ -14,7 +14,7 @@ const translationRoles = new Map([
 ]);
 
 const memberLibrary = new MemberLibrary();
-const toast = new Notification().getNotification("bottom");
+const toast = new NotificationSA().getNotification("bottom");
 
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
 const regNumberPhone =

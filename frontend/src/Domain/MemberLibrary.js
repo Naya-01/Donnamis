@@ -1,7 +1,7 @@
 import {getSessionObject} from "../utils/session";
-import Notification from "../Components/Module/Notification";
+import NotificationSA from "../Components/Module/NotificationSA";
 
-const Toast = new Notification().getNotification("bottom");
+const Toast = new NotificationSA().getNotification("bottom");
 
 class MemberLibrary {
 
@@ -123,7 +123,7 @@ class MemberLibrary {
     }
     if (userData.status === 200) {
 
-      const notification = new Notification().getNotification("bottom");
+      const notification = new NotificationSA().getNotification("bottom");
       notification.fire({
         icon: 'success',
         title: "Bienvenue !"

@@ -2,9 +2,9 @@ import {getSessionObject, setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
 import MemberLibrary from "../../Domain/MemberLibrary";
-import Notification from "../Module/Notification";
+import NotificationSA from "../Module/NotificationSA";
 
-const Toast = Notification.prototype.getNotification("bottom")
+const Toast = NotificationSA.prototype.getNotification("bottom")
 
 const htmlPage = `
             <div class="container mt-5">
@@ -62,11 +62,6 @@ const connectClientAndRedirect = async (username, password, remember) => {
  * @constructor
  */
 const LoginPage = () => {
-  if (getSessionObject("user")) {
-    Redirect("/");
-    return;
-  }
-
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML = htmlPage;
 

@@ -1,4 +1,6 @@
 import {getSessionObject} from "../utils/session";
+import NotificationSA from "../Components/Module/NotificationSA";
+import Swal from "sweetalert2";
 
 class RatingLibrary {
 
@@ -28,12 +30,19 @@ class RatingLibrary {
     } catch (err) {
       console.log(err);
     }
-    let current_rating;
     if (response.status === 200) {
-      current_rating = await response.json();
+      return await response.json();
     }
-
-    return current_rating;
+    let toast = NotificationSA.prototype.getNotification("bottom");
+    if (!response.ok) {
+      response.text().then((msg) => {
+        Swal.close();
+        toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+    }
   }
 
   /**
