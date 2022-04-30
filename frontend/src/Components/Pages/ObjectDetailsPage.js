@@ -29,14 +29,12 @@ const dictionnary = new Map([
 ]);
 
 let idOffer;
-let idObject;
 let imageOfObject;
 let english_status;
 let idType;
 let description;
 let time_slot;
 let form = false;
-let isInterested;
 let localLinkImage;
 let statusObject;
 let note = 1;
@@ -230,7 +228,7 @@ const ObjectDetailsPage = async () => {
     if (!isInterested && (english_status === "interested" || english_status === "available")) {
       displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
-      let current_rating = await ratingLibrary.getOne(idObject);
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
       if (current_rating === undefined) { // if there is no rating yet
         let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
