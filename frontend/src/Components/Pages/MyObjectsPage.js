@@ -70,6 +70,11 @@ const MyObjectsPage = async () => {
     status = "assigned";
     await actualizeCards();
   });
+  let interested = document.getElementById("btn-status-interested");
+  interested.addEventListener('click', async () => {
+    status = "interested";
+    await actualizeCards();
+  });
 
   let cancelled = document.getElementById("btn-status-cancelled");
   cancelled.addEventListener('click', async () => {
