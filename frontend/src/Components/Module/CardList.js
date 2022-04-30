@@ -5,7 +5,7 @@ import noImage from "../../img/noImage.png";
 const dictionary = new Map([
   ['interested', 'Intéressé'],
   ['available', 'Publié'],
-  ['assigned', 'En cours de donation'],
+  ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']

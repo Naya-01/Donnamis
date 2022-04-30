@@ -319,7 +319,7 @@ const interestedButton = async (buttonCard, offer) => {
               interest.version++, offer.version, offer.object.version
           ))) return;
           offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
-          buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Assignée';
+          buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Attribué';
           await reofferButton(buttonCard, offer);
           buttonCard.innerHTML = ``;
           cancelButton(buttonCard, offer);
