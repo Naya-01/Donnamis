@@ -15,6 +15,7 @@ import be.vinci.pae.exceptions.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
 
 public class InterestUCCImpl implements InterestUCC {
@@ -106,6 +107,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       // Send Notification
       interestDTO.setIsNotificated(true);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
@@ -182,6 +184,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       // Send Notification
       interestDTOFromDB.setIsNotificated(true);
+      interestDTOFromDB.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTOFromDB);
       interestDTOFromDB.setObject(objectDAO.getOne(interestDTOFromDB.getIdObject()));
       interestDTOFromDB.setMember(memberDAO.getOne(interestDTOFromDB.getIdMember()));
@@ -318,17 +321,32 @@ public class InterestUCCImpl implements InterestUCC {
    * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
    * send_notification field /!\
    *
-   * @param member   of the member
+   * @param idMember of the member's interest
+   * @param member   owner of the object or the one to update notification.
    * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
   @Override
-  public InterestDTO markNotificationShown(int idObject, MemberDTO member) {
-    InterestDTO interestDTO = null;
+  public InterestDTO markNotificationShown(Integer idObject, MemberDTO member, Integer idMember) {
+    InterestDTO interestDTO;
     try {
       dalService.startTransaction();
 
-      interestDTO = interestDAO.getOne(idObject, member.getMemberId());
+      ObjectDTO objectDTO = objectDAO.getOne(idObject);
+      if (objectDTO == null) {
+        throw new NotFoundException("L'objet n'existe pas");
+      }
+
+      if (!idMember.equals(member.getMemberId())) {
+        //It's not the same user interest as the requester.
+        if (!member.getMemberId().equals(objectDTO.getIdOfferor())) {
+          throw new ForbiddenException(
+              "Cette objet ne vous appartient pas, vous ne pouvez pas modifier la notification.");
+        }
+      }
+
+      interestDTO = interestDAO.getOne(idObject, idMember);
+
       if (interestDTO == null) {
         throw new NotFoundException("La notification n'existe pas");
       }
@@ -338,6 +356,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       // Send Notification
       interestDTO.setIsNotificated(false);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
@@ -362,7 +381,6 @@ public class InterestUCCImpl implements InterestUCC {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
-
       interestDTOList = interestDAO.markAllNotificationsShown(member.getMemberId());
       if (interestDTOList == null) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");

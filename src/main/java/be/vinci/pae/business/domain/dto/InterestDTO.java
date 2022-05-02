@@ -11,6 +11,10 @@ public interface InterestDTO {
 
   void setMember(MemberDTO member);
 
+  LocalDate getNotificationDate();
+
+  void setNotificationDate(LocalDate notificationDate);
+
   Boolean getIsNotificated();
 
   void setIsNotificated(boolean isNotificated);
@@ -42,7 +46,7 @@ public interface InterestDTO {
   Boolean getIsCalled();
 
   void setIsCalled(boolean isCalled);
-  
+
   OfferDTO getOffer();
 
   void setOffer(OfferDTO offer);

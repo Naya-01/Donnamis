@@ -29,6 +29,8 @@ public class InterestImpl implements InterestDTO {
   @JsonView(Views.Public.class)
   private Boolean isNotificated;
   @JsonView(Views.Public.class)
+  private LocalDate notificationDate;
+  @JsonView(Views.Public.class)
   private Integer version;
   @JsonView(Views.Public.class)
   private Boolean isCalled;
@@ -41,6 +43,16 @@ public class InterestImpl implements InterestDTO {
   @Override
   public void setMember(MemberDTO member) {
     this.member = member;
+  }
+
+  @Override
+  public LocalDate getNotificationDate() {
+    return notificationDate;
+  }
+
+  @Override
+  public void setNotificationDate(LocalDate notificationDate) {
+    this.notificationDate = notificationDate;
   }
 
   @Override
