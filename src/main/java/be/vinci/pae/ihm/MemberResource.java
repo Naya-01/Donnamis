@@ -165,4 +165,26 @@ public class MemberResource {
     }
     return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);
   }
+
+  /**
+   * Update a member status and update its assigned interests into a prevent status
+   *
+   * @param memberDTO member who has a prevent
+   * @return the filter member updated with a 'prevented' status
+   */
+  @PUT
+  @Path("/toPrevented")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Admin
+  public MemberDTO preventMember(MemberDTO memberDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource preventMember");
+
+    if (memberDTO.getMemberId() == null) {
+      throw new BadRequestException("Identifiant du membre manquant !");
+    }
+
+    return JsonViews.filterPublicJsonView(memberUCC.preventMember(memberDTO), MemberDTO.class);
+  }
+
 }

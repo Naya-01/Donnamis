@@ -65,4 +65,12 @@ public interface MemberUCC {
    * @return the modified member
    */
   MemberDTO updateMember(MemberDTO memberDTO);
+
+  /**
+   * Update a member status and update its assigned interests into a prevent status
+   *
+   * @param memberDTO member who has a prevent
+   * @return the member updated with a prevent status
+   */
+  MemberDTO preventMember(MemberDTO memberDTO);
 }
