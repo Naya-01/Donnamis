@@ -91,7 +91,9 @@ const baseMembersList = async (members) => {
 
     if (member.role === "administrator") {
       displayAdmin(member);
+      await offersButtons(member, true)
     } else {
+      await offersButtons(member, true)
       promoteButton(member);
     }
 
@@ -100,8 +102,6 @@ const baseMembersList = async (members) => {
     } else {
       setDisableButton(member);
     }
-
-    await offersButtons(member, true)
   }
 }
 
@@ -120,11 +120,12 @@ const setActiveButton = (member) => {
     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
     if (member.role === "administrator") {
       displayAdmin(member);
+      await offersButtons(member, false);
     } else {
+      await offersButtons(member, false);
       promoteButton(member);
     }
     setDisableButton(member);
-    await offersButtons(member, false);
   });
   buttonDiv.appendChild(buttonSetActive);
 }
@@ -144,11 +145,12 @@ const setDisableButton = (member) => {
     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
     if (member.role === "administrator") {
       displayAdmin(member);
+      await offersButtons(member, false);
     } else {
+      await offersButtons(member, false);
       promoteButton(member);
     }
     setActiveButton(member);
-    await offersButtons(member, false);
   });
   buttonDiv.appendChild(buttonSetActive);
 }
@@ -177,12 +179,12 @@ const promoteButton = (member) => {
     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
     member = await MemberLibrary.prototype.getUserByHisId(member.memberId);
     displayAdmin(member);
+    await offersButtons(member, false);
     if (member.status === "prevented") {
       setActiveButton(member);
     } else {
       setDisableButton(member);
     }
-    await offersButtons(member, false);
   });
   buttonDiv.appendChild(buttonPromote);
 }
