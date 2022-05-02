@@ -284,7 +284,7 @@ public class MemberUCCImpl implements MemberUCC {
   }
 
   /**
-   * Update a member status and update its assigned interests into a prevent status
+   * Update a member status and update its assigned interests into a prevent status.
    *
    * @param memberDTO member who has a prevent
    * @return the member updated with a prevent status
@@ -302,8 +302,8 @@ public class MemberUCCImpl implements MemberUCC {
       memberExist.setStatus("prevented");
       MemberDTO memberUpdated = memberDAO.updateOne(memberExist);
 
-      interestDAO.updateAllInterestsStatus
-          (memberUpdated.getMemberId(), "assigned", "prevented");
+      interestDAO.updateAllInterestsStatus(memberUpdated.getMemberId(),
+          "assigned", "prevented");
 
       dalService.commitTransaction();
       return memberUpdated;

@@ -375,12 +375,12 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Update all statuses of the member's interests.
    *
-   * @param idMember  update all interests of this member.
+   * @param idMember   update all interests of this member.
    * @param statusFrom actual status of the interests
-   * @param statusTo status updated
+   * @param statusTo   status updated
    */
   @Override
-  public void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo){
+  public void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo) {
     String query = " UPDATE donnamis.interests SET status= ? "
         + "WHERE id_member = ? AND status= ?";
 
