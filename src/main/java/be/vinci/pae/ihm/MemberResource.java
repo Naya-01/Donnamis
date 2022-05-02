@@ -167,7 +167,7 @@ public class MemberResource {
   }
 
   /**
-   * Update a member status and update its assigned interests into a prevent status
+   * Update a member status and update its assigned interests into a prevent status.
    *
    * @param memberDTO member who has a prevent
    * @return the filter member updated with a 'prevented' status
