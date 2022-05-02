@@ -81,18 +81,21 @@ const baseMembersList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
-  for (const member of members) {
+  if (Array.isArray(members)) {
+    for (const member of members) {
 
-    managementList(member.memberId, memberCards, profilImage,
-        member.firstname + " " + member.lastname + " (" + member.username + ")",
-        member.address.buildingNumber + " " + member.address.street + " " +
-        member.address.postcode + " " + member.address.commune);
+      managementList(member.memberId, memberCards, profilImage,
+          member.firstname + " " + member.lastname + " (" + member.username
+          + ")",
+          member.address.buildingNumber + " " + member.address.street + " " +
+          member.address.postcode + " " + member.address.commune);
 
-    // Show different buttons card depending on status
-    if (member.status === "denied") {
-      deniedMemberButtons(member.memberId, member.version);
-    } else {
-      normalMemberButtons(member.memberId, member.version);
+      // Show different buttons card depending on status
+      if (member.status === "denied") {
+        deniedMemberButtons(member.memberId, member.version);
+      } else {
+        normalMemberButtons(member.memberId, member.version);
+      }
     }
   }
 }

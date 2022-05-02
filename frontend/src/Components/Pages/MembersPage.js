@@ -71,36 +71,38 @@ const baseMembersList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
-  for (const member of members) {
-    let image;
-    if (member.image) {
-      image = "/api/member/getPicture/" + member.memberId;
-    } else {
-      image = profileImage;
-    }
+  if (Array.isArray(members)) {
+    for (const member of members) {
+      let image;
+      if (member.image) {
+        image = "/api/member/getPicture/" + member.memberId;
+      } else {
+        image = profileImage;
+      }
 
-    ManagementList(member.memberId, document.getElementById("page-body"),
-        image,
-        member.firstname + " " + member.lastname + " (" + member.username + ")",
-        member.address.buildingNumber + " " + member.address.street + " " +
-        member.address.postcode + " " + member.address.commune);
+      ManagementList(member.memberId, document.getElementById("page-body"),
+          image,
+          member.firstname + " " + member.lastname + " (" + member.username + ")",
+          member.address.buildingNumber + " " + member.address.street + " " +
+          member.address.postcode + " " + member.address.commune);
 
-    // Show different buttons card depending on status
-    const buttonDiv = document.getElementById("button-card-" + member.memberId);
-    buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
+      // Show different buttons card depending on status
+      const buttonDiv = document.getElementById("button-card-" + member.memberId);
+      buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
 
-    if (member.role === "administrator") {
-      displayAdmin(member);
-      await offersButtons(member, true)
-    } else {
-      await offersButtons(member, true)
-      promoteButton(member);
-    }
+      if (member.role === "administrator") {
+        displayAdmin(member);
+        await offersButtons(member, true)
+      } else {
+        await offersButtons(member, true)
+        promoteButton(member);
+      }
 
-    if (member.status === "prevented") {
-      setActiveButton(member);
-    } else {
-      setDisableButton(member);
+      if (member.status === "prevented") {
+        setActiveButton(member);
+      } else {
+        setDisableButton(member);
+      }
     }
   }
 }
