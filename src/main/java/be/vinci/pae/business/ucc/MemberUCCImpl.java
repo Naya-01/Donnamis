@@ -57,6 +57,11 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getStatus().equals("pending")) {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
+      if(memberDTO.getStatus().equals("prevented")){
+        memberDTO.setStatus("valid");
+        memberDTO = memberDAO.updateOne(memberDTO);
+        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(),"prevented","assigned");
+      }
       dalService.commitTransaction();
       return memberDTO;
     } catch (Exception e) {
