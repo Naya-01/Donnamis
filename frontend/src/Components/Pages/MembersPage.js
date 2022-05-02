@@ -98,39 +98,37 @@ const baseMembersList = async (members) => {
         promoteButton(member);
       }
 
-      if (member.status === "prevented") {
-        setActiveButton(member);
-      } else {
+      if (member.status !== "prevented") {
         setDisableButton(member);
       }
     }
   }
 }
 
-const setActiveButton = (member) => {
-  const buttonDiv = document.getElementById("button-card-" + member.memberId);
-  const buttonSetActive = document.createElement("button");
-  buttonSetActive.id = "promote-" + member.memberId;
-  buttonSetActive.className = "btn btn-success mb-2 mx-1";
-  buttonSetActive.type = "button";
-  buttonSetActive.innerText = "Activer";
-  buttonSetActive.addEventListener('click', async () => {
-    NotificationSA.prototype.getNotification().fire({
-      icon: 'success',
-      title: "Utilisateur mis en actif !"
-    });
-    buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
-    if (member.role === "administrator") {
-      displayAdmin(member);
-      await offersButtons(member, false);
-    } else {
-      await offersButtons(member, false);
-      promoteButton(member);
-    }
-    setDisableButton(member);
-  });
-  buttonDiv.appendChild(buttonSetActive);
-}
+// const setActiveButton = (member) => {
+//   const buttonDiv = document.getElementById("button-card-" + member.memberId);
+//   const buttonSetActive = document.createElement("button");
+//   buttonSetActive.id = "promote-" + member.memberId;
+//   buttonSetActive.className = "btn btn-success mb-2 mx-1";
+//   buttonSetActive.type = "button";
+//   buttonSetActive.innerText = "Activer";
+//   buttonSetActive.addEventListener('click', async () => {
+//     NotificationSA.prototype.getNotification().fire({
+//       icon: 'success',
+//       title: "Utilisateur mis en actif !"
+//     });
+//     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
+//     if (member.role === "administrator") {
+//       displayAdmin(member);
+//       await offersButtons(member, false);
+//     } else {
+//       await offersButtons(member, false);
+//       promoteButton(member);
+//     }
+//     setDisableButton(member);
+//   });
+//   buttonDiv.appendChild(buttonSetActive);
+// }
 
 const setDisableButton = (member) => {
   const buttonDiv = document.getElementById("button-card-" + member.memberId);
@@ -152,7 +150,6 @@ const setDisableButton = (member) => {
       await offersButtons(member, false);
       promoteButton(member);
     }
-    setActiveButton(member);
   });
   buttonDiv.appendChild(buttonSetActive);
 }
@@ -182,9 +179,7 @@ const promoteButton = (member) => {
     member = await MemberLibrary.prototype.getUserByHisId(member.memberId);
     displayAdmin(member);
     await offersButtons(member, false);
-    if (member.status === "prevented") {
-      setActiveButton(member);
-    } else {
+    if (member.status !== "prevented") {
       setDisableButton(member);
     }
   });
