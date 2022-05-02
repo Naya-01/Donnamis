@@ -103,16 +103,20 @@ public class ObjectUCCImpl implements ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
+   * @param version : version of the object
    * @return object updated
    */
   @Override
-  public ObjectDTO updateOne(ObjectDTO objectDTO) {
+  public ObjectDTO updateOne(ObjectDTO objectDTO, int version) {
     ObjectDTO object;
     try {
       dalService.startTransaction();
       object = objectDAO.getOne(objectDTO.getIdObject());
       if (object == null) {
         throw new NotFoundException("Objet non trouvé");
+      }
+      if (!objectDTO.getVersion().equals(version)) {
+        throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
       }
       object = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();

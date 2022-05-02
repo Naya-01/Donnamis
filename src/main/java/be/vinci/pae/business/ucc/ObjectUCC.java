@@ -31,7 +31,14 @@ public interface ObjectUCC {
    */
   List<ObjectDTO> getAllObjectMember(int idMember);
 
-  ObjectDTO updateOne(ObjectDTO objectDTO);
+  /**
+   * Update an object.
+   *
+   * @param objectDTO : object that we want to update.
+   * @param version : version of the object
+   * @return object updated
+   */
+  ObjectDTO updateOne(ObjectDTO objectDTO, int version);
 
   /**
    * Update the object picture.
