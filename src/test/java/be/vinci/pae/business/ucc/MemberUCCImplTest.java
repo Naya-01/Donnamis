@@ -122,7 +122,7 @@ class MemberUCCImplTest {
     assertAll(
         () -> assertEquals(mockMember, memberUCC.login(username, passwd1)),
         () -> Mockito.verify(mockMember).checkPassword(passwd1),
-        () -> Mockito.verify(mockMember, Mockito.times(2)).getStatus()
+        () -> Mockito.verify(mockMember, Mockito.times(3)).getStatus()
     );
 
   }

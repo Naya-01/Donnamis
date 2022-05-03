@@ -60,7 +60,8 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getStatus().equals("prevented")) {
         memberDTO.setStatus("valid");
         memberDTO = memberDAO.updateOne(memberDTO);
-        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(), "prevented", "assigned");
+        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(),
+            "prevented", "assigned");
       }
       dalService.commitTransaction();
       return memberDTO;
