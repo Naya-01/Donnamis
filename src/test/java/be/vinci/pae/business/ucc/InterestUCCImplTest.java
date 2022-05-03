@@ -757,7 +757,7 @@ class InterestUCCImplTest {
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
-
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
             () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
