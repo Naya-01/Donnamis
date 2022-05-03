@@ -137,6 +137,7 @@ const setDisableButton = (member) => {
   buttonSetActive.type = "button";
   buttonSetActive.innerText = "Désactiver";
   buttonSetActive.addEventListener('click', async () => {
+    await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version);
     NotificationSA.prototype.getNotification().fire({
       icon: 'success',
       title: "Utilisateur mis en inactif !"

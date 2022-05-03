@@ -220,6 +220,37 @@ class MemberLibrary {
     }
     return newMember;
   }
+
+  async memberToPrevent(idMember, version){
+    let response=null;
+    console.log(idMember);
+    try {
+      let options = {
+        method: "PUT",
+        body: JSON.stringify({
+          "memberId": idMember,
+          "version": version
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/member/toPrevented", options);
+      if (response.status === 200) {
+        return await response.json();
+      }
+      response.text().then((msg) => {
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+      return response;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 export default MemberLibrary;
