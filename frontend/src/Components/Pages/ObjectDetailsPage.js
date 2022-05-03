@@ -117,6 +117,7 @@ const ObjectDetailsPage = async () => {
   pageDiv.innerHTML =
       `<div class="container p-3">
       <div class="mx-5 my-5">
+      <div class="row" id="problemMember"></div>
       <h2 id="titleObject" class=pb-3></h2>
       <div class="card">
         <!-- Body of the card -->
@@ -221,9 +222,19 @@ const ObjectDetailsPage = async () => {
     // we get the member that gives the object
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
+    //if the member is prevented, a msg is display
+    if(memberGiver.status === "prevented"){
+      document.getElementById("problemMember").innerHTML = `
+        <p class="text-danger">
+          <i class="bi bi-exclamation-triangle"></i>
+          L'offreur est actuellement empêché de participer à la donnerie.
+          <i class="bi bi-exclamation-triangle"></i>
+        </p>
+      `
+    }
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username;
+        + memberGiver.username ;
 
     if (!isInterested && (english_status === "interested" || english_status === "available")) {
       displayAddInterest(offer.object.version, offer.version);

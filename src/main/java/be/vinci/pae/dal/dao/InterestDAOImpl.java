@@ -58,11 +58,12 @@ public class InterestDAOImpl implements InterestDAO {
     String query =
         "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
             + "i.be_called, i.version "
-            + "from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
+            + "from donnamis.interests i WHERE i.id_object=? AND (i.status=? OR i.status=?) ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setString(2, "assigned");
+      preparedStatement.setString(3, "prevented");
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       return getInterestDTO(resultSet);
@@ -295,7 +296,6 @@ public class InterestDAOImpl implements InterestDAO {
    * @return count of notification
    */
   @Override
-
   public Integer getNotificationCount(Integer idMember) {
     String query = "SELECT count(DISTINCT i.*) "
         + "FROM donnamis.interests i , donnamis.objects o "
@@ -327,6 +327,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @param interestDTO with the notification attribute.
    * @return the interest updated.
    */
+  @Override
   public InterestDTO updateNotification(InterestDTO interestDTO) {
     String query = "UPDATE donnamis.interests SET send_notification = ? "
         + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
@@ -351,6 +352,7 @@ public class InterestDAOImpl implements InterestDAO {
    * @param interestDTO the object that we want to edit the status.
    * @return interest
    */
+  @Override
   public InterestDTO updateStatus(InterestDTO interestDTO) {
 
     String query = "UPDATE donnamis.interests SET status = ?, version = ? "
@@ -370,4 +372,34 @@ public class InterestDAOImpl implements InterestDAO {
       throw new FatalException(e);
     }
   }
+
+  /**
+   * Update all statuses of the member's interests.
+   *
+   * @param idMember   update all interests of this member.
+   * @param statusFrom actual status of the interests
+   * @param statusTo   status updated
+   */
+  @Override
+  public void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo) {
+    String query = " UPDATE donnamis.interests SET status= ?, version= version+1, "
+        + "send_notification = true "
+        + "WHERE id_member = ? AND status= ? "
+        + "RETURNING id_object, id_member, availability_date, status, "
+        + " send_notification, version, be_called ";
+
+    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
+
+      preparedStatement.setString(1, statusTo);
+      preparedStatement.setInt(2, idMember);
+      preparedStatement.setString(3, statusFrom);
+      preparedStatement.executeQuery();
+    } catch (SQLException e) {
+      throw new FatalException(e);
+    }
+
+
+  }
+
+
 }

@@ -98,4 +98,13 @@ public interface InterestDAO {
    * @return interest
    */
   InterestDTO updateStatus(InterestDTO interestDTO);
+
+  /**
+   * Update all statuses of the member's interests.
+   *
+   * @param idMember  update all interests of this member.
+   * @param statusFrom actual status of the interests
+   * @param statusTo status updated
+   */
+  void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo);
 }
