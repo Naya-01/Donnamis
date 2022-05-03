@@ -207,11 +207,14 @@ public class InterestResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public InterestDTO markNotificationShown(@Context ContainerRequest request,
-      @PathParam("idObject") int idObject) {
-    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
-
+      @PathParam("idObject") Integer idObject, @QueryParam("idMember") Integer idMember) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotificationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO);
+    if (idMember == null) {
+      throw new BadRequestException("Veuillez indiquer un idMember");
+    }
+
+    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO, idMember);
     interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
     interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
     return interest;
@@ -231,6 +234,7 @@ public class InterestResource {
   public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+
     List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
     filterMember(interestDTOList);
     filterObject(interestDTOList);

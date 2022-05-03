@@ -737,7 +737,8 @@ class InterestUCCImplTest {
 
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO)),
+            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO,
+                memberDTO.getMemberId())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -756,10 +757,11 @@ class InterestUCCImplTest {
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
-
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO)),
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -787,7 +789,8 @@ class InterestUCCImplTest {
         .thenReturn(memberDTO);
 
     InterestDTO interestDTOShown = interestUCC.markNotificationShown(interestDTO.getIdObject(),
-        memberDTO);
+        memberDTO,
+        memberDTO.getMemberId());
 
     assertAll(
         () -> assertEquals(objectDTO, interestDTOShown.getObject()),

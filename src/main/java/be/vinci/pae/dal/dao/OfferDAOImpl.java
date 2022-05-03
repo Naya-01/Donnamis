@@ -393,6 +393,7 @@ public class OfferDAOImpl implements OfferDAO {
       offerDTO.setTimeSlot(resultSet.getString(3));
       offerDTO.setStatus(resultSet.getString(12));
       offerDTO.setVersion(resultSet.getInt(13));
+      offerDTO.setIdObject(resultSet.getInt(4));
 
       TypeDTO typeDTO = typeFactory.getTypeDTO();
       typeDTO.setIdType(resultSet.getInt(5));

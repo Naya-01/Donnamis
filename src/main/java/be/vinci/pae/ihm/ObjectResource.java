@@ -147,7 +147,7 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource updateOne");
-    ObjectDTO object = objectUCC.updateOne(objectDTO);
+    ObjectDTO object = objectUCC.updateOne(objectDTO, objectDTO.getVersion());
     object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
     return object;
   }

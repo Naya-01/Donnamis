@@ -11,6 +11,8 @@ import java.time.LocalDate;
 public class OfferImpl implements OfferDTO {
 
   @JsonView(Views.Public.class)
+  private Integer idObject;
+  @JsonView(Views.Public.class)
   private Integer idOffer;
   @JsonView(Views.Public.class)
   private LocalDate date;
@@ -24,6 +26,16 @@ public class OfferImpl implements OfferDTO {
   private ObjectDTO object;
   @JsonView(Views.Public.class)
   private Integer version;
+
+  @Override
+  public Integer getIdObject() {
+    return idObject;
+  }
+
+  @Override
+  public void setIdObject(int idObject) {
+    this.idObject = idObject;
+  }
 
   @Override
   public Integer getIdOffer() {
@@ -86,12 +98,12 @@ public class OfferImpl implements OfferDTO {
   }
 
   @Override
-  public void setVersion(Integer version) {
-    this.version = version;
+  public Integer getVersion() {
+    return version;
   }
 
   @Override
-  public Integer getVersion() {
-    return version;
+  public void setVersion(Integer version) {
+    this.version = version;
   }
 }

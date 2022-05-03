@@ -13,6 +13,7 @@ import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -304,6 +305,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (interestDTO != null) {
         // Update notification of the interest
         interestDTO.setIsNotificated(true);
+        interestDTO.setNotificationDate(LocalDate.now());
         interestDAO.updateNotification(interestDTO);
 
         // Update status of the interest
@@ -372,6 +374,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // update the notification of the interest
       interestDTO.setIsNotificated(true);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
 
       // Update status of the interest
@@ -444,6 +447,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Update interest notification
       interestDTO.setIsNotificated(true);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
 
       // Update interest status

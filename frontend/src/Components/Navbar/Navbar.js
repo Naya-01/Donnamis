@@ -280,7 +280,6 @@ const Navbar = async () => {
           notification.innerText = "";
           let markAllReadBtn = document.getElementById("allRead")
           markAllReadBtn.remove();
-          document.getElementById("notificationButton").click();
         });
 
         // Disable the default behavior of a dropdown (disappear when we click on the div)
@@ -329,7 +328,7 @@ const Navbar = async () => {
               notification.innerText = notificationCount;
             }
             await InterestLibrary.prototype.markNotificationShown(
-                interest.object.idObject);
+                interest.object.idObject, interest.member.memberId);
           });
 
           let btnGoto = document.getElementById(
