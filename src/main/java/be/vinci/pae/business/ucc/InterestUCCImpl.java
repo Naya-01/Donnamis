@@ -337,6 +337,12 @@ public class InterestUCCImpl implements InterestUCC {
         throw new NotFoundException("L'objet n'existe pas");
       }
 
+      interestDTO = interestDAO.getOne(idObject, idMember);
+
+      if (interestDTO == null) {
+        throw new NotFoundException("La notification n'existe pas");
+      }
+
       if (!idMember.equals(member.getMemberId())) {
         //It's not the same user interest as the requester.
         if (!member.getMemberId().equals(objectDTO.getIdOfferor())) {
@@ -345,11 +351,6 @@ public class InterestUCCImpl implements InterestUCC {
         }
       }
 
-      interestDTO = interestDAO.getOne(idObject, idMember);
-
-      if (interestDTO == null) {
-        throw new NotFoundException("La notification n'existe pas");
-      }
       if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }
