@@ -57,10 +57,10 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberDTO.getStatus().equals("pending")) {
         throw new UnauthorizedException("Le statut du membre est en attente");
       }
-      if(memberDTO.getStatus().equals("prevented")){
+      if (memberDTO.getStatus().equals("prevented")) {
         memberDTO.setStatus("valid");
         memberDTO = memberDAO.updateOne(memberDTO);
-        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(),"prevented","assigned");
+        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(), "prevented", "assigned");
       }
       dalService.commitTransaction();
       return memberDTO;
@@ -303,7 +303,7 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberExist == null) {
         throw new NotFoundException("Membre inexistant");
       }
-      if(!memberDTO.getVersion().equals(memberExist.getVersion())){
+      if (!memberDTO.getVersion().equals(memberExist.getVersion())) {
         throw new ForbiddenException(
             "Vous ne possédez pas une version à jour du membre.");
       }

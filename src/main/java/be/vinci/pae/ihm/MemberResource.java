@@ -183,7 +183,7 @@ public class MemberResource {
     if (memberDTO.getMemberId() == null) {
       throw new BadRequestException("Identifiant du membre manquant !");
     }
-    if(memberDTO.getVersion() == null){
+    if (memberDTO.getVersion() == null) {
       throw new BadRequestException("Attribut version manquant ! ");
     }
 
