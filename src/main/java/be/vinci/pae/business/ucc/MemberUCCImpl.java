@@ -4,6 +4,7 @@ import be.vinci.pae.business.domain.Member;
 import be.vinci.pae.business.domain.dto.AddressDTO;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.dal.dao.AddressDAO;
+import be.vinci.pae.dal.dao.InterestDAO;
 import be.vinci.pae.dal.dao.MemberDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ConflictException;
@@ -27,6 +28,8 @@ public class MemberUCCImpl implements MemberUCC {
   private AddressDAO addressDAO;
   @Inject
   private DALService dalService;
+  @Inject
+  private InterestDAO interestDAO;
 
   /**
    * Log in a quidam by a username and a password.
@@ -53,6 +56,13 @@ public class MemberUCCImpl implements MemberUCC {
       }
       if (memberDTO.getStatus().equals("pending")) {
         throw new UnauthorizedException("Le statut du membre est en attente");
+      }
+      if (memberDTO.getStatus().equals("prevented")) {
+        memberDTO.setStatus("valid");
+        memberDTO.setPassword(null); // we don't want to change the password
+        memberDTO = memberDAO.updateOne(memberDTO);
+        interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(),
+            "prevented", "assigned");
       }
       dalService.commitTransaction();
       return memberDTO;
@@ -278,5 +288,37 @@ public class MemberUCCImpl implements MemberUCC {
       dalService.rollBackTransaction();
       throw e;
     }
+  }
+
+  /**
+   * Update a member status and update its assigned interests into a prevent status.
+   *
+   * @param memberDTO member who has a prevent
+   * @return the member updated with a prevent status
+   */
+  @Override
+  public MemberDTO preventMember(MemberDTO memberDTO) {
+    try {
+      dalService.startTransaction();
+      MemberDTO memberExist = memberDAO.getOne(memberDTO.getMemberId());
+      if (memberExist == null) {
+        throw new NotFoundException("Membre inexistant");
+      }
+      if (!memberDTO.getVersion().equals(memberExist.getVersion())) {
+        throw new ForbiddenException(
+            "Vous ne possédez pas une version à jour du membre.");
+      }
+      memberDTO.setStatus("prevented");
+      MemberDTO memberUpdated = memberDAO.updateOne(memberDTO);
+      interestDAO.updateAllInterestsStatus(memberUpdated.getMemberId(),
+          "assigned", "prevented");
+      memberUpdated.setAddress(addressDAO.getAddressByMemberId(memberUpdated.getMemberId()));
+      dalService.commitTransaction();
+      return memberUpdated;
+    } catch (Exception e) {
+      dalService.rollBackTransaction();
+      throw e;
+    }
+
   }
 }

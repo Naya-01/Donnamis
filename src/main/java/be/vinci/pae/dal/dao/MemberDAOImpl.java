@@ -141,13 +141,13 @@ public class MemberDAOImpl implements MemberDAO {
             + "WHERE a.id_member = m.id_member ";
 
     if (status != null && status.equals("waiting")) {
-      query += "AND m.status != 'valid' ";
+      query += "AND (m.status = 'pending' OR m.status = 'denied') ";
     } else if (status != null && status.equals("pending")) {
       query += "AND m.status = 'pending' ";
     } else if (status != null && status.equals("denied")) {
       query += "AND m.status = 'denied' ";
     } else if (status != null && status.equals("valid")) {
-      query += "AND m.status = 'valid' ";
+      query += "AND (m.status = 'valid' OR m.status = 'prevented') ";
     }
     if (search != null && !search.isEmpty()) {
       query += "AND (lower(a.postcode) LIKE ? OR lower(a.commune) LIKE ? "
