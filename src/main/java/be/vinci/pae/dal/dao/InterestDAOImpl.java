@@ -58,11 +58,12 @@ public class InterestDAOImpl implements InterestDAO {
     String query =
         "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
             + "i.be_called, i.version "
-            + "from donnamis.interests i WHERE i.id_object=? AND i.status=? ";
+            + "from donnamis.interests i WHERE i.id_object=? AND (i.status=? OR i.status=?) ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.setString(2, "assigned");
+      preparedStatement.setString(3, "prevented");
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       return getInterestDTO(resultSet);
