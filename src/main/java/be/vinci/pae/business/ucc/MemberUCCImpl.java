@@ -303,13 +303,16 @@ public class MemberUCCImpl implements MemberUCC {
       if (memberExist == null) {
         throw new NotFoundException("Membre inexistant");
       }
-
+      if(!memberDTO.getVersion().equals(memberExist.getVersion())){
+        throw new ForbiddenException(
+            "Vous ne possédez pas une version à jour du membre.");
+      }
       memberExist.setStatus("prevented");
       MemberDTO memberUpdated = memberDAO.updateOne(memberExist);
 
       interestDAO.updateAllInterestsStatus(memberUpdated.getMemberId(),
           "assigned", "prevented");
-
+      memberUpdated.setAddress(addressDAO.getAddressByMemberId(memberUpdated.getMemberId()));
       dalService.commitTransaction();
       return memberUpdated;
     } catch (Exception e) {

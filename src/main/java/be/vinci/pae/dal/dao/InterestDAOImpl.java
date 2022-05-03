@@ -381,8 +381,10 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo) {
-    String query = " UPDATE donnamis.interests SET status= ? "
-        + "WHERE id_member = ? AND status= ?";
+    String query = " UPDATE donnamis.interests SET status= ?, version= version+1 "
+        + "WHERE id_member = ? AND status= ? "
+        + "RETURNING id_object, id_member, availability_date, status, "
+        + " send_notification, version, be_called ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
