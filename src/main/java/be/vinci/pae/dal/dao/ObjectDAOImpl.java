@@ -182,7 +182,8 @@ public class ObjectDAOImpl implements ObjectDAO {
       return null;
     }
     query += " , version = version + 1 "
-        + "WHERE id_object = ? RETURNING id_object, description, status, image, id_offeror, id_type";
+        + "WHERE id_object = ? RETURNING id_object, "
+        + "description, status, image, id_offeror, id_type";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 

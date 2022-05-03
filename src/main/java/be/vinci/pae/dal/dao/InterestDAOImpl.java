@@ -145,7 +145,8 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO addOne(InterestDTO item) {
     String query = "INSERT INTO donnamis.interests (id_object, id_member, availability_date, "
-        + "status,send_notification,be_called, version,notification_date) VALUES (?,?,?,?,?,?,?,NOW()) "
+        + "status,send_notification,be_called, version,notification_date) "
+        + "VALUES (?,?,?,?,?,?,?,NOW()) "
         + "RETURNING id_object, id_member, "
         + "availability_date, status, send_notification, version, be_called, notification_date";
 
