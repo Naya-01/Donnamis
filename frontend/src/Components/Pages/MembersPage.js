@@ -134,15 +134,17 @@ const setDisableButton = (member) => {
   const buttonDiv = document.getElementById("button-card-" + member.memberId);
   const buttonSetActive = document.createElement("button");
   buttonSetActive.id = "promote-" + member.memberId;
-  buttonSetActive.className = "btn btn-success mb-2 mx-1";
+  buttonSetActive.className = "btn btn-warning mb-2 mx-1";
   buttonSetActive.type = "button";
   buttonSetActive.innerText = "Désactiver";
   buttonSetActive.addEventListener('click', async () => {
-    await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version);
-    NotificationSA.prototype.getNotification().fire({
-      icon: 'success',
-      title: "Utilisateur mis en inactif !"
-    });
+    let preventedMember = await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version);
+    if(preventedMember !== undefined){
+      NotificationSA.prototype.getNotification().fire({
+        icon: 'success',
+        title: "L'utilisateur est temporairement empêché de participer à la donnerie."
+      });
+    }
     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
     if (member.role === "administrator") {
       displayAdmin(member);
