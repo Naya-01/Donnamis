@@ -59,6 +59,7 @@ public class MemberUCCImpl implements MemberUCC {
       }
       if (memberDTO.getStatus().equals("prevented")) {
         memberDTO.setStatus("valid");
+        memberDTO.setPassword(null); // we don't want to change the password
         memberDTO = memberDAO.updateOne(memberDTO);
         interestDAO.updateAllInterestsStatus(memberDTO.getMemberId(),
             "prevented", "assigned");
@@ -300,7 +301,6 @@ public class MemberUCCImpl implements MemberUCC {
     try {
       dalService.startTransaction();
       MemberDTO memberExist = memberDAO.getOne(memberDTO.getMemberId());
-
       if (memberExist == null) {
         throw new NotFoundException("Membre inexistant");
       }
@@ -308,9 +308,8 @@ public class MemberUCCImpl implements MemberUCC {
         throw new ForbiddenException(
             "Vous ne possédez pas une version à jour du membre.");
       }
-      memberExist.setStatus("prevented");
-      MemberDTO memberUpdated = memberDAO.updateOne(memberExist);
-
+      memberDTO.setStatus("prevented");
+      MemberDTO memberUpdated = memberDAO.updateOne(memberDTO);
       interestDAO.updateAllInterestsStatus(memberUpdated.getMemberId(),
           "assigned", "prevented");
       memberUpdated.setAddress(addressDAO.getAddressByMemberId(memberUpdated.getMemberId()));
