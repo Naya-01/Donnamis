@@ -79,7 +79,7 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
     }
 
     searchBarHtml +=
-        `<input type="text" class="form-control fs-4" id="searchBar" placeholder="${placeholder}">
+        `<input type="text" class="form-control" id="searchBar" placeholder="${placeholder}">
             <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>`
     if (hasNewObjectButton) {
       searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-primary mx-2">Ajouter un objet</button>`;
