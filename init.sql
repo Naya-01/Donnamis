@@ -63,9 +63,9 @@ CREATE TABLE donnamis.interests
     id_member         INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object         INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     send_notification BOOLEAN                                         NOT NULL,
-    notificationDate  TIMESTAMP                                       NOT NULL,
-    be_called         BOOLEAN NULL,
-    version           INTEGER NULL,
+    notification_date  TIMESTAMP                                      NOT NULL,
+    be_called         BOOLEAN NOT NULL,
+    version           INTEGER NOT NULL,
     PRIMARY KEY (id_object, id_member)
 );
 
