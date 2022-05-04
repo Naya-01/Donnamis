@@ -316,12 +316,12 @@ public class OfferResource {
         || offerDTO.getObject().getType().getIdType() != null
         && offerDTO.getObject().getType().getTypeName() != null && offerDTO.getObject().getType()
         .getTypeName().isEmpty()) {
-      throw new BadRequestException("Type need more informations");
+      throw new BadRequestException("Veuillez spécifier un type");
     }
     if (offerDTO.getObject().getType() == null
         || offerDTO.getObject().getDescription() == null || offerDTO.getObject().getDescription()
         .isEmpty()) {
-      throw new BadRequestException("Bad json object sent");
+      throw new BadRequestException("L'objet de l'offre est incomplet");
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
