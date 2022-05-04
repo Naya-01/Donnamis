@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 const dictionary = new Map([
   ['interested', 'Intéressé'],
-  ['available', 'Publié'],
+  ['available', 'Disponible'],
   ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],

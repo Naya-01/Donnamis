@@ -21,7 +21,7 @@ const ratingLibrary = new RatingLibrary();
 const bottomNotification = new NotificationSA().getNotification();
 const dictionnary = new Map([
   ['interested', 'Intéressé'],
-  ['available', 'Publié'],
+  ['available', 'Disponible'],
   ['assigned', 'En cours de donation'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
@@ -44,7 +44,6 @@ let telNumber;
 let versionObject = 0;
 let versionOffer = 0;
 let versionMemberConnected;
-
 
 /**
  * Render the page to see an object
@@ -223,7 +222,7 @@ const ObjectDetailsPage = async () => {
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
     //if the member is prevented, a msg is display
-    if(memberGiver.status === "prevented"){
+    if (memberGiver.status === "prevented") {
       document.getElementById("problemMember").innerHTML = `
         <p class="text-danger">
           <i class="bi bi-exclamation-triangle"></i>
@@ -234,14 +233,16 @@ const ObjectDetailsPage = async () => {
     }
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username ;
+        + memberGiver.username;
 
-    if (!isInterested && (english_status === "interested" || english_status === "available")) {
+    if (!isInterested && (english_status === "interested" || english_status
+        === "available")) {
       displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(offer.object.idObject);
       if (current_rating === undefined) { // if there is no rating yet
-        let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
+        let current_interest = await interestLibrary.getOneInterest(
+            offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -356,8 +357,8 @@ async function addOneInterest(versionObject, versionOffer) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let memberToUpdate = new Member(null, null, null,
-          null, numTel, null, versionMemberConnected,null,
-          null,null, idMemberConnected);
+          null, numTel, null, versionMemberConnected, null,
+          null, null, idMemberConnected);
       await memberLibrary.updateMember(memberToUpdate);
       versionMemberConnected += 1;
     }
@@ -370,14 +371,14 @@ async function addOneInterest(versionObject, versionOffer) {
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
   // the notification to show that the interest is send
-  if(newInterest !== undefined){
+  if (newInterest !== undefined) {
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre intérêt a bien été pris en compte.'
     })
     // increment the number of people interested
     let countInterest = document.getElementById("InterestCount");
-    countInterest.innerHTML=parseInt(++countInterest.innerHTML);
+    countInterest.innerHTML = parseInt(++countInterest.innerHTML);
   }
 }
 
@@ -608,10 +609,9 @@ async function updateObject(e) {
   if (fileInput.files[0] !== undefined) { // if there is an image
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
+    objectWithImage = await objectLibrary.setImage(formData,
+        offer.object.idObject, versionObject);
   }
-
-
 
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
@@ -626,7 +626,6 @@ async function updateObject(e) {
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-
 
   if (objectWithImage !== undefined) { // if there is an image
     if (localLinkImage !== undefined) {
@@ -664,7 +663,8 @@ async function ratingPopUp(e) {
         })
         return;
       }
-      let rating = await ratingLibrary.addRating(note, text_rating, offer.object.idObject);
+      let rating = await ratingLibrary.addRating(note, text_rating,
+          offer.object.idObject);
       if (rating !== undefined) {
         bottomNotification.fire({
           icon: 'success',

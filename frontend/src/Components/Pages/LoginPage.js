@@ -1,4 +1,4 @@
-import {getSessionObject, setSessionObject} from "../../utils/session";
+import {setSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 import Navbar from "../Navbar/Navbar";
 import MemberLibrary from "../../Domain/MemberLibrary";
