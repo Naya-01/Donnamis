@@ -14,6 +14,8 @@ const notificationDictionnary = new Map([
   ['cancelled', "L'offre a été annulée"],
   ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
   ['published', "a marquer un interet pour votre offre."],
+  ['prevented', "est tombé malade"],
+
 ]);
 
 // Color dictionnary for notification states.
@@ -22,7 +24,8 @@ const colorDictionnary = new Map([
   ['received', 'text-success'],
   ['cancelled', 'text-danger'],
   ['not_collected', 'text-danger'],
-  ['published', 'text-info']
+  ['published', 'text-info'],
+  ['prevented', 'text-danger']
 ]);
 
 const Navbar = async () => {
@@ -204,7 +207,8 @@ const Navbar = async () => {
           }
 
           // A notification HTML code
-          if (interest.status === 'published') {
+          if (interest.status === 'published' || interest.status
+              === 'prevented') {
             notifications += `<li>
                               <div class="dropdown-item dropdown-profil-element bg-navbar fs-5 notif-items " id="notification-${memberId}-${objectId}" href="#">
                                 <div class="row">
