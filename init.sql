@@ -5,16 +5,16 @@ CREATE SCHEMA donnamis;
 CREATE TABLE donnamis.members
 (
     id_member      SERIAL PRIMARY KEY,
-    username       VARCHAR(50) NOT NULL,
-    lastname       VARCHAR(50) NOT NULL,
-    firstname      VARCHAR(50) NOT NULL,
-    status         VARCHAR(15) NOT NULL,
-    role           VARCHAR(15) NOT NULL,
-    phone_number   VARCHAR(50) NULL,
-    password       CHAR(60)    NOT NULL,
-    refusal_reason VARCHAR(50) NULL,
+    username       VARCHAR(50)  NOT NULL,
+    lastname       VARCHAR(50)  NOT NULL,
+    firstname      VARCHAR(50)  NOT NULL,
+    status         VARCHAR(15)  NOT NULL,
+    role           VARCHAR(15)  NOT NULL,
+    phone_number   VARCHAR(50)  NULL,
+    password       CHAR(60)     NOT NULL,
+    refusal_reason VARCHAR(50)  NULL,
     image          VARCHAR(100) NULL,
-    version        INTEGER NULL
+    version        INTEGER      NOT NULL
 );
 
 CREATE TABLE donnamis.addresses
@@ -25,7 +25,7 @@ CREATE TABLE donnamis.addresses
     street          VARCHAR(50) NOT NULL,
     postcode        VARCHAR(15) NOT NULL,
     commune         VARCHAR(50) NOT NULL,
-    version         INTEGER NULL,
+    version         INTEGER     NOT NULL,
     PRIMARY KEY (id_member)
 );
 
@@ -42,9 +42,9 @@ CREATE TABLE donnamis.objects
     id_type     INTEGER REFERENCES donnamis.types (id_type)     NOT NULL,
     description VARCHAR(100)                                    NOT NULL,
     status      VARCHAR(50)                                     NOT NULL,
-    image       VARCHAR(100) NULL,
+    image       VARCHAR(100)                                    NULL,
     id_offeror  INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
-    version     INTEGER NULL
+    version     INTEGER                                         NOT NULL
 );
 
 CREATE TABLE donnamis.ratings
@@ -63,9 +63,9 @@ CREATE TABLE donnamis.interests
     id_member         INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object         INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     send_notification BOOLEAN                                         NOT NULL,
-    notification_date  TIMESTAMP                                      NOT NULL,
-    be_called         BOOLEAN NOT NULL,
-    version           INTEGER NOT NULL,
+    notification_date TIMESTAMP                                       NOT NULL,
+    be_called         BOOLEAN                                         NOT NULL,
+    version           INTEGER                                         NOT NULL,
     PRIMARY KEY (id_object, id_member)
 );
 
@@ -76,5 +76,5 @@ CREATE TABLE donnamis.offers
     time_slot VARCHAR(200)                                    NOT NULL,
     status    VARCHAR(200)                                    NOT NULL,
     id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
-    version   INTEGER NULL
+    version   INTEGER                                         NOT NULL
 );
