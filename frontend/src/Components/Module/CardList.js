@@ -43,6 +43,11 @@ const cardList = async (offers) => {
     let cnt = 1;
     //make the columns for the row
     while (cnt <= 3 && nbOffers < offers.length) {
+      let realDescription = offers[nbOffers].object.description;
+      if (realDescription.length > 40) {
+        realDescription = realDescription.substr(1, 40);
+        realDescription += "...";
+      }
       //if the offer has an image
       if (offers[nbOffers].object.image) {
         let imageObject = "/api/object/getPicture/"
@@ -65,7 +70,7 @@ const cardList = async (offers) => {
                     ${dictionary.get(offers[nbOffers].status)}
               </h6>
               <p class="card-text">
-                ${offers[nbOffers].object.description}
+                ${realDescription}
               </p>
             </div>
           </div>
