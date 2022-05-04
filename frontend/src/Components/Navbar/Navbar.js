@@ -9,7 +9,7 @@ import OfferLibrary from "../../Domain/OfferLibrary";
 
 // Notification dictionnary to know which text show.
 const notificationDictionnary = new Map([
-  ['assigned', "Vous avez été selectionné !"],
+  ['assigned', "L'objet vous a été attribué."],
   ['received', "Merci d'avoir récupérer l'objet !"],
   ['cancelled', "L'offre a été annulée"],
   ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
