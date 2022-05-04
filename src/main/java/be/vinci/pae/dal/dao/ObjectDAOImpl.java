@@ -219,7 +219,11 @@ public class ObjectDAOImpl implements ObjectDAO {
       }
       resultSet.close();
       preparedStatement.close();
-      return (objectDTOList.isEmpty()) ? null : objectDTOList;
+      if (objectDTOList.isEmpty()) {
+        return null;
+      } else {
+        return objectDTOList;
+      }
     } catch (SQLException e) {
       throw new FatalException(e);
     }

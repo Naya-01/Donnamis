@@ -30,8 +30,10 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO getOne(int idObject, int idMember) {
     String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
-            + "i.version, i.be_called, i.notification_date from donnamis.interests i "
+        "select i.id_object, i.id_member, i.availability_date, "
+            + "i.status, i.send_notification, "
+            + "i.version, i.be_called, i.notification_date "
+            + "from donnamis.interests i "
             + "WHERE i.id_object=? AND i.id_member=?";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -56,9 +58,11 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO getAssignedInterest(int idObject) {
     String query =
-        "select i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
+        "select i.id_object, i.id_member, i.availability_date, "
+            + "i.status, i.send_notification, "
             + "i.be_called, i.version,i.notification_date "
-            + "from donnamis.interests i WHERE i.id_object=? AND (i.status=? OR i.status=?) ";
+            + "from donnamis.interests i WHERE i.id_object=? "
+            + "AND (i.status=? OR i.status=?) ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -145,11 +149,13 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public InterestDTO addOne(InterestDTO item) {
-    String query = "INSERT INTO donnamis.interests (id_object, id_member, availability_date, "
+    String query = "INSERT INTO donnamis.interests "
+        + "(id_object, id_member, availability_date, "
         + "status,send_notification,be_called, version,notification_date) "
         + "VALUES (?,?,?,?,?,?,?,NOW()) "
         + "RETURNING id_object, id_member, "
-        + "availability_date, status, send_notification, version, be_called, notification_date";
+        + "availability_date, status, send_notification, "
+        + "version, be_called, notification_date";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, item.getIdObject());
@@ -222,9 +228,10 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
-    String query = "SELECT id_object, id_member, availability_date, status, send_notification, "
-        + "version, be_called, notification_date "
-        + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
+    String query =
+        "SELECT id_object, id_member, availability_date, status, send_notification, "
+            + "version, be_called, notification_date "
+            + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();
@@ -248,9 +255,11 @@ public class InterestDAOImpl implements InterestDAO {
         "SELECT DISTINCT i.id_member, i.id_object, i.availability_date, i.status, i.version "
             + ",i.send_notification,i.be_called, i.notification_date "
             + "FROM donnamis.interests i , donnamis.objects o "
-            + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND ( i.status = 'published' OR i.status = 'prevented') "
+            + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? "
+            + "AND ( i.status = 'published' OR i.status = 'prevented') "
             + "AND i.send_notification = true) "
-            + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published' AND i.status != 'prevented') "
+            + "   OR (i.id_member = ? AND i.send_notification = true "
+            + "AND i.status != 'published' AND i.status != 'prevented') "
             + "ORDER BY i.notification_date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -275,8 +284,10 @@ public class InterestDAOImpl implements InterestDAO {
   public List<InterestDTO> markAllNotificationsShown(Integer idMember) {
     String query = "UPDATE donnamis.interests SET send_notification = ? "
         + "FROM donnamis.objects o, donnamis.interests i "
-        + "WHERE (i.id_member = ? AND i.send_notification = true AND i.status != 'published'  AND i.status != 'prevented' ) OR "
-        + "(i.id_object = o.id_object AND o.id_offeror = ? AND (i.status = 'published' or i.status = 'prevented') "
+        + "WHERE (i.id_member = ? AND i.send_notification = true "
+        + "AND i.status != 'published'  AND i.status != 'prevented' ) OR "
+        + "(i.id_object = o.id_object AND o.id_offeror = ? "
+        + "AND (i.status = 'published' or i.status = 'prevented') "
         + " AND i.send_notification = true)"
         + "RETURNING i.id_object, i.id_member, i.availability_date, i.status,"
         + " i.send_notification, i.version, i.be_called, i.notification_date ";
@@ -302,9 +313,11 @@ public class InterestDAOImpl implements InterestDAO {
   public Integer getNotificationCount(Integer idMember) {
     String query = "SELECT count(DISTINCT i.*) "
         + "FROM donnamis.interests i , donnamis.objects o "
-        + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? AND ( i.status = 'published' OR i.status = 'prevented') "
+        + "WHERE (i.id_object = o.id_object AND o.id_offeror = ? "
+        + "AND ( i.status = 'published' OR i.status = 'prevented') "
         + "AND i.send_notification = true) "
-        + "   OR (i.id_member = ? AND i.send_notification = true AND i.status != 'published' AND i.status != 'prevented' )";
+        + "   OR (i.id_member = ? AND i.send_notification = true "
+        + "AND i.status != 'published' AND i.status != 'prevented' )";
     Integer notificationCount = null;
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idMember);
@@ -333,7 +346,8 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO updateNotification(InterestDTO interestDTO) {
     String query =
-        "UPDATE donnamis.interests SET send_notification = ? , notification_date = NOW() "
+        "UPDATE donnamis.interests "
+            + "SET send_notification = ? , notification_date = NOW() "
             + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
             + " availability_date, status,send_notification, version, be_called, notification_date ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -359,7 +373,8 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public InterestDTO updateStatus(InterestDTO interestDTO) {
 
-    String query = "UPDATE donnamis.interests SET status = ?, version = ? "
+    String query = "UPDATE donnamis.interests "
+        + "SET status = ?, version = ? "
         + "WHERE id_object = ? AND id_member = ? RETURNING id_object, id_member, "
         + "availability_date, status, send_notification, version, be_called, notification_date ";
 
@@ -386,7 +401,8 @@ public class InterestDAOImpl implements InterestDAO {
    */
   @Override
   public void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo) {
-    String query = " UPDATE donnamis.interests SET status= ?, version= version+1, "
+    String query = " UPDATE donnamis.interests "
+        + "SET status= ?, version= version+1, "
         + "send_notification = true , notification_date=NOW()"
         + "WHERE id_member = ? AND status= ? "
         + "RETURNING id_object, id_member, availability_date, status, "
