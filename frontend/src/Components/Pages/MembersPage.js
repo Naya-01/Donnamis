@@ -11,6 +11,7 @@ import Member from "../../Domain/Member";
 import {getSessionObject} from "../../utils/session";
 
 const memberLibrary = new MemberLibrary();
+
 /**
  * Render the Members page
  */
@@ -20,17 +21,16 @@ const MembersPage = async () => {
     return;
   }
   let member = await memberLibrary.getUserByHisToken();
-  if(member.role !== "administrator"){
+  if (member.role !== "administrator") {
     Redirect("/");
     return;
   }
-  await SearchBar("Membres", true, false, false, "Rechercher un membre", false,
-      false);
+  await SearchBar("Membres", true, false, false,
+      "Rechercher un membre", false, false);
 
-  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("",
-      "valid");
+  let members = await MemberLibrary.prototype.getMemberBySearchAndStatus("", "valid");
 
-  await baseMembersList(members);
+  await memberCardList(members);
 
   // Search members by enter
   const searchBar = document.getElementById("searchBar");
@@ -49,7 +49,7 @@ const MembersPage = async () => {
     if (e.key === "Enter") {
       members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
           searchBar.value, "valid");
-      await baseMembersList(members);
+      await memberCardList(members);
     }
   });
 
@@ -58,7 +58,7 @@ const MembersPage = async () => {
   search.addEventListener("click", async () => {
     members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
         searchBar.value, "valid");
-    await baseMembersList(members);
+    await memberCardList(members);
   });
 }
 
@@ -67,7 +67,7 @@ const MembersPage = async () => {
  *
  * @param members a list of member
  */
-const baseMembersList = async (members) => {
+const memberCardList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");
   memberCards.innerHTML = ``;
@@ -80,8 +80,7 @@ const baseMembersList = async (members) => {
         image = profileImage;
       }
 
-      ManagementList(member.memberId, document.getElementById("page-body"),
-          image,
+      ManagementList(member.memberId, memberCards, image,
           member.firstname + " " + member.lastname + " (" + member.username + ")",
           member.address.buildingNumber + " " + member.address.street + " " +
           member.address.postcode + " " + member.address.commune);
@@ -89,7 +88,6 @@ const baseMembersList = async (members) => {
       // Show different buttons card depending on status
       const buttonDiv = document.getElementById("button-card-" + member.memberId);
       buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
-
       if (member.role === "administrator") {
         displayAdmin(member);
         await offersButtons(member, true)
@@ -97,7 +95,6 @@ const baseMembersList = async (members) => {
         await offersButtons(member, true)
         promoteButton(member);
       }
-
       if (member.status !== "prevented") {
         setDisableButton(member);
       }
@@ -105,31 +102,11 @@ const baseMembersList = async (members) => {
   }
 }
 
-// const setActiveButton = (member) => {
-//   const buttonDiv = document.getElementById("button-card-" + member.memberId);
-//   const buttonSetActive = document.createElement("button");
-//   buttonSetActive.id = "promote-" + member.memberId;
-//   buttonSetActive.className = "btn btn-success mb-2 mx-1";
-//   buttonSetActive.type = "button";
-//   buttonSetActive.innerText = "Activer";
-//   buttonSetActive.addEventListener('click', async () => {
-//     NotificationSA.prototype.getNotification().fire({
-//       icon: 'success',
-//       title: "Utilisateur mis en actif !"
-//     });
-//     buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
-//     if (member.role === "administrator") {
-//       displayAdmin(member);
-//       await offersButtons(member, false);
-//     } else {
-//       await offersButtons(member, false);
-//       promoteButton(member);
-//     }
-//     setDisableButton(member);
-//   });
-//   buttonDiv.appendChild(buttonSetActive);
-// }
-
+/**
+ * Display the disable button
+ *
+ * @param member the member to get his card
+ */
 const setDisableButton = (member) => {
   const buttonDiv = document.getElementById("button-card-" + member.memberId);
   const buttonSetActive = document.createElement("button");
@@ -138,30 +115,33 @@ const setDisableButton = (member) => {
   buttonSetActive.type = "button";
   buttonSetActive.innerText = "Désactiver";
   buttonSetActive.addEventListener('click', async () => {
-    let preventedMember = await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version);
-    if(preventedMember !== undefined){
+    let preventedMember = await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version++);
+    if (preventedMember !== undefined) {
+      buttonSetActive.hidden = true;
       NotificationSA.prototype.getNotification().fire({
         icon: 'success',
         title: "L'utilisateur est temporairement empêché de participer à la donnerie."
       });
     }
-    buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
-    if (member.role === "administrator") {
-      displayAdmin(member);
-      await offersButtons(member, false);
-    } else {
-      await offersButtons(member, false);
-      promoteButton(member);
-    }
   });
   buttonDiv.appendChild(buttonSetActive);
 }
 
+/**
+ * Display admin hint
+ *
+ * @param member the member to get his card
+ */
 const displayAdmin = (member) => {
   const adminSign = document.getElementById("admin-div-" + member.memberId);
   adminSign.innerText = "Administrateur";
 }
 
+/**
+ * Display the promote button
+ *
+ * @param member the member to get his card
+ */
 const promoteButton = (member) => {
   const buttonDiv = document.getElementById("button-card-" + member.memberId);
   const buttonPromote = document.createElement("button");
@@ -170,25 +150,27 @@ const promoteButton = (member) => {
   buttonPromote.type = "button";
   buttonPromote.innerText = "Promouvoir";
   buttonPromote.addEventListener('click', async () => {
-    let memberToUpdate = new Member(null, null, null,
-        null, null, null, member.version,
-        "administrator", null, null, member.memberId);
-    await MemberLibrary.prototype.updateMember(memberToUpdate);
-    NotificationSA.prototype.getNotification().fire({
-      icon: 'success',
-      title: "Utilisateur promu !"
-    });
-    buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
-    member = await MemberLibrary.prototype.getUserByHisId(member.memberId);
-    displayAdmin(member);
-    await offersButtons(member, false);
-    if (member.status !== "prevented") {
-      setDisableButton(member);
+    let memberToUpdate = new Member(null, null, null, null, null,
+        null, member.version++, "administrator", null, null, member.memberId);
+    const isInserted = await MemberLibrary.prototype.updateMember(memberToUpdate);
+    if (isInserted) {
+      displayAdmin(member);
+      buttonPromote.hidden = true;
+      NotificationSA.prototype.getNotification().fire({
+        icon: 'success',
+        title: "Utilisateur promu !"
+      });
     }
   });
   buttonDiv.appendChild(buttonPromote);
 }
 
+/**
+ * Show offers on a member card
+ *
+ * @param member the member to retrieve his offers
+ * @param actualizeOfferStats if we need to re-display stats about offers of a member
+ */
 const offersButtons = async (member, actualizeOfferStats) => {
   const buttonDiv = document.getElementById("button-card-" + member.memberId);
   const countdata = await OfferLibrary.prototype.getCountOffers(member.memberId);
@@ -222,72 +204,56 @@ const offersButtons = async (member, actualizeOfferStats) => {
   const cardForm = document.getElementById("card-form-" + member.memberId);
 
   offeredObjects.addEventListener('click', async () => {
-    cardForm.innerHTML = ``;
-    if (isOfferedObjectsOpen) {
-      offeredObjects.className = "btn btn-primary mb-2 mx-1";
-      receivedObjects.className = "btn btn-primary mb-2 mx-1";
-    } else {
-      offeredObjects.className = "btn btn-success mb-2 mx-1";
-      receivedObjects.className = "btn btn-primary mb-2 mx-1";
-      const offers = await OfferLibrary.prototype.getOffers("",
-          member.memberId.toLocaleString(), "", "")
-      if (offers) {
-        for (const offer of offers) {
-          let image = noImage;
-          if (offer.object.image) {
-            image = "/api/object/getPicture/" + offer.object.idObject;
-          }
-          ManagementList(offer.idOffer, cardForm, image,
-              offer.object.description, offer.timeSlot, "offered");
-          const subCardDiv = document.getElementById(
-              "member-card-" + offer.idOffer + "-offered");
-          subCardDiv.className += " clickable";
-          subCardDiv.addEventListener('click', () => {
-            RedirectWithParamsInUrl("/objectDetails",
-                "?idOffer=" + offer.idOffer);
-          });
-        }
-      } else {
-        cardForm.innerHTML = "Aucun objet";
-      }
-    }
+    const offers = await OfferLibrary.prototype.getOffers("",
+        member.memberId.toLocaleString(), "", "")
+    await offerButton(cardForm, offeredObjects, receivedObjects, isOfferedObjectsOpen, offers);
     isOfferedObjectsOpen = !isOfferedObjectsOpen;
     isReceivedObjectsOpen = false;
   });
 
   receivedObjects.addEventListener('click', async () => {
-    cardForm.innerHTML = '';
-    if (isReceivedObjectsOpen) {
-      offeredObjects.className = "btn btn-primary mb-2 mx-1";
-      receivedObjects.className = "btn btn-primary mb-2 mx-1";
-    } else {
-      offeredObjects.className = "btn btn-primary mb-2 mx-1";
-      receivedObjects.className = "btn btn-success mb-2 mx-1";
-      const offers = await OfferLibrary.prototype.getGivenOffers(
-          member.memberId);
-      if (offers) {
-        for (const offer of offers) {
-          let image = noImage;
-          if (offer.object.image) {
-            image = "/api/object/getPicture/" + offer.object.idObject;
-          }
-          ManagementList(offer.idOffer, cardForm, image,
-              offer.object.description, offer.timeSlot, "received");
-          const subCardDiv = document.getElementById(
-              "member-card-" + offer.idOffer + "-received");
-          subCardDiv.className += " clickable";
-          subCardDiv.addEventListener('click', () => {
-            RedirectWithParamsInUrl("/objectDetails",
-                "?idOffer=" + offer.idOffer);
-          });
-        }
-      } else {
-        cardForm.innerHTML = "Aucun objet";
-      }
-    }
+    const offers = await OfferLibrary.prototype.getGivenOffers(member.memberId);
+    await offerButton(cardForm, receivedObjects, offeredObjects, isReceivedObjectsOpen, offers);
     isReceivedObjectsOpen = !isReceivedObjectsOpen;
     isOfferedObjectsOpen = false;
   });
+}
+
+/**
+ * Dropdown button to show received and offered offers
+ *
+ * @param cardForm the div of the member card
+ * @param mainOffers main offers div
+ * @param secondaryOffers secondary offers div
+ * @param isMainOffersOpen if the main offers are showed
+ * @param mainOffersList the list of main offers
+ */
+const offerButton = async (cardForm, mainOffers, secondaryOffers, isMainOffersOpen, mainOffersList) => {
+  cardForm.innerHTML = ``;
+  if (isMainOffersOpen) {
+    mainOffers.className = "btn btn-primary mb-2 mx-1";
+    secondaryOffers.className = "btn btn-primary mb-2 mx-1";
+  } else {
+    mainOffers.className = "btn btn-success mb-2 mx-1";
+    secondaryOffers.className = "btn btn-primary mb-2 mx-1";
+    if (mainOffersList) {
+      for (const offer of mainOffersList) {
+        let image = noImage;
+        if (offer.object.image) {
+          image = "/api/object/getPicture/" + offer.object.idObject;
+        }
+        ManagementList(offer.idOffer, cardForm, image, offer.object.description, offer.timeSlot, "offered");
+        const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
+        subCardDiv.className += " clickable";
+        subCardDiv.addEventListener('click', () => {
+          RedirectWithParamsInUrl("/objectDetails",
+              "?idOffer=" + offer.idOffer);
+        });
+      }
+    } else {
+      cardForm.innerHTML = "Aucun objet";
+    }
+  }
 }
 
 export default MembersPage;
