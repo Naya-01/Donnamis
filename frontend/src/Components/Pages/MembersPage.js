@@ -47,8 +47,7 @@ const MembersPage = async () => {
 
   searchBar.addEventListener("keyup", async (e) => {
     if (e.key === "Enter") {
-      members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-          searchBar.value, "valid");
+      members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
       await memberCardList(members);
     }
   });
@@ -56,8 +55,7 @@ const MembersPage = async () => {
   // Search members by click
   const search = document.getElementById("searchButton");
   search.addEventListener("click", async () => {
-    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(
-        searchBar.value, "valid");
+    members = await MemberLibrary.prototype.getMemberBySearchAndStatus(searchBar.value, "valid");
     await memberCardList(members);
   });
 }
@@ -87,7 +85,7 @@ const memberCardList = async (members) => {
 
       // Show different buttons card depending on status
       const buttonDiv = document.getElementById("button-card-" + member.memberId);
-      buttonDiv.innerHTML = `<h5 id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
+      buttonDiv.innerHTML = `<h5 class="fs-6" id="admin-div-${member.memberId}" style="color: darkred;"></h5>`;
       if (member.role === "administrator") {
         displayAdmin(member);
         await offersButtons(member, true)
@@ -178,7 +176,7 @@ const offersButtons = async (member, actualizeOfferStats) => {
     const informationMember = document.getElementById(
         "information-object-" + member.memberId);
     informationMember.innerHTML +=
-        `<p class="text-secondary fs-5">
+        `<p class="text-secondary">
           ${countdata.nbNotCollected} offre(s) non-cherchée(s) | ${countdata.nbGiven} offre(s) donnée(s)
           </p>`;
   }
@@ -246,8 +244,7 @@ const offerButton = async (cardForm, mainOffers, secondaryOffers, isMainOffersOp
         const subCardDiv = document.getElementById("member-card-" + offer.idOffer + "-offered");
         subCardDiv.className += " clickable";
         subCardDiv.addEventListener('click', () => {
-          RedirectWithParamsInUrl("/objectDetails",
-              "?idOffer=" + offer.idOffer);
+          RedirectWithParamsInUrl("/objectDetails", "?idOffer=" + offer.idOffer);
         });
       }
     } else {

@@ -83,7 +83,6 @@ const baseMembersList = async (members) => {
   memberCards.innerHTML = ``;
   if (Array.isArray(members)) {
     for (const member of members) {
-
       managementList(member.memberId, memberCards, profilImage,
           member.firstname + " " + member.lastname + " (" + member.username
           + ")",
@@ -110,8 +109,8 @@ const normalMemberButtons = (idMember, version) => {
   const refusedButtonId = "refused-button-" + idMember;
   const acceptedButtonId = "accepted-button-" + idMember;
   buttonDiv.innerHTML = `
-     <button id="${refusedButtonId}" class="btn btn-lg btn-danger mt-3" type="button">Refuser</button>
-     <button id="${acceptedButtonId}" class="btn btn-lg btn-success mt-3" type="button">Accepter</button>
+     <button id="${refusedButtonId}" class="btn btn-danger mt-3" type="button">Refuser</button>
+     <button id="${acceptedButtonId}" class="btn btn-success mt-3" type="button">Accepter</button>
   `;
 
   // Refuse member button
@@ -199,13 +198,14 @@ const refuseMember = (idMember, version) => {
   divTextArea.className = "form-floating m-auto";
 
   const textArea = document.createElement("textarea");
-  textArea.className = "form-control fs-5 mt-1";
+  textArea.className = "form-control mt-1";
   textArea.placeholder = "Indiquez la raison du refus";
   textArea.id = "raisonRefus";
   textArea.rows = 100;
+  textArea.setAttribute("style", "resize: none; height: 100px;");
 
   const label = document.createElement("label");
-  label.className = "fs-4 mb-1";
+  label.className = "fs-5 mb-1";
   label.for = "raisonRefus";
   label.innerText = "Raison du refus";
 
@@ -255,7 +255,7 @@ const deniedMemberButtons = (idMember, version) => {
   const revokeDecisionButtonId = "refused-button-" + idMember;
   const buttonDiv = document.getElementById("button-card-" + idMember);
   buttonDiv.innerHTML = `
-     <button id="${revokeDecisionButtonId}" class="btn btn-lg btn-success mt-3" type="button">Revenir sur la décision</button>
+     <button id="${revokeDecisionButtonId}" class="btn btn-success mt-3" type="button">Revenir sur la décision</button>
   `;
 
   // Revoke decision button listener
@@ -269,8 +269,8 @@ const deniedMemberButtons = (idMember, version) => {
     await MemberLibrary.prototype.updateMember(memberToUpdate);
     // set member valid
 
-    let pendingButton = document.getElementById("btn-radio-pending");
-    pendingButton.click();
+    // let pendingButton = document.getElementById("btn-radio-pending");
+    // pendingButton.click();
   });
 };
 

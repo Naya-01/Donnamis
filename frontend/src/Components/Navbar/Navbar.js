@@ -79,28 +79,28 @@ const Navbar = async () => {
      `;
     navbarWrapper.innerHTML = navbar;
   } else { // Navbar for the members connected
-    navbar = `<nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
+    navbar = `<nav class="navbar navbar-expand navbar-dark bg-navbar">
     <div class="container-fluid">
-        <a class="navbar-brand fs-1" href="#" data-uri="/">DONNAMIS</a>
-        <button aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation"
-                class="navbar-toggler" data-bs-target="#navbarSupportedContent"
-                data-bs-toggle="collapse" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand mx-2 fs-3" href="#" data-uri="/">DONNAMIS</a>
+<!--        <button aria-controls="navbarSupportedContent" aria-expanded="false"-->
+<!--                aria-label="Toggle navigation"-->
+<!--                class="navbar-toggler" data-bs-target="#navbarSupportedContent"-->
+<!--                data-bs-toggle="collapse" type="button">-->
+<!--            <span class="navbar-toggler-icon"></span>-->
+<!--        </button>-->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link fs-5" href="#" data-uri="/">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-5 " data-uri="/offers" href="#">Offres</a>
+                    <a class="nav-link fs-5" data-uri="/offers" href="#">Offres</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-5" data-uri="/assignedObjects" href="#">Objets attribués</a>
+                    <a class="nav-link fs-5 data-uri="/assignedObjects" href="#">Objets attribués</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-5 " href="#" data-uri="/myObjectsPage">Mes objets</a>
+                    <a class="nav-link fs-5" href="#" data-uri="/myObjectsPage">Mes objets</a>
                 </li>`
     // If the member is admin
     if (user_role === "administrator") {
@@ -115,7 +115,7 @@ const Navbar = async () => {
     navbar +=
         `</ul>
             <div class="d-flex">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">`
+                <ul class="navbar-nav me-auto mb-2 mb-0">`
 
     //Notification
 
@@ -130,46 +130,47 @@ const Navbar = async () => {
                            </div>
                         </a>
                         <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
-                           
+
                         </ul>
                     </li>
     `
     } else {
       navbar += `
-             <li class="nav-item dropdown mx-5">
-                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
-                           <div id="button-dot">
-                            <img  id="navbar-notification-picture" alt="profil" src="${notificationImage}">
-                            <span id="dot">${notificationCount}</span>
-                           </div>
-                        </a>
-                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
-                           
-                        </ul>
-                    </li>
+             <li class="nav-item dropdown mx-2">
+                    <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                    <div id="button-dot">
+<!--                    <img  id="navbar-notification-picture" alt="profil" src="${notificationImage}">-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                      <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"></path>
+                    </svg>
+                    <span id="dot">${notificationCount}</span>
+                  </div>
+                </a>
+                <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end"></ul>
+             </li>
     `
     }
 
     // Profil navbar
-    navbar += `<li class="nav-item m-auto">
-                        <span class="fs-5 text-white fw-bold mx-2" href="#">${username}</span>
+    navbar += `
+                    <li class="nav-item m-auto">
+                        <span class="text-white fw-bold mx-2" href="#">${username}</span>
                     </li>
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                           href="#"
-                           id="navbarDropdown" role="button">
-                            <img class="img-thumbnail" id="navbar-profil-picture" alt="profil" src="${image}">
+                           href="#" id="navbarDropdown" role="button">
+                            <img style="width: 35px; height: 35px;" class="img-thumbnail" id="navbar-profil-picture" alt="profil" src="${image}">
                         </a>
                         <ul aria-labelledby="navbarDropdown" class="bg-navbar dropdown-menu dropdown-menu-end">
                             <li>
-                              <a class="dropdown-item dropdown-profil-element bg-navbar fs-5" href="#" data-uri="/profil">
+                              <a class="dropdown-item dropdown-profil-element bg-navbar" href="#" data-uri="/profil">
                                 Voir son profil
                               </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item bg-navbar fs-5 text-danger fw-bolder" data-uri="/logout" href="#">Se
+                            <li><a class="dropdown-item bg-navbar text-danger fw-bolder" data-uri="/logout" href="#">Se
                                 déconnecter</a>
                             </li>
                         </ul>
