@@ -282,7 +282,8 @@ const interestedButton = async (buttonCard, offer) => {
         }
         let username = interest.member.username;
 
-        let availabilityDate = "Horaire : " + interest.availabilityDate[2]
+        let availabilityDate = "Date de disponibilité : "
+            + interest.availabilityDate[2]
             + "/" + interest.availabilityDate[1] + "/"
             + interest.availabilityDate[0];
 
