@@ -1,7 +1,6 @@
 import SearchBar from "../Module/SearchBar";
 import CardList from "../Module/CardList";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import MemberLibrary from "../../Domain/MemberLibrary";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import {getSessionObject} from "../../utils/session";
 

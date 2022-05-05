@@ -111,9 +111,6 @@ public class AuthResource {
         Pattern.compile("^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$");
     //starting with numbers
     Pattern regOnlyLettersAndNumbers = Pattern.compile("^[0-9]+[a-zA-Z]?$");
-    //starting with numbers
-    Pattern regOnlyLettersAndNumbersOrNothing = Pattern.compile("^([0-9]+[a-zA-Z]?)*$");
-    Pattern regOnlyLettersAndDash = Pattern.compile("^[a-zA-Z éàùöèê\'ûî-]+$");
 
     // Check if there is a member, and then if there is an address
     if (member == null || member.getAddress() == null) {
@@ -139,16 +136,10 @@ public class AuthResource {
       throw new BadRequestException("Le pseudonyme est trop grand");
     }
     if (member.getLastname().length() > 50) {
-      Matcher matcher = regOnlyLettersAndDash.matcher(member.getLastname());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le nom est trop grand ou est invalide");
-      }
+      throw new BadRequestException("Le nom est trop grand");
     }
     if (member.getFirstname().length() > 50) {
-      Matcher matcher = regOnlyLettersAndDash.matcher(member.getFirstname());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le prénom est trop grand ou est invalide");
-      }
+      throw new BadRequestException("Le prénom est trop grand");
     }
 
     // Check the number phone if is valid
@@ -163,38 +154,36 @@ public class AuthResource {
     AddressDTO addressOfMember = member.getAddress();
 
     if (addressOfMember.getUnitNumber() != null && addressOfMember.getUnitNumber().length() > 15) {
-      Matcher matcher = regOnlyLettersAndNumbersOrNothing.matcher(addressOfMember.getUnitNumber());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le numéro de boite est trop grand ou est invalide");
-      }
+      throw new BadRequestException("Le numéro de boite est trop grand");
     }
 
     if (addressOfMember.getBuildingNumber().length() > 8) {
+      throw new BadRequestException("Le numéro de maison est trop grand");
+    }
+
+    if (addressOfMember.getBuildingNumber().length() <= 8) {
       Matcher matcher = regOnlyLettersAndNumbers.matcher(addressOfMember.getBuildingNumber());
       if (!matcher.find()) {
-        throw new BadRequestException("Le numéro de maison est trop grand ou est invalide");
+        throw new BadRequestException("Le numéro de maison est invalide");
       }
     }
 
     if (addressOfMember.getStreet().length() > 50) {
-      Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getStreet());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le nom de rue est trop grand ou est invalide");
-      }
+      throw new BadRequestException("Le nom de rue est trop grand");
     }
 
     if (addressOfMember.getPostcode().length() > 15) {
+      throw new BadRequestException("Le numéro de code postal est trop grand");
+    }
+    if (addressOfMember.getPostcode().length() <= 15) {
       Matcher matcher = regOnlyNumbersAndDash.matcher(addressOfMember.getPostcode());
       if (!matcher.find()) {
-        throw new BadRequestException("Le numéro de code postal est trop grand ou est invalide");
+        throw new BadRequestException("Le numéro de code postal est invalide");
       }
     }
 
     if (addressOfMember.getCommune().length() > 50) {
-      Matcher matcher = regOnlyLettersAndDash.matcher(addressOfMember.getCommune());
-      if (!matcher.find()) {
-        throw new BadRequestException("Le nom de commune est trop grand ou est invalide");
-      }
+      throw new BadRequestException("Le nom de commune est trop grand");
     }
 
     // Register the member
