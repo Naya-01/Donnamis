@@ -156,8 +156,8 @@ public class InterestUCCImpl implements InterestUCC {
       }
 
       if (interestDTOFromDB.getMember().getStatus().equals("prevented")
-          || (!offerDTO.getStatus().equals("interested")
-          && !offerDTO.getStatus().equals("not_collected"))) {
+          || !offerDTO.getStatus().equals("interested")
+          && !offerDTO.getStatus().equals("not_collected")) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
 

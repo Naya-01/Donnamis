@@ -98,7 +98,8 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
       interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
       interestDTO.setVersion(resultSet.getInt("version"));
-      interestDTO.setNotificationDate(resultSet.getDate("notification_date").toLocalDate());
+      interestDTO.setNotificationDate(
+          resultSet.getDate("notification_date").toLocalDate());
 
       resultSet.close();
 
@@ -127,7 +128,8 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdObject(resultSet.getInt("id_object"));
         interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
-        interestDTO.setNotificationDate(resultSet.getDate("notification_date").toLocalDate());
+        interestDTO.setNotificationDate(
+            resultSet.getDate("notification_date").toLocalDate());
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
@@ -354,7 +356,7 @@ public class InterestDAOImpl implements InterestDAO {
         "UPDATE donnamis.interests "
             + "SET send_notification = ? , notification_date = NOW() "
             + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
-            + " availability_date, status,send_notification, version, be_called, notification_date ";
+            + "availability_date, status,send_notification, version, be_called, notification_date ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setBoolean(1, interestDTO.getIsNotificated());
