@@ -111,7 +111,7 @@ const setDisableButton = (member) => {
   buttonSetActive.id = "promote-" + member.memberId;
   buttonSetActive.className = "btn btn-warning mb-2 mx-1";
   buttonSetActive.type = "button";
-  buttonSetActive.innerText = "Désactiver";
+  buttonSetActive.innerText = "Empêcher";
   buttonSetActive.addEventListener('click', async () => {
     let preventedMember = await MemberLibrary.prototype.memberToPrevent(member.memberId, member.version++);
     if (preventedMember !== undefined) {
