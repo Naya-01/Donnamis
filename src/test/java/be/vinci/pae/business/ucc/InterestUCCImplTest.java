@@ -1017,10 +1017,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1065,10 +1067,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1116,10 +1120,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1167,11 +1173,13 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("assigned");
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1218,12 +1226,14 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("published");
     interestDTO.setVersion(12);
+    interestDTO.setMember(memberDTO);
 
     InterestDTO interestDTOInParam = interestFactory.getInterestDTO();
     interestDTOInParam.setVersion(30);
@@ -1278,12 +1288,14 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("published");
     interestDTO.setVersion(12);
+    interestDTO.setMember(memberDTO);
 
     InterestDTO interestDTOInParam = interestFactory.getInterestDTO();
     interestDTOInParam.setVersion(interestDTO.getVersion());
