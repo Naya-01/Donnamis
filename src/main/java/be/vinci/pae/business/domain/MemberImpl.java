@@ -174,4 +174,13 @@ public class MemberImpl implements Member {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
 
+  @Override
+  public String toString() {
+    return "MemberImpl{" +
+        "memberId=" + memberId +
+        ", username='" + username + '\'' +
+        ", status='" + status + '\'' +
+        ", role='" + role + '\'' +
+        '}';
+  }
 }
