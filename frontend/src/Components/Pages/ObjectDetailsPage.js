@@ -21,8 +21,8 @@ const ratingLibrary = new RatingLibrary();
 const bottomNotification = new NotificationSA().getNotification();
 const dictionnary = new Map([
   ['interested', 'Intéressé'],
-  ['available', 'Disponible'],
-  ['assigned', 'En cours de donation'],
+  ['available', 'Publié'],
+  ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']
