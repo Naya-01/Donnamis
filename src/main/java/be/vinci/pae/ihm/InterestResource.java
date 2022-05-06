@@ -94,10 +94,8 @@ public class InterestResource {
       throw new BadRequestException("Id d'objet inexistant");
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
-    interest.setIdMember(authenticatedUser.getMemberId());
-    interest.setStatus("published");
 
-    InterestDTO interestDTO = interestUCC.addOne(interest);
+    InterestDTO interestDTO = interestUCC.addOne(interest, authenticatedUser);
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     interestDTO = JsonViews.filterPublicJsonView(interestDTO, InterestDTO.class);
     return interestDTO;

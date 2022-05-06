@@ -61,14 +61,17 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Add one interest.
    *
-   * @param interest : interestDTO object.
+   * @param interest          : interestDTO object.
+   * @param authenticatedUser : member that wants to add an interest.
    * @return interest added.
    */
   @Override
-  public InterestDTO addOne(InterestDTO interest) {
+  public InterestDTO addOne(InterestDTO interest, MemberDTO authenticatedUser) {
     InterestDTO interestDTO;
     try {
       dalService.startTransaction();
+      interest.setIdMember(authenticatedUser.getMemberId());
+      interest.setStatus("published");
       if (interestDAO.getOne(interest.getIdObject(), interest.getIdMember()) != null) {
         //change name exception
         throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
@@ -124,7 +127,7 @@ public class InterestUCCImpl implements InterestUCC {
    * Assign the offer to a member.
    *
    * @param owner       the object's owner
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param interestDTO : the interest information (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
