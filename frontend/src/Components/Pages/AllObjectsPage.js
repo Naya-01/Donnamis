@@ -7,7 +7,6 @@ import {getSessionObject} from "../../utils/session";
 /**
  * Render the Objects page
  */
-
 const AllObjectsPage = async () => {
   if (!getSessionObject("user")) {
     Redirect("/");

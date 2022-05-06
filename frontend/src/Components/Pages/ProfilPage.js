@@ -8,6 +8,8 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 
 const pageDiv = document.querySelector("#page");
+
+//translation map of member roles
 const translationRoles = new Map([
   ['member', 'Membre'],
   ['administrator', 'Administrateur']

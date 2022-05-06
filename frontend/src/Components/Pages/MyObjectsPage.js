@@ -282,7 +282,7 @@ const interestedButton = async (buttonCard, offer) => {
           phone = "";
         }
         let username = interest.member.username;
-
+        let name = interest.member.firstname +" "+interest.member.lastname;
         let availabilityDate = "Date de disponibilité : "
             + interest.availabilityDate[2]
             + "/" + interest.availabilityDate[1] + "/"
@@ -300,7 +300,7 @@ const interestedButton = async (buttonCard, offer) => {
                   <img class="img-thumbnail" src="${image}" alt="image">
                 </div>
                 <div class="col-7 mt-3">
-                  <p class="fs-4">${username} ${phone}</p>
+                  <p class="fs-4">${username} (${name}) ${phone}</p>
                   <span class="text-secondary fs-5">${availabilityDate}</span>
                 </div>`
 

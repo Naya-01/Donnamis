@@ -32,7 +32,7 @@ public interface OfferUCC {
   OfferDTO addOffer(OfferDTO offerDTO, MemberDTO ownerDTO);
 
   /**
-   * Update the time slot of an offer or an errorcode.
+   * Update the time slot of an offer or an error code.
    *
    * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
    * @return an offerDTO with the id and the new time slot
@@ -42,9 +42,10 @@ public interface OfferUCC {
   /**
    * Get all offers.
    *
-   * @param search   the search pattern (empty -> all) according to their type, description
-   * @param idMember the member id if you want only your offers (0 -> all)
-   * @param type     the type of object that we want
+   * @param search       the search pattern (empty -> all) according to their type, description
+   * @param idMember     the member id if you want only your offers (0 -> all)
+   * @param type         the type of object that we want
+   * @param objectStatus the status of object that we want
    * @param dateText      the max date late
    * @return list of offers
    */

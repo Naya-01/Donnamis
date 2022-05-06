@@ -146,11 +146,11 @@ public class InterestDAOImpl implements InterestDAO {
   /**
    * Add one interest in the DB.
    *
-   * @param item : interestDTO object.
-   * @return item.
+   * @param interestDTO : interestDTO object.
+   * @return interest.
    */
   @Override
-  public InterestDTO addOne(InterestDTO item) {
+  public InterestDTO addOne(InterestDTO interestDTO) {
     String query = "INSERT INTO donnamis.interests "
         + "(id_object, id_member, availability_date, "
         + "status,send_notification,be_called, version,notification_date) "
@@ -160,12 +160,12 @@ public class InterestDAOImpl implements InterestDAO {
         + "version, be_called, notification_date";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setInt(1, item.getIdObject());
-      preparedStatement.setInt(2, item.getIdMember());
-      preparedStatement.setDate(3, Date.valueOf(item.getAvailabilityDate()));
-      preparedStatement.setString(4, item.getStatus());
+      preparedStatement.setInt(1, interestDTO.getIdObject());
+      preparedStatement.setInt(2, interestDTO.getIdMember());
+      preparedStatement.setDate(3, Date.valueOf(interestDTO.getAvailabilityDate()));
+      preparedStatement.setString(4, interestDTO.getStatus());
       preparedStatement.setBoolean(5, true);
-      preparedStatement.setBoolean(6, item.getIsCalled());
+      preparedStatement.setBoolean(6, interestDTO.getIsCalled());
       preparedStatement.setInt(7, 1);
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();

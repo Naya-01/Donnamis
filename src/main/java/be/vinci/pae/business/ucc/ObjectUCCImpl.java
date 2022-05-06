@@ -23,7 +23,7 @@ public class ObjectUCCImpl implements ObjectUCC {
   /**
    * Get the picture of an object.
    *
-   * @param id of the oject
+   * @param id of the object
    * @return picture as file
    */
   public BufferedImage getPicture(int id) {
@@ -103,7 +103,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version : version of the object
+   * @param version   : version of the object
    * @return object updated
    */
   @Override
@@ -132,7 +132,8 @@ public class ObjectUCCImpl implements ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
-   * @return Object modified.
+   * @param version      of the object
+   * @return Object updated.
    */
   @Override
   public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
@@ -152,8 +153,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (f.exists()) {
         f.delete();
       }
-
-
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

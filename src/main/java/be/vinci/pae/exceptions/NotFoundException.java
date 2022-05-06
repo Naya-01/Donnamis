@@ -5,12 +5,15 @@ import jakarta.ws.rs.core.Response;
 
 public class NotFoundException extends WebApplicationException {
 
+  /**
+   * Make a NotFoundException.
+   */
   public NotFoundException() {
     super(Response.Status.NOT_FOUND);
   }
 
   /**
-   * Make an NotFoundException with the custom message.
+   * Make a NotFoundException with the custom message.
    *
    * @param message custom error message
    */

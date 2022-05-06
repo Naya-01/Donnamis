@@ -38,6 +38,7 @@ public class OfferDAOImpl implements OfferDAO {
    *                      username and lastname
    * @param idMember      the member id if you want only your offers (0 -> all)
    * @param type          the type of object that we want
+   * @param objectStatus  the status of object that we want
    * @param dateText      the max date late
    * @return list of offers
    */
@@ -140,22 +141,6 @@ public class OfferDAOImpl implements OfferDAO {
     return getOfferDTOWithOldDate(idOffer, query);
   }
 
-  /**
-   * Get the offer with the id of its object.
-   *
-   * @param idObject the id of the object
-   * @return an offer that match with the idObject or null
-   */
-  @Override
-  public OfferDTO getOneByObject(int idObject) {
-    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
-        + "    ty.is_default, of.status, of.version, ob.version "
-        + "FROM donnamis.types ty , donnamis.objects ob, donnamis.offers of "
-        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
-        + "AND of.id_object = ? ORDER BY of.date DESC LIMIT 2";
-    return getOfferDTOWithOldDate(idObject, query);
-  }
 
   private OfferDTO getOfferDTOWithOldDate(int idObject, String query) {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
