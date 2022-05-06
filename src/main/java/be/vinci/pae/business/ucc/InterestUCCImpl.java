@@ -102,13 +102,9 @@ public class InterestUCCImpl implements InterestUCC {
         offerDTO.setStatus("interested");
         offerDAO.updateOne(offerDTO);
       }
-
+      interest.setIsNotificated(true);
+      interest.setNotificationDate(LocalDate.now());
       interestDTO = interestDAO.addOne(interest);
-
-      // Send Notification
-      interestDTO.setIsNotificated(true);
-      interestDTO.setNotificationDate(LocalDate.now());
-      interestDAO.updateNotification(interestDTO);
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
@@ -353,6 +349,7 @@ public class InterestUCCImpl implements InterestUCC {
       if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }
+      //TODO : vérifier version de interest
 
       // Send Notification
       interestDTO.setIsNotificated(false);

@@ -215,6 +215,13 @@ const ObjectDetailsPage = async () => {
     divB.appendChild(new_button);
     if (english_status === "given") {
       new_button.remove();
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
+      if (current_rating === undefined){
+        displayRating(null);
+      }
+      else{
+        displayRating(current_rating);
+      }
     }
   }
   // if this is not the object of the member connected
@@ -609,15 +616,19 @@ async function updateObject(e) {
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
     objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
+    versionObject = objectWithImage.version;
   }
 
 
-
+  console.log(versionOffer);
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject++,
-      versionOffer++);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
+  console.log(newOffer);
   if (newOffer !== undefined) {
+    versionOffer = versionOffer+1; //TODO : pq y'a pas la version : newOffer.version
+    versionObject = versionObject+1; //TODO : pareil : newOffer.object.version
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
