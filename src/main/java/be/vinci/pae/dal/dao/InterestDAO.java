@@ -14,9 +14,8 @@ public interface InterestDAO {
   List<InterestDTO> getAllNotifications(int idMember);
 
   /**
-   * Mark all notifications shown.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of
+   * the send_notification field /!\
    *
    * @param idMember to mark all his notifications showns.
    * @return interestDTOs updated.
@@ -42,9 +41,8 @@ public interface InterestDAO {
   InterestDTO getOne(int idObject, int idMember);
 
   /**
-   * Update the notification field to know if we have to send one.
-   * /!\ There is no version update because of
-   * the non-sensibility of the send_notification field /!\
+   * Update the notification field to know if we have to send one. /!\ There is no version update
+   * because of the non-sensibility of the send_notification field /!\
    *
    * @param interestDTO with the notification attribute.
    * @return the interest updated.
@@ -62,10 +60,10 @@ public interface InterestDAO {
   /**
    * Add one interest in the DB.
    *
-   * @param item : interestDTO object.
-   * @return item.
+   * @param interestDTO : interestDTO object.
+   * @return interest.
    */
-  InterestDTO addOne(InterestDTO item);
+  InterestDTO addOne(InterestDTO interestDTO);
 
   /**
    * Get the number of all interests.
@@ -102,9 +100,9 @@ public interface InterestDAO {
   /**
    * Update all statuses of the member's interests.
    *
-   * @param idMember  update all interests of this member.
+   * @param idMember   update all interests of this member.
    * @param statusFrom actual status of the interests
-   * @param statusTo status updated
+   * @param statusTo   status updated
    */
   void updateAllInterestsStatus(int idMember, String statusFrom, String statusTo);
 }

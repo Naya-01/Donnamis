@@ -28,6 +28,12 @@ const colorDictionnary = new Map([
   ['prevented', 'text-danger']
 ]);
 
+/**
+ * Make a navbar with different buttons.
+ *
+ * @returns {Promise<void>}
+ * @constructor
+ */
 const Navbar = async () => {
   const navbarWrapper = document.querySelector("#navbar");
   let navbar;

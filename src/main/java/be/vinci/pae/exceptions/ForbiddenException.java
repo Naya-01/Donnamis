@@ -5,12 +5,15 @@ import jakarta.ws.rs.core.Response;
 
 public class ForbiddenException extends WebApplicationException {
 
+  /**
+   * Make a ForbiddenException.
+   */
   public ForbiddenException() {
     super(Response.Status.FORBIDDEN);
   }
 
   /**
-   * Make an ForbiddenException with the custom message.
+   * Make a ForbiddenException with the custom message.
    *
    * @param message custom error message
    */

@@ -65,27 +65,6 @@ public class ObjectDAOImpl implements ObjectDAO {
   }
 
   /**
-   * Get all objects that we want to retrieve by his status.
-   *
-   * @param status : the status of the objects that we want to retrieve
-   * @return the object
-   */
-  @Override
-  public List<ObjectDTO> getAllByStatus(String status) {
-    String query = "SELECT id_object, id_type, description, status, image, id_offeror, version "
-        + "FROM donnamis.objects WHERE status = ?";
-
-    List<ObjectDTO> objectDTOList;
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, status);
-      objectDTOList = getObjectListDTO(preparedStatement);
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    return objectDTOList;
-  }
-
-  /**
    * Get all objects of a member that we want to retrieve by his id.
    *
    * @param idMember : take all object of this member.

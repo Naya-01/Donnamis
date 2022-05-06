@@ -169,7 +169,7 @@ public class MemberDAOImpl implements MemberDAO {
    * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
-   * @return the modified member
+   * @return the updated member
    */
   @Override
   public MemberDTO updateOne(MemberDTO memberDTO) {
@@ -288,9 +288,9 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Create an address on base of a resultset.
+   * Create an address from a result set.
    *
-   * @param resultSet rs that contains all info of an address
+   * @param resultSet rs containing all info of an address
    * @return the address
    */
   private AddressDTO getAddressDTOByResultSet(ResultSet resultSet) {

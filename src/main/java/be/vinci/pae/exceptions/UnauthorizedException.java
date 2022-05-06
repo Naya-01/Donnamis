@@ -5,6 +5,9 @@ import jakarta.ws.rs.core.Response;
 
 public class UnauthorizedException extends WebApplicationException {
 
+  /**
+   * Make an UnauthorizedException.
+   */
   public UnauthorizedException() {
     super(Response.Status.UNAUTHORIZED);
   }

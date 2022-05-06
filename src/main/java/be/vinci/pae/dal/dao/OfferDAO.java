@@ -12,6 +12,7 @@ public interface OfferDAO {
    * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @param idMember      the member id if you want only your offers (0 -> all)
    * @param type          the type of object that we want
+   * @param objectStatus  the status of object that we want
    * @return list of offers
    */
   List<OfferDTO> getAll(String searchPattern, int idMember, String type, String objectStatus);
@@ -30,14 +31,6 @@ public interface OfferDAO {
    * @return an offer that match with the idOffer or null
    */
   OfferDTO getOne(int idOffer);
-
-  /**
-   * Get the offer with the id of its object.
-   *
-   * @param idObject the id of the object
-   * @return an offer that match with the idObject or null
-   */
-  OfferDTO getOneByObject(int idObject);
 
 
   /**

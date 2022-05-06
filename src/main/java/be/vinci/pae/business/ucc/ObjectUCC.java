@@ -18,7 +18,7 @@ public interface ObjectUCC {
   /**
    * Get the picture of an object.
    *
-   * @param id of the oject
+   * @param id of the object
    * @return picture as file
    */
   BufferedImage getPicture(int id);
@@ -35,7 +35,7 @@ public interface ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version : version of the object
+   * @param version   : version of the object
    * @return object updated
    */
   ObjectDTO updateOne(ObjectDTO objectDTO, int version);
@@ -45,7 +45,8 @@ public interface ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
-   * @return Object modified.
+   * @param version      of the object
+   * @return Object updated.
    */
   ObjectDTO updateObjectPicture(String internalPath, int id, int version);
 

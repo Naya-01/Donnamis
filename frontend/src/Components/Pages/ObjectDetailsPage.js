@@ -432,7 +432,7 @@ function displayRating(current_rating) {
 
 /**
  * Change elements of the html to have a text.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToText(e) {
   e.preventDefault();
@@ -475,7 +475,7 @@ function changeToText(e) {
 
 /**
  * Change elements of the html to have a form.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToForm(e) {
   e.preventDefault();
@@ -567,7 +567,7 @@ function changeToForm(e) {
 
 /**
  * Send to the backend all informations to update an object
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function updateObject(e) {
   e.preventDefault();
@@ -639,7 +639,7 @@ async function updateObject(e) {
 
 /**
  * Display a popup to add a rating
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function ratingPopUp(e) {
   e.preventDefault();
@@ -683,7 +683,7 @@ async function ratingPopUp(e) {
 
 /**
  * Change the color of the stars in function of the note
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeColorStars(e) {
   e.preventDefault();
