@@ -142,7 +142,8 @@ public class OfferDAOImpl implements OfferDAO {
   }
 
   /**
-   * Construct an offer with its old date on base of a query
+   * Construct an offer with its old date on base of a query.
+   *
    * @param idObject the id of the object
    * @param query the SQL query to execute
    * @return the constructed offerDTO
