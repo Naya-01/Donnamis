@@ -15,7 +15,6 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
-  <!--<div class="mt-5 mx-lg-5"> //TODO a tester pour modifier la largeur de la searchbar-->
     <div class="container mt-5">
       <h1 class="fs-1">${pageName}</h1>`;
   if (hasNav) {
@@ -66,7 +65,19 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
 
     if (hasType) {
       searchBarHtml +=
-          `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          `
+<!--<div class="dropdown">-->
+<!--  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--    Dropdown button-->
+<!--  </button>-->
+<!--  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+<!--    <a class="dropdown-item" href="#">Action</a>-->
+<!--    <a class="dropdown-item" href="#">Another action</a>-->
+<!--    <a class="dropdown-item" href="#">Something else here</a>-->
+<!--  </div>-->
+<!--</div>-->
+
+<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                  Type
                </button>
                <select id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -80,9 +91,9 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
 
     searchBarHtml +=
         `<input type="text" class="form-control" id="searchBar" placeholder="${placeholder}">
-            <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>`
+            <button class="btn btn-outline-secondary fs-4" id="searchButton" type="button">Rechercher</button>`
     if (hasNewObjectButton) {
-      searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-primary mx-2">Ajouter un objet</button>`;
+      searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-secondary mx-2">Ajouter un objet</button>`;
     }
     searchBarHtml += `</div>
         <div id="page-body"></div>

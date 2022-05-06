@@ -143,3 +143,15 @@ input[type=submit] {
   width: 250px;
   height: 250px;
 }
+
+.nowrap-class {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

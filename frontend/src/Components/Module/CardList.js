@@ -64,7 +64,7 @@ const cardList = async (offers) => {
                 ${dictionaryColorStatus.get(offers[nbOffers].status)}">
                     ${dictionary.get(offers[nbOffers].status)}
               </h6>
-              <p class="card-text">
+              <p class="card-text nowrap-class">
                 ${offers[nbOffers].object.description}
               </p>
             </div>
@@ -74,10 +74,12 @@ const cardList = async (offers) => {
       cnt++;
     }
     page += `
+        </div>
       </div>
-    </div>
-</div>`;
+    </div>`;
+
   }
+  page += `<ul id="pagination-demo" class="pagination-lg"></ul>`;
   return page;
 }
 
