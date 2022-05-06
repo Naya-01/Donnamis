@@ -48,28 +48,23 @@ const Navbar = async () => {
   }
   if (username === undefined) { // Navbar for the quidams
     navbar = `
-          <nav class="navbar navbar-expand-lg navbar-dark bg-navbar">
+          <nav class="navbar navbar-expand navbar-dark bg-navbar">
             <div class="container-fluid">
-              <a class="navbar-brand fs-1" href="#" data-uri="/">DONNAMIS</a>
-              <button aria-controls="navbarSupportedContent" aria-expanded="false"
-                      aria-label="Toggle navigation"
-                      class="navbar-toggler" data-bs-target="#navbarSupportedContent"
-                      data-bs-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-              </button>
+              <a class="navbar-brand mx-2 fs-3" href="#" data-uri="/">DONNAMIS</a>
+              
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link fs-4 " href="#" data-uri="/">Accueil</a>
-                  </li>
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fs-5" href="#" data-uri="/">Accueil</a>
+                    </li>
                 </ul>
                 <div class="d-flex">
-                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                      <a class="nav-link fs-4 " href="#" data-uri="/register">S'inscrire</a>
+                      <a class="nav-link fs-5 " href="#" data-uri="/register">S'inscrire</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fs-4 " href="#" data-uri="/login" tabindex="-1">Se connecter</a>
+                      <a class="nav-link fs-5 " href="#" data-uri="/login" tabindex="-1">Se connecter</a>
                     </li>
                   </ul>
                 </div>
@@ -82,12 +77,6 @@ const Navbar = async () => {
     navbar = `<nav class="navbar navbar-expand navbar-dark bg-navbar">
     <div class="container-fluid">
         <a class="navbar-brand mx-2 fs-3" href="#" data-uri="/">DONNAMIS</a>
-<!--        <button aria-controls="navbarSupportedContent" aria-expanded="false"-->
-<!--                aria-label="Toggle navigation"-->
-<!--                class="navbar-toggler" data-bs-target="#navbarSupportedContent"-->
-<!--                data-bs-toggle="collapse" type="button">-->
-<!--            <span class="navbar-toggler-icon"></span>-->
-<!--        </button>-->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">

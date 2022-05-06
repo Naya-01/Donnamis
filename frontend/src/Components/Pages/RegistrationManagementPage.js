@@ -209,7 +209,7 @@ const refuseMember = (idMember, version) => {
   textArea.setAttribute("style", "resize: none; height: 100px;");
 
   const label = document.createElement("label");
-  label.className = "fs-5 mb-1";
+  label.className = "mb-1";
   label.for = "raisonRefus";
   label.innerText = "Raison du refus";
 
