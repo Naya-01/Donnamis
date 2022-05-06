@@ -2,6 +2,9 @@
  * SOURCE : https://www.w3schools.com/howto/howto_js_autocomplete.asp
  */
 
+/**
+ * Generate an autocomplete dropdown bellow input
+ */
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
@@ -67,22 +70,6 @@ function autocomplete(inp, arr) {
       }
     }
   });
-  // function addActive(x) {
-  //   /*a function to classify an item as "active":*/
-  //   if (!x) return false;
-  //   /*start by removing the "active" class on all items:*/
-  //   removeActive(x);
-  //   if (currentFocus >= x.length) currentFocus = 0;
-  //   if (currentFocus < 0) currentFocus = (x.length - 1);
-  //   /*add class "autocomplete-active":*/
-  //   x[currentFocus].classList.add("autocomplete-active");
-  // }
-  // function removeActive(x) {
-  //   /*a function to remove the "active" class from all autocomplete items:*/
-  //   for (var i = 0; i < x.length; i++) {
-  //     x[i].classList.remove("autocomplete-active");
-  //   }
-  // }
   function closeAllLists(elmnt) {
     /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
