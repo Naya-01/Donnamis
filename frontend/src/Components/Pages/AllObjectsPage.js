@@ -66,6 +66,9 @@ const AllObjectsPage = async () => {
     container: $('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body",
     todayHighlight: true,
     autoclose: true,
+    language: "fr",
+    orientation: "top right",
+    endDate: Date.now().toString(),
   })
 
   await actualizeCards();
