@@ -337,8 +337,7 @@ public class InterestDAOImpl implements InterestDAO {
 
 
   /**
-   * Update the notification field to know if we have to send one. /!\ There is no version update
-   * because of the non-sensibility of the send_notification field /!\
+   * Update the notification field to know if we have to send one.
    *
    * @param interestDTO with the notification attribute.
    * @return the interest updated.
@@ -347,7 +346,7 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO updateNotification(InterestDTO interestDTO) {
     String query =
         "UPDATE donnamis.interests "
-            + "SET send_notification = ? , notification_date = NOW() "
+            + "SET send_notification = ?, version= version+1 , notification_date = NOW() "
             + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
             + " availability_date, status,send_notification, version, be_called, notification_date ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
@@ -374,16 +373,15 @@ public class InterestDAOImpl implements InterestDAO {
   public InterestDTO updateStatus(InterestDTO interestDTO) {
 
     String query = "UPDATE donnamis.interests "
-        + "SET status = ?, version = ? "
+        + "SET status = ?, version = version+1 "
         + "WHERE id_object = ? AND id_member = ? RETURNING id_object, id_member, "
         + "availability_date, status, send_notification, version, be_called, notification_date ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setString(1, interestDTO.getStatus());
-      preparedStatement.setInt(2, interestDTO.getVersion() + 1);
-      preparedStatement.setInt(3, interestDTO.getIdObject());
-      preparedStatement.setInt(4, interestDTO.getIdMember());
+      preparedStatement.setInt(2, interestDTO.getIdObject());
+      preparedStatement.setInt(3, interestDTO.getIdMember());
       preparedStatement.executeQuery();
       ResultSet resultSet = preparedStatement.getResultSet();
       return getInterestDTO(resultSet);
