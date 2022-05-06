@@ -64,9 +64,10 @@ class OfferLibrary {
    *
    * @param timeSlot the time slot of the new offer
    * @param idObject the object that will receive a new offer
+   * @param version
    * @returns {Promise<*>} the offer in json and the status
    */
-  async addOffer(timeSlot, idObject) {
+  async addOffer(timeSlot, idObject, version = 1) {
     let response;
     try {
       let options = {
@@ -74,7 +75,8 @@ class OfferLibrary {
         body: JSON.stringify({
           "timeSlot": timeSlot,
           "object": {
-            "idObject": idObject
+            "idObject": idObject,
+            "version": version
           }
         }),
         headers: {

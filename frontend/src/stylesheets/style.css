@@ -37,8 +37,8 @@
 }
 
 .dropdown-profil-element:hover {
-  border: solid black 2px;
-  background-color: white;
+  /*border: solid black 2px;*/
+  /*background-color: white;*/
   color: black;
 }
 
@@ -142,4 +142,16 @@ input[type=submit] {
 .profil-picture {
   width: 250px;
   height: 250px;
+}
+
+.nowrap-class {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }

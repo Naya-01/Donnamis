@@ -80,10 +80,9 @@ const RegistrationManagementPage = async () => {
 const baseMembersList = async (members) => {
   // Create member cards
   const memberCards = document.getElementById("page-body");
-  memberCards.innerHTML = ``;
   if (Array.isArray(members)) {
+    memberCards.innerHTML = ``;
     for (const member of members) {
-
       managementList(member.memberId, memberCards, profilImage,
           member.firstname + " " + member.lastname + " (" + member.username
           + ")",
@@ -97,6 +96,8 @@ const baseMembersList = async (members) => {
         normalMemberButtons(member.memberId, member.version);
       }
     }
+  } else {
+    memberCards.innerHTML = `<p>Aucun membre</p>`;
   }
 }
 
@@ -110,8 +111,8 @@ const normalMemberButtons = (idMember, version) => {
   const refusedButtonId = "refused-button-" + idMember;
   const acceptedButtonId = "accepted-button-" + idMember;
   buttonDiv.innerHTML = `
-     <button id="${refusedButtonId}" class="btn btn-lg btn-danger mt-3" type="button">Refuser</button>
-     <button id="${acceptedButtonId}" class="btn btn-lg btn-success mt-3" type="button">Accepter</button>
+     <button id="${refusedButtonId}" class="btn btn-danger mt-3" type="button">Refuser</button>
+     <button id="${acceptedButtonId}" class="btn btn-success mt-3" type="button">Accepter</button>
   `;
 
   // Refuse member button
@@ -139,19 +140,20 @@ const acceptMember = (idMember, version) => {
 
   // Create admin checkbox
   const inputAdmin = document.createElement("input");
-  inputAdmin.className = "form-check-input mt-3 fs-4";
+  inputAdmin.className = "form-check-input";
   inputAdmin.type = "checkbox";
   inputAdmin.id = "flexCheckDefault";
 
   const label = document.createElement("label");
-  label.className = "form-check-label mt-2 fs-4";
+  label.className = "form-check-label mx-1";
   label.for = "flexCheckDefault";
+  label.setAttribute('for', 'flexCheckDefault');
   label.innerText = "Administrateur ?";
 
   const buttonDiv = document.getElementById("button-card-" + idMember);
   buttonDiv.appendChild(document.createElement("br"));
-  buttonDiv.appendChild(inputAdmin);
   buttonDiv.appendChild(label);
+  buttonDiv.appendChild(inputAdmin);
 
   // Hide potential card textarea
   const cardForm = document.getElementById("card-form-" + idMember);
@@ -199,13 +201,15 @@ const refuseMember = (idMember, version) => {
   divTextArea.className = "form-floating m-auto";
 
   const textArea = document.createElement("textarea");
-  textArea.className = "form-control fs-5 mt-1";
+  textArea.className = "form-control mt-1";
   textArea.placeholder = "Indiquez la raison du refus";
   textArea.id = "raisonRefus";
   textArea.rows = 100;
+  textArea.maxLength = 504;
+  textArea.setAttribute("style", "resize: none; height: 100px;");
 
   const label = document.createElement("label");
-  label.className = "fs-4 mb-1";
+  label.className = "mb-1";
   label.for = "raisonRefus";
   label.innerText = "Raison du refus";
 
@@ -255,7 +259,7 @@ const deniedMemberButtons = (idMember, version) => {
   const revokeDecisionButtonId = "refused-button-" + idMember;
   const buttonDiv = document.getElementById("button-card-" + idMember);
   buttonDiv.innerHTML = `
-     <button id="${revokeDecisionButtonId}" class="btn btn-lg btn-success mt-3" type="button">Revenir sur la décision</button>
+     <button id="${revokeDecisionButtonId}" class="btn btn-success mt-3" type="button">Revenir sur la décision</button>
   `;
 
   // Revoke decision button listener
@@ -269,8 +273,8 @@ const deniedMemberButtons = (idMember, version) => {
     await MemberLibrary.prototype.updateMember(memberToUpdate);
     // set member valid
 
-    let pendingButton = document.getElementById("btn-radio-pending");
-    pendingButton.click();
+    // let pendingButton = document.getElementById("btn-radio-pending");
+    // pendingButton.click();
   });
 };
 

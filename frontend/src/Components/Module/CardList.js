@@ -43,11 +43,6 @@ const cardList = async (offers) => {
     let cnt = 1;
     //make the columns for the row
     while (cnt <= 3 && nbOffers < offers.length) {
-      let realDescription = offers[nbOffers].object.description;
-      if (realDescription.length > 40) {
-        realDescription = realDescription.substr(1, 40);
-        realDescription += "...";
-      }
       //if the offer has an image
       if (offers[nbOffers].object.image) {
         let imageObject = "/api/object/getPicture/"
@@ -69,8 +64,8 @@ const cardList = async (offers) => {
                 ${dictionaryColorStatus.get(offers[nbOffers].status)}">
                     ${dictionary.get(offers[nbOffers].status)}
               </h6>
-              <p class="card-text">
-                ${realDescription}
+              <p class="card-text nowrap-class">
+                ${offers[nbOffers].object.description}
               </p>
             </div>
           </div>
@@ -79,9 +74,10 @@ const cardList = async (offers) => {
       cnt++;
     }
     page += `
+        </div>
       </div>
-    </div>
-</div>`;
+    </div>`;
+
   }
   return page;
 }

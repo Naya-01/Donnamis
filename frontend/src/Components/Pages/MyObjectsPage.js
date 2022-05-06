@@ -164,7 +164,8 @@ const reofferButton = async (buttonCard, offer) => {
   reofferButton.addEventListener("click", async () => {
     if (!(await OfferLibrary.prototype.addOffer(
         offer.timeSlot,
-        offer.object.idObject
+        offer.object.idObject,
+        offer.object.version
     ))) {
       return;
     }

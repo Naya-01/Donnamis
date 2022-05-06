@@ -10,14 +10,11 @@ import TypeLibrary from "../../Domain/TypeLibrary";
  * @param placeholder the bar search placeholder
  * @param hasNewObjectButton if you want a button next to the navbar
  * @param hasStatus boolean if there is filter for offer status
- * @returns {Promise<void>}
  */
-const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
-    hasNewObjectButton, hasStatus) => {
+const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasNewObjectButton, hasStatus) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
-  <!--<div class="mt-5 mx-lg-5"> a tester pour modifier la largeur de la searchbar-->
     <div class="container mt-5">
       <h1 class="fs-1">${pageName}</h1>`;
   if (hasNav) {
@@ -27,46 +24,60 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
 
     if (hasFilter) {
       searchBarHtml +=
-          `<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+          `<div class="btn-group-sm mx-2" role="group" aria-label="Basic radio toggle button group">
               <input type="radio" class="btn-check" checked name="btnradio" id="btn-radio-all" autocomplete="off">
-              <label class="btn btn-outline-secondary" for="btn-radio-all">Tous</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-radio-all">Tous</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-radio-pending" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-radio-pending">En attente</label>
-            
+              <label class="btn-sm btn-outline-secondary" for="btn-radio-pending">En attente</label>
+              <br>
               <input type="radio" class="btn-check" name="btnradio" id="btn-radio-denied" autocomplete="off">
-              <label class="btn btn-outline-danger" for="btn-radio-denied">Refusé</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-radio-denied">Refusé</label>
             </div>`;
     }
     if (hasStatus) {
-      searchBarHtml += `<div class="btn-group mx-2" role="group" aria-label="Basic radio toggle button group">
+      searchBarHtml += `
+            <div class="btn-group-sm mx-2" role="group" aria-label="Basic radio toggle button group">
               <input type="radio" class="btn-check" checked name="btnradio" id="btn-status-all" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-all">Tous</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-all">Tous</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-available" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-available">Publié</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-available">Publié</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-interested" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-interested">Intéressé</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-interested">Intéressé</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-assigned" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-assigned">Attribué</label>
-            
+              <label class="btn-sm btn-outline-secondary" for="btn-status-assigned">Attribué</label>
+            <br>
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-given" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-given">Donné</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-given">Donné</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-cancelled" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-cancelled">Annulé</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-cancelled">Annulé</label>
               
               <input type="radio" class="btn-check" name="btnradio" id="btn-status-not_collected" autocomplete="off">
-              <label class="btn btn-outline-dark" for="btn-status-not_collected">Non récupéré</label>
+              <label class="btn-sm btn-outline-secondary" for="btn-status-not_collected">Non récupéré</label>
               
-            </div>`;
+            </div>
+        `;
     }
 
     if (hasType) {
       searchBarHtml +=
-          `<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          `
+<!--<div class="dropdown">-->
+<!--  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--    Dropdown button-->
+<!--  </button>-->
+<!--  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+<!--    <a class="dropdown-item" href="#">Action</a>-->
+<!--    <a class="dropdown-item" href="#">Another action</a>-->
+<!--    <a class="dropdown-item" href="#">Something else here</a>-->
+<!--  </div>-->
+<!--</div>-->
+
+<button class="input-group-text dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                  Type
                </button>
                <select id="default-type-list" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -79,10 +90,10 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder,
     }
 
     searchBarHtml +=
-        `<input type="text" class="form-control fs-4" id="searchBar" placeholder="${placeholder}">
-            <button class="btn btn-outline-primary fs-4" id="searchButton" type="button">Rechercher</button>`
+        `<input type="text" class="form-control" id="searchBar" placeholder="${placeholder}">
+            <button class="btn btn-outline-secondary fs-4" id="searchButton" type="button">Rechercher</button>`
     if (hasNewObjectButton) {
-      searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-primary mx-2">Ajouter un objet</button>`;
+      searchBarHtml += `<button id="add-new-object-button" type="submit" class="btn btn-secondary mx-2">Ajouter un objet</button>`;
     }
     searchBarHtml += `</div>
         <div id="page-body"></div>
