@@ -221,9 +221,15 @@ class MemberLibrary {
     return newMember;
   }
 
+  /**
+   * Update the member status to make him prevented
+   *
+   * @param idMember the id of the member
+   * @param version the version for concurrency
+   * @returns the response
+   */
   async memberToPrevent(idMember, version){
     let response=null;
-    console.log(idMember);
     try {
       let options = {
         method: "PUT",

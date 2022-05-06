@@ -18,7 +18,7 @@ const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, ov
 
   const divCard = document.createElement("div");
   divCard.id = divCardId;
-  divCard.className = "row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded";
+  divCard.className = "row border border-1 mt-5 shadow p-3 mb-5 bg-body rounded";
 
   const pictureDiv = document.createElement("div");
   pictureDiv.className = "col-1 m-auto";
@@ -36,11 +36,11 @@ const managementList = (uniqueId, mainDiv, image, primaryText, secondaryText, ov
   informationDiv.id = "information-object-" + uniqueId;
 
   const baseInformationSpan = document.createElement("span");
-  baseInformationSpan.className = "fs-4";
+  baseInformationSpan.className = "fs-5";
   baseInformationSpan.innerText = primaryText;
 
   const informationSpan = document.createElement("span")
-  informationSpan.className = "text-secondary fs-5";
+  informationSpan.className = "text-secondary";
   informationSpan.innerText = secondaryText;
 
   informationDiv.appendChild(baseInformationSpan);
