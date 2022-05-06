@@ -22,7 +22,7 @@ const bottomNotification = new NotificationSA().getNotification();
 const dictionnary = new Map([
   ['interested', 'Intéressé'],
   ['available', 'Publié'],
-  ['assigned', 'En cours de donation'],
+  ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']
@@ -44,7 +44,6 @@ let telNumber;
 let versionObject = 0;
 let versionOffer = 0;
 let versionMemberConnected;
-
 
 /**
  * Render the page to see an object
@@ -230,7 +229,7 @@ const ObjectDetailsPage = async () => {
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
     //if the member is prevented, a msg is display
-    if(memberGiver.status === "prevented"){
+    if (memberGiver.status === "prevented") {
       document.getElementById("problemMember").innerHTML = `
         <p class="text-danger">
           <i class="bi bi-exclamation-triangle"></i>
@@ -241,7 +240,7 @@ const ObjectDetailsPage = async () => {
     }
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
-        + memberGiver.username ;
+        + memberGiver.username;
 
     if (!isInterested && (english_status === "interested" || english_status === "available")) {
       displayAddInterest(offer.object.version, offer.version);
@@ -363,8 +362,8 @@ async function addOneInterest(versionObject, versionOffer) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let memberToUpdate = new Member(null, null, null,
-          null, numTel, null, versionMemberConnected,null,
-          null,null, idMemberConnected);
+          null, numTel, null, versionMemberConnected, null,
+          null, null, idMemberConnected);
       await memberLibrary.updateMember(memberToUpdate);
       versionMemberConnected += 1;
     }
@@ -377,14 +376,14 @@ async function addOneInterest(versionObject, versionOffer) {
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
   // the notification to show that the interest is send
-  if(newInterest !== undefined){
+  if (newInterest !== undefined) {
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre intérêt a bien été pris en compte.'
     })
     // increment the number of people interested
     let countInterest = document.getElementById("InterestCount");
-    countInterest.innerHTML=parseInt(++countInterest.innerHTML);
+    countInterest.innerHTML = parseInt(++countInterest.innerHTML);
   }
 }
 
@@ -619,13 +618,10 @@ async function updateObject(e) {
     versionObject = objectWithImage.version;
   }
 
-
-  console.log(versionOffer);
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
       new_description, idType, english_status, statusObject, versionObject,
       versionOffer);
-  console.log(newOffer);
   if (newOffer !== undefined) {
     versionOffer = versionOffer+1; //TODO : pq y'a pas la version : newOffer.version
     versionObject = versionObject+1; //TODO : pareil : newOffer.object.version
@@ -637,7 +633,6 @@ async function updateObject(e) {
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-
 
   if (objectWithImage !== undefined) { // if there is an image
     if (localLinkImage !== undefined) {

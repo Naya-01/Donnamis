@@ -98,7 +98,8 @@ public class InterestDAOImpl implements InterestDAO {
       interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
       interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
       interestDTO.setVersion(resultSet.getInt("version"));
-      interestDTO.setNotificationDate(resultSet.getDate("notification_date").toLocalDate());
+      interestDTO.setNotificationDate(
+          resultSet.getDate("notification_date").toLocalDate());
 
       resultSet.close();
 
@@ -127,7 +128,8 @@ public class InterestDAOImpl implements InterestDAO {
         interestDTO.setIdObject(resultSet.getInt("id_object"));
         interestDTO.setIsCalled(resultSet.getBoolean("be_called"));
         interestDTO.setIsNotificated(resultSet.getBoolean("send_notification"));
-        interestDTO.setNotificationDate(resultSet.getDate("notification_date").toLocalDate());
+        interestDTO.setNotificationDate(
+            resultSet.getDate("notification_date").toLocalDate());
         interestDTOList.add(interestDTO);
       }
       resultSet.close();
@@ -214,8 +216,10 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public Integer getAllPublishedCount(Integer idObject) {
 
-    String query = "SELECT count(i.*) as nb FROM donnamis.interests i "
-        + "WHERE i.id_object = ? AND i.status = 'published'";
+    String query = "SELECT count(i.*) as nb FROM donnamis.interests i, donnamis.members m "
+        + "WHERE i.id_member = m.id_member "
+        + "AND m.status != 'prevented' "
+        + "AND i.id_object = ? AND i.status = 'published'";
     return getnbInterests(idObject, query);
 
   }
@@ -229,9 +233,12 @@ public class InterestDAOImpl implements InterestDAO {
   @Override
   public List<InterestDTO> getAllPublished(int idObject) {
     String query =
-        "SELECT id_object, id_member, availability_date, status, send_notification, "
-            + "version, be_called, notification_date "
-            + "FROM donnamis.interests WHERE id_object = ? AND status = 'published'";
+        "SELECT i.id_object, i.id_member, i.availability_date, i.status, i.send_notification, "
+            + "i.version, i.be_called, i.notification_date "
+            + "FROM donnamis.interests i,  donnamis.members m "
+            + "WHERE i.id_member = m.id_member "
+            + "AND m.status != 'prevented' "
+            + "AND i.id_object = ? AND i.status = 'published' ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
       preparedStatement.executeQuery();

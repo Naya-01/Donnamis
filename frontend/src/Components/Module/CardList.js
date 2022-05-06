@@ -79,7 +79,6 @@ const cardList = async (offers) => {
     </div>`;
 
   }
-  page += `<ul id="pagination-demo" class="pagination-lg"></ul>`;
   return page;
 }
 

@@ -14,7 +14,7 @@ const notificationDictionnary = new Map([
   ['cancelled', "L'offre a été annulée"],
   ['not_collected', "Vous n'êtes pas venu chercher l'objet"],
   ['published', "a marquer un interet pour votre offre."],
-  ['prevented', "est tombé malade"],
+  ['prevented', "est maintenant empêché de participer à la donnerie"],
 
 ]);
 

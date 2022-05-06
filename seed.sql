@@ -157,10 +157,10 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-03-25 02:00:00', 'Tous les jours de 15h à 18h', 3, 1, 'interested');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-16', 'published', 5, 3, 1, NOW(), true, true);
+VALUES ('2022-05-16', 'published', 5, 3, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-17', 'published', 3, 3, 1, NOW(), true, true);
+VALUES ('2022-05-17', 'published', 3, 3, 1, NOW(), true, false);
 
 -- 4
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
@@ -170,13 +170,13 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-03-28 04:00:00', 'Tous les matins avant 11h30', 4, 1, 'interested');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 4, 4, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 4, 4, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 3, 4, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 3, 4, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 1, 4, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 1, 4, 1, NOW(), true, false);
 
 -- 5
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version)
@@ -203,10 +203,10 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-04-14 08:00:00', 'Samedi en journée', 8, 1, 'interested');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-14', 'published', 5, 8, 1, NOW(), true, true);
+VALUES ('2022-05-14', 'published', 5, 8, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-14', 'published', 4, 8, 1, NOW(), true, true);
+VALUES ('2022-05-14', 'published', 4, 8, 1, NOW(), true, false);
 
 -- 9
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
@@ -215,7 +215,7 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-04-14 09:00:00', 'Lundi de 18h à 20h', 9, 1, 'assigned');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-16', 'assigned', 1, 9, 1, NOW(), true, true);
+VALUES ('2022-05-16', 'assigned', 1, 9, 1, NOW(), true, false);
 
 
 -- 10
@@ -225,13 +225,13 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-04-21 10:00:00', 'Lundi de 18h30 à 20h', 10, 1, 'interested');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 1, 10, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 1, 10, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 3, 10, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 3, 10, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES (NOW(), 'published', 4, 10, 1, NOW(), true, true);
+VALUES (NOW(), 'published', 4, 10, 1, NOW(), true, false);
 
 -- 11
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
@@ -240,10 +240,10 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-04-21 11:00:00', 'Lundi de 18h30 à 20h', 11, 1, 'interested');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-16', 'published', 1, 11, 1, NOW(), true, true);
+VALUES ('2022-05-16', 'published', 1, 11, 1, NOW(), true, false);
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-16', 'published', 3, 11, 1, NOW(), true, true);
+VALUES ('2022-05-16', 'published', 3, 11, 1, NOW(), true, false);
 
 -- 12
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
@@ -252,7 +252,7 @@ INSERT INTO donnamis.offers (date, time_slot, id_object, version, status)
 VALUES ('2022-04-21 12:00:00', 'Lundi de 16h à 17h', 12, 1, 'assigned');
 INSERT INTO donnamis.interests (availability_date, status, id_member, id_object, version,
                                 notification_date, send_notification, be_called)
-VALUES ('2022-05-16', 'assigned', 3, 12, 1, NOW(), true, true);
+VALUES ('2022-05-16', 'assigned', 3, 12, 1, NOW(), true, false);
 
 -- 13
 INSERT INTO donnamis.objects (id_type, description, status, id_offeror, version, image)
