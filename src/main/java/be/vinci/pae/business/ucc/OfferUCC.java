@@ -45,9 +45,11 @@ public interface OfferUCC {
    * @param search   the search pattern (empty -> all) according to their type, description
    * @param idMember the member id if you want only your offers (0 -> all)
    * @param type     the type of object that we want
+   * @param dateText      the max date late
    * @return list of offers
    */
-  List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus);
+  List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus,
+      String dateText);
 
   /**
    * Return the last offer of an object.

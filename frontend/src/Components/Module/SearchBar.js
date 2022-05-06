@@ -1,5 +1,6 @@
 import TypeLibrary from "../../Domain/TypeLibrary";
 
+
 /**
  * A module to display a search page
  *
@@ -10,8 +11,9 @@ import TypeLibrary from "../../Domain/TypeLibrary";
  * @param placeholder the bar search placeholder
  * @param hasNewObjectButton if you want a button next to the navbar
  * @param hasStatus boolean if there is filter for offer status
+ * @param hasDate if the searchbar has date
  */
-const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasNewObjectButton, hasStatus) => {
+const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasNewObjectButton, hasStatus, hasDate = false) => {
   const pageDiv = document.querySelector("#page");
   let searchBarHtml = ``;
   searchBarHtml = `
@@ -61,6 +63,12 @@ const searchBar = async (pageName, hasNav, hasFilter, hasType, placeholder, hasN
               
             </div>
         `;
+    }
+
+    if (hasDate) {
+      searchBarHtml += `
+        <input class="form-control"  id="date" name="date" placeholder="JJ/MM/AAAA" type="text" style="max-width: 120px"/>
+      `;
     }
 
     if (hasType) {

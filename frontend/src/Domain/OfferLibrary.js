@@ -271,9 +271,10 @@ class OfferLibrary {
    * @param self true if he wants to search for himself
    * @param type the object type
    * @param objStatus the object status
+   * @param date the limit date
    * @returns {Promise<boolean|any>}  an list offer in the json format or nothing
    */
-  async getOffers(searchPattern, self, type, objStatus) {
+  async getOffers(searchPattern, self, type, objStatus, date) {
     try {
       let options = {
         method: "GET",
@@ -283,7 +284,7 @@ class OfferLibrary {
         },
       };
       let query = "/api/offers?search-pattern=" + searchPattern + "&type="
-          + type + "&status=" + objStatus;
+          + type + "&status=" + objStatus + "&date=" + date;
       if (self) {
         query += "&self=" + self;
       }

@@ -14,7 +14,7 @@ const AllObjectsPage = async () => {
     return;
   }
   await searchBar("Toutes les offres", true, false, true, "Recherche une offre",
-      true, true);
+      true, true, true);
 
   let status = "";
 
@@ -32,14 +32,20 @@ const AllObjectsPage = async () => {
   let cancelled = document.getElementById("btn-status-cancelled");
   let not_collected = document.getElementById("btn-status-not_collected");
   let interested = document.getElementById("btn-status-interested");
+  let dateInput = document.getElementById("date");
 
   const actualizeCards = async () => {
     let type = typeObject.options[typeObject.selectedIndex].value;
     if (type === "Tout") {
       type = "";
     }
-    const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value,
-        false, type, status);
+
+    let dateFormatted = dateInput.value;
+    if (dateFormatted) {
+      const dateFormattedArray = dateFormatted.split("/");
+      dateFormatted = dateFormattedArray[2] + "-" + dateFormattedArray[1] + "-" + dateFormattedArray[0];
+    }
+    const offers = await OfferLibrary.prototype.getOffers(searchBarInput.value, false, type, status, dateFormatted);
     offersList.innerHTML = ``;
     if (!offers) {
       offersList.innerHTML = `<p>Aucun objet</p>`;
@@ -54,11 +60,15 @@ const AllObjectsPage = async () => {
     }
   }
 
-  await actualizeCards();
+  // Date picker configuration
+  $('input[name="date"]').datepicker({
+    format: 'dd/mm/yyyy',
+    container: $('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body",
+    todayHighlight: true,
+    autoclose: true,
+  })
 
-  searchButtonInput.addEventListener('click', async () => {
-    await actualizeCards();
-  });
+  await actualizeCards();
 
   searchBarInput.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {

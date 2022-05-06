@@ -10,9 +10,11 @@ import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +35,16 @@ public class OfferDAOImpl implements OfferDAO {
   /**
    * Get all offers.
    *
-   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param searchPattern the search pattern (empty -> all) according to their type, description,
+   *                      username and lastname
    * @param idMember      the member id if you want only your offers (0 -> all)
    * @param type          the type of object that we want
+   * @param dateText      the max date late
    * @return list of offers
    */
   @Override
   public List<OfferDTO> getAll(String searchPattern, int idMember, String type,
-      String objectStatus) {
+      String objectStatus, String dateText) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
         + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "       ty.is_default, of.status, of.version, ob.version "
@@ -51,7 +55,7 @@ public class OfferDAOImpl implements OfferDAO {
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
       query += "AND (LOWER(mb.username) LIKE ? OR LOWER(of.time_slot) LIKE ?"
-          + " OR LOWER(ob.description) LIKE ?) ";
+          + " OR LOWER(ob.description) LIKE ? OR LOWER(mb.lastname) LIKE ?) ";
     }
     if (type != null && !type.isEmpty()) {
       query += "AND ty.type_name = ? ";
@@ -62,12 +66,15 @@ public class OfferDAOImpl implements OfferDAO {
     if (objectStatus != null && !objectStatus.isEmpty()) {
       query += "AND LOWER(of.status) LIKE ? ";
     }
+    if (dateText != null && !dateText.isBlank()) {
+      query += "AND of.date >= ? ";
+    }
     query += " ORDER BY of.date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       int argCounter = 1;
       if (searchPattern != null && !searchPattern.isEmpty()) {
-        for (argCounter = 1; argCounter <= 3; argCounter++) {
+        for (argCounter = 1; argCounter <= 4; argCounter++) {
           preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
         }
       }
@@ -81,6 +88,10 @@ public class OfferDAOImpl implements OfferDAO {
       }
       if (objectStatus != null && !objectStatus.isEmpty()) {
         preparedStatement.setString(argCounter, objectStatus);
+        argCounter++;
+      }
+      if (dateText != null && !dateText.isBlank()) {
+        preparedStatement.setDate(argCounter, Date.valueOf(dateText));
       }
       return getOffersWithResultSet(preparedStatement.executeQuery());
     } catch (SQLException e) {

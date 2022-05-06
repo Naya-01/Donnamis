@@ -203,7 +203,7 @@ const offersButtons = async (member, actualizeOfferStats) => {
 
   offeredObjects.addEventListener('click', async () => {
     const offers = await OfferLibrary.prototype.getOffers("",
-        member.memberId.toLocaleString(), "", "")
+        member.memberId.toLocaleString(), "", "", "")
     await offerButton(cardForm, offeredObjects, receivedObjects, isOfferedObjectsOpen, offers);
     isOfferedObjectsOpen = !isOfferedObjectsOpen;
     isReceivedObjectsOpen = false;

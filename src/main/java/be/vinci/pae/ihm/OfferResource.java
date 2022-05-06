@@ -68,6 +68,7 @@ public class OfferResource {
       @DefaultValue("") @QueryParam("self") String offeror,
       @DefaultValue("") @QueryParam("type") String type,
       @DefaultValue("") @QueryParam("status") String objectStatus,
+      @DefaultValue("") @QueryParam("date") String dateText,
       @Context ContainerRequest request
   ) {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getOffers");
@@ -80,7 +81,8 @@ public class OfferResource {
         idOfferor = Integer.parseInt(offeror);
       } catch (Exception ignored) { /* ignore this exception */ }
     }
-    List<OfferDTO> offerDTOList = offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
+    List<OfferDTO> offerDTOList =
+        offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus, dateText);
     return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 
