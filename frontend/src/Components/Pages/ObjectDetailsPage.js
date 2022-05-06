@@ -398,6 +398,7 @@ function displayRating(current_rating) {
       || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
+    pNoRating.id = "PnoRating";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
   }
@@ -677,7 +678,11 @@ async function ratingPopUp(e) {
           title: 'Votre note a bien été prise en compte.'
         })
         document.getElementById("buttonGivenRating").remove(); // remove the button
-        displayRating(rating.rating, rating.comment); // display the new rating
+        displayRating(rating); // display the new rating
+        let pNoRating = document.getElementById("PnoRating");
+        if(pNoRating !== null){
+          pNoRating.remove();
+        }
       }
     }
   })
