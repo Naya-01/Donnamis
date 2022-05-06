@@ -141,7 +141,12 @@ public class OfferDAOImpl implements OfferDAO {
     return getOfferDTOWithOldDate(idOffer, query);
   }
 
-
+  /**
+   * Construct an offer with its old date on base of a query
+   * @param idObject the id of the object
+   * @param query the SQL query to execute
+   * @return the constructed offerDTO
+   */
   private OfferDTO getOfferDTOWithOldDate(int idObject, String query) {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -389,6 +394,12 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
+  /**
+   * Construct an offer on base of the resultset.
+   *
+   * @param resultSet that contains all information for the offers
+   * @return the constructed offerDTO
+   */
   private OfferDTO getOfferWithResultSet(ResultSet resultSet) {
     try {
       OfferDTO offerDTO = offerFactory.getOfferDTO();
