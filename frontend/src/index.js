@@ -3,6 +3,6 @@ import "./stylesheets/style.css"; // If you prefer to style your app with vanill
 import Navbar from "./Components/Navbar/Navbar";
 import {Router} from "./Components/Router/Router";
 
-await Navbar();
+Navbar();
 
 Router(); // The router will automatically load the root page
