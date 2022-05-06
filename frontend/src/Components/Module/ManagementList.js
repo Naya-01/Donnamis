@@ -1,5 +1,5 @@
 /**
- *  A module to display list
+ *  A module to display a customized card that will appear in a div
  *
  * @param uniqueId the unique id of the offer
  * @param mainDiv the div to place this module

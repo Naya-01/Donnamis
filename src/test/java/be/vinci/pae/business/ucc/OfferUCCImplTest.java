@@ -153,11 +153,11 @@ class OfferUCCImplTest {
   @DisplayName("Test getOffers with non offer returned")
   @Test
   public void testGetOffersWithEmptyListOfOffersReturned() {
-    Mockito.when(offerDAO.getAll("", 0, "", ""))
+    Mockito.when(offerDAO.getAll("", 0, "", "", ""))
         .thenReturn(new ArrayList<>());
     assertAll(
         () -> assertThrows(NotFoundException.class, () -> offerUCC
-            .getOffers("", 0, "", "")),
+            .getOffers("", 0, "", "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -181,9 +181,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2, offerDTO3);
 
-    Mockito.when(offerDAO.getAll("", 0, "", "")).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("", 0, "", "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("", 0, "", "")),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("", 0, "", "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -210,9 +210,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2);
 
-    Mockito.when(offerDAO.getAll("given", 0, "", "")).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("given", 0, "", "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 0, "", "")),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 0, "", "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -243,9 +243,9 @@ class OfferUCCImplTest {
 
     List<OfferDTO> offerDTOS = List.of(offerDTO1, offerDTO2);
 
-    Mockito.when(offerDAO.getAll("given", 13, "", "")).thenReturn(offerDTOS);
+    Mockito.when(offerDAO.getAll("given", 13, "", "", "")).thenReturn(offerDTOS);
     assertAll(
-        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 13, "", "")),
+        () -> assertEquals(offerDTOS, offerUCC.getOffers("given", 13, "", "", "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -1424,12 +1424,12 @@ class OfferUCCImplTest {
   public void testGetGivenAndAssignedOffersWithAnEmptyList() {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(13);
-    Mockito.when(offerDAO.getAllGivenAndAssignedOffers(memberDTO.getMemberId()))
+    Mockito.when(offerDAO.getAllGivenAndAssignedOffers(memberDTO.getMemberId(), ""))
         .thenReturn(new ArrayList<>());
 
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> offerUCC.getGivenAndAssignedOffers(memberDTO)),
+            () -> offerUCC.getGivenAndAssignedOffers(memberDTO, "")),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -1443,10 +1443,10 @@ class OfferUCCImplTest {
     listOfOffers.add(offerDTO);
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(13);
-    Mockito.when(offerDAO.getAllGivenAndAssignedOffers(memberDTO.getMemberId()))
+    Mockito.when(offerDAO.getAllGivenAndAssignedOffers(memberDTO.getMemberId(), ""))
         .thenReturn(listOfOffers);
 
-    List<OfferDTO> listFromDao = offerUCC.getGivenAndAssignedOffers(memberDTO);
+    List<OfferDTO> listFromDao = offerUCC.getGivenAndAssignedOffers(memberDTO, "");
 
     assertAll(
         () -> assertTrue(listFromDao.contains(offerDTO)),

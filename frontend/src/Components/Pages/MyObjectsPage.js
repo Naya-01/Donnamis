@@ -111,7 +111,7 @@ const MyObjectsPage = async () => {
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
   const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,
-      type, status);
+      type, status, "");
   memberCards.innerHTML = ``;
   if (!offers) { // objects is empty
     return;

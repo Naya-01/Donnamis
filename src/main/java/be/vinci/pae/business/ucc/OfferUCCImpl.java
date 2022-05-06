@@ -167,13 +167,15 @@ public class OfferUCCImpl implements OfferUCC {
    * @param idMember     the member id if you want only your offers (0 -> all)
    * @param type         the type of object that we want
    * @param objectStatus the status of object that we want
+   * @param dateText      the max date late
    * @return list of offers
    */
   @Override
-  public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus) {
+  public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus,
+      String dateText) {
     try {
       dalService.startTransaction();
-      List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
+      List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember, type, objectStatus, dateText);
       if (offerDTO.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
@@ -232,15 +234,16 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Get all offers received by a member.
    *
-   * @param receiver member
+   * @param receiver the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @Override
-  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver) {
+  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver, String searchPattern) {
     try {
       dalService.startTransaction();
-      List<OfferDTO> givenOffers = offerDAO.getAllGivenAndAssignedOffers(
-          receiver.getMemberId());
+      List<OfferDTO> givenOffers =
+          offerDAO.getAllGivenAndAssignedOffers(receiver.getMemberId(), searchPattern);
       if (givenOffers.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
