@@ -76,9 +76,10 @@ public interface OfferDAO {
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
-  List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver);
+  List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver, String searchPattern);
 
   /**
    * Get a map of data about a member (nb of received object, nb of not colected objects, nb of

@@ -231,15 +231,16 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Get all offers received by a member.
    *
-   * @param receiver member
+   * @param receiver the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @Override
-  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver) {
+  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver, String searchPattern) {
     try {
       dalService.startTransaction();
-      List<OfferDTO> givenOffers = offerDAO.getAllGivenAndAssignedOffers(
-          receiver.getMemberId());
+      List<OfferDTO> givenOffers =
+          offerDAO.getAllGivenAndAssignedOffers(receiver.getMemberId(), searchPattern);
       if (givenOffers.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }

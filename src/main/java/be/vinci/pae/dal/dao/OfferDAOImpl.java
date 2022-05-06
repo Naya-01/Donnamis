@@ -50,7 +50,6 @@ public class OfferDAOImpl implements OfferDAO {
         + "FROM donnamis.offers of2 WHERE of2.id_object = of.id_object ORDER BY of.date DESC)";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
-      // Search /!\ nom de l'offreur, type
       query += "AND (LOWER(mb.username) LIKE ? OR LOWER(of.time_slot) LIKE ?"
           + " OR LOWER(ob.description) LIKE ?) ";
     }
@@ -302,23 +301,33 @@ public class OfferDAOImpl implements OfferDAO {
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @Override
-  public List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver) {
+  public List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver, String searchPattern) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
         + "ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default, "
         + "of.status, of.version, ob.version, MAX(of.date) as \"date_premiere_offre\" "
         + "FROM donnamis.objects ob, donnamis.types ty, donnamis.offers of, donnamis.interests it "
         + "WHERE ob.id_object = of.id_object AND ob.id_type = ty.id_type "
         + "AND it.id_object = ob.id_object AND (it.status = 'received' or it.status = 'assigned')"
-        + " AND it.id_member = ? "
-        + "AND (of.status = 'given' OR of.status = 'assigned') "
-        + "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, ob.description, "
-        + "of.version, ob.version, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
-        + "ORDER BY date_premiere_offre DESC";
+        + " AND it.id_member = ? AND (of.status = 'given' OR of.status = 'assigned') ";
+
+    if (searchPattern != null && !searchPattern.isBlank()) {
+      query += "AND (LOWER(of.time_slot) LIKE ? OR LOWER(ob.description) LIKE ?) ";
+    }
+    query += "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
+        + "ob.description, of.version, ob.version, ob.status, ob.image, ob.id_offeror, "
+        + "ty.type_name, ty.is_default ORDER BY date_premiere_offre DESC";
+
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idReceiver);
+      if (searchPattern != null && !searchPattern.isBlank()) {
+        for (int i = 2; i <= 3; i++) {
+          preparedStatement.setString(i, "%" + searchPattern.toLowerCase() + "%");
+        }
+      }
       return getOffersWithResultSet(preparedStatement.executeQuery());
     } catch (SQLException e) {
       throw new FatalException(e);

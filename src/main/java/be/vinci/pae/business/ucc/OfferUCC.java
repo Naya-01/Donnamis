@@ -68,10 +68,11 @@ public interface OfferUCC {
   /**
    * Get all offers received by a member.
    *
-   * @param receiver member
+   * @param receiver the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
-  List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver);
+  List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver, String searchPattern);
 
   /**
    * Cancel an Object.

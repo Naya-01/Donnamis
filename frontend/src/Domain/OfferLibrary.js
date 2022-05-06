@@ -328,7 +328,7 @@ class OfferLibrary {
    *
    * @returns {Promise<boolean|any>} an list offer in the json format or nothing
    */
-  async getGivenAndAssignedOffers() {
+  async getGivenAndAssignedOffers(search) {
     try {
       let options = {
         method: "GET",
@@ -337,7 +337,7 @@ class OfferLibrary {
           "Authorization": getSessionObject("user").accessToken
         },
       };
-      let query = "/api/offers/givenAndAssignedOffers/";
+      let query = "/api/offers/givenAndAssignedOffers?search=" + search;
       let userData = await fetch(query, options);
       if (!userData.ok) {
         return false;

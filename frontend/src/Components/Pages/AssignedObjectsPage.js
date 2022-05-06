@@ -18,7 +18,7 @@ const AssignedObjectsPage = async () => {
   pageDiv.innerHTML += `<div id="card-list-div"></div>`
 
   const cardListDiv = document.getElementById("card-list-div");
-  const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers();
+  const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers("");
   cardListDiv.innerHTML = await CardList(offers);
 
   for (const offer of pageDiv.querySelectorAll(".clickable")) {
@@ -33,12 +33,14 @@ const AssignedObjectsPage = async () => {
   const searchBar = document.getElementById("searchBar");
   searchBar.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
+      const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers(searchBar.value);
       cardListDiv.innerHTML = await CardList(offers);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
+    const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers(searchBar.value);
     cardListDiv.innerHTML = await CardList(offers);
   });
 }
