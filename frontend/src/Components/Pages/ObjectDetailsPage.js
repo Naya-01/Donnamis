@@ -215,6 +215,13 @@ const ObjectDetailsPage = async () => {
     divB.appendChild(new_button);
     if (english_status === "given") {
       new_button.remove();
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
+      if (current_rating === undefined){
+        displayRating(null);
+      }
+      else{
+        displayRating(current_rating);
+      }
     }
   }
   // if this is not the object of the member connected
@@ -367,7 +374,6 @@ async function addOneInterest(versionObject, versionOffer) {
   new_button.disabled = true;
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
-  //TODO : pq la y'a les versions ça doit etre les id
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
   // the notification to show that the interest is send
