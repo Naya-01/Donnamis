@@ -348,7 +348,8 @@ public class InterestDAOImpl implements InterestDAO {
         "UPDATE donnamis.interests "
             + "SET send_notification = ?, version= version+1 , notification_date = NOW() "
             + "WHERE id_object= ? AND id_member = ? RETURNING id_object, id_member,"
-            + " availability_date, status,send_notification, version, be_called, notification_date ";
+            + " availability_date, status, send_notification, version, be_called, "
+            + "notification_date ";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
 
       preparedStatement.setBoolean(1, interestDTO.getIsNotificated());
