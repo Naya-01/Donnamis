@@ -367,6 +367,7 @@ async function addOneInterest(versionObject, versionOffer) {
   new_button.disabled = true;
   input_date.disabled = true;
   callMeCheckbox.disabled = true;
+  //TODO : pq la y'a les versions ça doit etre les id
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
   // the notification to show that the interest is send
@@ -609,15 +610,19 @@ async function updateObject(e) {
     let formData = new FormData();
     formData.append('file', fileInput.files[0]);
     objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
+    versionObject = objectWithImage.version;
   }
 
 
-
+  console.log(versionOffer);
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject++,
-      versionOffer++);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
+  console.log(newOffer);
   if (newOffer !== undefined) {
+    versionOffer = versionOffer+1; //TODO : pq y'a pas la version : newOffer.version
+    versionObject = versionObject+1; //TODO : pareil : newOffer.object.version
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
