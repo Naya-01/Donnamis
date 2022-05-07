@@ -43,6 +43,7 @@ const AddNewObjectPage = async () => {
   pageDiv.innerHTML = `
     <div class="container p-3">
       <div class="mx-5 my-5">
+        <h2 class=pb-3>Ajouter un objet</h2>
         <div class="card">  
           <!-- Body of the card -->
           <div class="card-body">
