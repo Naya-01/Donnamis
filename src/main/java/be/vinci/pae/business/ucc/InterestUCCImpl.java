@@ -353,7 +353,6 @@ public class InterestUCCImpl implements InterestUCC {
       if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }
-      //TODO : vérifier version de interest
 
       // Send Notification
       interestDTO.setIsNotificated(false);

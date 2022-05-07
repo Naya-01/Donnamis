@@ -743,6 +743,25 @@ class InterestUCCImplTest {
   }
 
   //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
+  @DisplayName("Test markNotificationShown with non existent object in db")
+  @Test
+  public void testMarkNotificationShownWithNonExistentObjectInDb() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockObjectDAO.getOne(nonExistentId))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test markNotificationShown with non existent interest in db")
   @Test
   public void testMarkNotificationShownWithNonExistentInterestInDb() {
@@ -761,6 +780,7 @@ class InterestUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
 
   @DisplayName("Test markNotificationShown with an interest already shown")
   @Test
