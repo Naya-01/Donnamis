@@ -255,7 +255,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,1)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, 1)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -322,7 +322,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,3)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, 3)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -334,7 +334,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,null)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, null)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -779,7 +779,6 @@ class MemberUCCImplTest {
     );
   }
 
-
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
   @DisplayName("Test getMember success")
@@ -853,4 +852,21 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  //  -----------------------------  GET PICTURE UCC  -----------------------------------  //
+
+  @DisplayName("Test preventMember with non existent member")
+  @Test
+  public void testPreventMemberWithNonExistentMember() {
+    MemberDTO memberNonExistent = getMemberNewMember();
+
+    Mockito.when(mockMemberDAO.getOne(memberNonExistent.getMemberId())).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> memberUCC.preventMember(memberNonExistent)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 }
