@@ -769,12 +769,19 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
-    Mockito.when(mockInterestDAO.getOne(nonExistentId, memberDTO.getMemberId()))
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(null);
 
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO,
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
                 memberDTO.getMemberId())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
