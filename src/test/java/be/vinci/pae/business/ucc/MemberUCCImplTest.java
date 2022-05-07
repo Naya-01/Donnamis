@@ -869,4 +869,21 @@ class MemberUCCImplTest {
     );
   }
 
+  @DisplayName("Test preventMember with not same member version")
+  @Test
+  public void testPreventMemberWithNotSameMemberVersion() {
+    MemberDTO memberExistent = getMemberNewMember();
+    memberExistent.setVersion(12);
+    MemberDTO memberFromGetOne = getMemberNewMember();
+    memberExistent.setVersion(13);
+
+    Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberFromGetOne);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> memberUCC.preventMember(memberExistent)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 }
