@@ -318,8 +318,7 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
-   * send_notification field /!\
+   * Mark a notification shown.
    *
    * @param idMember of the member's interest
    * @param member   owner of the object or the one to update notification.
