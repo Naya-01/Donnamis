@@ -28,7 +28,6 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mockito;
 
 class MemberUCCImplTest {
@@ -225,8 +224,9 @@ class MemberUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(12);
     memberDTO.setUsername("marc");
-    memberDTO.setPassword(BCrypt.hashpw(passwd1, BCrypt.gensalt()));
     memberDTO.setStatus("prevented");
+    Member member = (Member) memberDTO;
+    memberDTO.setPassword(member.hashPassword(passwd1));
 
     Mockito.when(mockMemberDAO.getOne(memberDTO.getUsername())).thenReturn(memberDTO);
     Mockito.when(mockMemberDAO.updateOne(memberDTO)).thenReturn(memberDTO);
