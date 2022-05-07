@@ -14,8 +14,6 @@ import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.business.factories.RatingFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
-import be.vinci.pae.business.ucc.AddressUCC;
-import be.vinci.pae.business.ucc.AddressUCCImpl;
 import be.vinci.pae.business.ucc.InterestUCC;
 import be.vinci.pae.business.ucc.InterestUCCImpl;
 import be.vinci.pae.business.ucc.MemberUCC;
@@ -66,7 +64,6 @@ public class ApplicationBinder extends AbstractBinder {
 
     bind(MemberUCCImpl.class).to(MemberUCC.class).in(Singleton.class);
     bind(TypeUCCImpl.class).to(TypeUCC.class).in(Singleton.class);
-    bind(AddressUCCImpl.class).to(AddressUCC.class).in(Singleton.class);
     bind(InterestUCCImpl.class).to(InterestUCC.class).in(Singleton.class);
     bind(MemberDAOImpl.class).to(MemberDAO.class).in(Singleton.class);
     bind(TypeDAOImpl.class).to(TypeDAO.class).in(Singleton.class);

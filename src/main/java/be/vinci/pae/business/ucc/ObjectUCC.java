@@ -35,10 +35,9 @@ public interface ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version   : version of the object
    * @return object updated
    */
-  ObjectDTO updateOne(ObjectDTO objectDTO, int version);
+  ObjectDTO updateOne(ObjectDTO objectDTO);
 
   /**
    * Update the object picture.
