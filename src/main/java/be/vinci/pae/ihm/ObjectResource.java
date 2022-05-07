@@ -3,7 +3,6 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
-import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.ihm.filters.Authorize;

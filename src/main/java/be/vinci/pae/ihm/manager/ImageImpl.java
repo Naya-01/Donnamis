@@ -26,7 +26,6 @@ public class ImageImpl implements Image {
     if (!isAuthorized(fileMime)) {
       return;
     }
-    ;
 
     for (String extension : typesAllowed) {
       String testPath =
@@ -75,12 +74,11 @@ public class ImageImpl implements Image {
   @Override
   public boolean isAuthorized(FormDataBodyPart fileMime) {
     String type = fileMime.getMediaType().getSubtype().toLowerCase();
-    boolean authorizedType = false;
     for (String t : typesAllowed) {
       if (type.equals(t)) {
-        authorizedType = true;
+        return false;
       }
     }
-    return authorizedType;
+    return true;
   }
 }
