@@ -74,11 +74,12 @@ public class ImageImpl implements Image {
   @Override
   public boolean isAuthorized(FormDataBodyPart fileMime) {
     String type = fileMime.getMediaType().getSubtype().toLowerCase();
+    Boolean authorized = false;
     for (String t : typesAllowed) {
       if (type.equals(t)) {
-        return false;
+        authorized = true;
       }
     }
-    return true;
+    return authorized;
   }
 }
