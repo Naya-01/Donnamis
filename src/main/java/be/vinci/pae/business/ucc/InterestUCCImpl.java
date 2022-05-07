@@ -344,8 +344,7 @@ public class InterestUCCImpl implements InterestUCC {
       }
 
       //It's not the same user interest as the requester.
-      if (!idMember.equals(member.getMemberId()) && !member.getMemberId()
-          .equals(objectDTO.getIdOfferor())) {
+      if (!member.getMemberId().equals(objectDTO.getIdOfferor())) {
         throw new ForbiddenException(
             "Cette objet ne vous appartient pas, vous ne pouvez pas modifier la notification.");
       }

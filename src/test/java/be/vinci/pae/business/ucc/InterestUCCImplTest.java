@@ -788,6 +788,32 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test markNotificationShown with not the same user interest as the requester")
+  @Test
+  public void testMarkNotificationShownWithNotTheSameUserInterestAsTheRequester() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(3);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), 1))
+        .thenReturn(interestFactory.getInterestDTO());
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
+                1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 
   @DisplayName("Test markNotificationShown with an interest already shown")
   @Test
