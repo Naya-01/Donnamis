@@ -30,7 +30,8 @@ public class ImageImpl implements Image {
 
     for (String extension : typesAllowed) {
       String testPath =
-          Config.getProperty("ImagePath") + "img\\" + path + filename + "." + extension;
+          Config.getProperty("ImagePath") + "img\\" + path + filename + "."
+              + extension;
       File f = new File(testPath);
       if (f.exists()) {
         f.delete();
@@ -62,7 +63,7 @@ public class ImageImpl implements Image {
    */
   @Override
   public String getInternalPath(String path, Integer id, FormDataBodyPart fileMime) {
-    return "img\\" + path + id + "." + fileMime.getMediaType().getSubtype();
+    return "img\\" + path + id + "." + fileMime.getMediaType().getSubtype().toLowerCase();
   }
 
   /**
@@ -73,7 +74,7 @@ public class ImageImpl implements Image {
    */
   @Override
   public boolean isAuthorized(FormDataBodyPart fileMime) {
-    String type = fileMime.getMediaType().getSubtype();
+    String type = fileMime.getMediaType().getSubtype().toLowerCase();
     boolean authorizedType = false;
     for (String t : typesAllowed) {
       if (type.equals(t)) {
