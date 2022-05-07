@@ -34,13 +34,14 @@ class ObjectUCCImplTest {
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
   private OfferDTO offerDTO;
+  private ObjectFactory objectFactory;
 
   @BeforeEach
   void initAll() {
     this.objectUCC = locator.getService(ObjectUCC.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
-    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
+    objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
     this.objectDTO.setIdObject(1);
     this.objectDTO.setDescription("the description");
@@ -127,7 +128,7 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(objectDTOUpdated.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateOne(objectDTOUpdated)).thenReturn(objectDTOUpdated);
     assertAll(
-        () -> assertEquals(objectDTOUpdated, objectUCC.updateOne(objectDTOUpdated, 1)),
+        () -> assertEquals(objectDTOUpdated, objectUCC.updateOne(objectDTOUpdated)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).updateOne(objectDTOUpdated),
@@ -141,7 +142,7 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTO);
     Mockito.when(mockObjectDAO.updateOne(objectDTO)).thenReturn(objectDTO);
     assertAll(
-        () -> assertEquals(objectDTO, objectUCC.updateOne(objectDTO, 1)),
+        () -> assertEquals(objectDTO, objectUCC.updateOne(objectDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).updateOne(objectDTO),
@@ -154,7 +155,21 @@ class ObjectUCCImplTest {
   public void testUpdateOneWithNonExistentObject() {
     Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(null);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> objectUCC.updateOne(objectDTO, 1)),
+        () -> assertThrows(NotFoundException.class, () -> objectUCC.updateOne(objectDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("test updateOne with not same version")
+  @Test
+  public void testUpdateOneWithNotSameVersion() {
+    ObjectDTO objectDTOFromDao = objectFactory.getObjectDTO();
+    objectDTOFromDao.setVersion(13);
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTOFromDao);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> objectUCC.updateOne(objectDTO)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()

@@ -18,8 +18,9 @@ public interface MemberUCC {
   /**
    * Update the profil picture of the member.
    *
-   * @param path of the picture
-   * @param id   of the member
+   * @param path    of the picture
+   * @param id      of the member
+   * @param version of the member
    * @return memberDTO updated
    */
   MemberDTO updateProfilPicture(String path, int id, Integer version);

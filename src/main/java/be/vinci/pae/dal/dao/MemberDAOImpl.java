@@ -169,7 +169,7 @@ public class MemberDAOImpl implements MemberDAO {
    * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
-   * @return the modified member
+   * @return the updated member
    */
   @Override
   public MemberDTO updateOne(MemberDTO memberDTO) {
@@ -195,10 +195,10 @@ public class MemberDAOImpl implements MemberDAO {
       query += "role = ?,";
       memberDTOList.addLast(memberDTO.getRole());
     }
-
-    query += "phone_number = ?,";
-    memberDTOList.addLast(memberDTO.getPhone());
-
+    if (memberDTO.getPhone() != null && !memberDTO.getPhone().isBlank()) {
+      query += "phone_number = ?,";
+      memberDTOList.addLast(memberDTO.getPhone());
+    }
     if (memberDTO.getReasonRefusal() != null && !memberDTO.getReasonRefusal().isBlank()) {
       query += "refusal_reason = ?,";
       memberDTOList.addLast(memberDTO.getReasonRefusal());
@@ -221,7 +221,6 @@ public class MemberDAOImpl implements MemberDAO {
         + "role, phone_number, password, refusal_reason, image, version ";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-
       int cnt = 1;
       for (String str : memberDTOList) {
         preparedStatement.setString(cnt++, str);
@@ -234,8 +233,6 @@ public class MemberDAOImpl implements MemberDAO {
     } catch (SQLException e) {
       throw new FatalException(e);
     }
-
-
   }
 
   /**
@@ -288,9 +285,9 @@ public class MemberDAOImpl implements MemberDAO {
   }
 
   /**
-   * Create an address on base of a resultset.
+   * Create an address from a result set.
    *
-   * @param resultSet rs that contains all info of an address
+   * @param resultSet rs containing all info of an address
    * @return the address
    */
   private AddressDTO getAddressDTOByResultSet(ResultSet resultSet) {

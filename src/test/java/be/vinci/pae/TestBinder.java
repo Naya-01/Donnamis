@@ -14,8 +14,6 @@ import be.vinci.pae.business.factories.RatingFactory;
 import be.vinci.pae.business.factories.RatingFactoryImpl;
 import be.vinci.pae.business.factories.TypeFactory;
 import be.vinci.pae.business.factories.TypeFactoryImpl;
-import be.vinci.pae.business.ucc.AddressUCC;
-import be.vinci.pae.business.ucc.AddressUCCImpl;
 import be.vinci.pae.business.ucc.InterestUCC;
 import be.vinci.pae.business.ucc.InterestUCCImpl;
 import be.vinci.pae.business.ucc.MemberUCC;
@@ -70,7 +68,6 @@ public class TestBinder extends AbstractBinder {
     bind(InterestUCCImpl.class).to(InterestUCC.class).in(Singleton.class);
     bind(ObjectUCCImpl.class).to(ObjectUCC.class).in(Singleton.class);
     bind(OfferUCCImpl.class).to(OfferUCC.class).in(Singleton.class);
-    bind(AddressUCCImpl.class).to(AddressUCC.class).in(Singleton.class);
     bind(RatingUCCImpl.class).to(RatingUCC.class).in(Singleton.class);
 
     bind(Mockito.mock(AddressDAOImpl.class)).to(AddressDAO.class);

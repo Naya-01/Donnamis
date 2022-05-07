@@ -5,6 +5,9 @@ import jakarta.ws.rs.core.Response;
 
 public class FatalException extends WebApplicationException {
 
+  /**
+   * Make an InternalServerErrorException.
+   */
   public FatalException() {
     super(Response.Status.INTERNAL_SERVER_ERROR);
   }

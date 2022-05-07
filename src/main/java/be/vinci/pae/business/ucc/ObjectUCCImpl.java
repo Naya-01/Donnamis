@@ -5,7 +5,6 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.awt.image.BufferedImage;
@@ -24,7 +23,7 @@ public class ObjectUCCImpl implements ObjectUCC {
   /**
    * Get the picture of an object.
    *
-   * @param id of the oject
+   * @param id of the object
    * @return picture as file
    */
   public BufferedImage getPicture(int id) {
@@ -104,11 +103,10 @@ public class ObjectUCCImpl implements ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version   : version of the object
    * @return object updated
    */
   @Override
-  public ObjectDTO updateOne(ObjectDTO objectDTO, int version) {
+  public ObjectDTO updateOne(ObjectDTO objectDTO) {
     ObjectDTO object;
     try {
       dalService.startTransaction();
@@ -116,7 +114,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (object == null) {
         throw new NotFoundException("Objet non trouvé");
       }
-      if (!objectDTO.getVersion().equals(version)) {
+      if (!object.getVersion().equals(objectDTO.getVersion())) {
         throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
       }
       object = objectDAO.updateOne(objectDTO);
@@ -133,6 +131,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
+   * @param version      of the object
    * @param memberId     owner of the object.
    * @return Object modified.
    */
@@ -148,7 +147,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       }
 
       if (!objectDTO.getIdOfferor().equals(memberId)) {
-        throw new UnauthorizedException("Cet objet ne vous appartient pas");
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
       if (!objectDTO.getVersion().equals(version)) {

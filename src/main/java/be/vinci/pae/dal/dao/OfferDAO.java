@@ -9,12 +9,16 @@ public interface OfferDAO {
   /**
    * Get all offers.
    *
-   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param searchPattern the search pattern (empty -> all) according to their type, description,
+   *                      username and lastname
    * @param idMember      the member id if you want only your offers (0 -> all)
    * @param type          the type of object that we want
+   * @param dateText      the max date late
+   * @param objectStatus  the status of object that we want
    * @return list of offers
    */
-  List<OfferDTO> getAll(String searchPattern, int idMember, String type, String objectStatus);
+  List<OfferDTO> getAll(String searchPattern, int idMember, String type, String objectStatus,
+                          String dateText);
 
   /**
    * Get the last six offers posted.
@@ -30,14 +34,6 @@ public interface OfferDAO {
    * @return an offer that match with the idOffer or null
    */
   OfferDTO getOne(int idOffer);
-
-  /**
-   * Get the offer with the id of its object.
-   *
-   * @param idObject the id of the object
-   * @return an offer that match with the idObject or null
-   */
-  OfferDTO getOneByObject(int idObject);
 
 
   /**
@@ -76,9 +72,10 @@ public interface OfferDAO {
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
-  List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver);
+  List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver, String searchPattern);
 
   /**
    * Get a map of data about a member (nb of received object, nb of not colected objects, nb of

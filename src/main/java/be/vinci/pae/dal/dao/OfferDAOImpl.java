@@ -10,6 +10,7 @@ import be.vinci.pae.dal.services.DALBackendService;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.FatalException;
 import jakarta.inject.Inject;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,14 +34,17 @@ public class OfferDAOImpl implements OfferDAO {
   /**
    * Get all offers.
    *
-   * @param searchPattern the search pattern (empty -> all) according to their type, description
+   * @param searchPattern the search pattern (empty -> all) according to their type, description,
+   *                      username and lastname
    * @param idMember      the member id if you want only your offers (0 -> all)
    * @param type          the type of object that we want
+   * @param objectStatus  the status of object that we want
+   * @param dateText      the max date late
    * @return list of offers
    */
   @Override
   public List<OfferDTO> getAll(String searchPattern, int idMember, String type,
-      String objectStatus) {
+      String objectStatus, String dateText) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
         + "       ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
         + "       ty.is_default, of.status, of.version, ob.version "
@@ -50,9 +54,8 @@ public class OfferDAOImpl implements OfferDAO {
         + "FROM donnamis.offers of2 WHERE of2.id_object = of.id_object ORDER BY of.date DESC)";
 
     if (searchPattern != null && !searchPattern.isEmpty()) {
-      // Search /!\ nom de l'offreur, type
       query += "AND (LOWER(mb.username) LIKE ? OR LOWER(of.time_slot) LIKE ?"
-          + " OR LOWER(ob.description) LIKE ?) ";
+          + " OR LOWER(ob.description) LIKE ? OR LOWER(mb.lastname) LIKE ?) ";
     }
     if (type != null && !type.isEmpty()) {
       query += "AND ty.type_name = ? ";
@@ -63,12 +66,15 @@ public class OfferDAOImpl implements OfferDAO {
     if (objectStatus != null && !objectStatus.isEmpty()) {
       query += "AND LOWER(of.status) LIKE ? ";
     }
+    if (dateText != null && !dateText.isBlank()) {
+      query += "AND of.date >= ? ";
+    }
     query += " ORDER BY of.date DESC";
 
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       int argCounter = 1;
       if (searchPattern != null && !searchPattern.isEmpty()) {
-        for (argCounter = 1; argCounter <= 3; argCounter++) {
+        for (argCounter = 1; argCounter <= 4; argCounter++) {
           preparedStatement.setString(argCounter, "%" + searchPattern.toLowerCase() + "%");
         }
       }
@@ -82,6 +88,10 @@ public class OfferDAOImpl implements OfferDAO {
       }
       if (objectStatus != null && !objectStatus.isEmpty()) {
         preparedStatement.setString(argCounter, objectStatus);
+        argCounter++;
+      }
+      if (dateText != null && !dateText.isBlank()) {
+        preparedStatement.setDate(argCounter, Date.valueOf(dateText));
       }
       return getOffersWithResultSet(preparedStatement.executeQuery());
     } catch (SQLException e) {
@@ -132,22 +142,12 @@ public class OfferDAOImpl implements OfferDAO {
   }
 
   /**
-   * Get the offer with the id of its object.
+   * Construct an offer with its old date on base of a query.
    *
    * @param idObject the id of the object
-   * @return an offer that match with the idObject or null
+   * @param query the SQL query to execute
+   * @return the constructed offerDTO
    */
-  @Override
-  public OfferDTO getOneByObject(int idObject) {
-    String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, "
-        + "    ty.id_type, ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, "
-        + "    ty.is_default, of.status, of.version, ob.version "
-        + "FROM donnamis.types ty , donnamis.objects ob, donnamis.offers of "
-        + "WHERE ty.id_type = ob.id_type AND of.id_object = ob.id_object  "
-        + "AND of.id_object = ? ORDER BY of.date DESC LIMIT 2";
-    return getOfferDTOWithOldDate(idObject, query);
-  }
-
   private OfferDTO getOfferDTOWithOldDate(int idObject, String query) {
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idObject);
@@ -302,23 +302,33 @@ public class OfferDAOImpl implements OfferDAO {
    * Get all offers received by a member.
    *
    * @param idReceiver the id of the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @Override
-  public List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver) {
+  public List<OfferDTO> getAllGivenAndAssignedOffers(int idReceiver, String searchPattern) {
     String query = "SELECT of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
         + "ob.description, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default, "
         + "of.status, of.version, ob.version, MAX(of.date) as \"date_premiere_offre\" "
         + "FROM donnamis.objects ob, donnamis.types ty, donnamis.offers of, donnamis.interests it "
         + "WHERE ob.id_object = of.id_object AND ob.id_type = ty.id_type "
         + "AND it.id_object = ob.id_object AND (it.status = 'received' or it.status = 'assigned')"
-        + " AND it.id_member = ? "
-        + "AND (of.status = 'given' OR of.status = 'assigned') "
-        + "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, ob.description, "
-        + "of.version, ob.version, ob.status, ob.image, ob.id_offeror, ty.type_name, ty.is_default "
-        + "ORDER BY date_premiere_offre DESC";
+        + " AND it.id_member = ? AND (of.status = 'given' OR of.status = 'assigned') ";
+
+    if (searchPattern != null && !searchPattern.isBlank()) {
+      query += "AND (LOWER(of.time_slot) LIKE ? OR LOWER(ob.description) LIKE ?) ";
+    }
+    query += "GROUP BY of.id_offer, of.date, of.time_slot, of.id_object, ty.id_type, "
+        + "ob.description, of.version, ob.version, ob.status, ob.image, ob.id_offeror, "
+        + "ty.type_name, ty.is_default ORDER BY date_premiere_offre DESC";
+
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setInt(1, idReceiver);
+      if (searchPattern != null && !searchPattern.isBlank()) {
+        for (int i = 2; i <= 3; i++) {
+          preparedStatement.setString(i, "%" + searchPattern.toLowerCase() + "%");
+        }
+      }
       return getOffersWithResultSet(preparedStatement.executeQuery());
     } catch (SQLException e) {
       throw new FatalException(e);
@@ -385,6 +395,12 @@ public class OfferDAOImpl implements OfferDAO {
     }
   }
 
+  /**
+   * Construct an offer on base of the resultset.
+   *
+   * @param resultSet that contains all information for the offers
+   * @return the constructed offerDTO
+   */
   private OfferDTO getOfferWithResultSet(ResultSet resultSet) {
     try {
       OfferDTO offerDTO = offerFactory.getOfferDTO();

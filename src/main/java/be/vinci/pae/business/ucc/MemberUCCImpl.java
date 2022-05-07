@@ -76,8 +76,9 @@ public class MemberUCCImpl implements MemberUCC {
   /**
    * Update the profil picture of the member.
    *
-   * @param path of the picture
-   * @param id   of the member
+   * @param path    of the picture
+   * @param id      of the member
+   * @param version of the member
    * @return memberDTO updated
    */
   @Override

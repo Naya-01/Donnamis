@@ -68,6 +68,7 @@ public class OfferResource {
       @DefaultValue("") @QueryParam("self") String offeror,
       @DefaultValue("") @QueryParam("type") String type,
       @DefaultValue("") @QueryParam("status") String objectStatus,
+      @DefaultValue("") @QueryParam("date") String dateText,
       @Context ContainerRequest request
   ) {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getOffers");
@@ -80,7 +81,8 @@ public class OfferResource {
         idOfferor = Integer.parseInt(offeror);
       } catch (Exception ignored) { /* ignore this exception */ }
     }
-    List<OfferDTO> offerDTOList = offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus);
+    List<OfferDTO> offerDTOList =
+        offerUcc.getOffers(searchPattern, idOfferor, type, objectStatus, dateText);
     return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 
@@ -194,17 +196,19 @@ public class OfferResource {
    * Get all offers received by a member.
    *
    * @param request data of the member connected
+   * @param search the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @GET
   @Authorize
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/givenAndAssignedOffers/")
-  public List<OfferDTO> getGivenAndAssigned(@Context ContainerRequest request) {
+  public List<OfferDTO> getGivenAndAssigned(@Context ContainerRequest request,
+      @QueryParam("search") String search) {
 
     Logger.getLogger("Log").log(Level.INFO, "OfferResource getGivenOffers");
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
-    List<OfferDTO> offerDTOList = offerUcc.getGivenAndAssignedOffers(memberRequest);
+    List<OfferDTO> offerDTOList = offerUcc.getGivenAndAssignedOffers(memberRequest, search);
     return JsonViews.filterPublicJsonViewAsList(offerDTOList, OfferDTO.class);
   }
 

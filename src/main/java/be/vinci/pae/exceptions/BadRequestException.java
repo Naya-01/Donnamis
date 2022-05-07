@@ -5,12 +5,15 @@ import jakarta.ws.rs.core.Response;
 
 public class BadRequestException extends WebApplicationException {
 
+  /**
+   * Make a BadRequestException.
+   */
   public BadRequestException() {
     super(Response.Status.BAD_REQUEST);
   }
 
   /**
-   * Make an BadRequestException with the custom message.
+   * Make a BadRequestException with the custom message.
    *
    * @param message custom error message
    */

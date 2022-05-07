@@ -69,8 +69,7 @@ public interface InterestUCC {
 
 
   /**
-   * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
-   * send_notification field /!\
+   * Mark a notification shown.
    *
    * @param idMember of the member
    * @param member   owner of the object or the one to update notification.

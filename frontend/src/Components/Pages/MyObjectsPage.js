@@ -111,7 +111,7 @@ const MyObjectsPage = async () => {
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
   const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,
-      type, status);
+      type, status, "");
   memberCards.innerHTML = ``;
   if (!offers) { // objects is empty
     return;
@@ -164,7 +164,8 @@ const reofferButton = async (buttonCard, offer) => {
   reofferButton.addEventListener("click", async () => {
     if (!(await OfferLibrary.prototype.addOffer(
         offer.timeSlot,
-        offer.object.idObject
+        offer.object.idObject,
+        offer.object.version
     ))) {
       return;
     }
@@ -281,7 +282,7 @@ const interestedButton = async (buttonCard, offer) => {
           phone = "";
         }
         let username = interest.member.username;
-
+        let name = interest.member.firstname +" "+interest.member.lastname;
         let availabilityDate = "Date de disponibilité : "
             + interest.availabilityDate[2]
             + "/" + interest.availabilityDate[1] + "/"
@@ -299,7 +300,7 @@ const interestedButton = async (buttonCard, offer) => {
                   <img class="img-thumbnail" src="${image}" alt="image">
                 </div>
                 <div class="col-7 mt-3">
-                  <p class="fs-4">${username} ${phone}</p>
+                  <p class="fs-4">${username} (${name}) ${phone}</p>
                   <span class="text-secondary fs-5">${availabilityDate}</span>
                 </div>`
 

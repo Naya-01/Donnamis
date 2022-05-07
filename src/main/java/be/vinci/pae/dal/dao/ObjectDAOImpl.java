@@ -32,7 +32,7 @@ public class ObjectDAOImpl implements ObjectDAO {
    */
   @Override
   public ObjectDTO updateObjectPicture(String path, int id) {
-    String query = "UPDATE donnamis.objects SET image=? WHERE id_object=?";
+    String query = "UPDATE donnamis.objects SET image=? , version = version + 1 WHERE id_object=?";
     try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
       preparedStatement.setString(1, path);
       preparedStatement.setInt(2, id);
@@ -62,27 +62,6 @@ public class ObjectDAOImpl implements ObjectDAO {
       throw new FatalException(e);
     }
     return objectDTO;
-  }
-
-  /**
-   * Get all objects that we want to retrieve by his status.
-   *
-   * @param status : the status of the objects that we want to retrieve
-   * @return the object
-   */
-  @Override
-  public List<ObjectDTO> getAllByStatus(String status) {
-    String query = "SELECT id_object, id_type, description, status, image, id_offeror, version "
-        + "FROM donnamis.objects WHERE status = ?";
-
-    List<ObjectDTO> objectDTOList;
-    try (PreparedStatement preparedStatement = dalBackendService.getPreparedStatement(query)) {
-      preparedStatement.setString(1, status);
-      objectDTOList = getObjectListDTO(preparedStatement);
-    } catch (SQLException e) {
-      throw new FatalException(e);
-    }
-    return objectDTOList;
   }
 
   /**

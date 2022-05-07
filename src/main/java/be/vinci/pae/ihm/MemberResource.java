@@ -161,8 +161,9 @@ public class MemberResource {
 
     MemberDTO requestMember = (MemberDTO) request.getProperty("user");
     if (!requestMember.getRole().equals("administrator")
-        && (memberDTO.getMemberId() != requestMember.getMemberId() || memberDTO.getRole() != null
-        || memberDTO.getStatus() != null || memberDTO.getReasonRefusal() != null)) {
+        && (!memberDTO.getMemberId().equals(requestMember.getMemberId())
+        || memberDTO.getRole() != null || memberDTO.getStatus() != null
+        || memberDTO.getReasonRefusal() != null)) {
       throw new UnauthorizedException();
     }
     return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);

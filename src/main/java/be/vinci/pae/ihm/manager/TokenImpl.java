@@ -22,6 +22,13 @@ public class TokenImpl implements Token {
   @Inject
   private MemberUCC memberUCC;
 
+  /**
+   * Make a token with an expiration date.
+   *
+   * @param memberDTO Member that'll receive the token
+   * @param date      the expiration date token
+   * @return a token
+   */
   private String getToken(MemberDTO memberDTO, Date date) {
     String token = null;
     try {

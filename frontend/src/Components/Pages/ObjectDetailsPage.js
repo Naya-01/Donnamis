@@ -214,6 +214,12 @@ const ObjectDetailsPage = async () => {
     divB.appendChild(new_button);
     if (english_status === "given") {
       new_button.remove();
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
+      if (current_rating === undefined) {
+        displayRating(null);
+      } else {
+        displayRating(current_rating);
+      }
     }
   }
   // if this is not the object of the member connected
@@ -274,12 +280,19 @@ function displayAddInterest(versionObject, versionOffer) {
   input_date.id = "input_date";
   input_date.type = "date";
   let date = new Date();
+  // Put a zero in front of month if it is a number < 10
   let month = "";
   if (date.getMonth() % 10 !== 0) {
     month = "0"
   }
   month += (date.getMonth() + 1);
-  let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+  // Put a zero in front of day if it is a number < 10
+  let day = "";
+  if (date.getDate() % 10 !== 0) {
+    day = "0"
+  }
+  day += date.getDate();
+  let dateActual = date.getFullYear() + "-" + month + "-" + day;
   input_date.value = dateActual;
   input_date.min = dateActual;
   document.getElementById("divDate").appendChild(labelDate);
@@ -393,6 +406,7 @@ function displayRating(current_rating) {
       || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
+    pNoRating.id = "PnoRating";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
   }
@@ -432,7 +446,7 @@ function displayRating(current_rating) {
 
 /**
  * Change elements of the html to have a text.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToText(e) {
   e.preventDefault();
@@ -475,7 +489,7 @@ function changeToText(e) {
 
 /**
  * Change elements of the html to have a form.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToForm(e) {
   e.preventDefault();
@@ -567,7 +581,7 @@ function changeToForm(e) {
 
 /**
  * Send to the backend all informations to update an object
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function updateObject(e) {
   e.preventDefault();
@@ -606,18 +620,39 @@ async function updateObject(e) {
   // Update the image
   let fileInput = document.querySelector('input[name=file]');
   let objectWithImage;
-  if (fileInput.files[0] !== undefined) { // if there is an image
-    let formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData,
-        offer.object.idObject, versionObject);
+
+  //if the image has been modified
+  if (fileInput.files[0] !== undefined) {
+    let types = ["image/jpeg", "image/jpg", "image/png"];
+    let canBeUpload = false;
+    for (const type in types) {
+      if (fileInput.files[0].type === types[type]) {
+        canBeUpload = true;
+      }
+    }
+
+    if (!canBeUpload) {
+      bottomNotification.fire({
+        icon: 'error',
+        title: "Nous n'acceptons que des images png, jpeg et jpg."
+      })
+      return;
+    } else {
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      objectWithImage = await objectLibrary.setImage(formData,
+          offer.object.idObject, versionObject);
+      versionObject = objectWithImage.version;
+    }
   }
 
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject++,
-      versionOffer++);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
   if (newOffer !== undefined) {
+    versionOffer = versionOffer + 1;
+    versionObject = versionObject + 1;
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
@@ -639,7 +674,7 @@ async function updateObject(e) {
 
 /**
  * Display a popup to add a rating
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function ratingPopUp(e) {
   e.preventDefault();
@@ -671,7 +706,11 @@ async function ratingPopUp(e) {
           title: 'Votre note a bien été prise en compte.'
         })
         document.getElementById("buttonGivenRating").remove(); // remove the button
-        displayRating(rating.rating, rating.comment); // display the new rating
+        displayRating(rating); // display the new rating
+        let pNoRating = document.getElementById("PnoRating");
+        if (pNoRating !== null) {
+          pNoRating.remove();
+        }
       }
     }
   })
@@ -683,7 +722,7 @@ async function ratingPopUp(e) {
 
 /**
  * Change the color of the stars in function of the note
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeColorStars(e) {
   e.preventDefault();

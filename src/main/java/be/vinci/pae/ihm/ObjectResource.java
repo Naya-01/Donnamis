@@ -4,6 +4,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
@@ -80,7 +81,7 @@ public class ObjectResource {
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
 
     if (!imageManager.isAuthorized(fileMime)) {
-      throw new BadRequestException("Le type du fichier est incorrect."
+      throw new ForbiddenException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
 
@@ -144,7 +145,7 @@ public class ObjectResource {
   @Authorize
   public ObjectDTO updateOne(ObjectDTO objectDTO) {
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource updateOne");
-    ObjectDTO object = objectUCC.updateOne(objectDTO, objectDTO.getVersion());
+    ObjectDTO object = objectUCC.updateOne(objectDTO);
     object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
     return object;
   }

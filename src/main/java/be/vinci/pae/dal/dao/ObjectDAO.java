@@ -23,15 +23,7 @@ public interface ObjectDAO {
    */
   ObjectDTO getOne(int id);
 
-  /**
-   * Get all objects that we want to retrieve by his status.
-   *
-   * @param status : the status of the objects that we want to retrieve
-   * @return the object
-   */
-  List<ObjectDTO> getAllByStatus(String status);
-
-
+  
   /**
    * Get all objects of a member that we want to retrieve by his id.
    *
