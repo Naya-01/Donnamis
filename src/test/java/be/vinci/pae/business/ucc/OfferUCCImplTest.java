@@ -1417,6 +1417,34 @@ class OfferUCCImplTest {
     );
   }
 
+  @DisplayName("Test addOffer with 5 interests V2")
+  @Test
+  public void testAddOfferSuccessWith5InterestsV2() {
+    OfferDTO offerDTO = getNewOffer();
+    offerDTO.getObject().setIdObject(3);
+    offerDTO.getObject().setIdOfferor(13);
+    offerDTO.setStatus("not_collected");
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(13);
+    Mockito.when(offerDAO.getLastObjectOffer(offerDTO.getObject().getIdObject()))
+        .thenReturn(offerDTO);
+    Mockito.when(interestDAO.getAllCount(offerDTO.getObject().getIdObject()))
+        .thenReturn(5);
+    Mockito.when(offerDAO.addOne(offerDTO))
+        .thenReturn(offerDTO);
+
+    OfferDTO offerDTOAdded = offerUCC.addOffer(offerDTO, memberDTO);
+
+    assertAll(
+        () -> assertEquals("interested",
+            offerDTOAdded.getObject().getStatus()),
+        () -> assertEquals("interested",
+            offerDTOAdded.getStatus()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
   //  ---------------------- GET Given AND ASSIGNED Offers UCC  --------------------------  //
 
   @DisplayName("Test getGivenAndAssignedOffers with empty list")
