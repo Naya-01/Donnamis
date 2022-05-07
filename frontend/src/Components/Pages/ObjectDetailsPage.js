@@ -215,10 +215,9 @@ const ObjectDetailsPage = async () => {
     if (english_status === "given") {
       new_button.remove();
       let current_rating = await ratingLibrary.getOne(offer.object.idObject);
-      if (current_rating === undefined){
+      if (current_rating === undefined) {
         displayRating(null);
-      }
-      else{
+      } else {
         displayRating(current_rating);
       }
     }
@@ -242,12 +241,14 @@ const ObjectDetailsPage = async () => {
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
 
-    if (!isInterested && (english_status === "interested" || english_status === "available")) {
+    if (!isInterested && (english_status === "interested" || english_status
+        === "available")) {
       displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(offer.object.idObject);
       if (current_rating === undefined) { // if there is no rating yet
-        let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
+        let current_interest = await interestLibrary.getOneInterest(
+            offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -612,11 +613,30 @@ async function updateObject(e) {
   // Update the image
   let fileInput = document.querySelector('input[name=file]');
   let objectWithImage;
-  if (fileInput.files[0] !== undefined) { // if there is an image
-    let formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
-    versionObject = objectWithImage.version;
+
+  //if the image has been modified
+  if (fileInput.files[0] !== undefined) {
+    let types = ["image/jpeg", "image/jpg", "image/png"];
+    let canBeUpload = false;
+    for (const type in types) {
+      if (fileInput.files[0].type === types[type]) {
+        canBeUpload = true;
+      }
+    }
+
+    if (!canBeUpload) {
+      bottomNotification.fire({
+        icon: 'error',
+        title: "Nous n'acceptons que des images png, jpeg et jpg."
+      })
+      return;
+    } else {
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      objectWithImage = await objectLibrary.setImage(formData,
+          offer.object.idObject, versionObject);
+      versionObject = objectWithImage.version;
+    }
   }
 
   // Call the function to update the offer
@@ -624,8 +644,8 @@ async function updateObject(e) {
       new_description, idType, english_status, statusObject, versionObject,
       versionOffer);
   if (newOffer !== undefined) {
-    versionOffer = versionOffer+1;
-    versionObject = versionObject+1;
+    versionOffer = versionOffer + 1;
+    versionObject = versionObject + 1;
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
@@ -671,7 +691,8 @@ async function ratingPopUp(e) {
         })
         return;
       }
-      let rating = await ratingLibrary.addRating(note, text_rating, offer.object.idObject);
+      let rating = await ratingLibrary.addRating(note, text_rating,
+          offer.object.idObject);
       if (rating !== undefined) {
         bottomNotification.fire({
           icon: 'success',
@@ -680,7 +701,7 @@ async function ratingPopUp(e) {
         document.getElementById("buttonGivenRating").remove(); // remove the button
         displayRating(rating); // display the new rating
         let pNoRating = document.getElementById("PnoRating");
-        if(pNoRating !== null){
+        if (pNoRating !== null) {
           pNoRating.remove();
         }
       }
