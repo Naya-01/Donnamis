@@ -218,6 +218,28 @@ class MemberUCCImplTest {
     assertThrows(NotFoundException.class, () -> memberUCC.login("", passwd1));
   }
 
+  @DisplayName("Test login function with prevented status member")
+  @Test
+  public void testLoginWithPreventedStatusMember() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(12);
+    memberDTO.setUsername("marc");
+    memberDTO.setStatus("prevented");
+    Member member = (Member) memberDTO;
+    memberDTO.setPassword(member.hashPassword(passwd1));
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getUsername())).thenReturn(memberDTO);
+    Mockito.when(mockMemberDAO.updateOne(memberDTO)).thenReturn(memberDTO);
+
+    MemberDTO memberDTOLogin = memberUCC.login(memberDTO.getUsername(), passwd1);
+    assertAll(
+        () -> assertEquals("valid", memberDTOLogin.getStatus()),
+        () -> assertNull(memberDTOLogin.getPassword()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
   @DisplayName("Test login function with username and password fields empty")
   @Test
   public void testLoginFunctionUsernameAndPasswordAreEmpty() {
@@ -255,7 +277,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,1)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, 1)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -322,7 +344,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,3)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, 3)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -334,7 +356,7 @@ class MemberUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(idMember)).thenReturn(memberValid1);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> memberUCC.updateProfilPicture(pathImage, idMember,null)),
+            () -> memberUCC.updateProfilPicture(pathImage, idMember, null)),
         () -> Mockito.verify(mockMemberDAO, Mockito.atLeastOnce()).getOne(idMember)
     );
   }
@@ -779,7 +801,6 @@ class MemberUCCImplTest {
     );
   }
 
-
   //  -----------------------------  GET MEMBER UCC  -----------------------------------  //
 
   @DisplayName("Test getMember success")
@@ -853,4 +874,68 @@ class MemberUCCImplTest {
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  //  -----------------------------  GET PICTURE UCC  -----------------------------------  //
+
+  @DisplayName("Test preventMember with non existent member")
+  @Test
+  public void testPreventMemberWithNonExistentMember() {
+    MemberDTO memberNonExistent = getMemberNewMember();
+
+    Mockito.when(mockMemberDAO.getOne(memberNonExistent.getMemberId())).thenReturn(null);
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> memberUCC.preventMember(memberNonExistent)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test preventMember with not same member version")
+  @Test
+  public void testPreventMemberWithNotSameMemberVersion() {
+    MemberDTO memberExistent = getMemberNewMember();
+    memberExistent.setVersion(12);
+    MemberDTO memberFromGetOne = getMemberNewMember();
+    memberFromGetOne.setVersion(13);
+
+    Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberFromGetOne);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> memberUCC.preventMember(memberExistent)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test preventMember success")
+  @Test
+  public void testPreventMemberSuccess() {
+    MemberDTO memberExistent = getMemberNewMember();
+    memberExistent.setVersion(13);
+    memberExistent.setMemberId(10);
+    memberExistent.getAddress().setIdMember(10);
+
+    MemberDTO memberFromGetOne = getMemberNewMember();
+    memberFromGetOne.setVersion(13);
+    memberFromGetOne.getAddress().setIdMember(memberExistent.getMemberId());
+    memberFromGetOne.setMemberId(memberExistent.getMemberId());
+    memberFromGetOne.setStatus("prevented");
+
+    Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberFromGetOne);
+    Mockito.when(mockMemberDAO.updateOne(memberExistent)).thenReturn(memberFromGetOne);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(memberFromGetOne.getMemberId()))
+        .thenReturn(memberFromGetOne.getAddress());
+
+    MemberDTO memberDTOUpdated = memberUCC.preventMember(memberExistent);
+
+    assertAll(
+        () -> assertEquals("prevented", memberExistent.getStatus()),
+        () -> assertEquals("prevented", memberDTOUpdated.getStatus()),
+        () -> assertEquals(memberFromGetOne, memberDTOUpdated),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
+  }
+
 }

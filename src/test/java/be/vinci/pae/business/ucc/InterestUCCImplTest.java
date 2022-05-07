@@ -743,14 +743,14 @@ class InterestUCCImplTest {
   }
 
   //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
-  @DisplayName("Test markNotificationShown with non existent interest in db")
+  @DisplayName("Test markNotificationShown with non existent object in db")
   @Test
-  public void testMarkNotificationShownWithNonExistentInterestInDb() {
+  public void testMarkNotificationShownWithNonExistentObjectInDb() {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
-    Mockito.when(mockInterestDAO.getOne(nonExistentId, memberDTO.getMemberId()))
+    Mockito.when(mockObjectDAO.getOne(nonExistentId))
         .thenReturn(null);
 
     assertAll(
@@ -762,6 +762,59 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test markNotificationShown with non existent interest in db")
+  @Test
+  public void testMarkNotificationShownWithNonExistentInterestInDb() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown with not the same user interest as the requester")
+  @Test
+  public void testMarkNotificationShownWithNotTheSameUserInterestAsTheRequester() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(3);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), 1))
+        .thenReturn(interestFactory.getInterestDTO());
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
+                1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+
   @DisplayName("Test markNotificationShown with an interest already shown")
   @Test
   public void testMarkNotificationShownWithAnInterestAlreadyShown() {
@@ -769,10 +822,16 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
     InterestDTO interestDTO = interestFactory.getInterestDTO();
     interestDTO.setIsNotificated(false);
-    interestDTO.setIdObject(12);
+    interestDTO.setIdObject(objectDTO.getIdObject());
 
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
@@ -792,7 +851,9 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
 
     InterestDTO interestDTO = interestFactory.getInterestDTO();
     interestDTO.setIsNotificated(true);
