@@ -28,6 +28,7 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mockito;
 
 class MemberUCCImplTest {
@@ -216,6 +217,27 @@ class MemberUCCImplTest {
   public void testLoginFunctionUsernameIsEmptyForExistentPasswordInTheDB() {
     Mockito.when(mockMemberDAO.getOne("")).thenReturn(null);
     assertThrows(NotFoundException.class, () -> memberUCC.login("", passwd1));
+  }
+
+  @DisplayName("Test login function with prevented status member")
+  @Test
+  public void testLoginWithPreventedStatusMember() {
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(12);
+    memberDTO.setUsername("marc");
+    memberDTO.setPassword(BCrypt.hashpw(passwd1, BCrypt.gensalt()));
+    memberDTO.setStatus("prevented");
+
+    Mockito.when(mockMemberDAO.getOne(memberDTO.getUsername())).thenReturn(memberDTO);
+    Mockito.when(mockMemberDAO.updateOne(memberDTO)).thenReturn(memberDTO);
+
+    MemberDTO memberDTOLogin = memberUCC.login(memberDTO.getUsername(), passwd1);
+    assertAll(
+        () -> assertEquals("valid", memberDTOLogin.getStatus()),
+        () -> assertNull(memberDTOLogin.getPassword()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
+    );
   }
 
   @DisplayName("Test login function with username and password fields empty")
