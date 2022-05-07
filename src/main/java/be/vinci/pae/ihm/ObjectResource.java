@@ -6,7 +6,6 @@ import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
