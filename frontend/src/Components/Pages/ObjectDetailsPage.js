@@ -624,8 +624,8 @@ async function updateObject(e) {
       new_description, idType, english_status, statusObject, versionObject,
       versionOffer);
   if (newOffer !== undefined) {
-    versionOffer = versionOffer+1; //TODO : pq y'a pas la version : newOffer.version
-    versionObject = versionObject+1; //TODO : pareil : newOffer.object.version
+    versionOffer = versionOffer+1;
+    versionObject = versionObject+1;
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
