@@ -35,7 +35,7 @@ public interface ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version : version of the object
+   * @param version   : version of the object
    * @return object updated
    */
   ObjectDTO updateOne(ObjectDTO objectDTO, int version);
@@ -45,8 +45,9 @@ public interface ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
+   * @param memberId     owner of the object.
    * @return Object modified.
    */
-  ObjectDTO updateObjectPicture(String internalPath, int id, int version);
+  ObjectDTO updateObjectPicture(String internalPath, int id, Integer memberId, int version);
 
 }

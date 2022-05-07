@@ -12,8 +12,26 @@ public interface Image {
    * @param file     data of the image
    * @param fileMime MIME of the image
    * @param path     where to save the image
-   * @return true if wrote successfully
    */
-  String writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path,
+  void writeImageOnDisk(InputStream file, FormDataBodyPart fileMime, String path,
       int filename);
+
+
+  /**
+   * Get the finalPath for the attributes.
+   *
+   * @param path     of the folder.
+   * @param id       of the image.
+   * @param fileMime MIME of the image.
+   * @return the string of path.
+   */
+  String getInternalPath(String path, Integer id, FormDataBodyPart fileMime);
+
+  /**
+   * Check if the image is authorized.
+   *
+   * @param fileMime MIME of the image.
+   * @return true if authorized.
+   */
+  boolean isAuthorized(FormDataBodyPart fileMime);
 }

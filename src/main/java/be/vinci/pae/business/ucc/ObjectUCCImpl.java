@@ -5,6 +5,7 @@ import be.vinci.pae.dal.dao.ObjectDAO;
 import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
+import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.utils.Config;
 import jakarta.inject.Inject;
 import java.awt.image.BufferedImage;
@@ -103,7 +104,7 @@ public class ObjectUCCImpl implements ObjectUCC {
    * Update an object.
    *
    * @param objectDTO : object that we want to update.
-   * @param version : version of the object
+   * @param version   : version of the object
    * @return object updated
    */
   @Override
@@ -132,16 +133,22 @@ public class ObjectUCCImpl implements ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
+   * @param memberId     owner of the object.
    * @return Object modified.
    */
   @Override
-  public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
+  public ObjectDTO updateObjectPicture(String internalPath, int id, Integer memberId,
+      int version) {
     ObjectDTO objectDTO;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
+      }
+
+      if (!objectDTO.getIdOfferor().equals(memberId)) {
+        throw new UnauthorizedException("Cet objet ne vous appartient pas");
       }
 
       if (!objectDTO.getVersion().equals(version)) {
@@ -152,8 +159,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (f.exists()) {
         f.delete();
       }
-
-
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

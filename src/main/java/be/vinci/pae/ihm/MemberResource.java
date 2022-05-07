@@ -60,13 +60,15 @@ public class MemberResource {
 
     Logger.getLogger("Log").log(Level.INFO, "MemberResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\",
-        memberDTO.getMemberId());
-
-    if (internalPath == null) {
+    if (!imageManager.isAuthorized(fileMime)) {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
+
+    String internalPath = imageManager.getInternalPath("profils\\", memberDTO.getMemberId(),
+        fileMime);
+    imageManager.writeImageOnDisk(file, fileMime, "profils\\",
+        memberDTO.getMemberId());
     return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId(), version);
   }
 
