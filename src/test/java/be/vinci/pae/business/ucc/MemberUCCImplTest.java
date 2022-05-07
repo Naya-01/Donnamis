@@ -875,7 +875,7 @@ class MemberUCCImplTest {
     MemberDTO memberExistent = getMemberNewMember();
     memberExistent.setVersion(12);
     MemberDTO memberFromGetOne = getMemberNewMember();
-    memberExistent.setVersion(13);
+    memberFromGetOne.setVersion(13);
 
     Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberFromGetOne);
     assertAll(
@@ -883,6 +883,36 @@ class MemberUCCImplTest {
             () -> memberUCC.preventMember(memberExistent)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test preventMember success")
+  @Test
+  public void testPreventMemberSuccess() {
+    MemberDTO memberExistent = getMemberNewMember();
+    memberExistent.setVersion(13);
+    memberExistent.setMemberId(10);
+    memberExistent.getAddress().setIdMember(10);
+
+    MemberDTO memberFromGetOne = getMemberNewMember();
+    memberFromGetOne.setVersion(13);
+    memberFromGetOne.getAddress().setIdMember(memberExistent.getMemberId());
+    memberFromGetOne.setMemberId(memberExistent.getMemberId());
+    memberFromGetOne.setStatus("prevented");
+
+    Mockito.when(mockMemberDAO.getOne(memberExistent.getMemberId())).thenReturn(memberFromGetOne);
+    Mockito.when(mockMemberDAO.updateOne(memberExistent)).thenReturn(memberFromGetOne);
+    Mockito.when(mockAddressDAO.getAddressByMemberId(memberFromGetOne.getMemberId()))
+        .thenReturn(memberFromGetOne.getAddress());
+
+    MemberDTO memberDTOUpdated = memberUCC.preventMember(memberExistent);
+
+    assertAll(
+        () -> assertEquals("prevented", memberExistent.getStatus()),
+        () -> assertEquals("prevented", memberDTOUpdated.getStatus()),
+        () -> assertEquals(memberFromGetOne, memberDTOUpdated),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).commitTransaction()
     );
   }
 
