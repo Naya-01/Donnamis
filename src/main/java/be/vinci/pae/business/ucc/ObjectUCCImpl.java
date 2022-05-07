@@ -115,7 +115,7 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (object == null) {
         throw new NotFoundException("Objet non trouvé");
       }
-      if (!objectDTO.getVersion().equals(version)) {
+      if (!object.getVersion().equals(version)) {
         throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
       }
       object = objectDAO.updateOne(objectDTO);
