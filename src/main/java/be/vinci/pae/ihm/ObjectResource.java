@@ -4,6 +4,7 @@ import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
 import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
@@ -82,7 +83,7 @@ public class ObjectResource {
     ObjectDTO objectDTO = objectUCC.getObject(id);
 
     if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
-      throw new UnauthorizedException("Cette objet ne vous appartient pas");
+      throw new ForbiddenException("Cette objet ne vous appartient pas");
     }
 
     String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\",
