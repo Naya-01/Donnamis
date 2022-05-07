@@ -280,12 +280,19 @@ function displayAddInterest(versionObject, versionOffer) {
   input_date.id = "input_date";
   input_date.type = "date";
   let date = new Date();
+  // Put a zero in front of month if it is a number < 10
   let month = "";
   if (date.getMonth() % 10 !== 0) {
     month = "0"
   }
   month += (date.getMonth() + 1);
-  let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+  // Put a zero in front of day if it is a number < 10
+  let day = "";
+  if (date.getDate() % 10 !== 0) {
+    day = "0"
+  }
+  day += date.getDate();
+  let dateActual = date.getFullYear() + "-" + month + "-" + day;
   input_date.value = dateActual;
   input_date.min = dateActual;
   document.getElementById("divDate").appendChild(labelDate);

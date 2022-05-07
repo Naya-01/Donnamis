@@ -165,7 +165,7 @@ class InterestLibrary {
         Swal.close();
         toast.fire({
           icon: 'success',
-          title: "le membre a été assigné"
+          title: "Le membre a été assigné"
         })
       }
     } catch (err) {

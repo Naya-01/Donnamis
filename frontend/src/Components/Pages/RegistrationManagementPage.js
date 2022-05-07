@@ -172,16 +172,18 @@ const acceptMember = (idMember, version) => {
     document.getElementById("member-card-" + idMember).hidden = true;
 
     // accept member db
-    let role = ""
+    let role = "";
+    let title = "Le membre a été accepté !";
     if (document.getElementById("flexCheckDefault").checked) {
       role = "administrator";
+      title = "Le membre a été accepté en tant qu'administrateur !";
     }
     let memberToUpdate = new Member(null, null, null,
         null, null, null, version, role, null, "valid", idMember);
     await MemberLibrary.prototype.updateMember(memberToUpdate);
     await Toast.fire({
       icon: 'success',
-      title: 'Le membre a été accepté !'
+      title: title
     });
 
   });

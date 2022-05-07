@@ -177,7 +177,7 @@ const offersButtons = async (member, actualizeOfferStats) => {
         "information-object-" + member.memberId);
     informationMember.innerHTML +=
         `<p class="text-secondary">
-          ${countdata.nbNotCollected} offre(s) non-cherchée(s) | ${countdata.nbGiven} offre(s) donnée(s)
+          ${countdata.nbNotCollected} objet(s) non-cherché(s) | ${countdata.nbGiven} objet(s) donné(s)
           </p>`;
   }
 
