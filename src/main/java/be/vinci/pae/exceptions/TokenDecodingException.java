@@ -5,6 +5,9 @@ import jakarta.ws.rs.core.Response;
 
 public class TokenDecodingException extends WebApplicationException {
 
+  /**
+   * Make a TokenDecodingException.
+   */
   public TokenDecodingException() {
     super(Response.Status.UNAUTHORIZED);
   }
@@ -18,6 +21,11 @@ public class TokenDecodingException extends WebApplicationException {
     super(message, Response.Status.UNAUTHORIZED);
   }
 
+  /**
+   * Make an TokenDecodingException with the Throwable.
+   *
+   * @param cause Throwable.
+   */
   public TokenDecodingException(Throwable cause) {
     super(cause.getMessage(), Response.Status.UNAUTHORIZED);
   }
