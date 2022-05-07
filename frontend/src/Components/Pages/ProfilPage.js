@@ -1,4 +1,4 @@
-import noImage from "../../img/noImage.png";
+import profil from "../../img/profil.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import Address from "../../Domain/Address";
 import Member from "../../Domain/Member";
@@ -16,7 +16,7 @@ const translationRoles = new Map([
 ]);
 
 const memberLibrary = new MemberLibrary();
-const toast = new NotificationSA().getNotification("bottom");
+const toast = new NotificationSA().getNotification();
 
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
 const regNumberPhone =
@@ -42,7 +42,7 @@ const modifyProfilRender = async () => {
     <div class="container mt-5">
       <div class="text-center">
         <img src="${image}" class="profil-picture img-thumbnail rounded-circle clickable" alt="profil image" id="image">
-        <input type="file" id="upload" style="display:none" name="upload">
+        <input type="file" id="upload" style="display:none" name="upload" accept=".jpg, .jpeg, .png">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -354,6 +354,7 @@ const modifyProfilRender = async () => {
           icon: 'error',
           title: "Nous n'acceptons que des images png, jpeg et jpg."
         })
+        return;
       } else {
         let formData = new FormData();
         formData.append('file', fileInput.files[0]);
@@ -498,7 +499,7 @@ const ProfilPage = async () => {
   if (member.image) {
     image = "/api/member/getPicture/" + member.memberId;
   } else {
-    image = noImage;
+    image = profil;
   }
   provImage = image;
   await profilRender();
