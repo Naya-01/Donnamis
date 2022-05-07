@@ -844,6 +844,35 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test markNotificationShown with an interest already shown v2")
+  @Test
+  public void testMarkNotificationShownWithAnInterestAlreadyShownV2() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(71);
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIsNotificated(false);
+    interestDTO.setIdObject(objectDTO.getIdObject());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test markNotificationShown success")
   @Test
   public void testMarkNotificationShownSuccess() {
