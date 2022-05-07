@@ -2,6 +2,7 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import noImage from "../../img/noImage.png";
+import profilImage from "../../img/profil.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
@@ -282,7 +283,7 @@ const interestedButton = async (buttonCard, offer) => {
           phone = "";
         }
         let username = interest.member.username;
-        let name = interest.member.firstname +" "+interest.member.lastname;
+        let name = interest.member.firstname + " " + interest.member.lastname;
         let availabilityDate = "Date de disponibilité : "
             + interest.availabilityDate[2]
             + "/" + interest.availabilityDate[1] + "/"
@@ -292,7 +293,7 @@ const interestedButton = async (buttonCard, offer) => {
         if (interest.member.image) {
           image = "/api/member/getPicture/" + interest.member.memberId;
         } else {
-          image = noImage;
+          image = profilImage;
         }
         allInterests += `
               <div class="row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded">
