@@ -50,7 +50,7 @@ CREATE TABLE donnamis.objects
 CREATE TABLE donnamis.ratings
 (
     rating    INTEGER                                         NOT NULL,
-    comment   VARCHAR(100)                                    NOT NULL,
+    comment   VARCHAR(200)                                    NOT NULL,
     id_member INTEGER REFERENCES donnamis.members (id_member) NOT NULL,
     id_object INTEGER REFERENCES donnamis.objects (id_object) NOT NULL,
     PRIMARY KEY (id_object)
