@@ -159,16 +159,33 @@ async function addObject(e) {
     return;
   }
 
+  let canBeUpload = false;
+  let fileInput = document.getElementById("file_input");
+  // check the format of the image if it exists
+  if (fileInput.files[0] !== undefined) {
+    let types = ["image/jpeg", "image/jpg", "image/png"]
+    for (const type in types) {
+      if (fileInput.files[0].type === types[type]) {
+        canBeUpload = true;
+      }
+    }
+    if (!canBeUpload) {
+      bottomNotification.fire({
+        icon: 'error',
+        title: "Nous n'acceptons que des images png, jpeg et jpg."
+      })
+      return;
+    }
+  }
   // Call the backend to add the offer
   let newOffer = await offerLibrary.addFirstOffer(timeSlot, description,
       typeName);
   let idObject = newOffer.object.idObject;
-  let fileInput = document.getElementById("file_input");
   // if there is an image
-  if (fileInput.files[0] !== undefined) {
-    let formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    await objectLibrary.setImage(formData, idObject);
+  if(canBeUpload){
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      await objectLibrary.setImage(formData, idObject);
   }
   Redirect("/");
   let notif = new NotificationSA().getNotification("top-end");
