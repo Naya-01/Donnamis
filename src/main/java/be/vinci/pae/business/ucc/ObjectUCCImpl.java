@@ -23,7 +23,7 @@ public class ObjectUCCImpl implements ObjectUCC {
   /**
    * Get the picture of an object.
    *
-   * @param id of the oject
+   * @param id of the object
    * @return picture as file
    */
   public BufferedImage getPicture(int id) {
@@ -114,6 +114,9 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (object == null) {
         throw new NotFoundException("Objet non trouvé");
       }
+      if (!object.getVersion().equals(objectDTO.getVersion())) {
+        throw new ForbiddenException("Vous n'avez pas la dernière version de l'objet.");
+      }
       object = objectDAO.updateOne(objectDTO);
       dalService.commitTransaction();
     } catch (Exception e) {
@@ -128,16 +131,23 @@ public class ObjectUCCImpl implements ObjectUCC {
    *
    * @param internalPath location of the picture.
    * @param id           of the object.
+   * @param version      of the object
+   * @param memberId     owner of the object.
    * @return Object modified.
    */
   @Override
-  public ObjectDTO updateObjectPicture(String internalPath, int id, int version) {
+  public ObjectDTO updateObjectPicture(String internalPath, int id, Integer memberId,
+      int version) {
     ObjectDTO objectDTO;
     try {
       dalService.startTransaction();
       objectDTO = objectDAO.getOne(id);
       if (objectDTO == null) {
         throw new NotFoundException("Objet non trouvé");
+      }
+
+      if (!objectDTO.getIdOfferor().equals(memberId)) {
+        throw new ForbiddenException("Cet objet ne vous appartient pas");
       }
 
       if (!objectDTO.getVersion().equals(version)) {
@@ -148,8 +158,6 @@ public class ObjectUCCImpl implements ObjectUCC {
       if (f.exists()) {
         f.delete();
       }
-
-
 
       objectDTO = objectDAO.updateObjectPicture(internalPath, id);
       dalService.commitTransaction();

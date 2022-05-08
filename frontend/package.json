@@ -24,6 +24,7 @@
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "bootstrap": "^5.0.1",
+    "bootstrap-datepicker": "^1.9.0",
     "sweetalert2": "^11.4.4"
   }
 }

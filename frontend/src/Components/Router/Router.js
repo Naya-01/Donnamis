@@ -65,7 +65,7 @@ const refreshToken = async () => {
   } else {
     removeSessionObject("user");
     await Navbar();
-    Redirect("/login");
+    Redirect("/");
     return false;
   }
 }

@@ -13,6 +13,7 @@ import be.vinci.pae.dal.services.DALService;
 import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -122,7 +123,7 @@ public class OfferUCCImpl implements OfferUCC {
   }
 
   /**
-   * Update the time slot of an offer or an errorcode.
+   * Update the time slot of an offer or an error code.
    *
    * @param offerDTO an offerDTO that contains the new time slot and the id of the offer
    * @return an offerDTO with the id and the new time slot
@@ -138,13 +139,13 @@ public class OfferUCCImpl implements OfferUCC {
       }
 
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
+        throw new ForbiddenException("Les versions de l'offre ne correspondent pas");
       }
 
       OfferDTO updatedOffer = offerDAO.updateOne(offerDTO);
       if (offerDTO.getObject() != null) {
-        if (!offerDTO.getObject().getVersion().equals(offerFromDB.getObject().getVersion())) {
-          throw new ForbiddenException("Les versions ne correspondent pas");
+        if (!updatedOffer.getObject().getVersion().equals(offerDTO.getObject().getVersion())) {
+          throw new ForbiddenException("Les versions de l'objet ne correspondent pas");
         }
         offerDTO.getObject().setIdObject(offerFromDB.getObject().getIdObject());
         updatedOffer.setObject(objectDAO.updateOne(offerDTO.getObject()));
@@ -162,16 +163,19 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Get all offers.
    *
-   * @param search   the search pattern (empty -> all) according to their type, description
-   * @param idMember the member id if you want only your offers (0 -> all)
-   * @param type     the type of object that we want
+   * @param search       the search pattern (empty -> all) according to their type, description
+   * @param idMember     the member id if you want only your offers (0 -> all)
+   * @param type         the type of object that we want
+   * @param objectStatus the status of object that we want
+   * @param dateText      the max date late
    * @return list of offers
    */
   @Override
-  public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus) {
+  public List<OfferDTO> getOffers(String search, int idMember, String type, String objectStatus,
+      String dateText) {
     try {
       dalService.startTransaction();
-      List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember, type, objectStatus);
+      List<OfferDTO> offerDTO = offerDAO.getAll(search, idMember, type, objectStatus, dateText);
       if (offerDTO.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
@@ -230,15 +234,16 @@ public class OfferUCCImpl implements OfferUCC {
   /**
    * Get all offers received by a member.
    *
-   * @param receiver member
+   * @param receiver the receiver
+   * @param searchPattern the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @Override
-  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver) {
+  public List<OfferDTO> getGivenAndAssignedOffers(MemberDTO receiver, String searchPattern) {
     try {
       dalService.startTransaction();
-      List<OfferDTO> givenOffers = offerDAO.getAllGivenAndAssignedOffers(
-          receiver.getMemberId());
+      List<OfferDTO> givenOffers =
+          offerDAO.getAllGivenAndAssignedOffers(receiver.getMemberId(), searchPattern);
       if (givenOffers.isEmpty()) {
         throw new NotFoundException("Aucune offre");
       }
@@ -281,7 +286,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Check the version of the offer
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
+        throw new ForbiddenException("Les versions de l'offre ne correspondent pas");
       }
 
       // Check version of the object
@@ -304,6 +309,7 @@ public class OfferUCCImpl implements OfferUCC {
       if (interestDTO != null) {
         // Update notification of the interest
         interestDTO.setIsNotificated(true);
+        interestDTO.setNotificationDate(LocalDate.now());
         interestDAO.updateNotification(interestDTO);
 
         // Update status of the interest
@@ -346,7 +352,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Check version of the offer
       if (!offerFromDB.getVersion().equals(offerDTO.getVersion())) {
-        throw new ForbiddenException("Les versions ne correspondent pas");
+        throw new ForbiddenException("Les versions de l'offre ne correspondent pas");
       }
 
       // Check version of the object
@@ -372,6 +378,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // update the notification of the interest
       interestDTO.setIsNotificated(true);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
 
       // Update status of the interest
@@ -444,6 +451,7 @@ public class OfferUCCImpl implements OfferUCC {
 
       // Update interest notification
       interestDTO.setIsNotificated(true);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
 
       // Update interest status

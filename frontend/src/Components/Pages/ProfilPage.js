@@ -1,4 +1,4 @@
-import noImage from "../../img/noImage.png";
+import profil from "../../img/profil.png";
 import MemberLibrary from "../../Domain/MemberLibrary";
 import Address from "../../Domain/Address";
 import Member from "../../Domain/Member";
@@ -8,20 +8,21 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect} from "../Router/Router";
 
 const pageDiv = document.querySelector("#page");
+
+//translation map of member roles
 const translationRoles = new Map([
   ['member', 'Membre'],
   ['administrator', 'Administrateur']
 ]);
 
 const memberLibrary = new MemberLibrary();
-const toast = new NotificationSA().getNotification("bottom");
+const toast = new NotificationSA().getNotification();
 
 const regOnlyNumbersAndDash = new RegExp('^[0-9-]+$');
 const regNumberPhone =
     new RegExp('^[+]?[(]?[0-9]{3}[)]?[- .]?[0-9]{3}[- .]?[0-9]{4,6}$');
 //starting with numbers
 const regOnlyLettersAndNumbers = new RegExp('^[0-9]+[a-zA-Z]?$');
-const regOnlyLettersAndDash = new RegExp('^[a-zA-Z éàùöèê\'ûî-]+$');
 
 let member = null;
 let image;
@@ -41,7 +42,7 @@ const modifyProfilRender = async () => {
     <div class="container mt-5">
       <div class="text-center">
         <img src="${image}" class="profil-picture img-thumbnail rounded-circle clickable" alt="profil image" id="image">
-        <input type="file" id="upload" style="display:none" name="upload">
+        <input type="file" id="upload" style="display:none" name="upload" accept=".jpg, .jpeg, .png">
         <p>${translationRoles.get(member.role)}</p>
         
         <div class=" ps-5 pe-5 pb-5">
@@ -236,22 +237,20 @@ const modifyProfilRender = async () => {
       })
       return;
     }
-    if (lastname.value.trim().length > 50 ||
-        !regOnlyLettersAndDash.test(lastname.value.trim())) {
+    if (lastname.value.trim().length > 50) {
       lastname.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le nom est trop grand ou est invalide'
+        title: 'Le nom est trop grand'
       })
       return;
     }
 
-    if (firstname.value.trim().length > 50 ||
-        !regOnlyLettersAndDash.test(firstname.value.trim())) {
+    if (firstname.value.trim().length > 50) {
       firstname.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le prénom est trop grand ou est invalide'
+        title: 'Le prénom est trop grand'
       })
       return;
     }
@@ -285,12 +284,11 @@ const modifyProfilRender = async () => {
       return;
     }
 
-    if (street.value.trim().length > 50 ||
-        !regOnlyLettersAndDash.test(street.value.trim())) {
+    if (street.value.trim().length > 50) {
       street.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le nom de rue est trop grand ou est invalide'
+        title: 'Le nom de rue est trop grand'
       })
       return;
     }
@@ -305,12 +303,11 @@ const modifyProfilRender = async () => {
       return;
     }
 
-    if (commune.value.trim().length > 50 ||
-        !regOnlyLettersAndDash.test(commune.value.trim())) {
+    if (commune.value.trim().length > 50) {
       commune.classList.add("border-danger");
       toast.fire({
         icon: 'error',
-        title: 'Le nom de commune est trop grand ou est invalide'
+        title: 'Le nom de commune est trop grand'
       })
       return;
     }
@@ -357,6 +354,7 @@ const modifyProfilRender = async () => {
           icon: 'error',
           title: "Nous n'acceptons que des images png, jpeg et jpg."
         })
+        return;
       } else {
         let formData = new FormData();
         formData.append('file', fileInput.files[0]);
@@ -368,8 +366,18 @@ const modifyProfilRender = async () => {
 
     let memberUpdated = await memberLibrary.updateMember(newMember);
     //if the update throws an error
+    let notifTopRight = new NotificationSA().getNotification("top-end");
     if (memberUpdated === null) {
+      notifTopRight.fire({
+        icon: 'error',
+        title: 'Votre profil n\'a pas pu être mis à jour'
+      })
       return;
+    } else {
+      notifTopRight.fire({
+        icon: 'success',
+        title: 'Votre profil a bien été mis à jour'
+      })
     }
     //if the username has been modified
     if (username.value.trim() !== member.username) {
@@ -501,7 +509,7 @@ const ProfilPage = async () => {
   if (member.image) {
     image = "/api/member/getPicture/" + member.memberId;
   } else {
-    image = noImage;
+    image = profil;
   }
   provImage = image;
   await profilRender();

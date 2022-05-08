@@ -2,6 +2,7 @@ import {getSessionObject} from "../../utils/session";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import searchBar from "../Module/SearchBar";
 import noImage from "../../img/noImage.png";
+import profilImage from "../../img/profil.png";
 import OfferLibrary from "../../Domain/OfferLibrary";
 import managementList from "../Module/ManagementList";
 import button from "bootstrap/js/src/button";
@@ -111,7 +112,7 @@ const MyObjectsPage = async () => {
 const objectCards = async (searchPattern, type, status) => {
   const memberCards = document.getElementById("page-body");
   const offers = await OfferLibrary.prototype.getOffers(searchPattern, true,
-      type, status);
+      type, status, "");
   memberCards.innerHTML = ``;
   if (!offers) { // objects is empty
     return;
@@ -129,7 +130,8 @@ const objectCards = async (searchPattern, type, status) => {
     card.className += " clickable";
 
     const buttonCard = document.getElementById("button-card-" + offer.idOffer);
-    if (offer.object.status !== "cancelled" && offer.object.status !== "given") {
+    if (offer.object.status !== "cancelled" && offer.object.status
+        !== "given") {
       await cancelButton(buttonCard, offer);
     }
 
@@ -137,7 +139,8 @@ const objectCards = async (searchPattern, type, status) => {
       await interestedButton(buttonCard, offer);
     }
 
-    if (offer.object.status === "cancelled" || offer.object.status === "not_collected") {
+    if (offer.object.status === "cancelled" || offer.object.status
+        === "not_collected") {
       await reofferButton(buttonCard, offer);
     }
 
@@ -162,18 +165,22 @@ const reofferButton = async (buttonCard, offer) => {
   reofferButton.addEventListener("click", async () => {
     if (!(await OfferLibrary.prototype.addOffer(
         offer.timeSlot,
-        offer.object.idObject
-    ))) return;
-    offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
+        offer.object.idObject,
+        offer.object.version
+    ))) {
+      return;
+    }
+    offer = await OfferLibrary.prototype.getLastOfferById(
+        offer.object.idObject);
     buttonCard.innerHTML = ``;
-    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = dictionary.get(offer.status);
+    buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = dictionary.get(
+        offer.status);
     cancelButton(buttonCard, offer);
     await interestedButton(buttonCard, offer);
   });
 
   buttonCard.appendChild(reofferButton);
 }
-
 
 const assignedButtons = (buttonCard, offer) => {
   const viewReceiverButton = document.createElement("button");
@@ -190,8 +197,11 @@ const assignedButtons = (buttonCard, offer) => {
         offer.idOffer,
         offer.version++,
         offer.object.version++
-    ))) return;
-    offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
+    ))) {
+      return;
+    }
+    offer = await OfferLibrary.prototype.getLastOfferById(
+        offer.object.idObject);
     buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Le receveur n\'est pas venu';
     buttonCard.innerHTML = ``;
     cancelButton(buttonCard, offer);
@@ -208,7 +218,9 @@ const assignedButtons = (buttonCard, offer) => {
         offer.object.idObject,
         offer.version++,
         offer.object.version++
-    ))) return;
+    ))) {
+      return;
+    }
     buttonCard.innerHTML = ``;
     buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Donné';
   });
@@ -226,8 +238,11 @@ const cancelButton = (buttonCard, offer) => {
         offer.idOffer,
         offer.version,
         offer.object.version
-    ))) return;
-    offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
+    ))) {
+      return;
+    }
+    offer = await OfferLibrary.prototype.getLastOfferById(
+        offer.object.idObject);
     buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Annulé';
     buttonCard.innerHTML = ``;
     await interestedButton(buttonCard, offer);
@@ -238,104 +253,113 @@ const cancelButton = (buttonCard, offer) => {
 }
 
 const interestedButton = async (buttonCard, offer) => {
-  const viewAllInterestedMembers = document.createElement("button");
-  viewAllInterestedMembers.innerText = "Voir les interessés";
-  viewAllInterestedMembers.type = "button";
-  viewAllInterestedMembers.className = "btn btn-primary mt-3 mx-1";
-  viewAllInterestedMembers.addEventListener("click", async e => {
-    let interests = await InterestLibrary.prototype.getAllInterests(offer.object.idObject);
-    if (interests === undefined) {
-      interests = [];
-    }
-    var allInterests = `<div class="container">`
+  if (offer.status !== "cancelled") {
+    const viewAllInterestedMembers = document.createElement("button");
 
-    for (const interest of interests) {
-
-      if (interest.status !== "published") {
-        continue;
+    viewAllInterestedMembers.innerText = "Voir les interessés";
+    viewAllInterestedMembers.type = "button";
+    viewAllInterestedMembers.className = "btn btn-primary mt-3 mx-1";
+    viewAllInterestedMembers.addEventListener("click", async e => {
+      let interests = await InterestLibrary.prototype.getAllInterests(
+          offer.object.idObject);
+      if (interests === undefined) {
+        interests = [];
       }
+      var allInterests = `<div class="container">`
 
-      let phone;
+      for (const interest of interests) {
 
-          if (interest.isCalled) {
-            phone = "(Appelez moi :  "
-                + interest.member.phone
-                + ")";
-          } else {
-            phone = "";
-          }
-          let username = interest.member.username;
+        if (interest.status !== "published") {
+          continue;
+        }
 
-      let availabilityDate = "Horaire : " + interest.availabilityDate[2]
-          + "/" + interest.availabilityDate[1] + "/"
-          + interest.availabilityDate[0];
+        let phone;
 
-      let image;
-      if (interest.member.image) {
-        image = "/api/member/getPicture/" + interest.member.memberId;
-      } else {
-        image = noImage;
-      }
-      allInterests += `
+        if (interest.isCalled) {
+          phone = "(Appelez moi :  "
+              + interest.member.phone
+              + ")";
+        } else {
+          phone = "";
+        }
+        let username = interest.member.username;
+        let name = interest.member.firstname + " " + interest.member.lastname;
+        let availabilityDate = "Date de disponibilité : "
+            + interest.availabilityDate[2]
+            + "/" + interest.availabilityDate[1] + "/"
+            + interest.availabilityDate[0];
+
+        let image;
+        if (interest.member.image) {
+          image = "/api/member/getPicture/" + interest.member.memberId;
+        } else {
+          image = profilImage;
+        }
+        allInterests += `
               <div class="row border border-1 border-dark mt-5 shadow p-3 mb-5 bg-body rounded">
                 <div class="col-2 m-auto">
                   <img class="img-thumbnail" src="${image}" alt="image">
                 </div>
                 <div class="col-7 mt-3">
-                  <p class="fs-4">${username} ${phone}</p>
+                  <p class="fs-4">${username} (${name}) ${phone}</p>
                   <span class="text-secondary fs-5">${availabilityDate}</span>
                 </div>`
 
-      allInterests += ` 
+        allInterests += ` 
                 <div class="col-3 mt-2">
                   <button class="btn btn-lg btn-primary" id="${"interest-"
-      + interest.member.memberId}">Choisir</button>
+        + interest.member.memberId}">Choisir</button>
                 </div>`
 
-      allInterests += `</div>`
-    }
-
-    allInterests += `</div>`
-
-    Swal.fire({
-      title: '<strong>Membres interessés</strong>',
-      html: allInterests,
-      width: 1000,
-      scrollbarPadding: true,
-      showCloseButton: true,
-      showConfirmButton: false,
-      showCancelButton: true,
-      focusConfirm: false,
-      cancelButtonText: 'Annuler',
-    })
-
-    for (const interest of interests) {
-      const btn = document.getElementById(
-          "interest-" + interest.member.memberId);
-      if (btn) {
-        btn.addEventListener("click", async e => {
-          if (!(await InterestLibrary.prototype.assignOffer(
-              interest.idObject, interest.idMember,
-              interest.version++, offer.version, offer.object.version
-          ))) return;
-          offer = await OfferLibrary.prototype.getLastOfferById(offer.object.idObject);
-          buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Attribué';
-          await reofferButton(buttonCard, offer);
-          buttonCard.innerHTML = ``;
-          cancelButton(buttonCard, offer);
-          assignedButtons(buttonCard, offer);
-        })
+        allInterests += `</div>`
       }
-    }
 
-  });
-  const countInterestedMembers = await InterestLibrary.prototype.getInterestedCount(offer.object.idObject);
-  const notificationInterested = document.createElement("span");
-  notificationInterested.className = "badge badge-light";
-  notificationInterested.innerText = countInterestedMembers.count;
-  viewAllInterestedMembers.appendChild(notificationInterested);
+      allInterests += `</div>`
 
-  buttonCard.appendChild(viewAllInterestedMembers);
+      Swal.fire({
+        title: '<strong>Membres interessés</strong>',
+        html: allInterests,
+        width: 1000,
+        scrollbarPadding: true,
+        showCloseButton: true,
+        showConfirmButton: false,
+        showCancelButton: true,
+        focusConfirm: false,
+        cancelButtonText: 'Annuler',
+      })
+
+      for (const interest of interests) {
+        const btn = document.getElementById(
+            "interest-" + interest.member.memberId);
+        if (btn) {
+          btn.addEventListener("click", async e => {
+            if (!(await InterestLibrary.prototype.assignOffer(
+                interest.idObject, interest.idMember,
+                interest.version++, offer.version, offer.object.version
+            ))) {
+              return;
+            }
+            offer = await OfferLibrary.prototype.getLastOfferById(
+                offer.object.idObject);
+            buttonCard.parentNode.parentNode.children[1].children[2].innerHTML = 'Attribué';
+            await reofferButton(buttonCard, offer);
+            buttonCard.innerHTML = ``;
+            cancelButton(buttonCard, offer);
+            assignedButtons(buttonCard, offer);
+          })
+        }
+      }
+
+    });
+    const countInterestedMembers = await InterestLibrary.prototype.getInterestedCount(
+        offer.object.idObject);
+    const notificationInterested = document.createElement("span");
+    notificationInterested.className = "badge badge-light";
+    notificationInterested.innerText = countInterestedMembers.count;
+    viewAllInterestedMembers.appendChild(notificationInterested);
+
+    buttonCard.appendChild(viewAllInterestedMembers);
+  }
 }
 
 export default MyObjectsPage;

@@ -18,8 +18,9 @@ public interface MemberUCC {
   /**
    * Update the profil picture of the member.
    *
-   * @param path of the picture
-   * @param id   of the member
+   * @param path    of the picture
+   * @param id      of the member
+   * @param version of the member
    * @return memberDTO updated
    */
   MemberDTO updateProfilPicture(String path, int id, Integer version);
@@ -65,4 +66,12 @@ public interface MemberUCC {
    * @return the modified member
    */
   MemberDTO updateMember(MemberDTO memberDTO);
+
+  /**
+   * Update a member status and update its assigned interests into a prevent status.
+   *
+   * @param memberDTO member who has a prevent
+   * @return the member updated with a prevent status
+   */
+  MemberDTO preventMember(MemberDTO memberDTO);
 }

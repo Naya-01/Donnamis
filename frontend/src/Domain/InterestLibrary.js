@@ -1,7 +1,6 @@
 import {getSessionObject} from "../utils/session";
 import NotificationSA from "../Components/Module/NotificationSA";
 import Swal from "sweetalert2";
-import toast from "sweetalert2";
 
 class InterestLibrary {
 
@@ -37,9 +36,10 @@ class InterestLibrary {
    * the send_notification field /!\
    *
    * @param idObject of the interest.
+   * @param idMember to update notification.
    * @returns interest updated.
    */
-  async markNotificationShown(idObject) {
+  async markNotificationShown(idObject, idMember) {
     let response;
     try {
       let options = {
@@ -49,7 +49,9 @@ class InterestLibrary {
           "Authorization": getSessionObject("user").accessToken,
         },
       };
-      response = await fetch("api/interest/notificationShown/" + idObject,
+      response = await fetch(
+          "api/interest/notificationShown/" + idObject + "?idMember="
+          + idMember,
           options);
     } catch (err) {
       console.log(err);
@@ -163,7 +165,7 @@ class InterestLibrary {
         Swal.close();
         toast.fire({
           icon: 'success',
-          title: "le membre a été assigné"
+          title: "Le membre a été assigné"
         })
       }
     } catch (err) {

@@ -22,7 +22,7 @@ const bottomNotification = new NotificationSA().getNotification();
 const dictionnary = new Map([
   ['interested', 'Intéressé'],
   ['available', 'Publié'],
-  ['assigned', 'En cours de donation'],
+  ['assigned', 'Attribué'],
   ['given', 'Donné'],
   ['cancelled', 'Annulé'],
   ['not_collected', 'Non récupéré']
@@ -44,7 +44,6 @@ let telNumber;
 let versionObject = 0;
 let versionOffer = 0;
 let versionMemberConnected;
-
 
 /**
  * Render the page to see an object
@@ -117,6 +116,7 @@ const ObjectDetailsPage = async () => {
   pageDiv.innerHTML =
       `<div class="container p-3">
       <div class="mx-5 my-5">
+      <div class="row" id="problemMember"></div>
       <h2 id="titleObject" class=pb-3></h2>
       <div class="card">
         <!-- Body of the card -->
@@ -214,6 +214,12 @@ const ObjectDetailsPage = async () => {
     divB.appendChild(new_button);
     if (english_status === "given") {
       new_button.remove();
+      let current_rating = await ratingLibrary.getOne(offer.object.idObject);
+      if (current_rating === undefined) {
+        displayRating(null);
+      } else {
+        displayRating(current_rating);
+      }
     }
   }
   // if this is not the object of the member connected
@@ -221,16 +227,28 @@ const ObjectDetailsPage = async () => {
     // we get the member that gives the object
     let memberGiver = await memberLibrary.getUserByHisId(
         offer.object.idOfferor);
+    //if the member is prevented, a msg is display
+    if (memberGiver.status === "prevented") {
+      document.getElementById("problemMember").innerHTML = `
+        <p class="text-danger">
+          <i class="bi bi-exclamation-triangle"></i>
+          L'offreur est actuellement empêché de participer à la donnerie.
+          <i class="bi bi-exclamation-triangle"></i>
+        </p>
+      `
+    }
     // change buttons
     document.getElementById("titleObject").textContent = "L'objet de "
         + memberGiver.username;
 
-    if (!isInterested && (english_status === "interested" || english_status === "available")) {
+    if (!isInterested && (english_status === "interested" || english_status
+        === "available")) {
       displayAddInterest(offer.object.version, offer.version);
     } else if (english_status === "given") {
       let current_rating = await ratingLibrary.getOne(offer.object.idObject);
       if (current_rating === undefined) { // if there is no rating yet
-        let current_interest = await interestLibrary.getOneInterest(offer.object.idObject);
+        let current_interest = await interestLibrary.getOneInterest(
+            offer.object.idObject);
         if (current_interest !== undefined && current_interest.status
             === "received") { // if the member connected has received the object
           let rating_button = document.createElement("input");
@@ -262,12 +280,19 @@ function displayAddInterest(versionObject, versionOffer) {
   input_date.id = "input_date";
   input_date.type = "date";
   let date = new Date();
+  // Put a zero in front of month if it is a number < 10
   let month = "";
   if (date.getMonth() % 10 !== 0) {
     month = "0"
   }
   month += (date.getMonth() + 1);
-  let dateActual = date.getFullYear() + "-" + month + "-" + date.getDate();
+  // Put a zero in front of day if it is a number < 10
+  let day = "";
+  if (date.getDate() % 10 !== 0) {
+    day = "0"
+  }
+  day += date.getDate();
+  let dateActual = date.getFullYear() + "-" + month + "-" + day;
   input_date.value = dateActual;
   input_date.min = dateActual;
   document.getElementById("divDate").appendChild(labelDate);
@@ -345,8 +370,8 @@ async function addOneInterest(versionObject, versionOffer) {
     } else if (numTel !== telNumber) { // the num is good and has changed
       //update the tel number of the member
       let memberToUpdate = new Member(null, null, null,
-          null, numTel, null, versionMemberConnected,null,
-          null,null, idMemberConnected);
+          null, numTel, null, versionMemberConnected, null,
+          null, null, idMemberConnected);
       await memberLibrary.updateMember(memberToUpdate);
       versionMemberConnected += 1;
     }
@@ -359,14 +384,14 @@ async function addOneInterest(versionObject, versionOffer) {
   let newInterest = await interestLibrary.addOne(offer.object.idObject,
       input_date.value, notificationCall, versionObject, versionOffer);
   // the notification to show that the interest is send
-  if(newInterest !== undefined){
+  if (newInterest !== undefined) {
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre intérêt a bien été pris en compte.'
     })
     // increment the number of people interested
     let countInterest = document.getElementById("InterestCount");
-    countInterest.innerHTML=parseInt(++countInterest.innerHTML);
+    countInterest.innerHTML = parseInt(++countInterest.innerHTML);
   }
 }
 
@@ -381,6 +406,7 @@ function displayRating(current_rating) {
       || current_rating.comment == null) {
     let pNoRating = document.createElement("p");
     pNoRating.innerHTML = "L'objet n'a pas été noté pour le moment.";
+    pNoRating.id = "PnoRating";
     pNoRating.className = "text-secondary";
     ratingDiv.appendChild(pNoRating);
   }
@@ -420,7 +446,7 @@ function displayRating(current_rating) {
 
 /**
  * Change elements of the html to have a text.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToText(e) {
   e.preventDefault();
@@ -463,7 +489,7 @@ function changeToText(e) {
 
 /**
  * Change elements of the html to have a form.
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeToForm(e) {
   e.preventDefault();
@@ -555,7 +581,7 @@ function changeToForm(e) {
 
 /**
  * Send to the backend all informations to update an object
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function updateObject(e) {
   e.preventDefault();
@@ -594,19 +620,39 @@ async function updateObject(e) {
   // Update the image
   let fileInput = document.querySelector('input[name=file]');
   let objectWithImage;
-  if (fileInput.files[0] !== undefined) { // if there is an image
-    let formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    objectWithImage = await objectLibrary.setImage(formData, offer.object.idObject, versionObject);
+
+  //if the image has been modified
+  if (fileInput.files[0] !== undefined) {
+    let types = ["image/jpeg", "image/jpg", "image/png"];
+    let canBeUpload = false;
+    for (const type in types) {
+      if (fileInput.files[0].type === types[type]) {
+        canBeUpload = true;
+      }
+    }
+
+    if (!canBeUpload) {
+      bottomNotification.fire({
+        icon: 'error',
+        title: "Nous n'acceptons que des images png, jpeg et jpg."
+      })
+      return;
+    } else {
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      objectWithImage = await objectLibrary.setImage(formData,
+          offer.object.idObject, versionObject);
+      versionObject = objectWithImage.version;
+    }
   }
-
-
 
   // Call the function to update the offer
   let newOffer = await offerLibrary.updateOffer(idOffer, new_time_slot,
-      new_description, idType, english_status, statusObject, versionObject++,
-      versionOffer++);
+      new_description, idType, english_status, statusObject, versionObject,
+      versionOffer);
   if (newOffer !== undefined) {
+    versionOffer = versionOffer + 1;
+    versionObject = versionObject + 1;
     bottomNotification.fire({
       icon: 'success',
       title: 'Votre objet a bien été mis à jour.'
@@ -615,7 +661,6 @@ async function updateObject(e) {
   // Attribute new values
   description = new_description
   time_slot = new_time_slot;
-
 
   if (objectWithImage !== undefined) { // if there is an image
     if (localLinkImage !== undefined) {
@@ -629,7 +674,7 @@ async function updateObject(e) {
 
 /**
  * Display a popup to add a rating
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function ratingPopUp(e) {
   e.preventDefault();
@@ -653,14 +698,19 @@ async function ratingPopUp(e) {
         })
         return;
       }
-      let rating = await ratingLibrary.addRating(note, text_rating, offer.object.idObject);
+      let rating = await ratingLibrary.addRating(note, text_rating,
+          offer.object.idObject);
       if (rating !== undefined) {
         bottomNotification.fire({
           icon: 'success',
           title: 'Votre note a bien été prise en compte.'
         })
         document.getElementById("buttonGivenRating").remove(); // remove the button
-        displayRating(rating.rating, rating.comment); // display the new rating
+        displayRating(rating); // display the new rating
+        let pNoRating = document.getElementById("PnoRating");
+        if (pNoRating !== null) {
+          pNoRating.remove();
+        }
       }
     }
   })
@@ -672,7 +722,7 @@ async function ratingPopUp(e) {
 
 /**
  * Change the color of the stars in function of the note
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 function changeColorStars(e) {
   e.preventDefault();

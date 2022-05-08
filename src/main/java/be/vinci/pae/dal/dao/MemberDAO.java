@@ -44,7 +44,7 @@ public interface MemberDAO {
    * Update one or many attribute(s) of a member.
    *
    * @param memberDTO a memberDTO
-   * @return the modified member
+   * @return the updated member
    */
   MemberDTO updateOne(MemberDTO memberDTO);
 

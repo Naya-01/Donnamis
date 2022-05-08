@@ -1,7 +1,6 @@
 import SearchBar from "../Module/SearchBar";
 import CardList from "../Module/CardList";
 import OfferLibrary from "../../Domain/OfferLibrary";
-import MemberLibrary from "../../Domain/MemberLibrary";
 import {Redirect, RedirectWithParamsInUrl} from "../Router/Router";
 import {getSessionObject} from "../../utils/session";
 
@@ -13,13 +12,13 @@ const AssignedObjectsPage = async () => {
     Redirect("/");
     return;
   }
-  await SearchBar("Objets attribués", true, false, true, "Rechercher un objet",
+  await SearchBar("Objets attribués", true, false, false, "Rechercher un objet",
       false, false);
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML += `<div id="card-list-div"></div>`
 
   const cardListDiv = document.getElementById("card-list-div");
-  const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers();
+  const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers("");
   cardListDiv.innerHTML = await CardList(offers);
 
   for (const offer of pageDiv.querySelectorAll(".clickable")) {
@@ -34,12 +33,14 @@ const AssignedObjectsPage = async () => {
   const searchBar = document.getElementById("searchBar");
   searchBar.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
+      const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers(searchBar.value);
       cardListDiv.innerHTML = await CardList(offers);
     }
   });
 
   const searchButtonDiv = document.getElementById("searchButton");
   searchButtonDiv.addEventListener('click', async () => {
+    const offers = await OfferLibrary.prototype.getGivenAndAssignedOffers(searchBar.value);
     cardListDiv.innerHTML = await CardList(offers);
   });
 }

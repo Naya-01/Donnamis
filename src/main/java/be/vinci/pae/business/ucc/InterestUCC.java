@@ -19,16 +19,16 @@ public interface InterestUCC {
   /**
    * Add one interest.
    *
-   * @param item : the interest informations (id of the object and id of the member).
-   * @return item.
+   * @param interest : the interest information (id of the object and id of the member).
+   * @return interest.
    */
-  InterestDTO addOne(InterestDTO item);
+  InterestDTO addOne(InterestDTO interest, MemberDTO authenticatedUser);
 
   /**
    * Assign the offer to a member.
    *
    * @param owner       of the object
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param interestDTO : the interest information (id of the object and id of the member).
    * @return objectDTO updated.
    */
   InterestDTO assignOffer(InterestDTO interestDTO, MemberDTO owner);
@@ -69,14 +69,14 @@ public interface InterestUCC {
 
 
   /**
-   * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
-   * send_notification field /!\
+   * Mark a notification shown.
    *
-   * @param member   of the member
+   * @param idMember of the member
+   * @param member   owner of the object or the one to update notification.
    * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
-  InterestDTO markNotificationShown(int idObject, MemberDTO member);
+  InterestDTO markNotificationShown(Integer idObject, MemberDTO member, Integer idMember);
 
   /**
    * Mark all notifications shown. /!\ There is no version update because of the non-sensibility of

@@ -1,6 +1,12 @@
 const Swal = require('sweetalert2')
 
 class NotificationSA {
+
+  /**
+   * Create a popup ready to be used using Swal.
+   *
+   * @param position : the position of the notification
+   */
   getNotification(position = "bottom") {
     return Swal.mixin({
       toast: true,

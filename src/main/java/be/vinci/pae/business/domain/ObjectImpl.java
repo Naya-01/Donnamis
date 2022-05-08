@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class ObjectImpl implements ObjectDTO {
 
   @JsonView(Views.Public.class)
+  private Integer idType;
+  @JsonView(Views.Public.class)
   private Integer idObject;
   @JsonView(Views.Public.class)
   private TypeDTO type;
@@ -24,6 +26,16 @@ public class ObjectImpl implements ObjectDTO {
   @JsonView(Views.Public.class)
   private Integer version;
 
+
+  @Override
+  public Integer getIdType() {
+    return idType;
+  }
+
+  @Override
+  public void setIdType(int idType) {
+    this.idType = idType;
+  }
 
   @Override
   public Integer getIdObject() {

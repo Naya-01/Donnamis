@@ -19,10 +19,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,8 +63,8 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource getOne");
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
     if (idObject < 1) {
-      throw new WebApplicationException("L'identifiant de l'objet et/ou du membre est/sont "
-          + "incorrect(s) et/ou manquant(s)", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("L'identifiant de l'objet et/ou du membre est/sont "
+          + "incorrect(s) et/ou manquant(s)");
     }
 
     InterestDTO interestDTO = interestUCC.getInterest(idObject, authenticatedUser.getMemberId());
@@ -90,16 +88,14 @@ public class InterestResource {
   public InterestDTO addOne(InterestDTO interest, @Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource addOne");
     if (interest == null || interest.getAvailabilityDate() == null) {
-      throw new WebApplicationException("Lacks of mandatory info", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Manque d'informations obligatoires");
     }
     if (interest.getIdObject() < 1) {
-      throw new WebApplicationException("Non existent id object", Response.Status.BAD_REQUEST);
+      throw new BadRequestException("Identifiant de l'objet inexistant");
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
-    interest.setIdMember(authenticatedUser.getMemberId());
-    interest.setStatus("published");
 
-    InterestDTO interestDTO = interestUCC.addOne(interest);
+    InterestDTO interestDTO = interestUCC.addOne(interest, authenticatedUser);
     interestDTO.setMember(JsonViews.filterPublicJsonView(interestDTO.getMember(), MemberDTO.class));
     interestDTO = JsonViews.filterPublicJsonView(interestDTO, InterestDTO.class);
     return interestDTO;
@@ -171,7 +167,7 @@ public class InterestResource {
    * Assign an object to a member interested.
    *
    * @param request     data of the object's owner.
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param interestDTO : the interest information (id of the object and id of the member).
    * @return object updated.
    */
   @POST
@@ -185,7 +181,8 @@ public class InterestResource {
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (interestDTO.getIdMember() == null || interestDTO.getIdObject() == null) {
-      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
+      throw new BadRequestException(
+          "Veuillez indiquer un identifiant dans l'objet de la ressource intérêt");
     }
     InterestDTO interest = interestUCC.assignOffer(interestDTO, ownerDTO);
     interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
@@ -207,11 +204,14 @@ public class InterestResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Authorize
   public InterestDTO markNotificationShown(@Context ContainerRequest request,
-      @PathParam("idObject") int idObject) {
-    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
-
+      @PathParam("idObject") Integer idObject, @QueryParam("idMember") Integer idMember) {
+    Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotificationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO);
+    if (idMember == null) {
+      throw new BadRequestException("Veuillez indiquer un identifiant de membre");
+    }
+
+    InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO, idMember);
     interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
     interest = JsonViews.filterPublicJsonView(interest, InterestDTO.class);
     return interest;
@@ -231,6 +231,7 @@ public class InterestResource {
   public List<InterestDTO> markAllNotificationsShown(@Context ContainerRequest request) {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotifcationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
+
     List<InterestDTO> interestDTOList = interestUCC.markAllNotificationsShown(memberDTO);
     filterMember(interestDTOList);
     filterObject(interestDTOList);

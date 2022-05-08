@@ -5,12 +5,15 @@ import jakarta.ws.rs.core.Response;
 
 public class ConflictException extends WebApplicationException {
 
+  /**
+   * Make a ConflictException.
+   */
   public ConflictException() {
     super(Response.Status.CONFLICT);
   }
 
   /**
-   * Make an ConflictException with the custom message.
+   * Make a ConflictException with the custom message.
    *
    * @param message custom error message
    */

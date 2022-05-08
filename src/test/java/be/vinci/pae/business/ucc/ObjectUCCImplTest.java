@@ -26,33 +26,35 @@ import org.mockito.Mockito;
 class ObjectUCCImplTest {
 
   private final ServiceLocator locator = ServiceLocatorUtilities.bind(new TestBinder());
-
+  private final int inexistentId = 1000;
+  private final String pathImage = "C:/img";
   private ObjectUCC objectUCC;
   private ObjectDAO mockObjectDAO;
   private DALService mockDalService;
   private ObjectDTO objectDTO;
   private ObjectDTO objectDTOUpdated;
   private OfferDTO offerDTO;
-  private final int inexistentId = 1000;
-  private final String pathImage = "C:/img";
+  private ObjectFactory objectFactory;
 
   @BeforeEach
   void initAll() {
     this.objectUCC = locator.getService(ObjectUCC.class);
     this.mockObjectDAO = locator.getService(ObjectDAO.class);
     this.mockDalService = locator.getService(DALService.class);
-    ObjectFactory objectFactory = locator.getService(ObjectFactory.class);
+    objectFactory = locator.getService(ObjectFactory.class);
     this.objectDTO = objectFactory.getObjectDTO();
     this.objectDTO.setIdObject(1);
     this.objectDTO.setDescription("the description");
     this.objectDTO.setIdOfferor(1);
     this.objectDTO.setStatus("available");
     this.objectDTO.setImage(this.pathImage);
+    this.objectDTO.setVersion(1);
     this.objectDTOUpdated = objectFactory.getObjectDTO();
     this.objectDTOUpdated.setIdObject(1);
     this.objectDTOUpdated.setDescription("the description2");
     this.objectDTOUpdated.setIdOfferor(1);
     this.objectDTOUpdated.setStatus("available");
+    this.objectDTOUpdated.setVersion(1);
     OfferFactory offerFactory = locator.getService(OfferFactory.class);
     this.offerDTO = offerFactory.getOfferDTO();
     this.offerDTO.setObject(objectDTO);
@@ -160,6 +162,20 @@ class ObjectUCCImplTest {
     );
   }
 
+  @DisplayName("test updateOne with not same version")
+  @Test
+  public void testUpdateOneWithNotSameVersion() {
+    ObjectDTO objectDTOFromDao = objectFactory.getObjectDTO();
+    objectDTOFromDao.setVersion(13);
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject())).thenReturn(objectDTOFromDao);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class, () -> objectUCC.updateOne(objectDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
+        () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1)).getOne(objectDTO.getIdObject()),
+        () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).rollBackTransaction()
+    );
+  }
+
   @DisplayName("test updateObjectPicture with existent object that has no image")
   @Test
   public void testUpdateObjectPictureWithExistentObjectThatHasNoImage() {
@@ -169,7 +185,8 @@ class ObjectUCCImplTest {
         .thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO,
-            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(), 1)),
+            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(),
+                objectDTO.getIdOfferor(), 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
@@ -189,7 +206,8 @@ class ObjectUCCImplTest {
         .thenReturn(objectDTO);
     assertAll(
         () -> assertEquals(objectDTO,
-            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(), 1)),
+            objectUCC.updateObjectPicture(pathImage, objectDTO.getIdObject(),
+                objectDTO.getIdOfferor(), 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
@@ -205,7 +223,7 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(null);
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> objectUCC.updateObjectPicture(pathImage, 1, 1)),
+            () -> objectUCC.updateObjectPicture(pathImage, 1, 1, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),
@@ -221,7 +239,7 @@ class ObjectUCCImplTest {
     Mockito.when(mockObjectDAO.getOne(1)).thenReturn(objectDTOUpdated);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> objectUCC.updateObjectPicture(pathImage, 1, 1)),
+            () -> objectUCC.updateObjectPicture(pathImage, 1, 1, 1)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1)).startTransaction(),
         () -> Mockito.verify(mockObjectDAO, Mockito.atLeast(1))
             .getOne(objectDTO.getIdObject()),

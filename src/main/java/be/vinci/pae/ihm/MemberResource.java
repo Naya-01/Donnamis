@@ -60,13 +60,15 @@ public class MemberResource {
 
     Logger.getLogger("Log").log(Level.INFO, "MemberResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "profils\\",
-        memberDTO.getMemberId());
-
-    if (internalPath == null) {
+    if (!imageManager.isAuthorized(fileMime)) {
       throw new BadRequestException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
+
+    String internalPath = imageManager.getInternalPath("profils\\", memberDTO.getMemberId(),
+        fileMime);
+    imageManager.writeImageOnDisk(file, fileMime, "profils\\",
+        memberDTO.getMemberId());
     return memberUCC.updateProfilPicture(internalPath, memberDTO.getMemberId(), version);
   }
 
@@ -85,7 +87,7 @@ public class MemberResource {
     MemberDTO memberDTO = memberUCC.getMember(id);
 
     if (memberDTO.getImage() == null) {
-      throw new NotFoundException("Cet objet ne possède pas d'image");
+      throw new NotFoundException("Ce membre ne possède pas de photo de profil");
     }
 
     return Response.ok(memberUCC.getPicture(memberDTO.getMemberId())).build();
@@ -159,10 +161,36 @@ public class MemberResource {
 
     MemberDTO requestMember = (MemberDTO) request.getProperty("user");
     if (!requestMember.getRole().equals("administrator")
-        && (memberDTO.getMemberId() != requestMember.getMemberId() || memberDTO.getRole() != null
-        || memberDTO.getStatus() != null || memberDTO.getReasonRefusal() != null)) {
+        && (!memberDTO.getMemberId().equals(requestMember.getMemberId())
+        || memberDTO.getRole() != null || memberDTO.getStatus() != null
+        || memberDTO.getReasonRefusal() != null)) {
       throw new UnauthorizedException();
     }
     return JsonViews.filterPublicJsonView(memberUCC.updateMember(memberDTO), MemberDTO.class);
   }
+
+  /**
+   * Update a member status and update its assigned interests into a prevented status.
+   *
+   * @param memberDTO member who has a prevented
+   * @return the filter member updated with a 'prevented' status
+   */
+  @PUT
+  @Path("/toPrevented")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Admin
+  public MemberDTO preventMember(MemberDTO memberDTO) {
+    Logger.getLogger("Log").log(Level.INFO, "MemberResource preventMember");
+
+    if (memberDTO.getMemberId() == null) {
+      throw new BadRequestException("Identifiant du membre manquant !");
+    }
+    if (memberDTO.getVersion() == null) {
+      throw new BadRequestException("Attribut 'version' manquant ! ");
+    }
+
+    return JsonViews.filterPublicJsonView(memberUCC.preventMember(memberDTO), MemberDTO.class);
+  }
+
 }

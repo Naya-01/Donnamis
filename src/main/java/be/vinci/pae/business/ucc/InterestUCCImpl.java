@@ -15,6 +15,7 @@ import be.vinci.pae.exceptions.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
 
 public class InterestUCCImpl implements InterestUCC {
@@ -60,14 +61,17 @@ public class InterestUCCImpl implements InterestUCC {
   /**
    * Add one interest.
    *
-   * @param interest : interestDTO object.
+   * @param interest          : interestDTO object.
+   * @param authenticatedUser : member that wants to add an interest.
    * @return interest added.
    */
   @Override
-  public InterestDTO addOne(InterestDTO interest) {
+  public InterestDTO addOne(InterestDTO interest, MemberDTO authenticatedUser) {
     InterestDTO interestDTO;
     try {
       dalService.startTransaction();
+      interest.setIdMember(authenticatedUser.getMemberId());
+      interest.setStatus("published");
       if (interestDAO.getOne(interest.getIdObject(), interest.getIdMember()) != null) {
         //change name exception
         throw new ConflictException("Un intérêt pour cet objet et ce membre existe déjà !");
@@ -101,12 +105,9 @@ public class InterestUCCImpl implements InterestUCC {
         offerDTO.setStatus("interested");
         offerDAO.updateOne(offerDTO);
       }
-
+      interest.setIsNotificated(true);
+      interest.setNotificationDate(LocalDate.now());
       interestDTO = interestDAO.addOne(interest);
-
-      // Send Notification
-      interestDTO.setIsNotificated(true);
-      interestDAO.updateNotification(interestDTO);
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
 
@@ -122,7 +123,7 @@ public class InterestUCCImpl implements InterestUCC {
    * Assign the offer to a member.
    *
    * @param owner       the object's owner
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param interestDTO : the interest information (id of the object and id of the member).
    * @return objectDTO updated.
    */
   @Override
@@ -153,7 +154,8 @@ public class InterestUCCImpl implements InterestUCC {
         throw new ForbiddenException("Les versions ne correspondent pas");
       }
 
-      if (!offerDTO.getStatus().equals("interested")
+      if (interestDTOFromDB.getMember().getStatus().equals("prevented")
+          || !offerDTO.getStatus().equals("interested")
           && !offerDTO.getStatus().equals("not_collected")) {
         throw new ForbiddenException("L'offre n'est pas en mesure d'être assigné");
       }
@@ -182,6 +184,7 @@ public class InterestUCCImpl implements InterestUCC {
 
       // Send Notification
       interestDTOFromDB.setIsNotificated(true);
+      interestDTOFromDB.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTOFromDB);
       interestDTOFromDB.setObject(objectDAO.getOne(interestDTOFromDB.getIdObject()));
       interestDTOFromDB.setMember(memberDAO.getOne(interestDTOFromDB.getIdMember()));
@@ -315,29 +318,44 @@ public class InterestUCCImpl implements InterestUCC {
   }
 
   /**
-   * Mark a notification shown. /!\ There is no version update because of the non-sensibility of the
-   * send_notification field /!\
+   * Mark a notification shown.
    *
-   * @param member   of the member
+   * @param idMember of the member's interest
+   * @param member   owner of the object or the one to update notification.
    * @param idObject to mark as shown.
    * @return interestDTO updated.
    */
   @Override
-  public InterestDTO markNotificationShown(int idObject, MemberDTO member) {
-    InterestDTO interestDTO = null;
+  public InterestDTO markNotificationShown(Integer idObject, MemberDTO member, Integer idMember) {
+    InterestDTO interestDTO;
     try {
       dalService.startTransaction();
 
-      interestDTO = interestDAO.getOne(idObject, member.getMemberId());
+      ObjectDTO objectDTO = objectDAO.getOne(idObject);
+      if (objectDTO == null) {
+        throw new NotFoundException("L'objet n'existe pas");
+      }
+
+      interestDTO = interestDAO.getOne(idObject, idMember);
+
       if (interestDTO == null) {
         throw new NotFoundException("La notification n'existe pas");
       }
+
+      //It's not the same user interest as the requester.
+      if (!idMember.equals(member.getMemberId()) && !member.getMemberId()
+          .equals(objectDTO.getIdOfferor())) {
+        throw new ForbiddenException(
+            "Cette objet ne vous appartient pas, vous ne pouvez pas modifier la notification.");
+      }
+
       if (!interestDTO.getIsNotificated()) {
         throw new ForbiddenException("La notification a déjà été marquée comme lue");
       }
 
       // Send Notification
       interestDTO.setIsNotificated(false);
+      interestDTO.setNotificationDate(LocalDate.now());
       interestDAO.updateNotification(interestDTO);
       interestDTO.setObject(objectDAO.getOne(interestDTO.getIdObject()));
       interestDTO.setMember(memberDAO.getOne(interestDTO.getIdMember()));
@@ -362,7 +380,6 @@ public class InterestUCCImpl implements InterestUCC {
     List<InterestDTO> interestDTOList;
     try {
       dalService.startTransaction();
-
       interestDTOList = interestDAO.markAllNotificationsShown(member.getMemberId());
       if (interestDTOList == null) {
         throw new NotFoundException("Aucunes notifications n'a été trouvé");

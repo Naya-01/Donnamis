@@ -174,14 +174,16 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with already an existent interest")
   @Test
   public void testAddOneWithAlreadyAnExistentInterest() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
         .thenReturn(interestDTO);
     assertAll(
-        () -> assertThrows(ConflictException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ConflictException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -192,16 +194,18 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with non existent object")
   @Test
   public void testAddOneWithNonExistentObject() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(null);
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -212,17 +216,19 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with object of interest having status neither interested nor available")
   @Test
   public void testAddOneWithObjectInterestGivenStatus() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     objectDTO.setStatus("given");
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
         .thenReturn(null);
     Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
         .thenReturn(objectDTO);
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -233,10 +239,11 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with non existent offer interest")
   @Test
   public void testAddOneWithNonExistentOfferInterest() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     objectDTO.setStatus("available");
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), interestDTO.getIdMember()))
@@ -247,7 +254,8 @@ class InterestUCCImplTest {
         .thenReturn(null);
 
     assertAll(
-        () -> assertThrows(NotFoundException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -258,10 +266,11 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with existent cancelled offer interest")
   @Test
   public void testAddOneWithExistentCancelledOfferInterest() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     objectDTO.setStatus("available");
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
 
     OfferDTO offerDTO = offerFactory.getOfferDTO();
@@ -275,7 +284,8 @@ class InterestUCCImplTest {
         .thenReturn(offerDTO);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -286,11 +296,12 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with none interest and object have not same version")
   @Test
   public void testAddOneWithNoneInterestExistentAndObjectNotSameVersion() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     objectDTO.setStatus("available");
     objectDTO.setVersion(13);
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
 
     OfferDTO offerDTO = offerFactory.getOfferDTO();
@@ -310,7 +321,8 @@ class InterestUCCImplTest {
         .thenReturn(0);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -321,11 +333,12 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with none interest, not same version, and interested status")
   @Test
   public void testAddOneWithNoneInterestExistentAndObjectNotSameVersionAndInterestedStatus() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     objectDTO.setIdObject(12);
     objectDTO.setStatus("interested");
     objectDTO.setVersion(13);
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
 
     OfferDTO offerDTO = offerFactory.getOfferDTO();
@@ -345,7 +358,8 @@ class InterestUCCImplTest {
         .thenReturn(0);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -356,6 +370,8 @@ class InterestUCCImplTest {
   @DisplayName("test addOne with none interest and offer have not same version")
   @Test
   public void testAddOneWithNoneInterestExistentAndOfferNotSameVersion() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     OfferDTO offerDTO = offerFactory.getOfferDTO();
     offerDTO.setStatus("available");
     offerDTO.setVersion(12);
@@ -365,7 +381,6 @@ class InterestUCCImplTest {
     objectDTO.setVersion(14);
 
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     interestDTO.setOffer(offerDTO);
 
@@ -388,7 +403,8 @@ class InterestUCCImplTest {
         .thenReturn(0);
 
     assertAll(
-        () -> assertThrows(ForbiddenException.class, () -> interestUCC.addOne(interestDTO)),
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.addOne(interestDTO, authenticatedUser)),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
             .startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeast(1))
@@ -399,6 +415,8 @@ class InterestUCCImplTest {
   @DisplayName("test addOne success with none interest existent for the object")
   @Test
   public void testAddOneSuccessWithNoneInterestExistentForTheObject() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     OfferDTO offerDTO = offerFactory.getOfferDTO();
     offerDTO.setStatus("available");
     offerDTO.setVersion(17);
@@ -408,7 +426,6 @@ class InterestUCCImplTest {
     objectDTO.setVersion(14);
 
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     interestDTO.setOffer(offerDTO);
 
@@ -439,7 +456,7 @@ class InterestUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
         .thenReturn(memberDTO);
 
-    InterestDTO interestDTOAdded = interestUCC.addOne(interestDTO);
+    InterestDTO interestDTOAdded = interestUCC.addOne(interestDTO, authenticatedUser);
 
     assertAll(
         () -> assertEquals("interested", objectDTOFromGetOne.getStatus()),
@@ -457,6 +474,8 @@ class InterestUCCImplTest {
   @DisplayName("test addOne success with 3 interests existent for the object")
   @Test
   public void testAddOneSuccessWith3InterestsExistentForTheObject() {
+    MemberDTO authenticatedUser = memberFactory.getMemberDTO();
+    authenticatedUser.setMemberId(1);
     OfferDTO offerDTO = offerFactory.getOfferDTO();
     offerDTO.setStatus("available");
     offerDTO.setVersion(17);
@@ -466,7 +485,6 @@ class InterestUCCImplTest {
     objectDTO.setVersion(14);
 
     interestDTO.setObject(objectDTO);
-    interestDTO.setIdMember(1);
     interestDTO.setAvailabilityDate(LocalDate.now());
     interestDTO.setOffer(offerDTO);
 
@@ -497,7 +515,7 @@ class InterestUCCImplTest {
     Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
         .thenReturn(memberDTO);
 
-    InterestDTO interestDTOAdded = interestUCC.addOne(interestDTO);
+    InterestDTO interestDTOAdded = interestUCC.addOne(interestDTO, authenticatedUser);
 
     assertAll(
         () -> assertTrue(interestDTOAdded.getIsNotificated()),
@@ -725,6 +743,25 @@ class InterestUCCImplTest {
   }
 
   //  ---------------------------- MARK NOTIFICATION SHOWN UCC  -------------------------------  //
+  @DisplayName("Test markNotificationShown with non existent object in db")
+  @Test
+  public void testMarkNotificationShownWithNonExistentObjectInDb() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    Mockito.when(mockObjectDAO.getOne(nonExistentId))
+        .thenReturn(null);
+
+    assertAll(
+        () -> assertThrows(NotFoundException.class,
+            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
   @DisplayName("Test markNotificationShown with non existent interest in db")
   @Test
   public void testMarkNotificationShownWithNonExistentInterestInDb() {
@@ -732,16 +769,51 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
-    Mockito.when(mockInterestDAO.getOne(nonExistentId, memberDTO.getMemberId()))
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(null);
 
     assertAll(
         () -> assertThrows(NotFoundException.class,
-            () -> interestUCC.markNotificationShown(nonExistentId, memberDTO)),
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
   }
+
+  @DisplayName("Test markNotificationShown with not the same user interest as the requester")
+  @Test
+  public void testMarkNotificationShownWithNotTheSameUserInterestAsTheRequester() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(2);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(3);
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+
+    Mockito.when(mockInterestDAO.getOne(objectDTO.getIdObject(), 1))
+        .thenReturn(interestFactory.getInterestDTO());
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(objectDTO.getIdObject(), memberDTO,
+                1)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 
   @DisplayName("Test markNotificationShown with an interest already shown")
   @Test
@@ -750,16 +822,81 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
     InterestDTO interestDTO = interestFactory.getInterestDTO();
     interestDTO.setIsNotificated(false);
-    interestDTO.setIdObject(12);
+    interestDTO.setIdObject(objectDTO.getIdObject());
 
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
-
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
     assertAll(
         () -> assertThrows(ForbiddenException.class,
-            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO)),
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown with an interest already shown v2")
+  @Test
+  public void testMarkNotificationShownWithAnInterestAlreadyShownV2() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(71);
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIsNotificated(false);
+    interestDTO.setIdObject(objectDTO.getIdObject());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
+                memberDTO.getMemberId())),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
+  @DisplayName("Test markNotificationShown with an interest already shown v3")
+  @Test
+  public void testMarkNotificationShownWithAnInterestAlreadyShownV3() {
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
+    objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
+
+    InterestDTO interestDTO = interestFactory.getInterestDTO();
+    interestDTO.setIsNotificated(false);
+    interestDTO.setIdObject(objectDTO.getIdObject());
+
+    Mockito.when(mockObjectDAO.getOne(objectDTO.getIdObject()))
+        .thenReturn(objectDTO);
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), 71))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject())).thenReturn(objectDTO);
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.markNotificationShown(interestDTO.getIdObject(), memberDTO,
+                71)),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
         () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
     );
@@ -772,7 +909,9 @@ class InterestUCCImplTest {
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
 
+    ObjectDTO objectDTO = objectFactory.getObjectDTO();
     objectDTO.setIdObject(12);
+    objectDTO.setIdOfferor(memberDTO.getMemberId());
 
     InterestDTO interestDTO = interestFactory.getInterestDTO();
     interestDTO.setIsNotificated(true);
@@ -787,7 +926,8 @@ class InterestUCCImplTest {
         .thenReturn(memberDTO);
 
     InterestDTO interestDTOShown = interestUCC.markNotificationShown(interestDTO.getIdObject(),
-        memberDTO);
+        memberDTO,
+        memberDTO.getMemberId());
 
     assertAll(
         () -> assertEquals(objectDTO, interestDTOShown.getObject()),
@@ -988,6 +1128,52 @@ class InterestUCCImplTest {
     );
   }
 
+  @DisplayName("Test assignOffer with prevented member status")
+  @Test
+  public void testAssignOfferWithPreventedMemberStatus() {
+    ObjectDTO newObject = objectFactory.getObjectDTO();
+    newObject.setIdObject(objectDTO.getIdObject());
+    newObject.setVersion(26);
+
+    objectDTO.setVersion(26);
+
+    OfferDTO offerDTOFromGetLastOne = offerFactory.getOfferDTO();
+    offerDTOFromGetLastOne.setIdOffer(18);
+    offerDTOFromGetLastOne.setVersion(14);
+    offerDTOFromGetLastOne.setObject(newObject);
+    offerDTOFromGetLastOne.setStatus("not_collected");
+
+    OfferDTO offerDTO = offerFactory.getOfferDTO();
+    offerDTO.setObject(interestDTO.getObject());
+    offerDTO.setIdOffer(18);
+    offerDTO.setVersion(14);
+
+    MemberDTO memberDTO = memberFactory.getMemberDTO();
+    memberDTO.setMemberId(3);
+    memberDTO.setStatus("prevented");
+
+    interestDTO.setIdMember(memberDTO.getMemberId());
+    interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
+    interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
+
+    Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
+        .thenReturn(interestDTO);
+    Mockito.when(mockObjectDAO.getOne(interestDTO.getIdObject()))
+        .thenReturn(interestDTO.getObject());
+    Mockito.when(mockMemberDAO.getOne(interestDTO.getIdMember()))
+        .thenReturn(memberDTO);
+    Mockito.when(mockOfferDAO.getLastObjectOffer(interestDTO.getIdObject()))
+        .thenReturn(offerDTOFromGetLastOne);
+
+    assertAll(
+        () -> assertThrows(ForbiddenException.class,
+            () -> interestUCC.assignOffer(interestDTO, memberDTO)),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).startTransaction(),
+        () -> Mockito.verify(mockDalService, Mockito.atLeastOnce()).rollBackTransaction()
+    );
+  }
+
 
   @DisplayName("Test assignOffer with available offer status")
   @Test
@@ -1014,10 +1200,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1062,10 +1250,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1113,10 +1303,12 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1164,11 +1356,13 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("assigned");
+    interestDTO.setMember(memberDTO);
 
     Mockito.when(mockInterestDAO.getOne(interestDTO.getIdObject(), memberDTO.getMemberId()))
         .thenReturn(interestDTO);
@@ -1215,12 +1409,14 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("published");
     interestDTO.setVersion(12);
+    interestDTO.setMember(memberDTO);
 
     InterestDTO interestDTOInParam = interestFactory.getInterestDTO();
     interestDTOInParam.setVersion(30);
@@ -1275,12 +1471,14 @@ class InterestUCCImplTest {
 
     MemberDTO memberDTO = memberFactory.getMemberDTO();
     memberDTO.setMemberId(3);
+    memberDTO.setStatus("valid");
 
     interestDTO.setIdMember(memberDTO.getMemberId());
     interestDTO.getObject().setIdOfferor(memberDTO.getMemberId());
     interestDTO.setOffer(offerDTO);
     interestDTO.setStatus("published");
     interestDTO.setVersion(12);
+    interestDTO.setMember(memberDTO);
 
     InterestDTO interestDTOInParam = interestFactory.getInterestDTO();
     interestDTOInParam.setVersion(interestDTO.getVersion());

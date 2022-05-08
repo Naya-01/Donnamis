@@ -3,9 +3,8 @@ package be.vinci.pae.ihm;
 import be.vinci.pae.business.domain.dto.MemberDTO;
 import be.vinci.pae.business.domain.dto.ObjectDTO;
 import be.vinci.pae.business.ucc.ObjectUCC;
-import be.vinci.pae.exceptions.BadRequestException;
+import be.vinci.pae.exceptions.ForbiddenException;
 import be.vinci.pae.exceptions.NotFoundException;
-import be.vinci.pae.exceptions.UnauthorizedException;
 import be.vinci.pae.ihm.filters.Authorize;
 import be.vinci.pae.ihm.manager.Image;
 import be.vinci.pae.utils.JsonViews;
@@ -79,22 +78,20 @@ public class ObjectResource {
 
     Logger.getLogger("Log").log(Level.INFO, "ObjectResource setPicture");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
-    ObjectDTO objectDTO = objectUCC.getObject(id);
 
-    if (objectDTO.getIdOfferor() != memberDTO.getMemberId()) {
-      throw new UnauthorizedException("Cette objet ne vous appartient pas");
-    }
-
-    String internalPath = imageManager.writeImageOnDisk(file, fileMime, "objects\\",
-        objectDTO.getIdObject());
-    if (internalPath == null) {
-      throw new BadRequestException("Le type du fichier est incorrect."
+    if (!imageManager.isAuthorized(fileMime)) {
+      throw new ForbiddenException("Le type du fichier est incorrect."
           + "\nVeuillez soumettre une image");
     }
+
+    String internalPath = imageManager.getInternalPath("objects\\", id, fileMime);
+
     ObjectDTO object = objectUCC.updateObjectPicture(
-        internalPath, objectDTO.getIdObject(), version);
-    object = JsonViews.filterPublicJsonView(object, ObjectDTO.class);
-    return object;
+        internalPath, id, memberDTO.getMemberId(), version);
+
+    imageManager.writeImageOnDisk(file, fileMime, "objects\\", id);
+
+    return JsonViews.filterPublicJsonView(object, ObjectDTO.class);
   }
 
   /**

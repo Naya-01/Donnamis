@@ -220,6 +220,43 @@ class MemberLibrary {
     }
     return newMember;
   }
+
+  /**
+   * Update the member status to make him prevented
+   *
+   * @param idMember the id of the member
+   * @param version the version for concurrency
+   * @returns the response
+   */
+  async memberToPrevent(idMember, version){
+    let response=null;
+    try {
+      let options = {
+        method: "PUT",
+        body: JSON.stringify({
+          "memberId": idMember,
+          "version": version
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": getSessionObject("user").accessToken,
+        },
+      };
+      response = await fetch("api/member/toPrevented", options);
+      if (response.status === 200) {
+        return await response.json();
+      }
+      response.text().then((msg) => {
+        Toast.fire({
+          icon: 'error',
+          title: msg
+        });
+      })
+      return response;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 export default MemberLibrary;

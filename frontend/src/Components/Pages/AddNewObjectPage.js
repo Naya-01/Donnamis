@@ -43,6 +43,7 @@ const AddNewObjectPage = async () => {
   pageDiv.innerHTML = `
     <div class="container p-3">
       <div class="mx-5 my-5">
+        <h2 class=pb-3>Ajouter un objet</h2>
         <div class="card">  
           <!-- Body of the card -->
           <div class="card-body">
@@ -102,7 +103,8 @@ const AddNewObjectPage = async () => {
       </div>
     </div>`;
 
-  document.querySelector("#addObjectButton").addEventListener("click", addObject);
+  document.querySelector("#addObjectButton").addEventListener("click",
+      addObject);
   let input_file = document.getElementById("file_input");
   // display the image if the user upload a file
   input_file.onchange = () => {
@@ -115,7 +117,7 @@ const AddNewObjectPage = async () => {
 
 /**
  * Send to the backend all informations to create an object
- * @param {Event} e : evenement
+ * @param {Event} e : event
  */
 async function addObject(e) {
   e.preventDefault();
@@ -128,31 +130,28 @@ async function addObject(e) {
 
   let emptyFields = 0;
   // check the description
-  if(description.trim().length === 0){
+  if (description.trim().length === 0) {
     descriptionHTML.classList.add("border-danger");
-    emptyFields ++;
-  }
-  else{
+    emptyFields++;
+  } else {
     descriptionHTML.classList.remove("border-danger");
   }
   // check the type name
-  if(typeName.trim().length === 0){
+  if (typeName.trim().length === 0) {
     typeNameHTML.classList.add("border-danger");
-    emptyFields ++;
-  }
-  else{
+    emptyFields++;
+  } else {
     typeNameHTML.classList.remove("border-danger");
   }
   // check the time slot
-  if(timeSlot.trim().length === 0){
+  if (timeSlot.trim().length === 0) {
     timeSlotHTML.classList.add("border-danger");
-    emptyFields ++;
-  }
-  else{
+    emptyFields++;
+  } else {
     timeSlotHTML.classList.remove("border-danger");
   }
   // if there is an empty field
-  if(emptyFields > 0){
+  if (emptyFields > 0) {
     bottomNotification.fire({
       icon: 'error',
       title: 'Vous devez remplir les champs obligatoires'
@@ -160,15 +159,33 @@ async function addObject(e) {
     return;
   }
 
-  // Call the backend to add the offer
-  let newOffer = await offerLibrary.addFirstOffer(timeSlot, description, typeName);
-  let idObject = newOffer.object.idObject;
+  let canBeUpload = false;
   let fileInput = document.getElementById("file_input");
-  // if there is an image
+  // check the format of the image if it exists
   if (fileInput.files[0] !== undefined) {
-    let formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    await objectLibrary.setImage(formData, idObject);
+    let types = ["image/jpeg", "image/jpg", "image/png"]
+    for (const type in types) {
+      if (fileInput.files[0].type === types[type]) {
+        canBeUpload = true;
+      }
+    }
+    if (!canBeUpload) {
+      bottomNotification.fire({
+        icon: 'error',
+        title: "Nous n'acceptons que des images png, jpeg et jpg."
+      })
+      return;
+    }
+  }
+  // Call the backend to add the offer
+  let newOffer = await offerLibrary.addFirstOffer(timeSlot, description,
+      typeName);
+  let idObject = newOffer.object.idObject;
+  // if there is an image
+  if(canBeUpload){
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      await objectLibrary.setImage(formData, idObject);
   }
   Redirect("/");
   let notif = new NotificationSA().getNotification("top-end");
