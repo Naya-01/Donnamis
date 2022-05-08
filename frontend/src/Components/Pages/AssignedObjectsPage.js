@@ -12,7 +12,7 @@ const AssignedObjectsPage = async () => {
     Redirect("/");
     return;
   }
-  await SearchBar("Objets attribués", true, false, true, "Rechercher un objet",
+  await SearchBar("Objets attribués", true, false, false, "Rechercher un objet",
       false, false);
   const pageDiv = document.querySelector("#page");
   pageDiv.innerHTML += `<div id="card-list-div"></div>`
