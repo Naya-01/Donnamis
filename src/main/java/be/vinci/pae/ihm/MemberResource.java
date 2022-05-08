@@ -87,7 +87,7 @@ public class MemberResource {
     MemberDTO memberDTO = memberUCC.getMember(id);
 
     if (memberDTO.getImage() == null) {
-      throw new NotFoundException("Cet objet ne possède pas d'image");
+      throw new NotFoundException("Ce membre ne possède pas de photo de profil");
     }
 
     return Response.ok(memberUCC.getPicture(memberDTO.getMemberId())).build();
@@ -170,9 +170,9 @@ public class MemberResource {
   }
 
   /**
-   * Update a member status and update its assigned interests into a prevent status.
+   * Update a member status and update its assigned interests into a prevented status.
    *
-   * @param memberDTO member who has a prevent
+   * @param memberDTO member who has a prevented
    * @return the filter member updated with a 'prevented' status
    */
   @PUT
@@ -187,7 +187,7 @@ public class MemberResource {
       throw new BadRequestException("Identifiant du membre manquant !");
     }
     if (memberDTO.getVersion() == null) {
-      throw new BadRequestException("Attribut version manquant ! ");
+      throw new BadRequestException("Attribut 'version' manquant ! ");
     }
 
     return JsonViews.filterPublicJsonView(memberUCC.preventMember(memberDTO), MemberDTO.class);

@@ -23,6 +23,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -132,7 +133,7 @@ public class OfferResource {
     Logger.getLogger("Log").log(Level.INFO, "OfferResource addOffer");
     if (offerDTO.getObject().getIdObject() == null || offerDTO.getTimeSlot() == null
         || offerDTO.getTimeSlot().isBlank()) {
-      throw new BadRequestException("Information manquante !");
+      throw new BadRequestException("Informations manquantes !");
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
@@ -157,13 +158,13 @@ public class OfferResource {
     MemberDTO memberRequest = (MemberDTO) request.getProperty("user");
 
     if (offerDTO.getIdOffer() == null) {
-      throw new BadRequestException("Aucun id de l'offre");
+      throw new BadRequestException("L'offre n'a pas d'identifiant");
     }
 
     OfferDTO initialOfferDTO = offerUcc.getOfferById(offerDTO.getIdOffer());
 
-    if (initialOfferDTO.getObject().getIdOfferor() != memberRequest.getMemberId()) {
-      throw new UnauthorizedException("Vous n'avez pas créé cet offre.");
+    if (!Objects.equals(initialOfferDTO.getObject().getIdOfferor(), memberRequest.getMemberId())) {
+      throw new UnauthorizedException("Vous n'êtes pas l'offreur de l'objet");
     }
     OfferDTO offer = offerUcc.updateOffer(offerDTO);
     return JsonViews.filterPublicJsonView(offer, OfferDTO.class);
@@ -196,7 +197,7 @@ public class OfferResource {
    * Get all offers received by a member.
    *
    * @param request data of the member connected
-   * @param search the search pattern (empty -> all) according to their type, description
+   * @param search  the search pattern (empty -> all) according to their type, description
    * @return a list of offerDTO
    */
   @GET
@@ -229,7 +230,8 @@ public class OfferResource {
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (offerDTO.getIdOffer() == null) {
-      throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
+      throw new BadRequestException(
+          "Veuillez indiquer un identifiant dans la ressource de l'offre");
     }
 
     OfferDTO offer = offerUcc.cancelOffer(offerDTO, ownerDTO);
@@ -252,7 +254,8 @@ public class OfferResource {
 
     Logger.getLogger("Log").log(Level.INFO, "OfferResource notCollectedOffer");
     if (offerDTO.getIdOffer() == null) {
-      throw new BadRequestException("Veuillez indiquer un id dans la ressource offer");
+      throw new BadRequestException(
+          "Veuillez indiquer un identifiant dans la ressource de l'offre");
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
@@ -277,7 +280,7 @@ public class OfferResource {
 
     Logger.getLogger("Log").log(Level.INFO, "OfferResource giveOffer");
     if (offerDTO.getObject().getIdObject() == null) {
-      throw new BadRequestException("id de l'objet null");
+      throw new BadRequestException("L'identifiant de l'objet null");
     }
 
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
@@ -286,7 +289,7 @@ public class OfferResource {
   }
 
   /**
-   * Get a map of data about a member (nb of received object, nb of not colected objects, nb of
+   * Get a map of data about a member (nb of received object, nb of not collected objects, nb of
    * given objects and nb of total offers).
    *
    * @param idReceiver the id of the member

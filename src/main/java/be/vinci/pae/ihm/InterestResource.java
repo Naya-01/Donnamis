@@ -91,7 +91,7 @@ public class InterestResource {
       throw new BadRequestException("Manque d'informations obligatoires");
     }
     if (interest.getIdObject() < 1) {
-      throw new BadRequestException("Id d'objet inexistant");
+      throw new BadRequestException("Identifiant de l'objet inexistant");
     }
     MemberDTO authenticatedUser = (MemberDTO) request.getProperty("user");
 
@@ -167,7 +167,7 @@ public class InterestResource {
    * Assign an object to a member interested.
    *
    * @param request     data of the object's owner.
-   * @param interestDTO : the interest informations (id of the object and id of the member).
+   * @param interestDTO : the interest information (id of the object and id of the member).
    * @return object updated.
    */
   @POST
@@ -181,7 +181,8 @@ public class InterestResource {
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
 
     if (interestDTO.getIdMember() == null || interestDTO.getIdObject() == null) {
-      throw new BadRequestException("Veuillez indiquer un id dans l'objet de la ressource interet");
+      throw new BadRequestException(
+          "Veuillez indiquer un identifiant dans l'objet de la ressource intérêt");
     }
     InterestDTO interest = interestUCC.assignOffer(interestDTO, ownerDTO);
     interest.setMember(JsonViews.filterPublicJsonView(interest.getMember(), MemberDTO.class));
@@ -207,7 +208,7 @@ public class InterestResource {
     Logger.getLogger("Log").log(Level.INFO, "InterestResource markNotificationShown");
     MemberDTO memberDTO = (MemberDTO) request.getProperty("user");
     if (idMember == null) {
-      throw new BadRequestException("Veuillez indiquer un idMember");
+      throw new BadRequestException("Veuillez indiquer un identifiant de membre");
     }
 
     InterestDTO interest = interestUCC.markNotificationShown(idObject, memberDTO, idMember);

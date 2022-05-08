@@ -41,8 +41,8 @@ public class RatingResource {
     Logger.getLogger("Log").log(Level.INFO, "RatingResource getOne");
     RatingDTO ratingDTO = ratingUCC.getOne(idObject);
     ratingDTO.setMemberRater(JsonViews
-        .filterPublicJsonView(ratingDTO.getMemberRater(),MemberDTO.class));
-    ratingDTO = JsonViews.filterPublicJsonView(ratingDTO,RatingDTO.class);
+        .filterPublicJsonView(ratingDTO.getMemberRater(), MemberDTO.class));
+    ratingDTO = JsonViews.filterPublicJsonView(ratingDTO, RatingDTO.class);
     return ratingDTO;
   }
 
@@ -61,15 +61,15 @@ public class RatingResource {
 
     if (ratingDTO == null || ratingDTO.getIdObject() == null || ratingDTO.getRating() == null
         || ratingDTO.getComment() == null || ratingDTO.getComment().isBlank()) {
-      throw new BadRequestException("Rating need more informations");
+      throw new BadRequestException("La note a besoin de plus d'informations");
     }
     MemberDTO ownerDTO = (MemberDTO) request.getProperty("user");
     ratingDTO.setIdMember(ownerDTO.getMemberId());
     RatingDTO rating = ratingUCC.addRating(ratingDTO);
 
     rating.setMemberRater(JsonViews
-        .filterPublicJsonView(rating.getMemberRater(),MemberDTO.class));
-    rating = JsonViews.filterPublicJsonView(rating,RatingDTO.class);
+        .filterPublicJsonView(rating.getMemberRater(), MemberDTO.class));
+    rating = JsonViews.filterPublicJsonView(rating, RatingDTO.class);
     return rating;
   }
 }
