@@ -118,16 +118,16 @@ const Navbar = async () => {
 
     if (notificationCount === 0) {
       navbar += `
-             <li class="nav-item dropdown mx-5">
-                        <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
-                           <div>
-                            <img class="" id="navbar-notification-picture" alt="notification" src="${notificationImage}">
-                           </div>
-                        </a>
-                        <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end">
-
-                        </ul>
-                    </li>
+             <li class="nav-item dropdown mx-2">
+                    <a aria-expanded="false" class="nav-link " id="notificationButton" data-bs-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                    <div id="button-dot">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                      <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"></path>
+                    </svg>
+                  </div>
+                </a>
+                <ul id="notificationContent" aria-labelledby="navbarDropdown" class="dropdown-menu bg-navbar dropdown-menu-end"></ul>
+             </li>
     `
     } else {
       navbar += `
