@@ -366,11 +366,16 @@ const modifyProfilRender = async () => {
 
     let memberUpdated = await memberLibrary.updateMember(newMember);
     //if the update throws an error
+    let notifTopRight = new NotificationSA().getNotification("top-end");
     if (memberUpdated === null) {
+      notifTopRight.fire({
+        icon: 'error',
+        title: 'Votre profil n\'a pas pu être mis à jour'
+      })
       return;
     } else {
-      toast.fire({
-        icon: 'error',
+      notifTopRight.fire({
+        icon: 'success',
         title: 'Votre profil a bien été mis à jour'
       })
     }
