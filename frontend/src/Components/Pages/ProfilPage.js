@@ -368,6 +368,11 @@ const modifyProfilRender = async () => {
     //if the update throws an error
     if (memberUpdated === null) {
       return;
+    } else {
+      toast.fire({
+        icon: 'error',
+        title: 'Votre profil a bien été mis à jour'
+      })
     }
     //if the username has been modified
     if (username.value.trim() !== member.username) {
